@@ -39,30 +39,20 @@ defmodule SaladUI.Sheet do
   """
   use SaladUI, :component
 
-  attr :show, :boolean, default: false, doc: "Show the sheet on mount"
-  attr :class, :string, default: "inline-block"
-  slot :inner_block, required: true
+  attr(:class, :string, default: "inline-block")
+  slot(:inner_block, required: true)
 
   def sheet(assigns) do
-    # random unique key
-    assigns = assign(assigns, :key, "sheet")
-
     ~H"""
-    <div
-      class={classes([@class])}
-      phx-mounted={
-        (@show && JS.exec("phx-show-sheet", to: "[data-key=#{@key}] .sheet-content")) || %JS{}
-      }
-      data-key={@key}
-    >
+    <div class={classes([@class])}>
       <%= render_slot(@inner_block) %>
     </div>
     """
   end
 
-  attr :class, :string, default: "inner-block"
-  attr :target, :string, required: true, doc: "The id of the sheet to open"
-  slot :inner_block, required: true
+  attr(:class, :string, default: "inner-block")
+  attr(:target, :string, required: true, doc: "The id of the sheet to open")
+  slot(:inner_block, required: true)
 
   def sheet_trigger(assigns) do
     ~H"""
@@ -72,14 +62,14 @@ defmodule SaladUI.Sheet do
     """
   end
 
-  attr :class, :string, default: nil
+  attr(:class, :string, default: nil)
 
   defp sheet_overlay(assigns) do
     ~H"""
     <div
       class={
         classes([
-          "sheet-overlay fixed hidden inset-0 z-50 bg-background/80 backdrop-blur-sm",
+          "sheet-overlay fixed hidden inset-0 z-50 bg-black/80",
           @class
         ])
       }
@@ -89,11 +79,11 @@ defmodule SaladUI.Sheet do
     """
   end
 
-  attr :id, :string, required: true, doc: "The id of the sheet"
-  attr :class, :string, default: nil
-  attr :side, :string, default: "right", values: ~w(left right top bottom), doc: "The side of the sheet"
-  slot :inner_block, required: true
-  slot :custom_close_btn, required: false
+  attr(:id, :string, required: true, doc: "The id of the sheet")
+  attr(:class, :string, default: nil)
+  attr(:side, :string, default: "right", values: ~w(left right top bottom), doc: "The side of the sheet")
+  slot(:inner_block, required: true)
+  slot(:custom_close_btn, required: false)
 
   def sheet_content(assigns) do
     variant_class =
@@ -166,8 +156,8 @@ defmodule SaladUI.Sheet do
     """
   end
 
-  attr :class, :string, default: nil
-  slot :inner_block, required: true
+  attr(:class, :string, default: nil)
+  slot(:inner_block, required: true)
 
   def sheet_header(assigns) do
     ~H"""
@@ -177,8 +167,8 @@ defmodule SaladUI.Sheet do
     """
   end
 
-  attr :class, :string, default: nil
-  slot :inner_block, required: true
+  attr(:class, :string, default: nil)
+  slot(:inner_block, required: true)
 
   def sheet_title(assigns) do
     ~H"""
@@ -188,8 +178,8 @@ defmodule SaladUI.Sheet do
     """
   end
 
-  attr :class, :string, default: nil
-  slot :inner_block, required: true
+  attr(:class, :string, default: nil)
+  slot(:inner_block, required: true)
 
   def sheet_description(assigns) do
     ~H"""
@@ -199,8 +189,8 @@ defmodule SaladUI.Sheet do
     """
   end
 
-  attr :class, :string, default: nil
-  slot :inner_block, required: true
+  attr(:class, :string, default: nil)
+  slot(:inner_block, required: true)
 
   def sheet_footer(assigns) do
     ~H"""
@@ -210,9 +200,9 @@ defmodule SaladUI.Sheet do
     """
   end
 
-  attr :class, :string, default: nil
-  attr :target, :string, required: true, doc: "The id of the sheet tag to close"
-  slot :inner_block, required: true
+  attr(:class, :string, default: nil)
+  attr(:target, :string, required: true, doc: "The id of the sheet tag to close")
+  slot(:inner_block, required: true)
 
   def sheet_close(assigns) do
     ~H"""
@@ -220,6 +210,27 @@ defmodule SaladUI.Sheet do
       <%= render_slot(@inner_block) %>
     </div>
     """
+  end
+
+  @variants %{
+    side: %{
+      "top" => "inset-x-0 top-0 border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-to",
+      "bottom" =>
+        "inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
+      "left" =>
+        "inset-y-0 right-0 h-full w-3/4  border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm",
+      "right" => "text-foreground"
+    }
+  }
+
+  @default_variants %{
+    side: "default"
+  }
+
+  defp variant(props) do
+    variants = Map.merge(@default_variants, props)
+
+    Enum.map_join(variants, " ", fn {key, value} -> @variants[key][value] end)
   end
 
   defp show_sheet(js \\ %JS{}, id, side) when is_binary(id) do
@@ -234,11 +245,13 @@ defmodule SaladUI.Sheet do
     js
     |> JS.show(
       to: "##{id} .sheet-overlay",
-      transition: {"transition ease-in-out", "opacity-0", "opacity-100"}
+      transition: {"transition ease-in-out", "opacity-0", "opacity-100"},
+      time: 600
     )
     |> JS.show(
       to: "##{id} .sheet-content-wrap",
-      transition: transition
+      transition: transition,
+      time: 600
     )
     |> JS.add_class("overflow-hidden", to: "body")
     |> JS.focus_first(to: "##{id} .sheet-content-wrap")
@@ -256,9 +269,10 @@ defmodule SaladUI.Sheet do
     js
     |> JS.hide(
       to: "##{id} .sheet-overlay",
-      transition: {"transition ease-in-out", "opacity-100", "opacity-0"}
+      transition: {"transition ease-in-out", "opacity-100", "opacity-0"},
+      time: 400
     )
-    |> JS.hide(to: "##{id} .sheet-content-wrap", transition: transition)
+    |> JS.hide(to: "##{id} .sheet-content-wrap", transition: transition, time: 400)
     |> JS.remove_class("overflow-hidden", to: "body")
     |> JS.pop_focus()
   end
