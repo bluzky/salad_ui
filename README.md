@@ -112,3 +112,44 @@ Here is how to start develop SaladUI on local machine.
 cd salad_storybook
 mix phx.server
 ```
+
+
+## List of components
+
+- [ ] Accordion
+- [x] Alert
+- [ ] Alert Dialog
+- [x] Avatar
+- [x] Badge
+- [ ] Breadcrumb
+- [x] Button
+- [x] Card
+- [ ] Carousel
+- [x] Checkbox
+- [ ] Collapsible
+- [ ] Combobox
+- [ ] Command
+- [ ] Context Menu
+- [x] Dialog
+- [ ] Drawer
+- [x] Dropdown Menu
+- [x] Form
+- [ ] Hover Card
+- [x] Input
+- [ ] Input OTP
+- [x] Label
+- [ ] Pagination
+- [ ] Popover
+- [ ] Progress
+- [ ] Radio Group
+- [ ] Scroll Area
+- [x] Select
+- [ ] Separator
+- [x] Sheet
+- [ ] Skeleton
+- [ ] Slider
+- [ ] Switch
+- [x] Table
+- [x] Tabs
+- [x] Textarea
+- [ ] Tooltip
