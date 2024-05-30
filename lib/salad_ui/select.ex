@@ -33,22 +33,48 @@ defmodule SaladUI.Select do
 
   attr(:id, :string, default: nil)
   attr(:name, :any, default: nil)
-  attr(:value, :any, default: nil)
+  attr(:value, :any, default: nil, doc: "The value of the select")
+
+  attr(:label, :string,
+    default: nil,
+    doc: "The display label of the select value. If not provided, the value will be used."
+  )
+
+  attr(:placeholder, :string, default: nil, doc: "The placeholder text when no value is selected.")
+
   attr(:class, :string, default: nil)
   slot(:inner_block, required: true)
   attr(:rest, :global)
 
   def select(assigns) do
+    assigns =
+      assign(assigns, :instance, %{
+        id: assigns.id,
+        name: assigns.name,
+        value: assigns.value,
+        label: assigns.label,
+        placeholder: assigns.placeholder
+      })
+
     ~H"""
-    <div id={@id} class={classes(["relative group select-root", @class])} {@rest}>
-      <%= render_slot(@inner_block) %>
+    <div
+      id={@id}
+      class={classes(["relative group", @class])}
+      data-state="closed"
+      {@rest}
+      x-hide-select={hide_select(@id)}
+      x-show-select={show_select(@id)}
+      x-toggle-select={toggle_select(@id)}
+      phx-click-away={JS.exec("x-hide-select")}
+    >
+      <%= render_slot(@inner_block, @instance) %>
     </div>
     """
   end
 
   attr(:target, :string, required: true)
+  attr(:instance, :map, required: true, doc: "The instance of the select component")
   attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
   attr(:rest, :global)
 
   def select_trigger(assigns) do
@@ -61,31 +87,23 @@ defmodule SaladUI.Select do
           @class
         ])
       }
-      phx-click={show_select(@target)}
+      phx-click={toggle_select(@instance.id)}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      <span
+        class="select-value pointer-events-none before:content-[attr(data-content)]"
+        data-content={@instance.label || @instance.value || @instance.placeholder}
+      >
+      </span>
       <span class="h-4 w-4 opacity-50" />
     </button>
     """
   end
 
-  attr(:value, :string, default: nil)
-  attr(:placeholder, :string, default: nil)
+  attr(:instance, :map, required: true, doc: "The instance of the select component")
 
-  def select_value(assigns) do
-    ~H"""
-    <span
-      class="select-value pointer-events-none before:content-[attr(data-content)]"
-      data-content={@value || @placeholder}
-    >
-    </span>
-    """
-  end
-
-  attr(:id, :string, required: true)
   attr(:class, :string, default: nil)
-  attr(:side, :string, values: ~w(top right bottom left), default: "bottom")
+  attr(:side, :string, values: ~w(top bottom), default: "bottom")
   slot(:inner_block, required: true)
 
   attr(:rest, :global)
@@ -93,19 +111,19 @@ defmodule SaladUI.Select do
   def select_content(assigns) do
     position_class =
       case assigns.side do
-        "top" -> "bottom-full mb-2"
-        "bottom" -> "top-full mt-2"
+        "top" -> "bottom-full mb-1"
+        "bottom" -> "top-full mt-1"
       end
 
     assigns =
-      assign(assigns, :position_class, position_class)
+      assigns
+      |> assign(:position_class, position_class)
+      |> assign(:id, assigns.instance.id <> "-content")
 
     ~H"""
     <.focus_wrap
-      data-side={@side}
-      data-state="closed"
       id={@id}
-      phx-click-away={hide_select(@id)}
+      data-side={@side}
       class={
         classes([
           "select-content absolute hidden",
@@ -147,39 +165,44 @@ defmodule SaladUI.Select do
     """
   end
 
-  attr(:value, :any, required: true)
-  attr(:name, :string, required: true)
-  attr(:selected, :boolean, default: false)
+  attr(:instance, :map, required: true, doc: "The instance of the select component")
+
+  attr(:value, :string, required: true)
+  attr(:label, :string, default: nil)
   attr(:disabled, :boolean, default: false)
   attr(:class, :string, default: nil)
-  attr(:"phx-click", JS, default: %JS{})
   slot(:inner_block, required: true)
 
   attr(:rest, :global)
 
   def select_item(assigns) do
+    assigns = assign(assigns, :label, assigns.label || assigns.value)
+
     ~H"""
     <label
       role="option"
       class={
         classes([
-          "group",
-          "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent",
+          "group/item",
+          "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           @class
         ])
       }
       {%{"data-disabled": @disabled}}
-      phx-click={update_value(@name, @value)}
+      phx-click={select_value(@instance.id, @label)}
       {@rest}
     >
       <input
         type="radio"
-        class="peer"
-        name={@name}
+        class="peer w-0 opacity-0"
+        name={@instance.name}
         value={@value}
-        checked={@selected}
+        checked={@instance.value == @value}
         disabled={@disabled}
+        phx-key="Escape"
+        phx-keydown={JS.exec("x-hide-select", to: "##{@instance.id}")}
       />
+      <div class="absolute top-0 left-0 w-full h-full group-hover/item:bg-accent rounded"></div>
       <span class="hidden peer-checked:block absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
         <span aria-hidden="true">
           <svg
@@ -198,9 +221,7 @@ defmodule SaladUI.Select do
           </svg>
         </span>
       </span>
-      <span>
-        <%= render_slot(@inner_block) %>
-      </span>
+      <span class="z-0 peer-focus:text-accent-foreground"><%= @label %></span>
     </label>
     """
   end
@@ -213,20 +234,49 @@ defmodule SaladUI.Select do
 
   defp hide_select(id) do
     %JS{}
-    |> JS.add_class("hidden", to: "##{id}")
     |> JS.pop_focus()
+    |> JS.add_class("hidden",
+      transition: "ease-out",
+      to: "##{id}[data-state=open] .select-content",
+      time: 150
+    )
     |> JS.set_attribute({"data-state", "closed"}, to: "##{id}")
   end
 
+  # show select and focus first selected item or first item if no selected item
   defp show_select(id) do
     %JS{}
     # show if closed
-    |> JS.remove_class("hidden", to: "##{id}[data-state=\"closed\"]")
-    |> JS.focus_first(to: "##{id}[data-state=\"closed\"]")
+    |> JS.focus_first(to: "##{id}[data-state=closed] .select-content")
     |> JS.set_attribute({"data-state", "open"}, to: "##{id}")
+    |> JS.focus_first(to: "##{id}[data-state=open] .select-content")
+    |> JS.focus_first(to: "##{id}[data-state=open] .select-content label:has(input:checked)")
   end
 
-  defp update_value(name, value) do
-    JS.set_attribute(%JS{}, {"data-content", value}, to: ".select-root:has(input[name=#{name}]) .select-value")
+  # show or hide select
+  defp toggle_select(id) do
+    %JS{}
+    |> JS.add_class("hidden",
+      transition: "ease-out",
+      to: "##{id}[data-state=open] .select-content",
+      time: 150
+    )
+    # show if closed
+    |> JS.remove_class("hidden", to: "##{id}[data-state=closed] .select-content")
+    |> JS.toggle_attribute({"data-state", "open", "closed"}, to: "##{id}")
+    |> JS.focus_first(to: "##{id}[data-state=open] .select-content")
+    |> JS.focus_first(to: "##{id}[data-state=open] .select-content label:has(input:checked)")
+  end
+
+  # set value to select and hide select
+  defp select_value(root_id, value) do
+    %JS{}
+    |> JS.set_attribute({"data-content", value}, to: "##{root_id} .select-value")
+    |> JS.exec("x-hide-select", to: "##{root_id}")
+  end
+
+  # get content id by concat root id with "-content"
+  defp content_id(id) do
+    "##{id}-content"
   end
 end
