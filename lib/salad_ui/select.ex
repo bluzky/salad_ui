@@ -274,9 +274,4 @@ defmodule SaladUI.Select do
     |> JS.set_attribute({"data-content", value}, to: "##{root_id} .select-value")
     |> JS.exec("x-hide-select", to: "##{root_id}")
   end
-
-  # get content id by concat root id with "-content"
-  defp content_id(id) do
-    "##{id}-content"
-  end
 end
