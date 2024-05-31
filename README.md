@@ -1,6 +1,6 @@
 # SaladUI
 
-This library is my attemp to port [shadcd ui](https://ui.shadcn.com/) to Phoenix Liveview Component.
+This library is my attemp to port [shadcn ui](https://ui.shadcn.com/) to Phoenix Liveview Component.
 
 **Warning: this library is under heavy development and not ready for production**
 
@@ -144,7 +144,7 @@ mix phx.server
 - [ ] Radio Group
 - [ ] Scroll Area
 - [x] Select
-- [ ] Separator
+- [x] Separator
 - [x] Sheet
 - [ ] Skeleton
 - [ ] Slider
