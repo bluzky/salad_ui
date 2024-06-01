@@ -121,7 +121,7 @@ mix phx.server
 - [ ] Alert Dialog
 - [x] Avatar
 - [x] Badge
-- [ ] Breadcrumb
+- [x] Breadcrumb
 - [x] Button
 - [x] Card
 - [ ] Carousel
@@ -138,7 +138,7 @@ mix phx.server
 - [x] Input
 - [ ] Input OTP
 - [x] Label
-- [ ] Pagination
+- [x] Pagination
 - [ ] Popover
 - [ ] Progress
 - [ ] Radio Group
