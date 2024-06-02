@@ -142,11 +142,11 @@ mix phx.server
 - [ ] Popover
 - [ ] Progress
 - [ ] Radio Group
-- [ ] Scroll Area
+- [x] Scroll Area
 - [x] Select
 - [x] Separator
 - [x] Sheet
-- [ ] Skeleton
+- [x] Skeleton
 - [ ] Slider
 - [ ] Switch
 - [x] Table
