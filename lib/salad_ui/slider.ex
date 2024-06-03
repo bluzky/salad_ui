@@ -25,7 +25,7 @@ defmodule SaladUI.Slider do
       class={classes(["relative w-full", @class])}
       style={"--#{@id}-val: #{(@value - @min)/(@max - @min) * 100}"}
     >
-      <span class={["relative flex w-full touch-none select-none items-center"]} {@rest}>
+      <span class={["relative flex w-full touch-none select-none items-center"]}>
         <span
           data-orientation="horizontal"
           class="relative h-2 w-full grow overflow-hidden rounded-full bg-secondary"
@@ -61,6 +61,7 @@ defmodule SaladUI.Slider do
         phx-update="ignore"
         style="width: calc(100% + 20px)"
         oninput={"this.parentNode.style='--#{@id}-val:' + (this.value - #{@min})/#{@max - @min}*100"}
+        {@rest}
       />
     </div>
     """
