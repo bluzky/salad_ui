@@ -117,39 +117,39 @@ mix phx.server
 ## List of components
 
 - [ ] Accordion
-- [x] Alert
+- ✅ Alert
 - [ ] Alert Dialog
-- [x] Avatar
-- [x] Badge
-- [x] Breadcrumb
-- [x] Button
-- [x] Card
+- ✅ Avatar
+- ✅ Badge
+- ✅ Breadcrumb
+- ✅ Button
+- ✅ Card
 - [ ] Carousel
-- [x] Checkbox
+- ✅ Checkbox
 - [ ] Collapsible
 - [ ] Combobox
 - [ ] Command
 - [ ] Context Menu
-- [x] Dialog
+- ✅ Dialog
 - [ ] Drawer
-- [x] Dropdown Menu
-- [x] Form
+- ✅ Dropdown Menu
+- ✅ Form
 - [ ] Hover Card
-- [x] Input
+- ✅ Input
 - [ ] Input OTP
-- [x] Label
-- [x] Pagination
+- ✅ Label
+- ✅ Pagination
 - [ ] Popover
-- [x] Progress
+- ✅ Progress
 - [ ] Radio Group
-- [x] Scroll Area
-- [x] Select
-- [x] Separator
-- [x] Sheet
-- [x] Skeleton
-- [x] Slider
+- ✅ Scroll Area
+- ✅ Select
+- ✅ Separator
+- ✅ Sheet
+- ✅ Skeleton
+- ✅ Slider
 - [ ] Switch
-- [x] Table
-- [x] Tabs
-- [x] Textarea
+- ✅ Table
+- ✅ Tabs
+- ✅ Textarea
 - [ ] Tooltip
