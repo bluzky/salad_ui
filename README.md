@@ -148,8 +148,8 @@ mix phx.server
 - ✅ Sheet
 - ✅ Skeleton
 - ✅ Slider
-- [ ] Switch
+- ✅ Switch
 - ✅ Table
 - ✅ Tabs
 - ✅ Textarea
-- [ ] Tooltip
+- ✅ Tooltip
