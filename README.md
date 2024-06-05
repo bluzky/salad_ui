@@ -2,7 +2,7 @@
 
 This library is my attemp to port [shadcn ui](https://ui.shadcn.com/) to Phoenix Liveview Component.
 
-**Warning: this library is under heavy development and not ready for production**
+🚧 **Warning: this library is under heavy development and not ready for production** 🚧 
 
 ## [Demo at https://salad-storybook.fly.dev](https://salad-storybook.fly.dev/)
 
