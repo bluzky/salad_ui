@@ -53,7 +53,7 @@ defmodule SaladUI.Card do
 
   def card_title(assigns) do
     ~H"""
-    <h3 class={classes(["font-semibold leading-none tracking-tight", @class])} {@rest}>
+    <h3 class={classes(["text-2xl font-semibold leading-none tracking-tight", @class])} {@rest}>
       <%= render_slot(@inner_block) %>
     </h3>
     """

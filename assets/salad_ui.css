@@ -1,3 +1,4 @@
+/* Scroll area */
 
 /* firefox */
 .salad-scroll-area {
@@ -23,4 +24,17 @@
 .salad-scroll-area::-webkit-scrollbar-thumb {
   background-color: #c2c2c2;
   border-radius: 14px;
+}
+
+/* slider */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  @apply w-full bg-primary bg-no-repeat bg-gradient-to-r from-secondary to-secondary rounded-lg h-2;
+}
+input[type="range"]::-webkit-slider-thumb,
+input[type="range"]::-moz-range-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  @apply w-5 h-5 bg-background border-2 border-primary rounded-full;
 }

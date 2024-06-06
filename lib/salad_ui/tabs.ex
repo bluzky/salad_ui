@@ -62,8 +62,8 @@ defmodule SaladUI.Tabs do
     """
   end
 
-  attr :root, :string, required: true, doc: "id of root tabs tag"
-  attr(:target, :string, required: true, doc: "target id of tab content")
+  attr(:root, :string, required: true, doc: "id of root tabs tag")
+  attr(:value, :string, required: true, doc: "target value of tab content")
   attr(:class, :string, default: nil)
   slot(:inner_block, required: true)
   attr(:rest, :global)
@@ -78,8 +78,8 @@ defmodule SaladUI.Tabs do
           @class
         ])
       }
-      data-target={@target}
-      phx-click={show_tab(@root, @target)}
+      data-target={@value}
+      phx-click={show_tab(@root, @value)}
       {@rest}
     >
       <%= render_slot(@inner_block) %>
@@ -87,7 +87,7 @@ defmodule SaladUI.Tabs do
     """
   end
 
-  attr :id, :string, required: true, doc: "unique for tab content"
+  attr(:value, :string, required: true, doc: "unique for tab content")
   attr(:class, :string, default: nil)
   slot(:inner_block, required: true)
   attr(:rest, :global)
@@ -102,7 +102,7 @@ defmodule SaladUI.Tabs do
           @class
         ])
       }
-      id={@id}
+      value={@value}
       {@rest}
     >
       <%= render_slot(@inner_block) %>
@@ -112,11 +112,11 @@ defmodule SaladUI.Tabs do
 
   # Set selected tab to active
   # show appropriate tab content
-  defp show_tab(root, id) do
+  defp show_tab(root, value) do
     %JS{}
     |> JS.set_attribute({"data-state", ""}, to: "##{root} .tabs-trigger[data-state=active]")
-    |> JS.set_attribute({"data-state", "active"}, to: "##{root} .tabs-trigger[data-target=#{id}]")
-    |> JS.hide(to: "##{root} .tabs-content:not(##{id})")
-    |> JS.show(to: "##{id}")
+    |> JS.set_attribute({"data-state", "active"}, to: "##{root} .tabs-trigger[data-target=#{value}]")
+    |> JS.hide(to: "##{root} .tabs-content:not([value=#{value}])")
+    |> JS.show(to: "##{root} .tabs-content[value=#{value}]")
   end
 end

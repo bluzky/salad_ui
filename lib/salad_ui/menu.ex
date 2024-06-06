@@ -31,9 +31,9 @@ defmodule SaladUI.Menu do
    </.menu>
   """
 
-  attr :class, :string, default: "top-0 left-full"
-  slot :inner_block, required: true
-  attr :rest, :global
+  attr(:class, :string, default: "top-0 left-full")
+  slot(:inner_block, required: true)
+  attr(:rest, :global)
 
   def menu(assigns) do
     ~H"""
@@ -49,10 +49,10 @@ defmodule SaladUI.Menu do
     """
   end
 
-  attr :class, :string, default: nil
-  attr :disabled, :boolean, default: false
-  slot :inner_block, required: true
-  attr :rest, :global
+  attr(:class, :string, default: nil)
+  attr(:disabled, :boolean, default: false)
+  slot(:inner_block, required: true)
+  attr(:rest, :global)
 
   def menu_item(assigns) do
     ~H"""
@@ -72,10 +72,10 @@ defmodule SaladUI.Menu do
     """
   end
 
-  attr :class, :string, default: nil
-  attr :inset, :boolean, default: false
-  slot :inner_block, required: true
-  attr :rest, :global
+  attr(:class, :string, default: nil)
+  attr(:inset, :boolean, default: false)
+  slot(:inner_block, required: true)
+  attr(:rest, :global)
 
   def menu_label(assigns) do
     ~H"""
@@ -85,17 +85,20 @@ defmodule SaladUI.Menu do
     """
   end
 
-  attr :class, :string, default: nil
+  attr(:class, :string, default: nil)
+  slot(:inner_block)
 
   def menu_separator(assigns) do
     ~H"""
-    <div role="separator" class={classes(["-mx-1 my-1 h-px bg-muted", @class])}></div>
+    <div role="separator" class={classes(["-mx-1 my-1 h-px bg-muted", @class])}>
+      <%= render_slot(@inner_block) %>
+    </div>
     """
   end
 
-  attr :class, :string, default: nil
-  slot :inner_block, required: true
-  attr :rest, :global
+  attr(:class, :string, default: nil)
+  slot(:inner_block, required: true)
+  attr(:rest, :global)
 
   def menu_shortcut(assigns) do
     ~H"""
@@ -105,9 +108,9 @@ defmodule SaladUI.Menu do
     """
   end
 
-  attr :class, :string, default: nil
-  slot :inner_block, required: true
-  attr :rest, :global
+  attr(:class, :string, default: nil)
+  slot(:inner_block, required: true)
+  attr(:rest, :global)
 
   def menu_group(assigns) do
     ~H"""
