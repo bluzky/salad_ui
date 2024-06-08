@@ -4,7 +4,7 @@ defmodule SaladUI.MixProject do
   def project do
     [
       app: :salad_ui,
-      version: "0.4.0",
+      version: "0.4.1",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -27,7 +27,8 @@ defmodule SaladUI.MixProject do
     [
       maintainers: ["Dung Nguyen"],
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/bluzky/salad_ui"}
+      links: %{"GitHub" => "https://github.com/bluzky/salad_ui"},
+      files: ~w(lib assets .formatter.exs mix.exs README*)
     ]
   end
 
