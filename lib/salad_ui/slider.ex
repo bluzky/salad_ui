@@ -20,6 +20,13 @@ defmodule SaladUI.Slider do
   attr(:rest, :global)
 
   def slider(assigns) do
+    assigns =
+      assigns
+      |> Map.put(:value, normalize_integer(assigns[:value]))
+      |> Map.put(:min, normalize_integer(assigns[:min]))
+      |> Map.put(:max, normalize_integer(assigns[:max]))
+      |> Map.put(:step, normalize_integer(assigns[:step]))
+
     ~H"""
     <div
       class={classes(["relative w-full", @class])}
@@ -65,5 +72,12 @@ defmodule SaladUI.Slider do
       />
     </div>
     """
+  end
+
+  defp normalize_integer(value) do
+    case Integer.parse(value) do
+      {:ok, integer} -> integer
+      _ -> nil
+    end
   end
 end

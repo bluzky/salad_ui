@@ -14,19 +14,12 @@ defmodule SaladUI.Textarea do
 
   """
   attr(:id, :any, default: nil)
-  attr(:name, :string)
+  attr(:name, :string, default: nil)
   attr(:value, :string)
-
-  attr(:field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]")
-
   attr(:class, :string, default: nil)
   attr(:rest, :global)
 
   def textarea(assigns) do
-    assigns = prepare_assign(assigns)
-    rest = Map.merge(assigns.rest, Map.take(assigns, [:id, :name]))
-    assigns = assign(assigns, :rest, rest)
-
     ~H"""
     <textarea
       class={
@@ -35,6 +28,7 @@ defmodule SaladUI.Textarea do
           @class
         ])
       }
+      {%{id: @id, name: @name}}
       {@rest}
     ><%= Phoenix.HTML.Form.normalize_value("textarea", assigns[:value]) %></textarea>
     """

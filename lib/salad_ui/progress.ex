@@ -16,6 +16,8 @@ defmodule SaladUI.Progress do
   attr(:rest, :global)
 
   def progress(assigns) do
+    assigns = assign(assigns, :value, normalize_integer(assigns[:value]))
+
     ~H"""
     <div
       class={classes(["relative h-4 w-full overflow-hidden rounded-full bg-secondary", @class])}
@@ -28,5 +30,15 @@ defmodule SaladUI.Progress do
       </div>
     </div>
     """
+  end
+
+  defp normalize_integer(value) do
+    case Integer.parse(value) do
+      {integer, _} ->
+        integer
+
+      _ ->
+        nil
+    end
   end
 end

@@ -36,6 +36,17 @@ defmodule SaladUI.Tooltip do
   end
 
   @doc """
+  Render only for compatible with shad ui
+  """
+  slot(:inner_block, required: true)
+
+  def tooltip_trigger(assigns) do
+    ~H"""
+    <%= render_slot(@inner_block) %>
+    """
+  end
+
+  @doc """
   Render
   """
   attr(:class, :string, default: nil)
