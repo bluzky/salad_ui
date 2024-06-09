@@ -16,4 +16,16 @@ defmodule SaladUI.Helpers do
   def prepare_assign(assigns) do
     assigns
   end
+
+  # normalize_integer
+  def normalize_integer(value) when is_integer(value), do: value
+
+  def normalize_integer(value) when is_binary(value) do
+    case Integer.parse(value) do
+      {:ok, integer} -> integer
+      _ -> nil
+    end
+  end
+
+  def normalize_integer(_), do: nil
 end

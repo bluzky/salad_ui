@@ -31,14 +31,4 @@ defmodule SaladUI.Progress do
     </div>
     """
   end
-
-  defp normalize_integer(value) do
-    case Integer.parse(value) do
-      {integer, _} ->
-        integer
-
-      _ ->
-        nil
-    end
-  end
 end

@@ -73,11 +73,4 @@ defmodule SaladUI.Slider do
     </div>
     """
   end
-
-  defp normalize_integer(value) do
-    case Integer.parse(value) do
-      {:ok, integer} -> integer
-      _ -> nil
-    end
-  end
 end
