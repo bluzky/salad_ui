@@ -227,12 +227,6 @@ defmodule SaladUI.Sheet do
     side: "default"
   }
 
-  defp variant(props) do
-    variants = Map.merge(@default_variants, props)
-
-    Enum.map_join(variants, " ", fn {key, value} -> @variants[key][value] end)
-  end
-
   defp show_sheet(js \\ %JS{}, id, side) when is_binary(id) do
     transition =
       case side do

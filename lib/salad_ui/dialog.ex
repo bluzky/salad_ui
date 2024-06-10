@@ -37,11 +37,11 @@ defmodule SaladUI.Dialog do
               </.dialog_content>
         </.dialog>
   """
-  attr :id, :string, required: true
-  attr :show, :boolean, default: false
-  attr :on_cancel, JS, default: %JS{}
-  attr :class, :string, default: nil
-  slot :inner_block, required: true
+  attr(:id, :string, required: true)
+  attr(:show, :boolean, default: false)
+  attr(:on_cancel, JS, default: %JS{})
+  attr(:class, :string, default: nil)
+  slot(:inner_block, required: true)
 
   def dialog(assigns) do
     ~H"""
@@ -107,8 +107,8 @@ defmodule SaladUI.Dialog do
     """
   end
 
-  attr :class, :string, default: nil
-  slot :inner_block, required: true
+  attr(:class, :string, default: nil)
+  slot(:inner_block, required: true)
 
   def dialog_header(assigns) do
     ~H"""
@@ -118,8 +118,8 @@ defmodule SaladUI.Dialog do
     """
   end
 
-  attr :class, :string, default: nil
-  slot :inner_block, required: true
+  attr(:class, :string, default: nil)
+  slot(:inner_block, required: true)
 
   def dialog_title(assigns) do
     ~H"""
@@ -129,8 +129,8 @@ defmodule SaladUI.Dialog do
     """
   end
 
-  attr :class, :string, default: nil
-  slot :inner_block, required: true
+  attr(:class, :string, default: nil)
+  slot(:inner_block, required: true)
 
   def dialog_description(assigns) do
     ~H"""
@@ -140,8 +140,8 @@ defmodule SaladUI.Dialog do
     """
   end
 
-  attr :class, :string, default: nil
-  slot :inner_block, required: true
+  attr(:class, :string, default: nil)
+  slot(:inner_block, required: true)
 
   def dialog_footer(assigns) do
     ~H"""
