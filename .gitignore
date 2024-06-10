@@ -26,3 +26,5 @@ salad_ui-*.tar
 /tmp/
 
 .DS_Store
+
+node_modules/

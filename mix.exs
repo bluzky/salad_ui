@@ -49,7 +49,8 @@ defmodule SaladUI.MixProject do
       {:phoenix_live_view, "~> 0.20.1"},
       {:tails, "~> 0.1.5"},
       {:styler, "~> 0.7", only: [:dev, :test], runtime: false},
-      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
+      {:tailwind, "~> 0.2", only: [:dev, :test], runtime: Mix.env() == :dev}
 
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
