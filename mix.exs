@@ -61,20 +61,14 @@ defmodule SaladUI.MixProject do
     [
       {:tails, "~> 0.1.5"},
       {:phoenix, "~> 1.7"},
-      {:heroicons, "~> 0.5.3"},
-      {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 4.0"},
       {:mix_test_watch, "~> 1.2"},
       {:phoenix_live_view, "~> 0.20.1"},
-      {:phoenix_html_helpers, "~> 1.0"},
       {:excoveralls, "~> 0.10", only: :test},
       {:ex_doc, "~> 0.24", only: :dev, runtime: false},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:styler, "~> 0.7", only: [:dev, :test], runtime: false},
       {:tailwind, "~> 0.2", only: [:dev, :test], runtime: Mix.env() == :dev}
-
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]
   end
 
