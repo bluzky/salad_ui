@@ -6,9 +6,9 @@ name: Elixir CI
 # different name for the main branch like "master" or "production".
 on:
   push:
-    branches: [ "master", "main", "staging", "dev" ]  # adapt branch for project
+    branches: [ "master", "main", "staging", "dev", "setup-dev", "setting-up-tests"]  # adapt branch for project
   pull_request:
-    branches: [ "master", "main", "staging", "dev" ]  # adapt branch for project
+    branches: [ "master", "main", "staging", "dev", "setup-dev", "setting-up-tests"]  # adapt branch for project
 
 # Sets the ENV `MIX_ENV` to `test` for running tests
 env:
