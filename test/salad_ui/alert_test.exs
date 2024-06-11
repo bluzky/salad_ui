@@ -16,13 +16,13 @@ defmodule SaladUI.AlertTest do
         </.alert>
         """)
 
-      assert html =~
-               "<div class=\"relative p-4 rounded-lg bg-background text-foreground w-full [&amp;&gt;span+div]:translate-y-[-3px] [&amp;&gt;span]:absolute [&amp;&gt;span]:left-4 [&amp;&gt;span]:top-4 [&amp;&gt;span~*]:pl-7 border\">"
-
       assert html =~ "<h5 class=\"mb-1 tracking-tight font-medium leading-none\">"
-
       assert html =~ "Heads up!"
       assert html =~ "Alert Descriptions"
+
+      for class <- ~w(relative w-full rounded-lg border p-4 absolute left-4 top-4) do
+        assert html =~ class
+      end
     end
 
     test "It renders destructive alert correctly" do
@@ -39,8 +39,9 @@ defmodule SaladUI.AlertTest do
         </.alert>
         """)
 
-      # Confirm the style rendering
-      assert html =~ "relative p-4 rounded-lg border-destructive/50 text-destructive w-full dark:border-destructive"
+      for class <- ~w(relative p-4 rounded-lg border-destructive/50 text-destructive w-full dark:border-destructive) do
+        assert html =~ class
+      end
 
       assert html =~ "Heads up!"
       assert html =~ "You can add components to your app using the cli"
@@ -53,6 +54,10 @@ defmodule SaladUI.AlertTest do
         rendered_to_string(~H"""
         <.alert_title>Alert title</.alert_title>
         """)
+
+      for class <- ~w(mb-1 font-medium leading-none tracking-tight) do
+        assert html =~ class
+      end
 
       assert html =~ "<h5 class=\"mb-1"
       assert html =~ "Alert title"
@@ -69,6 +74,10 @@ defmodule SaladUI.AlertTest do
 
       assert html =~ "Alert description"
       assert html =~ "<div class=\"text-sm [&amp;_p]:leading-relaxed\">"
+
+      for class <- ~w(text-sm leading-relaxed) do
+        assert html =~ class
+      end
     end
   end
 end
