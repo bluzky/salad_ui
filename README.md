@@ -4,6 +4,8 @@ This library is my attemp to port [shadcn ui](https://ui.shadcn.com/) to Phoenix
 
 ## [Demo at https://salad-storybook.fly.dev](https://salad-storybook.fly.dev/)
 
+>  In Construction: Salad UI is in its early stages. Expect breaking changes in minor releases until 1.0 is ready! 🚀
+
 ## Installation
 
 1. Adding `salad_ui` to your list of dependencies in `mix.exs`:
@@ -11,7 +13,7 @@ This library is my attemp to port [shadcn ui](https://ui.shadcn.com/) to Phoenix
 ```elixir
 def deps do
   [
-    {:salad_ui, github: "bluzky/salad_ui"}
+    {:salad_ui, "~> 0.4.2"}
   ]
 end
 ```
