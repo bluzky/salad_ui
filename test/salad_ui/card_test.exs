@@ -88,14 +88,14 @@ defmodule SaladUI.CardTest do
         <.card>
           <.card_header>
             <.card_title>Card title</.card_title>
-            
+
             <.card_description>Card subtitle</.card_description>
           </.card_header>
-          
+
           <.card_content>
             Card text
           </.card_content>
-          
+
           <.card_footer>
             <.button>Button</.button>
           </.card_footer>
