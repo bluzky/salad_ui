@@ -1,4 +1,4 @@
-name: Elixir CI
+name: Tests
 
 # Define workflow that runs when changes are pushed to the
 # `main` branch or pushed to a PR branch that targets the `main`
