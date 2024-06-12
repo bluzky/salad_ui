@@ -1,5 +1,11 @@
 # SaladUI
 
+[![Tests](https://github.com/bluzky/salad_ui/workflows/tests/badge.svg)] (https://github.com/bluzky/salad_ui/actions)
+[![Module Version](https://img.shields.io/hexpm/v/salad_ui.svg)](https://hex.pm/packages/salad_ui)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/salad_ui/)
+[![Total Download](https://img.shields.io/hexpm/dt/salad_ui.svg)](https://hex.pm/packages/salad_ui)
+[![Last Updated](https://img.shields.io/github/last-commit/bluzky/salad_ui.svg)](https://github.com/bluzky/salad_ui/commits/main)
+
 This library is my attemp to port [shadcn ui](https://ui.shadcn.com/) to Phoenix Liveview Component.
 
 ## [Demo at https://salad-storybook.fly.dev](https://salad-storybook.fly.dev/)
