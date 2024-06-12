@@ -212,27 +212,6 @@ defmodule SaladUI.Sheet do
     """
   end
 
-  @variants %{
-    side: %{
-      "top" => "inset-x-0 top-0 border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-to",
-      "bottom" =>
-        "inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
-      "left" =>
-        "inset-y-0 right-0 h-full w-3/4  border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm",
-      "right" => "text-foreground"
-    }
-  }
-
-  @default_variants %{
-    side: "default"
-  }
-
-  defp variant(props) do
-    variants = Map.merge(@default_variants, props)
-
-    Enum.map_join(variants, " ", fn {key, value} -> @variants[key][value] end)
-  end
-
   defp show_sheet(js \\ %JS{}, id, side) when is_binary(id) do
     transition =
       case side do
