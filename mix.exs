@@ -64,10 +64,10 @@ defmodule SaladUI.MixProject do
       {:phoenix_html, "~> 4.0"},
       {:mix_test_watch, "~> 1.2"},
       {:phoenix_live_view, "~> 0.20.1"},
-      {:excoveralls, "~> 0.10", only: :test},
-      {:ex_doc, "~> 0.24", only: :dev, runtime: false},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:styler, "~> 0.7", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.24", only: [:dev, :test], runtime: false},
+      {:excoveralls, "~> 0.10", only: [:dev, :test], runtime: false},
       {:tailwind, "~> 0.2", only: [:dev, :test], runtime: Mix.env() == :dev}
     ]
   end
