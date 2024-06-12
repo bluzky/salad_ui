@@ -1,6 +1,7 @@
 # SaladUI
 
-[![Tests](https://github.com/bluzky/salad_ui/workflows/tests/badge.svg)] (https://github.com/bluzky/salad_ui/actions)
+
+![Tests](https://github.com/bluzky/salad_ui/actions/workflows/tests.yml/badge.svg)
 [![Module Version](https://img.shields.io/hexpm/v/salad_ui.svg)](https://hex.pm/packages/salad_ui)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/salad_ui/)
 [![Total Download](https://img.shields.io/hexpm/dt/salad_ui.svg)](https://hex.pm/packages/salad_ui)
