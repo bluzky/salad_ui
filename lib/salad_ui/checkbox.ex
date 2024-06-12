@@ -6,8 +6,6 @@ defmodule SaladUI.Checkbox do
   Implement checkbox input component
 
   ## Examples:
-
-      <.checkbox field={@form[:remember_me]} />
       <.checkbox class="!border-destructive" name="agree" value={true} />
   """
   attr(:id, :any, default: nil)
