@@ -56,9 +56,7 @@ defmodule SaladUI.Tooltip do
 
   def tooltip_content(assigns) do
     assigns =
-      assigns
-      |> assign(:variant_class, variant(%{side: assigns.side}))
-      |> assign(:variant_style, style_variant(%{side: assigns.side}))
+      assign(assigns, :variant_class, side_variant(assigns.side))
 
     ~H"""
     <div
@@ -71,41 +69,10 @@ defmodule SaladUI.Tooltip do
           @class
         ])
       }
-      style={@variant_style}
       {@rest}
     >
       <%= render_slot(@inner_block) %>
     </div>
     """
-  end
-
-  @variants %{
-    side: %{
-      "top" => "bottom-full mb-2 left-1/2 -translate-x-1/2",
-      "bottom" => "top-full mt-2 left-1/2 -translate-x-1/2",
-      "left" => "right-full mr-2 top-1/2 -translate-y-1/2",
-      "right" => "left-full ml-2 top-1/2 -translate-y-1/2"
-    }
-  }
-
-  defp variant(variants) do
-    Enum.map_join(variants, " ", fn {key, value} ->
-      @variants[key][value]
-    end)
-  end
-
-  @style_variants %{
-    side: %{
-      "top" => "--tw-enter-translate-x: -50%",
-      "bottom" => "--tw-enter-translate-x: -50%",
-      "left" => "--tw-enter-translate-y: -50%",
-      "right" => "--tw-enter-translate-y: -50%"
-    }
-  }
-
-  defp style_variant(variants) do
-    Enum.map_join(variants, " ", fn {key, value} ->
-      @style_variants[key][value]
-    end)
   end
 end
