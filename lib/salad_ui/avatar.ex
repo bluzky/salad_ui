@@ -7,7 +7,10 @@ defmodule SaladUI.Avatar do
 
   def avatar(assigns) do
     ~H"""
-    <span class={classes(["relative h-10 w-10 overflow-hidden rounded-full", @class])} {@rest}>
+    <span
+      class={classes(["relative h-10 w-10 shrink-0 overflow-hidden rounded-full", @class])}
+      {@rest}
+    >
       <%= render_slot(@inner_block) %>
     </span>
     """

@@ -60,10 +60,8 @@ defmodule SaladUI.MixProject do
   defp deps do
     [
       {:tails, "~> 0.1.5"},
-      {:phoenix, "~> 1.7"},
-      {:phoenix_html, "~> 4.0"},
-      {:mix_test_watch, "~> 1.2"},
       {:phoenix_live_view, "~> 0.20.1"},
+      {:mix_test_watch, "~> 1.2", only: [:dev, :test]},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:styler, "~> 0.7", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.24", only: [:dev, :test], runtime: false},
