@@ -47,7 +47,7 @@ defmodule SaladUI.DialogTest do
         </.dialog_description>
         """)
 
-      assert html =~ "Make changes to your profile here click save when you're done\n</p>"
+      assert html =~ "Make changes to your profile here click save when you're done\n\n</p>"
 
       for css_class <- ~w(text-sm text-muted-foreground) do
         assert html =~ css_class
@@ -81,28 +81,28 @@ defmodule SaladUI.DialogTest do
         <.dialog id="my-modal" on_cancel={Phoenix.LiveView.JS.navigate("")} class="w-[700px]">
           <.dialog_header>
             <.dialog_title>Edit profile</.dialog_title>
-            
+
             <.dialog_description>
               Make changes to your profile here click save when you're done
             </.dialog_description>
           </.dialog_header>
-          
+
           <div class="grid gap-4 py-4">
             <div class="grid grid-cols-4 items-center gap-4">
               <.label html-for="name" class="text-right">
                 Name
               </.label>
-               <.input id="name" value="Dzung Nguyen" class="col-span-3" />
+              <.input id="name" value="Dzung Nguyen" class="col-span-3" />
             </div>
-            
+
             <div class="grid grid-cols-4 items-center gap-4">
               <.label html-for="username" class="text-right">
                 Username
               </.label>
-               <.input id="username" value="@bluzky" class="col-span-3" />
+              <.input id="username" value="@bluzky" class="col-span-3" />
             </div>
           </div>
-          
+
           <.dialog_footer>
             <.button type="submit">save changes</.button>
           </.dialog_footer>
