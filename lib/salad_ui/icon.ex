@@ -1,8 +1,5 @@
 defmodule SaladUI.Icon do
-  @moduledoc false
-  use SaladUI, :component
-
-  @doc """
+  @moduledoc """
   Renders a [Heroicon](https://heroicons.com).
 
   Heroicons come in three styles – outline, solid, and mini.
@@ -19,8 +16,10 @@ defmodule SaladUI.Icon do
       <.icon name="hero-x-mark-solid" />
       <.icon name="hero-arrow-path" class="ml-1 w-3 h-3 animate-spin" />
   """
+  use SaladUI, :component
+
   attr(:name, :string, required: true)
-  attr(:class, :string, default: nil)
+  attr(:class, :string, default: "")
 
   def icon(%{name: "hero-" <> _} = assigns) do
     ~H"""
