@@ -18,6 +18,7 @@ defmodule SaladUI.Icon do
   """
 
   use SaladUI, :component
+
   attr(:name, :string, required: true)
   attr(:class, :string, default: "")
 
