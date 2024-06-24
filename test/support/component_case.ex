@@ -19,6 +19,13 @@ defmodule ComponentCase do
         |> Enum.count()
         |> Kernel.-(1)
       end
+
+      def clean_string(str) do
+        str
+        |> String.replace("\n", "")
+        |> String.replace("\r", "")
+        |> String.replace("  ", "")
+      end
     end
   end
 end
