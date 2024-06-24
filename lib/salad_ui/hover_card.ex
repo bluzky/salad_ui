@@ -3,7 +3,6 @@ defmodule SaladUI.HoverCard do
   Implement hover card component
 
   ## Usage
-
       <.hover_card>
         <.hover_card_trigger>
           <.button variant="link">
