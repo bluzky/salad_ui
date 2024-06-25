@@ -11,11 +11,14 @@ defmodule SaladUI.DialogTest do
       assigns = %{}
 
       html =
-        rendered_to_string(~H"""
+        ~H"""
         <.dialog_header>This is the content of the header</.dialog_header>
-        """)
+        """
+        |> rendered_to_string()
+        |> clean_string()
 
-      assert html =~ "This is the content of the header\n</div>"
+      assert html =~
+               "<div class=\"flex text-center flex-col space-y-1.5 sm:text-left\">This is the content of the header</div>"
 
       for css_class <- ~w(flex flex-col space-y-1.5 text-center sm:text-left) do
         assert html =~ css_class
