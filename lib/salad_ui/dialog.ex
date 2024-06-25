@@ -47,13 +47,15 @@ defmodule SaladUI.Dialog do
     ~H"""
     <div
       id={@id}
-      phx-mounted={@show && show_modal(@id)}
-      phx-remove={hide_modal(@id)}
-      class="relative z-50 hidden"
+      phx-mounted={@show && JS.exec("phx-show-modal", to: "##{@id}")}
+      phx-remove={JS.exec("phx-hide-modal", to: "##{@id}")}
+      phx-show-modal={show_modal(@id)}
+      phx-hide-modal={hide_modal(@id)}
+      class="relative z-50 hidden group/dialog"
     >
       <div
         id={"#{@id}-bg"}
-        class="fixed inset-0 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+        class="fixed inset-0 bg-black/80  group-data-[state=open]/dialog:animate-in group-data-[state=closed]/dialog:animate-out group-data-[state=closed]/dialog:fade-out-0 group-data-[state=open]/dialog:fade-in-0"
         aria-hidden="true"
       />
       <div
@@ -64,9 +66,9 @@ defmodule SaladUI.Dialog do
       >
         <.focus_wrap
           id={"#{@id}-wrap"}
-          phx-window-keydown={hide_modal(@on_cancel, @id)}
+          phx-window-keydown={JS.exec("phx-hide-modal", to: "##{@id}")}
           phx-key="escape"
-          phx-click-away={hide_modal(@on_cancel, @id)}
+          phx-click-away={JS.exec("phx-hide-modal", to: "##{@id}")}
           class="w-full sm:max-w-[425px]"
         >
           <div
@@ -75,7 +77,7 @@ defmodule SaladUI.Dialog do
             tabindex="0"
             class={
               classes([
-                "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
+                "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 group-data-[state=open]/dialog:animate-in group-data-[state=closed]/dialog:animate-out group-data-[state=closed]/dialog:fade-out-0 group-data-[state=open]/dialog:fade-in-0 group-data-[state=closed]/dialog:zoom-out-95 group-data-[state=open]/dialog:zoom-in-95 group-data-[state=closed]/dialog:slide-out-to-left-1/2 group-data-[state=closed]/dialog:slide-out-to-top-[48%] group-data-[state=open]/dialog:slide-in-from-left-1/2 group-data-[state=open]/dialog:slide-in-from-top-[48%] sm:rounded-lg",
                 @class
               ])
             }
@@ -84,8 +86,8 @@ defmodule SaladUI.Dialog do
 
             <button
               type="button"
-              class="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
-              phx-click={hide_modal(@on_cancel, @id)}
+              class="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none group-data-[state=open]/dialog:bg-accent group-data-[state=open]/dialog:text-muted-foreground"
+              phx-click={JS.exec("phx-hide-modal", to: "##{@id}")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -151,45 +153,18 @@ defmodule SaladUI.Dialog do
     """
   end
 
-  defp show(js, selector) do
-    JS.show(js,
-      to: selector,
-      transition:
-        {"transition-all transform ease-out duration-300", "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
-         "opacity-100 translate-y-0 sm:scale-100"}
-    )
-  end
-
-  defp hide(js, selector) do
-    JS.hide(js,
-      to: selector,
-      time: 200,
-      transition:
-        {"transition-all transform ease-in duration-200", "opacity-100 translate-y-0 sm:scale-100",
-         "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
-    )
-  end
-
   def show_modal(js \\ %JS{}, id) when is_binary(id) do
     js
-    |> JS.show(to: "##{id}")
-    |> JS.show(
-      to: "##{id}-bg",
-      transition: {"transition-all transform ease-out duration-300", "opacity-0", "opacity-100"}
-    )
-    |> show("##{id}-wrap")
+    |> JS.set_attribute({"data-state", "open"}, to: "##{id}")
+    |> JS.show(to: "##{id}", transition: {"", "", ""}, time: 150)
     |> JS.add_class("overflow-hidden", to: "body")
     |> JS.focus_first(to: "##{id}-content")
   end
 
   def hide_modal(js \\ %JS{}, id) do
     js
-    |> JS.hide(
-      to: "##{id}-bg",
-      transition: {"transition-all transform ease-in duration-200", "opacity-100", "opacity-0"}
-    )
-    |> hide("##{id}-wrap")
-    |> JS.hide(to: "##{id}", transition: {"block", "block", "hidden"})
+    |> JS.set_attribute({"data-state", "closed"}, to: "##{id}")
+    |> JS.hide(to: "##{id}", transition: {"", "", ""}, time: 150)
     |> JS.remove_class("overflow-hidden", to: "body")
     |> JS.pop_focus()
   end
