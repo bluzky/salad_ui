@@ -151,7 +151,7 @@ To run the failing tests only, just run `mix test.watch --stale`.
 - [ ] Drawer
 - ✅ Dropdown Menu
 - ✅ Form
-- [ ] Hover Card
+- ✅ Hover Card
 - ✅ Input
 - [ ] Input OTP
 - ✅ Label
