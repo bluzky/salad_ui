@@ -156,7 +156,7 @@ defmodule SaladUI.Dialog do
   def show_modal(js \\ %JS{}, id) when is_binary(id) do
     js
     |> JS.set_attribute({"data-state", "open"}, to: "##{id}")
-    |> JS.show(to: "##{id}", transition: {"", "", ""}, time: 150)
+    |> JS.show(to: "##{id}", transition: {"_", "_", "_"}, time: 150)
     |> JS.add_class("overflow-hidden", to: "body")
     |> JS.focus_first(to: "##{id}-content")
   end
@@ -164,7 +164,7 @@ defmodule SaladUI.Dialog do
   def hide_modal(js \\ %JS{}, id) do
     js
     |> JS.set_attribute({"data-state", "closed"}, to: "##{id}")
-    |> JS.hide(to: "##{id}", transition: {"", "", ""}, time: 150)
+    |> JS.hide(to: "##{id}", transition: {"_", "_", "_"}, time: 150)
     |> JS.remove_class("overflow-hidden", to: "body")
     |> JS.pop_focus()
   end
