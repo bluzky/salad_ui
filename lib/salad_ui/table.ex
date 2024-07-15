@@ -44,9 +44,9 @@ defmodule SaladUI.Table do
        </.table_body>
       </.table>
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def table(assigns) do
     ~H"""
@@ -56,9 +56,9 @@ defmodule SaladUI.Table do
     """
   end
 
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def table_header(assigns) do
     ~H"""
@@ -68,9 +68,9 @@ defmodule SaladUI.Table do
     """
   end
 
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def table_row(assigns) do
     ~H"""
@@ -88,9 +88,9 @@ defmodule SaladUI.Table do
     """
   end
 
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def table_head(assigns) do
     ~H"""
@@ -108,9 +108,9 @@ defmodule SaladUI.Table do
     """
   end
 
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def table_body(assigns) do
     ~H"""
@@ -120,9 +120,9 @@ defmodule SaladUI.Table do
     """
   end
 
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def table_cell(assigns) do
     ~H"""
@@ -135,9 +135,9 @@ defmodule SaladUI.Table do
   @doc """
   Render table footer
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global, include: ~w(disabled form name value))
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global, include: ~w(disabled form name value)
+  slot :inner_block, required: true
 
   def table_footer(assigns) do
     ~H"""
@@ -155,9 +155,9 @@ defmodule SaladUI.Table do
     """
   end
 
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def table_caption(assigns) do
     ~H"""

@@ -10,34 +10,36 @@ defmodule SaladUI.DropdownMenu do
 
   ## Examples:
 
-   <.dropdown_menu>
-   <.dropdown_menu_trigger>
-   <.button variant="outline">Open</.button>
-   </.dropdown_menu_trigger>
-   <.dropdown_menu_content>
-   <.dropdown_menu_label>Account</.dropdown_menu_label>
-   <.dropdown_menu_separator />
-   <.dropdown_menu_group>
-   <.dropdown_menu_item>
-       Profile
-     <.dropdown_menu_shortcut>⌘P</.dropdown_menu_shortcut>
-   </.dropdown_menu_item>
-   <.dropdown_menu_item>
-       Billing
-     <.dropdown_menu_shortcut>⌘B</.dropdown_menu_shortcut>
-   </.dropdown_menu_item>
-   <.dropdown_menu_item>
-       Settings
-     <.dropdown_menu_shortcut>⌘S</.dropdown_menu_shortcut>
-   </.dropdown_menu_item>
-   </.dropdown_menu_group>
-   </.dropdown_menu_content>
-   </.dropdown_menu>
+      <.dropdown_menu>
+        <.dropdown_menu_trigger>
+          <.button variant="outline">Open</.button>
+        </.dropdown_menu_trigger>
+
+        <.dropdown_menu_content>
+          <.dropdown_menu_label>Account</.dropdown_menu_label>
+          <.dropdown_menu_separator />
+
+          <.dropdown_menu_group>
+            <.dropdown_menu_item>
+              Profile
+              <.dropdown_menu_shortcut>⌘P</.dropdown_menu_shortcut>
+            </.dropdown_menu_item>
+            <.dropdown_menu_item>
+              Billing
+              <.dropdown_menu_shortcut>⌘B</.dropdown_menu_shortcut>
+            </.dropdown_menu_item>
+            <.dropdown_menu_item>
+              Settings
+              <.dropdown_menu_shortcut>⌘S</.dropdown_menu_shortcut>
+            </.dropdown_menu_item>
+          </.dropdown_menu_group>
+        </.dropdown_menu_content>
+      </.dropdown_menu>
   """
 
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global
 
   def dropdown_menu(assigns) do
     ~H"""
@@ -47,9 +49,9 @@ defmodule SaladUI.DropdownMenu do
     """
   end
 
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global
 
   def dropdown_menu_trigger(assigns) do
     ~H"""
@@ -65,11 +67,11 @@ defmodule SaladUI.DropdownMenu do
     """
   end
 
-  attr(:class, :string, default: nil)
-  attr(:side, :string, values: ["top", "right", "bottom", "left"], default: "bottom")
-  attr(:align, :string, values: ["start", "center", "end"], default: "start")
-  slot(:inner_block, required: true)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  attr :side, :string, values: ["top", "right", "bottom", "left"], default: "bottom"
+  attr :align, :string, values: ["start", "center", "end"], default: "start"
+  slot :inner_block, required: true
+  attr :rest, :global
 
   def dropdown_menu_content(assigns) do
     assigns =

@@ -13,11 +13,11 @@ defmodule SaladUI.Textarea do
 
 
   """
-  attr(:id, :any, default: nil)
-  attr(:name, :string, default: nil)
-  attr(:value, :string)
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
+  attr :id, :any, default: nil
+  attr :name, :string, default: nil
+  attr :value, :string
+  attr :class, :string, default: nil
+  attr :rest, :global
 
   def textarea(assigns) do
     ~H"""

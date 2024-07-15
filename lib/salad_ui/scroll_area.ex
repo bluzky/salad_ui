@@ -21,9 +21,9 @@ defmodule SaladUI.ScrollArea do
     </.scroll_area>
   ```
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block
 
   def scroll_area(assigns) do
     ~H"""

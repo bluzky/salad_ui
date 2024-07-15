@@ -11,13 +11,13 @@ defmodule SaladUI.Slider do
       <.slider class="w-[60%]" id="slider-single-default-slider" max={50} min={10} step={5} value={20}/>
 
   """
-  attr(:id, :string, required: true)
-  attr(:class, :string, default: nil)
-  attr(:value, :integer, default: 0, doc: "")
-  attr(:min, :integer, default: 0)
-  attr(:max, :integer, default: 100)
-  attr(:step, :integer, default: 1)
-  attr(:rest, :global)
+  attr :id, :string, required: true
+  attr :class, :string, default: nil
+  attr :value, :integer, default: 0, doc: ""
+  attr :min, :integer, default: 0
+  attr :max, :integer, default: 100
+  attr :step, :integer, default: 1
+  attr :rest, :global
 
   def slider(assigns) do
     assigns =

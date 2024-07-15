@@ -13,10 +13,10 @@ defmodule SaladUI.Alert do
       </.alert>
   """
 
-  attr(:variant, :string, default: "default", values: ~w(default destructive))
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
-  attr(:rest, :global, default: %{})
+  attr :variant, :string, default: "default", values: ~w(default destructive)
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global, default: %{}
 
   def alert(assigns) do
     assigns = assign(assigns, :variant_class, variant(assigns))
@@ -40,9 +40,9 @@ defmodule SaladUI.Alert do
   @doc """
   Render alert title
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global, include: ~w(disabled form name value))
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global, include: ~w(disabled form name value)
+  slot :inner_block, required: true
 
   def alert_title(assigns) do
     ~H"""
@@ -63,9 +63,9 @@ defmodule SaladUI.Alert do
   @doc """
   Render alert description
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global, include: ~w(disabled form name value))
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global, include: ~w(disabled form name value)
+  slot :inner_block, required: true
 
   def alert_description(assigns) do
     ~H"""

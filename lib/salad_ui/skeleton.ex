@@ -5,8 +5,8 @@ defmodule SaladUI.Skeleton do
   @doc """
   Render skeleton
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  attr :rest, :global
 
   def skeleton(assigns) do
     ~H"""

@@ -31,20 +31,19 @@ defmodule SaladUI.Select do
   Ready to use select component with all required parts.
   """
 
-  attr(:id, :string, default: nil)
-  attr(:name, :any, default: nil)
-  attr(:value, :any, default: nil, doc: "The value of the select")
+  attr :id, :string, default: nil
+  attr :name, :any, default: nil
+  attr :value, :any, default: nil, doc: "The value of the select"
 
-  attr(:label, :string,
+  attr :label, :string,
     default: nil,
     doc: "The display label of the select value. If not provided, the value will be used."
-  )
 
-  attr(:placeholder, :string, default: nil, doc: "The placeholder text when no value is selected.")
+  attr :placeholder, :string, default: nil, doc: "The placeholder text when no value is selected."
 
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global
 
   def select(assigns) do
     assigns =
@@ -72,10 +71,10 @@ defmodule SaladUI.Select do
     """
   end
 
-  attr(:target, :string, required: true)
-  attr(:instance, :map, required: true, doc: "The instance of the select component")
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
+  attr :target, :string, required: true
+  attr :instance, :map, required: true, doc: "The instance of the select component"
+  attr :class, :string, default: nil
+  attr :rest, :global
 
   def select_trigger(assigns) do
     ~H"""
@@ -100,13 +99,13 @@ defmodule SaladUI.Select do
     """
   end
 
-  attr(:instance, :map, required: true, doc: "The instance of the select component")
+  attr :instance, :map, required: true, doc: "The instance of the select component"
 
-  attr(:class, :string, default: nil)
-  attr(:side, :string, values: ~w(top bottom), default: "bottom")
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :side, :string, values: ~w(top bottom), default: "bottom"
+  slot :inner_block, required: true
 
-  attr(:rest, :global)
+  attr :rest, :global
 
   def select_content(assigns) do
     position_class =
@@ -141,9 +140,9 @@ defmodule SaladUI.Select do
     """
   end
 
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global
 
   def select_group(assigns) do
     ~H"""
@@ -153,9 +152,9 @@ defmodule SaladUI.Select do
     """
   end
 
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global
 
   def select_label(assigns) do
     ~H"""
@@ -165,15 +164,15 @@ defmodule SaladUI.Select do
     """
   end
 
-  attr(:instance, :map, required: true, doc: "The instance of the select component")
+  attr :instance, :map, required: true, doc: "The instance of the select component"
 
-  attr(:value, :string, required: true)
-  attr(:label, :string, default: nil)
-  attr(:disabled, :boolean, default: false)
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
+  attr :value, :string, required: true
+  attr :label, :string, default: nil
+  attr :disabled, :boolean, default: false
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
 
-  attr(:rest, :global)
+  attr :rest, :global
 
   def select_item(assigns) do
     assigns = assign(assigns, :label, assigns.label || assigns.value)

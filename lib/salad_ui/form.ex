@@ -40,9 +40,9 @@ defmodule SaladUI.Form do
             </.form>
       </div>
   """
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global
 
   def form_item(assigns) do
     ~H"""
@@ -52,11 +52,11 @@ defmodule SaladUI.Form do
     """
   end
 
-  attr(:class, :string, default: nil)
-  attr(:error, :boolean, default: false)
+  attr :class, :string, default: nil
+  attr :error, :boolean, default: false
 
-  slot(:inner_block, required: true)
-  attr(:rest, :global)
+  slot :inner_block, required: true
+  attr :rest, :global
 
   def form_label(assigns) do
     ~H"""
@@ -75,7 +75,7 @@ defmodule SaladUI.Form do
   end
 
   # attr :class, :string, default: nil
-  slot(:inner_block, required: true)
+  slot :inner_block, required: true
   # attr :rest, :global
 
   def form_control(assigns) do
@@ -84,9 +84,9 @@ defmodule SaladUI.Form do
     """
   end
 
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global
 
   def form_description(assigns) do
     ~H"""
@@ -96,12 +96,12 @@ defmodule SaladUI.Form do
     """
   end
 
-  attr(:field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]")
+  attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
-  attr(:class, :string, default: nil)
-  attr(:errors, :list, default: [])
-  slot(:inner_block, required: false)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  attr :errors, :list, default: []
+  slot :inner_block, required: false
+  attr :rest, :global
 
   def form_message(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     assigns

@@ -10,19 +10,18 @@ defmodule SaladUI.Button do
       <.button>Send!</.button>
       <.button phx-click="go" class="ml-2">Send!</.button>
   """
-  attr(:type, :string, default: nil)
-  attr(:class, :string, default: nil)
+  attr :type, :string, default: nil
+  attr :class, :string, default: nil
 
-  attr(:variant, :string,
+  attr :variant, :string,
     values: ~w(default secondary destructive outline ghost link),
     default: "default",
     doc: "the button variant style"
-  )
 
-  attr(:size, :string, values: ~w(default sm lg icon), default: "default")
-  attr(:rest, :global, include: ~w(disabled form name value))
+  attr :size, :string, values: ~w(default sm lg icon), default: "default"
+  attr :rest, :global, include: ~w(disabled form name value)
 
-  slot(:inner_block, required: true)
+  slot :inner_block, required: true
 
   def(button(assigns)) do
     assigns = assign(assigns, :variant_class, variant(assigns))

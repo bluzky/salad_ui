@@ -39,8 +39,8 @@ defmodule SaladUI.Sheet do
   """
   use SaladUI, :component
 
-  attr(:class, :string, default: "inline-block")
-  slot(:inner_block, required: true)
+  attr :class, :string, default: "inline-block"
+  slot :inner_block, required: true
 
   def sheet(assigns) do
     ~H"""
@@ -50,9 +50,9 @@ defmodule SaladUI.Sheet do
     """
   end
 
-  attr(:class, :string, default: "inner-block")
-  attr(:target, :string, required: true, doc: "The id of the sheet to open")
-  slot(:inner_block, required: true)
+  attr :class, :string, default: "inner-block"
+  attr :target, :string, required: true, doc: "The id of the sheet to open"
+  slot :inner_block, required: true
 
   def sheet_trigger(assigns) do
     ~H"""
@@ -62,7 +62,7 @@ defmodule SaladUI.Sheet do
     """
   end
 
-  attr(:class, :string, default: nil)
+  attr :class, :string, default: nil
 
   defp sheet_overlay(assigns) do
     ~H"""
@@ -79,11 +79,11 @@ defmodule SaladUI.Sheet do
     """
   end
 
-  attr(:id, :string, required: true, doc: "The id of the sheet")
-  attr(:class, :string, default: nil)
-  attr(:side, :string, default: "right", values: ~w(left right top bottom), doc: "The side of the sheet")
-  slot(:inner_block, required: true)
-  slot(:custom_close_btn, required: false)
+  attr :id, :string, required: true, doc: "The id of the sheet"
+  attr :class, :string, default: nil
+  attr :side, :string, default: "right", values: ~w(left right top bottom), doc: "The side of the sheet"
+  slot :inner_block, required: true
+  slot :custom_close_btn, required: false
 
   def sheet_content(assigns) do
     variant_class =
@@ -94,12 +94,7 @@ defmodule SaladUI.Sheet do
         "bottom" -> "inset-x-0 bottom-0 border-t"
       end
 
-    assigns =
-      assign(
-        assigns,
-        :variant_class,
-        variant_class
-      )
+    assigns = assign(assigns, :variant_class, variant_class)
 
     ~H"""
     <div
@@ -156,8 +151,8 @@ defmodule SaladUI.Sheet do
     """
   end
 
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
 
   def sheet_header(assigns) do
     ~H"""
@@ -167,8 +162,8 @@ defmodule SaladUI.Sheet do
     """
   end
 
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
 
   def sheet_title(assigns) do
     ~H"""
@@ -178,8 +173,8 @@ defmodule SaladUI.Sheet do
     """
   end
 
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
 
   def sheet_description(assigns) do
     ~H"""
@@ -189,8 +184,8 @@ defmodule SaladUI.Sheet do
     """
   end
 
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
 
   def sheet_footer(assigns) do
     ~H"""
@@ -200,9 +195,9 @@ defmodule SaladUI.Sheet do
     """
   end
 
-  attr(:class, :string, default: nil)
-  attr(:target, :string, required: true, doc: "The id of the sheet tag to close")
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :target, :string, required: true, doc: "The id of the sheet tag to close"
+  slot :inner_block, required: true
 
   def sheet_close(assigns) do
     ~H"""

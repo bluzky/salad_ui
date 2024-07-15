@@ -11,9 +11,9 @@ defmodule SaladUI.Progress do
       <.progress class="w-[60%]" value={20}/>
 
   """
-  attr(:class, :string, default: nil)
-  attr(:value, :integer, default: 0, doc: "")
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  attr :value, :integer, default: 0, doc: ""
+  attr :rest, :global
 
   def progress(assigns) do
     assigns = assign(assigns, :value, normalize_integer(assigns[:value]))
