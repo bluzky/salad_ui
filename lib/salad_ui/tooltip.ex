@@ -15,9 +15,9 @@ defmodule SaladUI.Tooltip do
   </.tooltip>
 
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def tooltip(assigns) do
     ~H"""
@@ -38,7 +38,7 @@ defmodule SaladUI.Tooltip do
   @doc """
   Render only for compatible with shad ui
   """
-  slot(:inner_block, required: true)
+  slot :inner_block, required: true
 
   def tooltip_trigger(assigns) do
     ~H"""
@@ -49,10 +49,10 @@ defmodule SaladUI.Tooltip do
   @doc """
   Render
   """
-  attr(:class, :string, default: nil)
-  attr(:side, :string, default: "top", values: ~w(bottom left right top))
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :side, :string, default: "top", values: ~w(bottom left right top)
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def tooltip_content(assigns) do
     assigns =

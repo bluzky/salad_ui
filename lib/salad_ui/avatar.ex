@@ -2,8 +2,8 @@ defmodule SaladUI.Avatar do
   @moduledoc false
   use SaladUI, :component
 
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  attr :rest, :global
 
   def avatar(assigns) do
     ~H"""
@@ -16,8 +16,8 @@ defmodule SaladUI.Avatar do
     """
   end
 
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  attr :rest, :global
 
   def avatar_image(assigns) do
     ~H"""
@@ -31,9 +31,9 @@ defmodule SaladUI.Avatar do
     """
   end
 
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: false)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: false
 
   def avatar_fallback(assigns) do
     ~H"""

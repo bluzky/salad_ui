@@ -10,9 +10,9 @@ defmodule SaladUI.Separator do
      <.separator orientation="horizontal" />
 
   """
-  attr(:orientation, :string, values: ~w(vertical horizontal), default: "horizontal")
-  attr(:class, :string, default: nil)
-  attr(:rest, :global, include: ~w(disabled form name value))
+  attr :orientation, :string, values: ~w(vertical horizontal), default: "horizontal"
+  attr :class, :string, default: nil
+  attr :rest, :global, include: ~w(disabled form name value)
 
   def separator(assigns) do
     ~H"""

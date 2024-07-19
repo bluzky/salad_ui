@@ -8,12 +8,12 @@ defmodule SaladUI.Checkbox do
   ## Examples:
       <.checkbox class="!border-destructive" name="agree" value={true} />
   """
-  attr(:id, :any, default: nil)
-  attr(:name, :any, default: nil)
-  attr(:value, :any, default: nil)
-  attr(:field, Phoenix.HTML.FormField)
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
+  attr :id, :any, default: nil
+  attr :name, :any, default: nil
+  attr :value, :any, default: nil
+  attr :field, Phoenix.HTML.FormField
+  attr :class, :string, default: nil
+  attr :rest, :global
 
   def checkbox(assigns) do
     assigns =

@@ -8,12 +8,12 @@ defmodule SaladUI.Switch do
   ## Examples:
 
   """
-  attr(:id, :string, required: true)
-  attr(:name, :string, default: nil)
-  attr(:checked, :string, default: "false")
-  attr(:class, :string, default: nil)
-  attr(:disabled, :boolean, default: false)
-  attr(:rest, :global)
+  attr :id, :string, required: true
+  attr :name, :string, default: nil
+  attr :checked, :string, default: "false"
+  attr :class, :string, default: nil
+  attr :disabled, :boolean, default: false
+  attr :rest, :global
 
   def switch(assigns) do
     assigns =

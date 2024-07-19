@@ -24,9 +24,9 @@ defmodule SaladUI.Breadcrumb do
         </.breadcrumb>
 
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def breadcrumb(assigns) do
     ~H"""
@@ -49,9 +49,9 @@ defmodule SaladUI.Breadcrumb do
   @doc """
   Render breadcrumb list
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def breadcrumb_list(assigns) do
     ~H"""
@@ -73,9 +73,9 @@ defmodule SaladUI.Breadcrumb do
   @doc """
   Render breadcrumb item
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def breadcrumb_item(assigns) do
     ~H"""
@@ -96,9 +96,9 @@ defmodule SaladUI.Breadcrumb do
   @doc """
   Render breadcrumb link
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def breadcrumb_link(assigns) do
     ~H"""
@@ -119,9 +119,9 @@ defmodule SaladUI.Breadcrumb do
   @doc """
   Render breadcrumb page number
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def breadcrumb_page(assigns) do
     ~H"""
@@ -145,8 +145,8 @@ defmodule SaladUI.Breadcrumb do
   @doc """
   Render a separator
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  attr :rest, :global
 
   def breadcrumb_separator(assigns) do
     ~H"""
@@ -178,8 +178,8 @@ defmodule SaladUI.Breadcrumb do
   @doc """
   Render ellipsis
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  attr :rest, :global
 
   def breadcrumb_ellipsis(assigns) do
     ~H"""

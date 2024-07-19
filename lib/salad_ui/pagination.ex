@@ -31,9 +31,9 @@ defmodule SaladUI.Pagination do
         </.pagination>
 
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def pagination(assigns) do
     ~H"""
@@ -57,9 +57,9 @@ defmodule SaladUI.Pagination do
   @doc """
   Render pagination content
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def pagination_content(assigns) do
     ~H"""
@@ -81,9 +81,9 @@ defmodule SaladUI.Pagination do
   @doc """
   Render pagination item
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def pagination_item(assigns) do
     ~H"""
@@ -104,11 +104,11 @@ defmodule SaladUI.Pagination do
   @doc """
   Render pagination link
   """
-  attr(:"is-active", :boolean, default: false)
-  attr(:size, :string, default: "icon")
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :"is-active", :boolean, default: false
+  attr :size, :string, default: "icon"
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def pagination_link(assigns) do
     is_active = assigns[:"is-active"] in [true, "true"]
@@ -141,8 +141,8 @@ defmodule SaladUI.Pagination do
   @doc """
   Render next button
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  attr :rest, :global
 
   def pagination_next(assigns) do
     ~H"""
@@ -170,8 +170,8 @@ defmodule SaladUI.Pagination do
   @doc """
   Render previous button
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  attr :rest, :global
 
   def pagination_previous(assigns) do
     ~H"""
@@ -199,8 +199,8 @@ defmodule SaladUI.Pagination do
   @doc """
   Render ellipsis
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  attr :rest, :global
 
   def pagination_ellipsis(assigns) do
     ~H"""

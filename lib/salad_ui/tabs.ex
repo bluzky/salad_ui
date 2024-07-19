@@ -28,11 +28,11 @@ defmodule SaladUI.Tabs do
   """
   use SaladUI, :component
 
-  attr(:id, :string, required: true, doc: "id for root tabs tag")
-  attr(:default, :string, default: nil, doc: "default tab value")
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
-  attr(:rest, :global)
+  attr :id, :string, required: true, doc: "id for root tabs tag"
+  attr :default, :string, default: nil, doc: "default tab value"
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global
 
   def tabs(assigns) do
     ~H"""
@@ -42,9 +42,9 @@ defmodule SaladUI.Tabs do
     """
   end
 
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global
 
   def tabs_list(assigns) do
     ~H"""
@@ -62,11 +62,11 @@ defmodule SaladUI.Tabs do
     """
   end
 
-  attr(:root, :string, required: true, doc: "id of root tabs tag")
-  attr(:value, :string, required: true, doc: "target value of tab content")
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
-  attr(:rest, :global)
+  attr :root, :string, required: true, doc: "id of root tabs tag"
+  attr :value, :string, required: true, doc: "target value of tab content"
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global
 
   def tabs_trigger(assigns) do
     ~H"""
@@ -87,10 +87,10 @@ defmodule SaladUI.Tabs do
     """
   end
 
-  attr(:value, :string, required: true, doc: "unique for tab content")
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
-  attr(:rest, :global)
+  attr :value, :string, required: true, doc: "unique for tab content"
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global
 
   def tabs_content(assigns) do
     ~H"""

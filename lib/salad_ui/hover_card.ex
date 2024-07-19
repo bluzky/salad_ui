@@ -19,9 +19,9 @@ defmodule SaladUI.HoverCard do
   @doc """
   Render hover card wrapper
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def hover_card(assigns) do
     ~H"""
@@ -42,9 +42,9 @@ defmodule SaladUI.HoverCard do
   @doc """
   Render hover card trigger
   """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def hover_card_trigger(assigns) do
     ~H"""
@@ -65,11 +65,11 @@ defmodule SaladUI.HoverCard do
   @doc """
   Render hover card content
   """
-  attr(:class, :string, default: nil)
-  attr(:side, :string, values: ~w(bottom left right top), default: "top")
-  attr(:align, :string, values: ["start", "center", "end"], default: "center")
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :side, :string, values: ~w(bottom left right top), default: "top"
+  attr :align, :string, values: ["start", "center", "end"], default: "center"
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def hover_card_content(assigns) do
     assigns =

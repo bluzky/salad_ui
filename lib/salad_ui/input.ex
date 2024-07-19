@@ -11,19 +11,18 @@ defmodule SaladUI.Input do
       <.input type="email" placeholder="Enter your email" />
       <.input type="password" placeholder="Enter your password" />
   """
-  attr(:id, :any, default: nil)
-  attr(:name, :any, default: nil)
-  attr(:value, :any)
+  attr :id, :any, default: nil
+  attr :name, :any, default: nil
+  attr :value, :any
 
-  attr(:type, :string,
+  attr :type, :string,
     default: "text",
     values: ~w(date datetime-local email file hidden month number password tel text time url week)
-  )
 
-  attr(:field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]")
+  attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  attr :rest, :global
 
   def input(assigns) do
     assigns = prepare_assign(assigns)

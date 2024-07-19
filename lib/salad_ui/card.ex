@@ -23,9 +23,9 @@ defmodule SaladUI.Card do
         </.card>
   """
 
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global
 
   def card(assigns) do
     ~H"""
@@ -35,9 +35,9 @@ defmodule SaladUI.Card do
     """
   end
 
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global
 
   def card_header(assigns) do
     ~H"""
@@ -47,9 +47,9 @@ defmodule SaladUI.Card do
     """
   end
 
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global
 
   def card_title(assigns) do
     ~H"""
@@ -59,9 +59,9 @@ defmodule SaladUI.Card do
     """
   end
 
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global
 
   def card_description(assigns) do
     ~H"""
@@ -71,9 +71,9 @@ defmodule SaladUI.Card do
     """
   end
 
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global
 
   def card_content(assigns) do
     ~H"""
@@ -83,9 +83,9 @@ defmodule SaladUI.Card do
     """
   end
 
-  attr(:class, :string, default: nil)
-  slot(:inner_block, required: true)
-  attr(:rest, :global)
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global
 
   def card_footer(assigns) do
     ~H"""

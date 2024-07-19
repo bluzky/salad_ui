@@ -10,16 +10,15 @@ defmodule SaladUI.Badge do
       <.badge>Badge</.badge>
       <.badge variant="destructive">Badge</.badge>
   """
-  attr(:class, :string, default: nil)
+  attr :class, :string, default: nil
 
-  attr(:variant, :string,
+  attr :variant, :string,
     values: ~w(default secondary destructive outline),
     default: "default",
     doc: "the badge variant style"
-  )
 
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :rest, :global
+  slot :inner_block, required: true
 
   def badge(assigns) do
     assigns = assign(assigns, :variant_class, variant(assigns))
