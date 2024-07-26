@@ -48,6 +48,7 @@ defmodule SaladUI do
       import SaladUI.Table
       import SaladUI.Tabs
       import SaladUI.Textarea
+      import SaladUI.ThemeToggle
       import SaladUI.Tooltip
     end
   end
