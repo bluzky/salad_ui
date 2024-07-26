@@ -175,7 +175,6 @@ The theme_toggle component accepts the following attributes:
     - nil or omitted: Uses the provided JavaScript (must be set up as described above).
     - String: Name of a custom event or JavaScript function to be called.
     - 1-arity function: Called with the selected theme as an argument.
-    - 0-arity function: Called without arguments; theme details are added to the returned JS commands.
 
 ### Examples
 
