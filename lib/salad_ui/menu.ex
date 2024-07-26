@@ -42,7 +42,7 @@ defmodule SaladUI.Menu do
     ~H"""
     <div
       class={[
-        "min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md",
+        "min-w-[8rem] overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md",
         @class
       ]}
       {@rest}

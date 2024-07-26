@@ -128,7 +128,7 @@ defmodule SaladUi.MenuTest do
         |> clean_string()
 
       assert html =~
-               "<div class=\"min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md top-0 left-full\">"
+               "<div class=\"min-w-[8rem] overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md top-0 left-full\">"
 
       assert html =~ "<div class=\"\" role=\"group\""
       assert html =~ "Profile"

@@ -20,7 +20,7 @@ This library is my attemp to port [shadcn ui](https://ui.shadcn.com/) to Phoenix
 ```elixir
 def deps do
   [
-    {:salad_ui, "~> 0.4.2"}
+    {:salad_ui, "~> 0.5.2"}
   ]
 end
 ```
@@ -107,6 +107,97 @@ SaladUI use `tails` to properly merge Tailwindcss classes
 config :tails, colors_file: Path.join(File.cwd!(), "assets/tailwind.colors.json")
 ```
 
+## Theme Toggle
+
+The Theme Toggle component provides an easy way to implement theme switching in your Phoenix LiveView application.
+
+### Useage 
+1. Add *darkMode: ["class"]* to your module.exports in tailwind.config.js:
+```
+module.exports = {
+  darkMode: ["class"],
+  etc...
+}
+```
+
+2. Add the Theme Toggle component to your layout:
+
+  ```elixir
+  <SaladUI.ThemeToggle.theme_toggle />
+  ```
+
+  Typically, you'd place this in your root layout (lib/your_app_web/components/layouts/root.html.heex) or app layout (lib/your_app_web/components/layouts/app.html.heex).
+
+3. Implement theme switching functionality: You can either use the provided JavaScript or implement your own theme switching logic.
+
+Using the Provided JavaScript
+Add the following code to your app.js (usually located at assets/js/app.js):
+
+```
+//! Theme Toggle
+document.addEventListener('DOMContentLoaded', (event) => {
+  const setTheme = (theme) => {
+    if (theme === 'system') {
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.classList.remove('light', 'dark');
+      document.documentElement.classList.add(systemTheme);
+    } else {
+      document.documentElement.classList.remove('light', 'dark');
+      document.documentElement.classList.add(theme);
+    }
+    localStorage.setItem('theme', theme);
+  };
+
+  const savedTheme = localStorage.getItem('theme') || 'system';
+  setTheme(savedTheme);
+
+  window.addEventListener("set_theme", (e) => {
+    setTheme(e.detail.theme);
+  });
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    if (localStorage.getItem('theme') === 'system') {
+      setTheme('system');
+    }
+  });
+});
+```
+
+Using Custom Theme Switching Logic
+If you prefer to use your own theme switching logic, you must provide the on_theme_change attribute to the component.
+
+### Customization
+The theme_toggle component accepts the following attributes:
+
+- id (string, optional): Custom ID for the toggle container. Default: "theme-toggle"
+- class (string, optional): Additional CSS classes for the toggle container.
+- on_theme_change (any, optional): Custom handler for theme changes. Accepts:
+    - nil or omitted: Uses the provided JavaScript (must be set up as described above).
+    - String: Name of a custom event or JavaScript function to be called.
+    - 1-arity function: Called with the selected theme as an argument.
+    - 0-arity function: Called without arguments; theme details are added to the returned JS commands.
+
+### Examples
+
+1. Using default behaviour:
+```
+<SaladUI.ThemeToggle.theme_toggle />
+```
+
+2. Using a custom event name:
+```
+<SaladUI.ThemeToggle.theme_toggle on_theme_change="myCustomThemeEvent" />
+```
+
+3. Using a custom function:
+```
+<SaladUI.ThemeToggle.theme_toggle on_theme_change={fn theme -> JS.push("save_theme", value: %{theme: theme}) end} />
+```
+
+4. Customizing ID and class:
+```
+<SaladUI.ThemeToggle.theme_toggle id="my-theme-toggle" class="absolute top-4 right-4" />
+```
 
 ## Development
 
@@ -169,4 +260,5 @@ To run the failing tests only, just run `mix test.watch --stale`.
 - ✅ Table
 - ✅ Tabs
 - ✅ Textarea
+- ✅ Theme Toggle
 - ✅ Tooltip
