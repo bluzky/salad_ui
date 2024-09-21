@@ -82,7 +82,6 @@ module.exports = {
     },
   },
   plugins: [
-    require("@tailwindcss/forms"),
     require("@tailwindcss/typography"),
     require("tailwindcss-animate"),
     ...
@@ -107,6 +106,23 @@ SaladUI use `tails` to properly merge Tailwindcss classes
 config :tails, colors_file: Path.join(File.cwd!(), "assets/tailwind.colors.json")
 ```
 
+5. Some tweaks
+Thanks to @ahacking
+
+- To make dark and light mode work correctly, add following to your `app.css`
+```css
+body {
+    @apply bg-background text-foreground;
+}
+```
+
+- In case border color not working correctly, add following to your `app.css`
+```css
+@layer base {
+    * {
+        @apply border-border !important;
+    }
+```
 
 ## Development
 
