@@ -10,7 +10,7 @@ defmodule SaladUI.Label do
       <.label>Send!</.label>
   """
   attr :class, :string, default: nil
-  attr :rest, :global, include: ~w(disabled form name value)
+  attr :rest, :global, include: ~w(disabled form name value for)
   slot :inner_block, required: true
 
   def label(assigns) do
