@@ -106,7 +106,30 @@ SaladUI use `tails` to properly merge Tailwindcss classes
 config :tails, colors_file: Path.join(File.cwd!(), "assets/tailwind.colors.json")
 ```
 
-5. Some tweaks
+
+5. **Add javascript to handle event from server**
+This add ability to execute client action from server. It's similar to `JS.exec/2`. Thanks to [this post](https://fly.io/phoenix-files/server-triggered-js/) from fly.io.
+
+Add this code snippet to the end of `app.js`
+
+```js
+window.addEventListener("phx:js-exec", ({ detail }) => {
+  document.querySelectorAll(detail.to).forEach((el) => {
+    liveSocket.execJS(el, el.getAttribute(detail.attr));
+  });
+});
+```
+
+Then from server side, you can close an opening sheet like this.
+```elixir
+  @impl true
+  def handle_event("update", params, socket) do
+    # your logic
+    {:noreply, push_event(socket, "js-exec", %{to: "#my-sheet", attr: "phx-hide-sheet"})}
+  end
+```
+
+6. Some tweaks
 Thanks to @ahacking
 
 - To make dark and light mode work correctly, add following to your `app.css`
