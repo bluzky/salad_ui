@@ -29,7 +29,7 @@ end
 - Goto [https://ui.shadcn.com/themes](https://ui.shadcn.com/themes).
 - Choose a color → Copy code → Paste to your `app.css` file
 - Create new file `tailwind.colors.json` in your assets directory and paste following content
-```
+```json
 {
   "accent": {
     "DEFAULT": "hsl(var(--accent))",
@@ -71,7 +71,7 @@ end
 - Tell tailwind to extract class from `SaladUI`
 - Add custom color
 - Add tailwind plugin
-```
+```js
 module.exports = {
   content: [
     "../deps/salad_ui/lib/**/*.ex",
