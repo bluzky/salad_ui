@@ -6,6 +6,22 @@ defmodule SaladUI.RadioGroup do
   Radio input group component
 
   ## Examples:
+
+      <.radio_group name="question-1" value="option-2">
+      <div class="flex items-center space-x-2">
+        <.radio_group_item builder={builder} value="option-one" id="option-one"></.radio_group_item>
+        <.label for="option-one">
+          Option One
+        </.label>
+      </div>
+      <div class="flex items-center space-x-2">
+        <.radio_group_item builder={builder} value="option-two" id="option-two"></.radio_group_item>
+        <.label for="option-two">
+          Option Two
+        </.label>
+      </div>
+    </.radio_group>
+
   """
   attr :name, :string, default: nil
   attr :value, :any, default: nil
