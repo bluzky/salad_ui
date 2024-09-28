@@ -29,6 +29,16 @@ defmodule SaladUI.Helpers do
 
   def normalize_integer(_), do: nil
 
+  def normalize_boolean(value) do
+    case value do
+      "true" -> true
+      "false" -> false
+      true -> true
+      false -> false
+      _ -> false
+    end
+  end
+
   @doc """
   Variant helper for generating classes based on side and align
   """
