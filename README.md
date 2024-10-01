@@ -197,7 +197,7 @@ To run the failing tests only, just run `mix test.watch --stale`.
 - ✅ Pagination
 - [ ] Popover
 - ✅ Progress
-- [ ] Radio Group
+- ✅ Radio Group
 - ✅ Scroll Area
 - ✅ Select
 - ✅ Separator
@@ -209,3 +209,5 @@ To run the failing tests only, just run `mix test.watch --stale`.
 - ✅ Tabs
 - ✅ Textarea
 - ✅ Tooltip
+- ✅ Toggle
+- ✅ Toggle Group
