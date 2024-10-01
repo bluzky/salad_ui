@@ -35,7 +35,7 @@ defmodule SaladUI.ToggleGroup do
   slot :inner_block
 
   def toggle_group(assigns) do
-    validate_value_type(assigns)
+    ensure_valid_value_type!(assigns)
 
     ~H"""
     <div class={classes(["flex items-center justify-center gap-1", @class])}>
