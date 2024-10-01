@@ -44,7 +44,7 @@ defmodule SaladUI.ToggleGroup do
     """
   end
 
-  defp validate_value_type(%{value: value, type: type} = _assigns) do
+  defp ensure_valid_value_type!(%{value: value, type: type} = _assigns) do
     cond do
       type == "multiple" and not is_list(value) ->
         raise ArgumentError, "The value of the toggle group must be a list for multiple type."
