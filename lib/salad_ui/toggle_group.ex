@@ -20,21 +20,30 @@ defmodule SaladUI.ToggleGroup do
       </.toggle_group_item>
     </.toggle_group>
   """
-  attr :name, :any, required: true
-  attr :class, :string, default: nil
-  attr :variant, :string, default: "default"
-  attr :size, :string, default: "default"
-  attr :type, :string, values: ~w(single multiple), default: "single"
+  attr :name, :string, default: nil
+  attr :multiple, :any, values: [true, false, "true", "false"], default: false
+
+  attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
+
+  attr :"default-value", :any, values: [true, false, "true", "false"]
 
   attr :value, :string,
     default: nil,
     doc: "The value of the toggle group. It's a single value for single type and a list of values for multiple type."
 
   attr :disabled, :boolean, default: false
+  attr :class, :string, default: nil
+  attr :variant, :string, default: "default"
+  attr :size, :string, default: "default"
   attr :rest, :global
   slot :inner_block
 
   def toggle_group(assigns) do
+    assigns = prepare_assign(assigns)
+
+    assigns =
+      assign_new(assigns, :checked, fn -> Phoenix.HTML.Form.normalize_value("checkbox", assigns.multiple) end)
+
     ensure_valid_value_type!(assigns)
 
     ~H"""
@@ -44,12 +53,12 @@ defmodule SaladUI.ToggleGroup do
     """
   end
 
-  defp ensure_valid_value_type!(%{value: value, type: type} = _assigns) do
+  defp ensure_valid_value_type!(%{value: value, multiple: multiple} = _assigns) do
     cond do
-      type == "multiple" and not is_list(value) ->
+      multiple and not is_list(value) ->
         raise ArgumentError, "The value of the toggle group must be a list for multiple type."
 
-      type == "single" and not (is_nil(value) or is_binary(value)) ->
+      not multiple and not (is_nil(value) or is_binary(value)) ->
         raise ArgumentError, "The value of the toggle group must be a single value for single type."
 
       true ->
@@ -64,7 +73,39 @@ defmodule SaladUI.ToggleGroup do
   attr :rest, :global
   slot :inner_block
 
-  def toggle_group_item(%{builder: %{type: "single"}} = assigns) do
+  def toggle_group_item(%{builder: %{multiple: true}} = assigns) do
+    assigns =
+      assigns
+      |> assign(:variant_class, variant(assigns.builder))
+      |> assign(:checked, assigns.value in assigns.builder.value)
+
+    ~H"""
+    <button
+      onclick="this.querySelector('.toggle-input').click()"
+      disabled={@disabled || @builder.disabled}
+      class={
+        classes([
+          "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 has-[:checked]:bg-accent has-[:checked]:text-accent-foreground",
+          @variant_class,
+          @class
+        ])
+      }
+    >
+      <input
+        type="checkbox"
+        class="toggle-input hidden"
+        name={@builder.name}
+        value={@value}
+        checked={@checked}
+        {@rest}
+      />
+      <%= render_slot(@inner_block) %>
+    </button>
+    """
+  end
+
+  # single type
+  def toggle_group_item(assigns) do
     assigns =
       assigns
       |> assign(:variant_class, variant(assigns.builder))
@@ -86,37 +127,6 @@ defmodule SaladUI.ToggleGroup do
         type="radio"
         class="toggle-input hidden"
         name={@builder.name}
-        value={@value}
-        checked={@checked}
-        {@rest}
-      />
-      <%= render_slot(@inner_block) %>
-    </button>
-    """
-  end
-
-  def toggle_group_item(%{builder: %{type: "multiple"}} = assigns) do
-    assigns =
-      assigns
-      |> assign(:variant_class, variant(assigns.builder))
-      |> assign(:checked, assigns.value in assigns.builder.value)
-
-    ~H"""
-    <button
-      onclick="this.querySelector('.toggle-input').click()"
-      disabled={@disabled || @builder.disabled}
-      class={
-        classes([
-          "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 has-[:checked]:bg-accent has-[:checked]:text-accent-foreground",
-          @variant_class,
-          @class
-        ])
-      }
-    >
-      <input
-        type="checkbox"
-        class="toggle-input hidden"
-        name={@builder.name <> "[]"}
         value={@value}
         checked={@checked}
         {@rest}

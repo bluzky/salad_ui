@@ -25,10 +25,13 @@ defmodule SaladUI.RadioGroup do
   """
   attr :name, :string, default: nil
   attr :value, :any, default: nil
+  attr :"default-value", :any
+  attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
   attr :class, :string, default: nil
   slot :inner_block, required: true
 
   def radio_group(assigns) do
+    assigns = prepare_assign(assigns)
     assigns = assign(assigns, :builder, %{name: assigns.name, value: assigns.value})
 
     ~H"""
@@ -63,6 +66,7 @@ defmodule SaladUI.RadioGroup do
         type="radio"
         class="hidden peer/radio"
         name={@builder.name}
+        value={@value}
         checked={normalize_boolean(@checked) || @builder.value == @value}
         {@rest}
       />

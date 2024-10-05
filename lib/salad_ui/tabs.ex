@@ -5,19 +5,19 @@ defmodule SaladUI.Tabs do
 
   ## Example:
 
-      <.tabs default="account" id="settings" class="w-[400px]">
+      <.tabs default="account" id="settings" :let={builder} class="w-[400px]">
       <.tabs_list class="grid w-full grid-cols-2">
-        <.tabs_trigger root="settings" target="account">account</.tabs_trigger>
-        <.tabs_trigger root="settings" target="password">password</.tabs_trigger>
+        <.tabs_trigger builder={builder} value="account">account</.tabs_trigger>
+        <.tabs_trigger builder={builder} value="password">password</.tabs_trigger>
       </.tabs_list>
-      <.tabs_content id="account">
+      <.tabs_content value="account">
           <.card>
           <.card_content class="p-6">
             Account
           </.card_content>
         </.card>
       </.tabs_content>
-      <.tabs_content id="password">
+      <.tabs_content value="password">
         <.card>
           <.card_content class="p-6">
             Password
@@ -35,9 +35,11 @@ defmodule SaladUI.Tabs do
   attr :rest, :global
 
   def tabs(assigns) do
+    assigns = assign(assigns, :builder, %{default: assigns.default, id: assigns.id})
+
     ~H"""
     <div class={@class} id={@id} {@rest} phx-mounted={show_tab(@id, @default)}>
-      <%= render_slot(@inner_block) %>
+      <%= render_slot(@inner_block, @builder) %>
     </div>
     """
   end
@@ -62,7 +64,7 @@ defmodule SaladUI.Tabs do
     """
   end
 
-  attr :root, :string, required: true, doc: "id of root tabs tag"
+  attr :builder, :map, required: true, doc: "builder instance of tabs"
   attr :value, :string, required: true, doc: "target value of tab content"
   attr :class, :string, default: nil
   slot :inner_block, required: true
@@ -79,7 +81,7 @@ defmodule SaladUI.Tabs do
         ])
       }
       data-target={@value}
-      phx-click={show_tab(@root, @value)}
+      phx-click={show_tab(@builder.id, @value)}
       {@rest}
     >
       <%= render_slot(@inner_block) %>
