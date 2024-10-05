@@ -8,20 +8,19 @@ defmodule SaladUI.Checkbox do
   ## Examples:
       <.checkbox class="!border-destructive" name="agree" value={true} />
   """
-  attr :id, :any, default: nil
   attr :name, :any, default: nil
   attr :value, :any, default: nil
+  attr :"default-value", :any, values: [true, false, "true", "false"], default: false
   attr :field, Phoenix.HTML.FormField
   attr :class, :string, default: nil
   attr :rest, :global
 
   def checkbox(assigns) do
     assigns =
-      assigns
-      |> prepare_assign()
-      |> assign_new(:checked, fn ->
-        Phoenix.HTML.Form.normalize_value("checkbox", assigns.value)
-      end)
+      prepare_assign(assigns)
+
+    assigns =
+      assign_new(assigns, :checked, fn -> Phoenix.HTML.Form.normalize_value("checkbox", assigns.value) end)
 
     ~H"""
     <input type="hidden" name={@name} value="false" />
@@ -33,7 +32,6 @@ defmodule SaladUI.Checkbox do
           @class
         ])
       }
-      id={@id || @name}
       name={@name}
       value="true"
       checked={@checked}

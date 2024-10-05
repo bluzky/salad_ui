@@ -7,11 +7,15 @@ defmodule SaladUI.Toggle do
 
   ## Example:
 
-      <.toggle pressed="true" size="sm" variant="outline">Bold</.toggle>
+      <.toggle value="true" size="sm" variant="outline">Bold</.toggle>
   """
   attr :id, :any, default: nil
   attr :name, :any, default: nil
-  attr :pressed, :boolean, default: false
+  attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
+
+  attr :value, :boolean, default: false
+  attr :"default-value", :any, values: [true, false, "true", "false"], default: false
+
   attr :disabled, :boolean, default: false
   attr :variant, :string, values: ~w(default outline), default: "default"
   attr :size, :string, values: ~w(default sm lg), default: "default"
@@ -21,8 +25,11 @@ defmodule SaladUI.Toggle do
 
   def toggle(assigns) do
     assigns =
+      prepare_assign(assigns)
+
+    assigns =
       assigns
-      |> assign_new(:checked, fn -> Phoenix.HTML.Form.normalize_value("checkbox", assigns.pressed) end)
+      |> assign_new(:checked, fn -> Phoenix.HTML.Form.normalize_value("checkbox", assigns.value) end)
       |> assign(:variant_class, variant(assigns))
 
     ~H"""
@@ -41,7 +48,7 @@ defmodule SaladUI.Toggle do
       <input
         type="checkbox"
         class="toggle-input hidden"
-        id={@id || @name}
+        id={@id}
         name={@name}
         value="true"
         checked={@checked}

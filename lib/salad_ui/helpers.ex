@@ -7,14 +7,23 @@ defmodule SaladUI.Helpers do
   """
   def prepare_assign(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     assigns
-    |> assign(field: nil, id: assigns.id || field.id)
+    |> assign(field: nil, id: assigns[:id] || field.id)
     # |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
-    |> assign_new(:name, fn -> if assigns[:multiple], do: field.name <> "[]", else: field.name end)
-    |> assign_new(:value, fn -> field.value end)
+    |> assign(:name, if(assigns[:multiple], do: field.name <> "[]", else: field.name))
+    |> assign(:value, field.value)
+    |> prepare_assign()
   end
 
+  # use default value if value is not provided or empty
   def prepare_assign(assigns) do
-    assigns
+    value =
+      if assigns[:value] in [nil, "", []] do
+        assigns[:"default-value"]
+      else
+        assigns[:value]
+      end
+
+    assign(assigns, value: value)
   end
 
   # normalize_integer
@@ -22,7 +31,7 @@ defmodule SaladUI.Helpers do
 
   def normalize_integer(value) when is_binary(value) do
     case Integer.parse(value) do
-      {:ok, integer} -> integer
+      {integer, _} -> integer
       _ -> nil
     end
   end

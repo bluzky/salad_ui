@@ -10,14 +10,20 @@ defmodule SaladUI.Switch do
   """
   attr :id, :string, required: true
   attr :name, :string, default: nil
-  attr :checked, :string, default: "false"
+  attr :value, :boolean, default: nil
+  attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
+
+  attr :"default-value", :any, values: [true, false, "true", "false"], default: false
   attr :class, :string, default: nil
   attr :disabled, :boolean, default: false
   attr :rest, :global
 
   def switch(assigns) do
     assigns =
-      assign(assigns, :checked, Phoenix.HTML.Form.normalize_value("checkbox", assigns.checked))
+      prepare_assign(assigns)
+
+    assigns =
+      assign(assigns, :checked, Phoenix.HTML.Form.normalize_value("checkbox", assigns.value))
 
     ~H"""
     <button
@@ -36,14 +42,7 @@ defmodule SaladUI.Switch do
       <span class="pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform group-data-[state=checked]/switch:translate-x-5 group-data-[state=unchecked]/switch:translate-x-0">
       </span>
       <input type="hidden" name={@name} value="false" />
-      <input
-        type="checkbox"
-        class="hidden"
-        name={@name}
-        value="true"
-        {%{checked: @checked && "true"}}
-        {@rest}
-      />
+      <input type="checkbox" class="hidden" name={@name} value="true" {%{checked: @checked}} {@rest} />
     </button>
     """
   end

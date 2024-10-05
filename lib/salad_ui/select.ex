@@ -34,6 +34,9 @@ defmodule SaladUI.Select do
   attr :id, :string, default: nil
   attr :name, :any, default: nil
   attr :value, :any, default: nil, doc: "The value of the select"
+  attr :"default-value", :any, default: nil, doc: "The default value of the select"
+
+  attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
   attr :label, :string,
     default: nil,
@@ -46,8 +49,10 @@ defmodule SaladUI.Select do
   attr :rest, :global
 
   def select(assigns) do
+    assigns = prepare_assign(assigns)
+
     assigns =
-      assign(assigns, :instance, %{
+      assign(assigns, :builder, %{
         id: assigns.id,
         name: assigns.name,
         value: assigns.value,
@@ -66,13 +71,12 @@ defmodule SaladUI.Select do
       x-toggle-select={toggle_select(@id)}
       phx-click-away={JS.exec("x-hide-select")}
     >
-      <%= render_slot(@inner_block, @instance) %>
+      <%= render_slot(@inner_block, @builder) %>
     </div>
     """
   end
 
-  attr :target, :string, required: true
-  attr :instance, :map, required: true, doc: "The instance of the select component"
+  attr :builder, :map, required: true, doc: "The builder of the select component"
   attr :class, :string, default: nil
   attr :rest, :global
 
@@ -86,12 +90,12 @@ defmodule SaladUI.Select do
           @class
         ])
       }
-      phx-click={toggle_select(@instance.id)}
+      phx-click={toggle_select(@builder.id)}
       {@rest}
     >
       <span
         class="select-value pointer-events-none before:content-[attr(data-content)]"
-        data-content={@instance.label || @instance.value || @instance.placeholder}
+        data-content={@builder.label || @builder.value || @builder.placeholder}
       >
       </span>
       <span class="h-4 w-4 opacity-50" />
@@ -99,7 +103,7 @@ defmodule SaladUI.Select do
     """
   end
 
-  attr :instance, :map, required: true, doc: "The instance of the select component"
+  attr :builder, :map, required: true, doc: "The builder of the select component"
 
   attr :class, :string, default: nil
   attr :side, :string, values: ~w(top bottom), default: "bottom"
@@ -117,7 +121,7 @@ defmodule SaladUI.Select do
     assigns =
       assigns
       |> assign(:position_class, position_class)
-      |> assign(:id, assigns.instance.id <> "-content")
+      |> assign(:id, assigns.builder.id <> "-content")
 
     ~H"""
     <.focus_wrap
@@ -164,7 +168,7 @@ defmodule SaladUI.Select do
     """
   end
 
-  attr :instance, :map, required: true, doc: "The instance of the select component"
+  attr :builder, :map, required: true, doc: "The builder of the select component"
 
   attr :value, :string, required: true
   attr :label, :string, default: nil
@@ -188,18 +192,18 @@ defmodule SaladUI.Select do
         ])
       }
       {%{"data-disabled": @disabled}}
-      phx-click={select_value(@instance.id, @label)}
+      phx-click={select_value(@builder.id, @label)}
       {@rest}
     >
       <input
         type="radio"
         class="peer w-0 opacity-0"
-        name={@instance.name}
+        name={@builder.name}
         value={@value}
-        checked={@instance.value == @value}
+        checked={@builder.value == @value}
         disabled={@disabled}
         phx-key="Escape"
-        phx-keydown={JS.exec("x-hide-select", to: "##{@instance.id}")}
+        phx-keydown={JS.exec("x-hide-select", to: "##{@builder.id}")}
       />
       <div class="absolute top-0 left-0 w-full h-full group-hover/item:bg-accent rounded"></div>
       <span class="hidden peer-checked:block absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
