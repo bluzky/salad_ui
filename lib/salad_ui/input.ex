@@ -12,7 +12,7 @@ defmodule SaladUI.Input do
       <.input type="password" placeholder="Enter your password" />
   """
   attr :id, :any, default: nil
-  attr :name, :any, default: nil
+  attr :name, :any
   attr :value, :any
 
   attr :type, :string,
@@ -24,7 +24,9 @@ defmodule SaladUI.Input do
   attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
   attr :class, :string, default: nil
-  attr :rest, :global
+  attr :rest, :global,
+    include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
+                multiple pattern placeholder readonly required rows size step)
 
   def input(assigns) do
     assigns = prepare_assign(assigns)
