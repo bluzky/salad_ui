@@ -101,5 +101,51 @@ defmodule SaladUI.InputTest do
       assert html =~
                "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" name=\"secret\" type=\"hidden\" value=\"hard to get in\">"
     end
+
+    test "It sets the id and name when only given a form field" do
+      assigns = %{form: %{
+        email: %Phoenix.HTML.FormField{
+          id: "user_email",
+          name: "user[email]",
+          errors: [],
+          field: :email,
+          value: nil,
+          form: nil
+        }
+      }}
+
+      html =
+        ~H"""
+        <.input field={@form[:email]} required />
+        """
+        |> rendered_to_string()
+        |> clean_string()
+
+      assert html =~
+               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" id=\"user_email\" name=\"user[email]\" type=\"text\" required>"
+    end
+
+    test "It supports overriding the form field id and name when explicitly set" do
+      assigns = %{form: %{
+        email: %Phoenix.HTML.FormField{
+          id: "user_email",
+          name: "user[email]",
+          errors: [],
+          field: :email,
+          value: nil,
+          form: nil
+        }
+      }}
+
+      html =
+        ~H"""
+        <.input id="custom" name="custom" field={@form[:email]} required />
+        """
+        |> rendered_to_string()
+        |> clean_string()
+
+      assert html =~
+               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" id=\"custom\" name=\"custom\" type=\"text\" required>"
+    end
   end
 end
