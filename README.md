@@ -147,6 +147,12 @@ body {
     }
 ```
 
+7. Config custom error translate function
+
+```elixir
+config :salad_ui, :error_translator_function, {MyAppWeb.CoreComponents, :translate_error}
+```
+
 ## Development
 
 Here is how to start develop SaladUI on local machine.
@@ -211,3 +217,13 @@ To run the failing tests only, just run `mix test.watch --stale`.
 - ✅ Tooltip
 - ✅ Toggle
 - ✅ Toggle Group
+
+
+## Credits
+This project could not be available without these awesome works:
+
+- `tailwind css` an awesome css utility project
+- `tails` for merging tailwind class
+- `shadcn/ui` which this project is inspired from
+- `Phoenix Framework` of course
+

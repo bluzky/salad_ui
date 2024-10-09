@@ -55,10 +55,21 @@ defmodule SaladUI.Form do
   attr :class, :string, default: nil
   attr :error, :boolean, default: false
 
+  attr :field, Phoenix.HTML.FormField,
+    default: nil,
+    doc: "a form field struct retrieved from the form, for example: @form[:email]"
+
   slot :inner_block, required: true
   attr :rest, :global
 
-  def form_label(assigns) do
+  def form_label(%{field: field} = assigns) do
+    assigns =
+      if field && not Enum.empty?(field.errors) do
+        assign(assigns, error: true)
+      else
+        assigns
+      end
+
     ~H"""
     <SaladUI.Label.label
       class={
@@ -96,21 +107,18 @@ defmodule SaladUI.Form do
     """
   end
 
-  attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
+  attr :field, Phoenix.HTML.FormField,
+    default: nil,
+    doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
   attr :class, :string, default: nil
   attr :errors, :list, default: []
   slot :inner_block, required: false
   attr :rest, :global
 
-  def form_message(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
-    assigns
-    |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
-    |> assign(:field, nil)
-    |> form_message()
-  end
-
   def form_message(assigns) do
+    assigns = prepare_assign(assigns)
+
     ~H"""
     <p
       :if={msg = render_slot(@inner_block) || not Enum.empty?(@errors)}
@@ -123,20 +131,5 @@ defmodule SaladUI.Form do
       <% end %>
     </p>
     """
-  end
-
-  @doc """
-  Translates an error message using gettext.
-  TODO: improve transaltion later 🔥
-  """
-  def translate_error({msg, _opts}) do
-    msg
-  end
-
-  @doc """
-  Translates the errors for a field from a keyword list of errors.
-  """
-  def translate_errors(errors, field) when is_list(errors) do
-    for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
 end
