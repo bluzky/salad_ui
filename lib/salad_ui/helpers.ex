@@ -119,12 +119,9 @@ defmodule SaladUI.Helpers do
   end
 
   defp get_translator_from_config do
-    case_result =
-      case Application.get_env(:salad_ui, :error_translator_function) do
-        {module, function} -> &apply(module, function, [&1])
-        nil -> nil
-      end
-
-    IO.inspect(case_result, label: "error_translator_function")
+    case Application.get_env(:salad_ui, :error_translator_function) do
+      {module, function} -> &apply(module, function, [&1])
+      nil -> nil
+    end
   end
 end
