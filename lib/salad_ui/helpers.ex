@@ -8,7 +8,7 @@ defmodule SaladUI.Helpers do
   def prepare_assign(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     assigns
     |> assign(field: nil, id: assigns[:id] || field.id)
-    # |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
+    |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
     |> assign(:name, if(assigns[:multiple], do: field.name <> "[]", else: field.name))
     |> assign(:value, field.value)
     |> prepare_assign()
@@ -81,6 +81,47 @@ defmodule SaladUI.Helpers do
 
       side in ["left", "right"] ->
         "#{align}-vertical"
+    end
+  end
+
+  # Translate error message
+  # borrowed from https://github.com/petalframework/petal_components/blob/main/lib/petal_components/field.ex#L414
+  defp translate_error({msg, opts}) do
+    config_translator = get_translator_from_config() || (&fallback_translate_error/1)
+
+    config_translator.({msg, opts})
+  end
+
+  defp fallback_translate_error({msg, opts}) do
+    Enum.reduce(opts, msg, fn {key, value}, acc ->
+      try do
+        String.replace(acc, "%{#{key}}", to_string(value))
+      rescue
+        e ->
+          IO.warn(
+            """
+            the fallback message translator for the form_field_error function cannot handle the given value.
+
+            Hint: you can set up the `error_translator_function` to route all errors to your application helpers:
+
+              config :salad_ui, :error_translator_function, {MyAppWeb.CoreComponents, :translate_error}
+
+            Given value: #{inspect(value)}
+
+            Exception: #{Exception.message(e)}
+            """,
+            __STACKTRACE__
+          )
+
+          "invalid value"
+      end
+    end)
+  end
+
+  defp get_translator_from_config do
+    case Application.get_env(:salad_ui, :error_translator_function) do
+      {module, function} -> &apply(module, function, [&1])
+      nil -> nil
     end
   end
 end
