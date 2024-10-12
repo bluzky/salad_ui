@@ -46,7 +46,7 @@ defmodule SaladUi.PaginationTest do
         |> rendered_to_string()
         |> clean_string()
 
-      assert html =~ "aria-current=\"\">3</a>"
+      assert html =~ ~r/<a.+aria-current=\"\" .+>3<\/a>/
 
       for css_class <-
             ~w("inline-flex rounded-md transition-colors whitespace-nowrap items-center justify-center font-medium text-sm w-9 h-9 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground") do

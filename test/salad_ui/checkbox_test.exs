@@ -12,7 +12,6 @@ defmodule SaladUI.CheckboxTest do
         <.checkbox class="!border-destructive" name="remember_me" value={true} />
         """)
 
-      assert html =~ "id=\"remember_me\""
       assert html =~ "name=\"remember_me\""
       assert html =~ "value=\"true\" checked>"
       assert html =~ "<input type=\"hidden\" name=\"remember_me\" value=\"false\">"

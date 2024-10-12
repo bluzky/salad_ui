@@ -15,7 +15,7 @@ defmodule SaladUI.InputTest do
         |> clean_string()
 
       assert html =~
-               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" type=\"text\" placeholder=\"Enter your name\">"
+               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" placeholder=\"Enter your name\" type=\"text\">"
     end
 
     test "It renders email input correctly" do
@@ -29,7 +29,7 @@ defmodule SaladUI.InputTest do
         |> clean_string()
 
       assert html =~
-               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" type=\"email\" placeholder=\"Enter your email\">"
+               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" placeholder=\"Enter your email\" type=\"email\">"
     end
 
     test "It renders password input correctly" do
@@ -43,7 +43,7 @@ defmodule SaladUI.InputTest do
         |> clean_string()
 
       assert html =~
-               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" type=\"password\" placeholder=\"Enter your password\">"
+               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" placeholder=\"Enter your password\" type=\"password\">"
     end
 
     test "It renders dates input correctly" do
@@ -57,7 +57,7 @@ defmodule SaladUI.InputTest do
         |> clean_string()
 
       assert html =~
-               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" type=\"date\" placeholder=\"yyy-mm-dd\">"
+               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" placeholder=\"yyy-mm-dd\" type=\"date\">"
     end
 
     test "It renders datetime-local input correctly" do
@@ -71,7 +71,7 @@ defmodule SaladUI.InputTest do
         |> clean_string()
 
       assert html =~
-               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" type=\"datetime-local\" placeholder=\"Date time\">"
+               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" placeholder=\"Date time\" type=\"datetime-local\">"
     end
 
     test "It renders file input correctly" do
@@ -85,7 +85,7 @@ defmodule SaladUI.InputTest do
         |> clean_string()
 
       assert html =~
-               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" type=\"file\" placeholder=\"Select file\">"
+               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" placeholder=\"Select file\" type=\"file\">"
     end
 
     test "It renders hidden input correctly" do
