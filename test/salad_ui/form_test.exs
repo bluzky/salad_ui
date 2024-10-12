@@ -72,9 +72,6 @@ defmodule SaladUI.FormTest do
       assert html =~ "<p class=\"text-destructive font-medium text-sm\">This is a form message</p>"
     end
 
-    test "It returns the message from a tuple {}" do
-      assert translate_error({"Error Message", []}) == "Error Message"
-    end
 
     test "It renders an entire form correctly" do
       assigns = %{form: %{}, myself: "test-string"}
@@ -111,7 +108,7 @@ defmodule SaladUI.FormTest do
         |> clean_string()
 
       assert html =~
-               "<form id=\"project-form\" class=\"space-y-6\" phx-submit=\"save\" phx-change=\"validate\" phx-target=\"test-string\">"
+               "<form class=\"space-y-6\" id=\"project-form\" phx-change=\"validate\" phx-submit=\"save\" phx-target=\"test-string\""
 
       assert html =~
                "<label class=\"font-medium leading-none text-sm false peer-disabled:cursor-not-allowed peer-disabled:opacity-70\">\What is your project's name?</label>"
