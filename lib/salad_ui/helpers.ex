@@ -9,8 +9,8 @@ defmodule SaladUI.Helpers do
     assigns
     |> assign(field: nil, id: assigns[:id] || field.id)
     |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
-    |> assign(:name, if(assigns[:multiple], do: field.name <> "[]", else: field.name))
-    |> assign(:value, field.value)
+    |> assign(:name, assigns[:name] || if(assigns[:multiple], do: field.name <> "[]", else: field.name))
+    |> assign(:value, assigns[:value] || field.value)
     |> prepare_assign()
   end
 
