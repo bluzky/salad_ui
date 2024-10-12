@@ -72,7 +72,6 @@ defmodule SaladUI.FormTest do
       assert html =~ "<p class=\"text-destructive font-medium text-sm\">This is a form message</p>"
     end
 
-
     test "It renders an entire form correctly" do
       assigns = %{form: %{}, myself: "test-string"}
 
