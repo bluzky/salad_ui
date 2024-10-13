@@ -1,27 +1,26 @@
 defmodule SaladUI.Patcher.ConfigPatcher do
   @moduledoc false
 
-  def patch(config_path, components_path) do
+  def patch(config_path, opts \\ []) do
+    configs_to_add = Keyword.get(opts, :configs, [])
+
     new_content =
       config_path
       |> File.read!()
-      |> update_content(components_path)
+      |> update_content(configs_to_add)
 
     File.write!(config_path, new_content)
   end
 
-  defp update_content(content, components_path) do
-    content
-    |> add_config_if_missing(
-      :salad_ui,
-      "Path to install SaladUI components",
-      components_path: "Path.join(File.cwd!(), \"#{components_path}\")"
-    )
-    |> add_config_if_missing(
-      :tails,
-      "SaladUI use tails to properly merge Tailwind CSS classes",
-      colors_file: "Path.join(File.cwd!(), \"assets/tailwind.colors.json\")"
-    )
+  defp update_content(content, configs) do
+    Enum.reduce(configs, content, fn {config_name, config_data}, acc ->
+      add_config_if_missing(
+        acc,
+        config_name,
+        config_data.description,
+        config_data.values
+      )
+    end)
   end
 
   defp add_config_if_missing(content, config_name, description, values) do
@@ -54,8 +53,6 @@ defmodule SaladUI.Patcher.ConfigPatcher do
     """
   end
 
-  # If you want to insert Elixir code, suchs as modules
-  # or an expression, using a string with the code you want to insert
   defp format_values(values) do
     Enum.map_join(values, ", ", fn
       {key, value} -> "#{key}: #{value}"

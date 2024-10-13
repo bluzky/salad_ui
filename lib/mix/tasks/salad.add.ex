@@ -88,7 +88,10 @@ defmodule Mix.Tasks.Salad.Add do
 
   defp insert_target_module_name(source) do
     module_name = get_module_name()
-    Regex.replace(~r/defmodule SaladUI\.([a-zA-Z0-9_]+)/, source, "defmodule #{module_name}.Components.\\1")
+
+    source
+    |> String.replace(~r/defmodule SaladUI\.([a-zA-Z0-9_]+)/, "defmodule #{module_name}.Components.\\1")
+    |> String.replace(~r/use SaladUI,\s*:component/, "use #{module_name}.Component")
   end
 
   defp get_module_name do

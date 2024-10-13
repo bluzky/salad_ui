@@ -19,10 +19,10 @@ defmodule SaladUI.Patcher do
   ## Parameters
 
   - config_path: The path to the project's `config.exs` file
-  - components_path: The path to the components directory
+  - configs: A list of configurations to add to the config file. Each configuration must be a tuple with the name of the configuration and a map with the description and values to add. If you want to insert Elixir code, suchs as modules or an expression, use a string with the code you want to insert.
   """
-  def patch_config(config_path, components_path) do
-    ConfigPatcher.patch(config_path, components_path)
+  def patch_config(config_path, configs) do
+    ConfigPatcher.patch(config_path, configs: configs)
   end
 
   @doc """

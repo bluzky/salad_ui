@@ -30,6 +30,7 @@ defmodule Mix.Tasks.Salad.Init do
 
   defp init(component_path, color_scheme) do
     env = Atom.to_string(Mix.env())
+    app_name = Mix.Project.config()[:app] |> Atom.to_string() |> String.downcase()
     assets_path = build_assets_path(env)
 
     node_opts = if env == "test", do: [skip: true], else: []
@@ -41,6 +42,8 @@ defmodule Mix.Tasks.Salad.Init do
          :ok <- patch_js(assets_path),
          :ok <- copy_tailwind_colors(assets_path),
          :ok <- patch_tailwind_config(),
+         :ok <- write_helpers_module(app_name),
+         :ok <- write_component_module(app_name),
          :ok <- install_node_dependencies(node_opts) do
       Mix.shell().info("Done. Now you can add components by running mix salad.add <component_name>")
     else
@@ -80,14 +83,45 @@ defmodule Mix.Tasks.Salad.Init do
   end
 
   defp write_config(component_path) do
-    Mix.shell().info("Writing components path to config.exs")
+    with :ok <- write_dev_config(component_path) do
+      write_tails_config()
+    end
+  end
+
+  defp write_dev_config(component_path) do
+    Mix.shell().info("Writing components path to dev.exs")
+    dev_config_path = Path.join(File.cwd!(), "config/dev.exs")
+
+    components_config = [
+      salad_ui: %{
+        description: "Path to install SaladUI components",
+        values: [components_path: "Path.join(File.cwd!(), \"#{component_path}\")"]
+      }
+    ]
+
+    patch_config(dev_config_path, components_config)
+  end
+
+  defp write_tails_config do
+    Mix.shell().info("Writing tails config to config.exs")
     config_path = Path.join(File.cwd!(), "config/config.exs")
 
+    tails_config = [
+      tails: %{
+        description: "SaladUI use tails to properly merge Tailwind CSS classes",
+        values: [colors_file: "Path.join(File.cwd!(), \"assets/tailwind.colors.json\")"]
+      }
+    ]
+
+    patch_config(config_path, tails_config)
+  end
+
+  defp patch_config(config_path, config) do
     if File.exists?(config_path) do
-      Patcher.patch_config(config_path, component_path)
+      Patcher.patch_config(config_path, config)
       :ok
     else
-      {:error, "config.exs not found"}
+      {:error, "#{Path.basename(config_path)} not found"}
     end
   end
 
@@ -139,6 +173,45 @@ defmodule Mix.Tasks.Salad.Init do
     else
       {:error, "tailwind.config.js not found"}
     end
+  end
+
+  defp write_helpers_module(app_name) do
+    Mix.shell().info("Writing helpers module")
+    source_path = Path.join(get_base_path(), "helpers.ex")
+    primary_path = Path.join([File.cwd!(), "lib/#{app_name}_web"])
+
+    target_path =
+      if File.exists?(primary_path) do
+        Path.join([primary_path, "helpers.ex"])
+      else
+        Path.join([File.cwd!(), "lib", "helpers.ex"])
+      end
+
+    module_name = Macro.camelize(app_name)
+
+    source_code =
+      Regex.replace(~r/defmodule SaladUI\.Helpers/, File.read!(source_path), "defmodule #{module_name}Web.Helpers")
+
+    File.write!(target_path, source_code)
+  end
+
+  defp write_component_module(app_name) do
+    Mix.shell().info("Writing component module")
+    source_path = Path.join(:code.priv_dir(:salad_ui), "templates/component.eex")
+
+    primary_path = Path.join([File.cwd!(), "lib/#{app_name}_web"])
+
+    target_path =
+      if File.exists?(primary_path) do
+        Path.join([primary_path, "component.ex"])
+      else
+        Path.join([File.cwd!(), "lib", "component.ex"])
+      end
+
+    module_name = Macro.camelize(app_name)
+    source_code = EEx.eval_file(source_path, module_name: module_name, assigns: %{module_name: module_name})
+
+    File.write!(target_path, source_code)
   end
 
   defp install_node_dependencies(opts) do
