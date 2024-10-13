@@ -20,7 +20,14 @@ defmodule SaladUI.Patcher.ConfigPatcherTest do
 
       File.write!(@config_file, initial_content)
 
-      ConfigPatcher.patch(@config_file, @components_path)
+      configs_to_add = [
+        salad_ui: %{
+          description: "Path to install SaladUI components",
+          values: [components_path: "Path.join(File.cwd!(), \"#{@components_path}\")"]
+        }
+      ]
+
+      ConfigPatcher.patch(@config_file, configs: configs_to_add)
 
       assert File.read!(@config_file) =~ "config :salad_ui,"
       assert File.read!(@config_file) =~ "components_path: Path.join(File.cwd!(), \"#{@components_path}\")"
@@ -33,7 +40,14 @@ defmodule SaladUI.Patcher.ConfigPatcherTest do
 
       File.write!(@config_file, initial_content)
 
-      ConfigPatcher.patch(@config_file, @components_path)
+      configs_to_add = [
+        tails: %{
+          description: "SaladUI use tails to properly merge Tailwind CSS classes",
+          values: [colors_file: "Path.join(File.cwd!(), \"assets/tailwind.colors.json\")"]
+        }
+      ]
+
+      ConfigPatcher.patch(@config_file, configs: configs_to_add)
 
       assert File.read!(@config_file) =~ "config :tails,"
       assert File.read!(@config_file) =~ "colors_file: Path.join(File.cwd!(), \"assets/tailwind.colors.json\")"
@@ -46,7 +60,18 @@ defmodule SaladUI.Patcher.ConfigPatcherTest do
 
       File.write!(@config_file, initial_content)
 
-      ConfigPatcher.patch(@config_file, @components_path)
+      configs_to_add = [
+        salad_ui: %{
+          description: "Path to install SaladUI components",
+          values: [components_path: "Path.join(File.cwd!(), \"#{@components_path}\")"]
+        },
+        tails: %{
+          description: "SaladUI use tails to properly merge Tailwind CSS classes",
+          values: [colors_file: "Path.join(File.cwd!(), \"assets/tailwind.colors.json\")"]
+        }
+      ]
+
+      ConfigPatcher.patch(@config_file, configs: configs_to_add)
 
       assert File.read!(@config_file) =~ "config :salad_ui,"
       assert File.read!(@config_file) =~ "components_path: Path.join(File.cwd!(), \"#{@components_path}\")"
@@ -61,9 +86,20 @@ defmodule SaladUI.Patcher.ConfigPatcherTest do
       config :tails, colors_file: "/some/file.json"
       """
 
+      configs_to_add = [
+        salad_ui: %{
+          description: "Path to install SaladUI components",
+          values: [components_path: "Path.join(File.cwd!(), \"#{@components_path}\")"]
+        },
+        tails: %{
+          description: "SaladUI use tails to properly merge Tailwind CSS classes",
+          values: [colors_file: "Path.join(File.cwd!(), \"assets/tailwind.colors.json\")"]
+        }
+      ]
+
       File.write!(@config_file, initial_content)
 
-      ConfigPatcher.patch(@config_file, @components_path)
+      ConfigPatcher.patch(@config_file, configs: configs_to_add)
 
       assert File.read!(@config_file) == initial_content
     end
@@ -77,7 +113,18 @@ defmodule SaladUI.Patcher.ConfigPatcherTest do
 
       File.write!(@config_file, initial_content)
 
-      ConfigPatcher.patch(@config_file, @components_path)
+      configs_to_add = [
+        salad_ui: %{
+          description: "Path to install SaladUI components",
+          values: [components_path: "Path.join(File.cwd!(), \"#{@components_path}\")"]
+        },
+        tails: %{
+          description: "SaladUI use tails to properly merge Tailwind CSS classes",
+          values: [colors_file: "Path.join(File.cwd!(), \"assets/tailwind.colors.json\")"]
+        }
+      ]
+
+      ConfigPatcher.patch(@config_file, configs: configs_to_add)
 
       content = File.read!(@config_file)
       assert content =~ "config :salad_ui,"
