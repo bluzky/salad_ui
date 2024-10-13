@@ -6,6 +6,8 @@ defmodule Mix.Tasks.Salad.Init do
   """
   use Mix.Task
 
+  import SaladUi.TasksHelpers
+
   alias SaladUI.Patcher
 
   @default_components_path "lib/%APP_NAME%_web/components/ui"

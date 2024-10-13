@@ -9,7 +9,9 @@ defmodule Mix.Tasks.Salad.Add do
   """
   use Mix.Task
 
-  @non_components_files ~w(patcher helper)
+  import SaladUi.TasksHelpers
+
+  @non_components_files ~w(patcher helper task_helpers)
 
   @impl true
   def run(argv) do
@@ -115,35 +117,6 @@ defmodule Mix.Tasks.Salad.Add do
       |> Path.wildcard()
       |> Enum.map(&Path.basename(&1, ".ex"))
       |> Enum.reject(&(&1 in @non_components_files))
-    end
-  end
-
-  defp get_base_path do
-    if Mix.env() == :test do
-      # In test, we do not have access to the salad_ui dependency
-      # so we need to find the components source files under the `lib/salad_ui` directory
-      Path.expand("lib/salad_ui")
-    else
-      case find_salad_ui_dep() do
-        {:ok, path} -> path |> Path.join("lib/salad_ui") |> Path.expand()
-        {:error, reason} -> raise "Failed to find SaladUI: #{reason}"
-      end
-    end
-  end
-
-  defp find_salad_ui_dep do
-    deps = Mix.Dep.load_and_cache()
-
-    case Enum.find(deps, &(&1.app == :salad_ui)) do
-      %Mix.Dep{opts: opts} = dep ->
-        if path = Keyword.get(opts, :path) do
-          {:ok, path}
-        else
-          {:ok, Path.join([File.cwd!(), "deps", Atom.to_string(dep.app)])}
-        end
-
-      nil ->
-        {:error, "SaladUI not found in dependencies"}
     end
   end
 
