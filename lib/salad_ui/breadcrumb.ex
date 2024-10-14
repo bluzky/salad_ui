@@ -97,7 +97,7 @@ defmodule SaladUI.Breadcrumb do
   Render breadcrumb link
   """
   attr :class, :string, default: nil
-  attr :rest, :global
+  attr :rest, :global, include: ~w(download href hreflang ping referrerpolicy rel target type)
   slot :inner_block, required: true
 
   def breadcrumb_link(assigns) do
