@@ -10,7 +10,7 @@ defmodule Mix.Tasks.Salad.Init do
 
   alias SaladUI.Patcher
 
-  @default_components_path "lib/%APP_NAME%_web/components/ui"
+  @default_components_path "lib/%APP_NAME%_web/components"
   @color_schemes ~w(zinc slate stone gray neutral red rose orange green blue yellow violet)
   @default_color_scheme "gray"
 
@@ -42,8 +42,8 @@ defmodule Mix.Tasks.Salad.Init do
          :ok <- patch_js(assets_path),
          :ok <- copy_tailwind_colors(assets_path),
          :ok <- patch_tailwind_config(),
-         :ok <- write_helpers_module(app_name),
-         :ok <- write_component_module(app_name),
+         :ok <- write_helpers_module(component_path, app_name),
+         :ok <- write_component_module(component_path, app_name),
          :ok <- install_node_dependencies(node_opts) do
       Mix.shell().info("Done. Now you can add components by running mix salad.add <component_name>")
     else
@@ -175,39 +175,28 @@ defmodule Mix.Tasks.Salad.Init do
     end
   end
 
-  defp write_helpers_module(app_name) do
+  defp write_helpers_module(component_path, app_name) do
     Mix.shell().info("Writing helpers module")
     source_path = Path.join(get_base_path(), "helpers.ex")
-    primary_path = Path.join([File.cwd!(), "lib/#{app_name}_web"])
-
-    target_path =
-      if File.exists?(primary_path) do
-        Path.join([primary_path, "helpers.ex"])
-      else
-        Path.join([File.cwd!(), "lib", "helpers.ex"])
-      end
+    target_path = Path.join(component_path, "helpers.ex")
 
     module_name = Macro.camelize(app_name)
 
     source_code =
-      Regex.replace(~r/defmodule SaladUI\.Helpers/, File.read!(source_path), "defmodule #{module_name}Web.Helpers")
+      Regex.replace(
+        ~r/defmodule SaladUI\.Helpers/,
+        File.read!(source_path),
+        "defmodule #{module_name}Web.ComponentHelpers"
+      )
 
     File.write!(target_path, source_code)
   end
 
-  defp write_component_module(app_name) do
+  defp write_component_module(component_path, app_name) do
     Mix.shell().info("Writing component module")
     source_path = Path.join(:code.priv_dir(:salad_ui), "templates/component.eex")
 
-    primary_path = Path.join([File.cwd!(), "lib/#{app_name}_web"])
-
-    target_path =
-      if File.exists?(primary_path) do
-        Path.join([primary_path, "component.ex"])
-      else
-        Path.join([File.cwd!(), "lib", "component.ex"])
-      end
-
+    target_path = Path.join(component_path, "component.ex")
     module_name = Macro.camelize(app_name)
     source_code = EEx.eval_file(source_path, module_name: module_name, assigns: %{module_name: module_name})
 
