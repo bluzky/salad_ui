@@ -8,19 +8,26 @@ defmodule SaladUI.Patcher.TailwindPatcher do
   @plugins ["@tailwindcss/typography", "tailwindcss-animate"]
   @tailwind_colors "./tailwind.colors.json"
 
-  def patch(tailwind_config_path) do
+  def patch(tailwind_config_path, opts \\ []) do
     new_content =
       tailwind_config_path
       |> File.read!()
-      |> update_content()
+      |> update_content(opts)
 
     File.write!(tailwind_config_path, new_content)
   end
 
-  defp update_content(content) do
-    content
-    |> add_plugins()
-    |> add_theme()
+  defp update_content(content, opts) do
+    content =
+      content
+      |> add_plugins()
+      |> add_theme()
+
+    if opts[:as_lib] == true do
+      add_content_watch(content)
+    else
+      content
+    end
   end
 
   defp add_plugins(content) do
@@ -121,5 +128,11 @@ defmodule SaladUI.Patcher.TailwindPatcher do
       content,
       "\\1\n      colors: require(\"#{@tailwind_colors}\"),"
     )
+  end
+
+  # add content directory to SaladUI library so Tailwind will extract css from lib too
+  defp add_content_watch(content) do
+    content_pattern = "\"../deps/salad_ui/lib/**/*.ex\""
+    Regex.replace(~r/content:\s*\[/, content, "content: [\n#{content_pattern},")
   end
 end
