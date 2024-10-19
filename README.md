@@ -15,139 +15,48 @@ This library is my attemp to port [shadcn ui](https://ui.shadcn.com/) to Phoenix
 
 ## Installation
 
-1. Adding `salad_ui` to your list of dependencies in `mix.exs`:
+1. Using `salad_ui` as part of your project:
+
+- Adding `salad_ui` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:salad_ui, "~> 0.7.0"}
+    {:salad_ui, "~> 0.9.0", only: [:dev]}
   ]
 end
 ```
 
-2. Add custom color
-- Goto [https://ui.shadcn.com/themes](https://ui.shadcn.com/themes).
-- Choose a color → Copy code → Paste to your `app.css` file
-- Create new file `tailwind.colors.json` in your assets directory and paste following content
-```json
-{
-  "accent": {
-    "DEFAULT": "hsl(var(--accent))",
-    "foreground": "hsl(var(--accent-foreground))"
-  },
-  "background": "hsl(var(--background))",
-  "border": "hsl(var(--border))",
-  "card": {
-    "DEFAULT": "hsl(var(--card))",
-    "foreground": "hsl(var(--card-foreground))"
-  },
-  "destructive": {
-    "DEFAULT": "hsl(var(--destructive))",
-    "foreground": "hsl(var(--destructive-foreground))"
-  },
-  "foreground": "hsl(var(--foreground))",
-  "input": "hsl(var(--input))",
-  "muted": {
-    "DEFAULT": "hsl(var(--muted))",
-    "foreground": "hsl(var(--muted-foreground))"
-  },
-  "popover": {
-    "DEFAULT": "hsl(var(--popover))",
-    "foreground": "hsl(var(--popover-foreground))"
-  },
-  "primary": {
-    "DEFAULT": "hsl(var(--primary))",
-    "foreground": "hsl(var(--primary-foreground))"
-  },
-  "ring": "hsl(var(--ring))",
-  "secondary": {
-    "DEFAULT": "hsl(var(--secondary))",
-    "foreground": "hsl(var(--secondary-foreground))"
-  }
-}
+- Init Salad UI in your project
+```
+#> cd your_project
+#> mix salad.init
+
+# install some components
+#> mix salad.add label button
 ```
 
-3. Configure tailwind
-- Tell tailwind to extract class from `SaladUI`
-- Add custom color
-- Add tailwind plugin
-```js
-module.exports = {
-  content: [
-    "../deps/salad_ui/lib/**/*.ex",
-    ],
-  theme: {
-    extend: {
-      colors: require("./tailwind.colors.json"),
-    },
-  },
-  plugins: [
-    require("@tailwindcss/typography"),
-    require("tailwindcss-animate"),
-    ...
+2. Using `salad_ui` as a library:
+
+- Adding `salad_ui` to your list of dependencies in `mix.exs`:
+
+```elixir
+def deps do
+  [
+    {:salad_ui, "~> 0.9.0", only: [:dev]}
   ]
-}
+end
 ```
 
-- Install `tailwindcss-animate`
+- Init Salad UI in your project with option `--as-lib`
 ```
-cd assets
-npm i -D tailwindcss-animate
-# or yarn
-yarn add -D tailwindcss-animate
-```
-
-4. Configure `tails`
-SaladUI use `tails` to properly merge Tailwindcss classes
-
-```elixir
-# config/config.exs
-
-config :tails, colors_file: Path.join(File.cwd!(), "assets/tailwind.colors.json")
+#> cd your_project
+#> mix salad.init --as-lib
 ```
 
 
-5. **Add javascript to handle event from server**
-This add ability to execute client action from server. It's similar to `JS.exec/2`. Thanks to [this post](https://fly.io/phoenix-files/server-triggered-js/) from fly.io.
-
-Add this code snippet to the end of `app.js`
-
-```js
-window.addEventListener("phx:js-exec", ({ detail }) => {
-  document.querySelectorAll(detail.to).forEach((el) => {
-    liveSocket.execJS(el, el.getAttribute(detail.attr));
-  });
-});
-```
-
-Then from server side, you can close an opening sheet like this.
-```elixir
-  @impl true
-  def handle_event("update", params, socket) do
-    # your logic
-    {:noreply, push_event(socket, "js-exec", %{to: "#my-sheet", attr: "phx-hide-sheet"})}
-  end
-```
-
-6. Some tweaks
-Thanks to @ahacking
-
-- To make dark and light mode work correctly, add following to your `app.css`
-```css
-body {
-    @apply bg-background text-foreground;
-}
-```
-
-- In case border color not working correctly, add following to your `app.css`
-```css
-@layer base {
-    * {
-        @apply border-border !important;
-    }
-```
-
-7. Config custom error translate function
+## More configuration
+1. Custom error translate function
 
 ```elixir
 config :salad_ui, :error_translator_function, {MyAppWeb.CoreComponents, :translate_error}
@@ -226,4 +135,3 @@ This project could not be available without these awesome works:
 - `tails` for merging tailwind class
 - `shadcn/ui` which this project is inspired from
 - `Phoenix Framework` of course
-
