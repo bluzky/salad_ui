@@ -16,7 +16,7 @@ defmodule SaladUi.TasksHelpers do
     if Mix.env() == :test, do: test_path(), else: development_path()
   end
 
-  defp test_path, do: Path.expand("lib/salad_ui")
+  defp test_path, do: __DIR__
 
   defp development_path do
     case find_salad_ui_dep() do

@@ -4,7 +4,7 @@ defmodule Mix.Tasks.Salad.InitTest do
   alias Mix.Tasks.Salad.Init
 
   @tmp_dir "test_init"
-  @default_components_path Path.join([@tmp_dir, "lib/test_app_web/components/ui"])
+  @default_components_path Path.join(["lib/test_app_web/components"])
 
   setup do
     # The shell asks for a path to install components.
@@ -22,7 +22,7 @@ defmodule Mix.Tasks.Salad.InitTest do
   test "run/1 initializes SaladUI" do
     in_tmp(@tmp_dir, fn ->
       # Create a mock mix.exs file
-      File.write!("mix.exs", "defmodule TestApp.MixProject do use Mix.Project\nend")
+      File.write!("mix.exs", "defmodule SaladUI.MixProject do use Mix.Project\nend")
 
       File.mkdir_p!("config")
       File.mkdir_p!("assets/css")
@@ -35,12 +35,6 @@ defmodule Mix.Tasks.Salad.InitTest do
       File.write!("assets/js/app.js", "// Original app.js content\n")
       File.write!("assets/tailwind.config.js", "module.exports = {\n  // Original tailwind config\n}\n")
 
-      # Both helpers.ex and component.ex are created
-      # in a path built using the app name.
-      # In test, the app name is "salad_ui", so
-      # we need the path `salad_ui_web` and search those file in that path
-      File.mkdir_p!("lib/salad_ui_web")
-
       # Mock the _build directory structure
       priv_dir = "_build/test/lib/salad_ui/priv/static/assets"
       File.mkdir_p!(priv_dir)
@@ -49,12 +43,7 @@ defmodule Mix.Tasks.Salad.InitTest do
       File.mkdir_p!(Path.join(priv_dir, "colors"))
       File.write!(Path.join([priv_dir, "colors", "gray.css"]), "/* gray theme */")
 
-      # Mock a helper source file
-      File.mkdir_p!("lib/salad_ui")
-      File.write!("lib/salad_ui/helpers.ex", "defmodule TestAppWeb.Helpers do")
-
       Init.run([])
-
       # Allow some time for file operations to complete
       :timer.sleep(100)
 
@@ -72,8 +61,8 @@ defmodule Mix.Tasks.Salad.InitTest do
       assert File.read!("assets/js/app.js") =~ "// server events"
       assert File.exists?("assets/tailwind.colors.json")
       assert File.read!("assets/tailwind.config.js") =~ "require(\"./tailwind.colors.json\")"
-      assert File.read!("lib/salad_ui_web/helpers.ex") =~ "defmodule TestAppWeb.Helpers do"
-      assert File.read!("lib/salad_ui_web/component.ex") =~ "defmodule SaladUiWeb.Component do"
+      assert File.read!("lib/test_app_web/components/helpers.ex") =~ "defmodule SaladUiWeb.ComponentHelpers do"
+      assert File.read!("lib/test_app_web/components/component.ex") =~ "defmodule SaladUiWeb.Component do"
     end)
   end
 

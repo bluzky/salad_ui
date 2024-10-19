@@ -34,8 +34,8 @@ defmodule SaladUI.Patcher do
 
   - tailwind_config_path: Path to the Tailwind configuration file
   """
-  def patch_tailwind_config(tailwind_config_path) do
-    TailwindPatcher.patch(tailwind_config_path)
+  def patch_tailwind_config(tailwind_config_path, opts \\ []) do
+    TailwindPatcher.patch(tailwind_config_path, opts)
   end
 
   @doc """

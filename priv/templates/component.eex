@@ -15,7 +15,7 @@ defmodule <%= @module_name %>Web.Component do
     quote do
       use Phoenix.Component
 
-      import <%= @module_name %>Web.Helpers
+      import <%= @module_name %>Web.ComponentHelpers
       import Tails, only: [classes: 1]
 
       alias Phoenix.LiveView.JS
