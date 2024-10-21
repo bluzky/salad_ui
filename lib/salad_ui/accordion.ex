@@ -33,16 +33,14 @@ defmodule SaladUI.Accordion do
   """
   use SaladUI, :component
 
-  attr :name, :string, required: true
   attr :class, :string, default: nil
   slot :inner_block, required: true
 
   def accordion(assigns) do
-    assigns = assign(assigns, :builder, %{name: assigns[:name]})
 
     ~H"""
     <div class={classes(["", @class])}>
-      <%= render_slot(@inner_block, @builder) %>
+      <%= render_slot(@inner_block) %>
     </div>
     """
   end
