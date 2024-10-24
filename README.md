@@ -87,7 +87,7 @@ To run the failing tests only, just run `mix test.watch --stale`.
 
 ## List of components
 
-- [ ] Accordion
+- ✅ Accordion
 - ✅ Alert
 - [ ] Alert Dialog
 - ✅ Avatar
