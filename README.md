@@ -22,7 +22,7 @@ This library is my attemp to port [shadcn ui](https://ui.shadcn.com/) to Phoenix
 ```elixir
 def deps do
   [
-    {:salad_ui, "~> 0.9.0", only: [:dev]}
+    {:salad_ui, "~> 0.10.0", only: [:dev]}
   ]
 end
 ```
