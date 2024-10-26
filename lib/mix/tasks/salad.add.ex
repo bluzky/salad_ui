@@ -65,8 +65,9 @@ defmodule Mix.Tasks.Salad.Add do
          {:ok, source_content} <- File.read(source_file),
          target_path = build_target_file_path(file_name),
          :ok <- File.mkdir_p(Path.dirname(target_path)),
-         modified_content = insert_target_module_name(source_content),
-         :ok <- File.write(target_path, modified_content) do
+         modified_content = insert_target_module_name(source_content, file_name),
+         :ok <- File.write(target_path, modified_content),
+         :ok <- maybe_perform_additional_setup(file_name) do
       Mix.shell().info("#{file_name} component installed successfully ✅")
     else
       {:error, :source_not_found} ->
@@ -86,12 +87,51 @@ defmodule Mix.Tasks.Salad.Add do
     Path.join([component_dir(), "#{file_name}.ex"])
   end
 
-  defp insert_target_module_name(source) do
+  defp insert_target_module_name(source, file_name) do
     module_name = get_module_name()
 
     source
     |> String.replace(~r/defmodule SaladUI\.([a-zA-Z0-9_]+)/, "defmodule #{module_name}.Component.\\1")
     |> String.replace(~r/use SaladUI,\s*:component/, "use #{module_name}.Component")
+    |> maybe_apply_additional_insertions(module_name, file_name)
+  end
+
+  defp maybe_apply_additional_insertions(source, module_name, "chart") do
+    source
+    |> String.replace("use Phoenix.LiveComponent", "use #{module_name}, :live_component")
+    |> String.replace("use Phoenix.LiveView", "use #{module_name}, :live_view")
+    |> String.replace("SaladUI.Chart", "#{module_name}.Component.Chart")
+  end
+
+  defp maybe_apply_additional_insertions(source, _, _), do: source
+
+  defp maybe_perform_additional_setup("chart") do
+    with :ok <- copy_chart_hook(),
+         :ok <- install_chart_dependencies() do
+      Mix.shell().info("\nChartHook installed successfully")
+      Mix.shell().info("Do not forget to import it into your app.js file and pass it to your live socket")
+      :ok
+    else
+      {:error, _} = error -> error
+    end
+  end
+
+  defp maybe_perform_additional_setup(_), do: :ok
+
+  defp install_chart_dependencies do
+    Mix.shell().cmd("npm install chart.js --prefix assets")
+    :ok
+  end
+
+  defp copy_chart_hook do
+    source_path = Path.join(:code.priv_dir(:salad_ui), "static/assets/ChartHook.js")
+    target_path = Path.join(File.cwd!(), "assets/js/ChartHook.js")
+
+    unless File.exists?(target_path) do
+      File.cp!(source_path, target_path)
+    end
+
+    :ok
   end
 
   defp get_module_name do
