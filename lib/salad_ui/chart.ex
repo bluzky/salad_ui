@@ -65,7 +65,7 @@ defmodule SaladUI.Chart do
 
     def render(assigns) do
       ~H\"\"\"
-        <.live_componet
+        <.live_component
           module={MyChart}
           id="my-chart"
           chart_config={@chart_config}
