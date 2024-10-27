@@ -22,7 +22,7 @@ This library is my attemp to port [shadcn ui](https://ui.shadcn.com/) to Phoenix
 ```elixir
 def deps do
   [
-    {:salad_ui, "~> 0.10.0", only: [:dev]}
+    {:salad_ui, "~> 0.11.0", only: [:dev]}
   ]
 end
 ```
@@ -43,7 +43,7 @@ end
 ```elixir
 def deps do
   [
-    {:salad_ui, "~> 0.9.0", only: [:dev]}
+    {:salad_ui, "~> 0.11.0", only: [:dev]}
   ]
 end
 ```
@@ -110,7 +110,7 @@ To run the failing tests only, just run `mix test.watch --stale`.
 - [ ] Input OTP
 - ✅ Label
 - ✅ Pagination
-- [ ] Popover
+- ✅ Popover
 - ✅ Progress
 - ✅ Radio Group
 - ✅ Scroll Area
