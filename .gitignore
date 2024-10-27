@@ -30,3 +30,5 @@ salad_ui-*.tar
 node_modules/
 
 /.vscode/
+/.ctags.d/
+.tags
