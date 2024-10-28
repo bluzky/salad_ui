@@ -4,7 +4,7 @@ defmodule <%= @module_name %>Web.Component do
 
   This can be used in your components as:
 
-    use <%= @module_name %>Web
+    use <%= @module_name %>Web.Component
 
   Do NOT define functions inside the quoted expressions
   below. Instead, define additional modules and import
