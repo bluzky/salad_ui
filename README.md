@@ -1,5 +1,6 @@
 # SaladUI
 
+An attemp to bring [shadcn ui](https://ui.shadcn.com/) components to Phoenix Liveview.
 
 ![Tests](https://github.com/bluzky/salad_ui/actions/workflows/tests.yml/badge.svg)
 [![Module Version](https://img.shields.io/hexpm/v/salad_ui.svg)](https://hex.pm/packages/salad_ui)
@@ -7,11 +8,9 @@
 [![Total Download](https://img.shields.io/hexpm/dt/salad_ui.svg)](https://hex.pm/packages/salad_ui)
 [![Last Updated](https://img.shields.io/github/last-commit/bluzky/salad_ui.svg)](https://github.com/bluzky/salad_ui/commits/main)
 
-This library is my attemp to port [shadcn ui](https://ui.shadcn.com/) to Phoenix Liveview Component.
-
 ## [Demo at https://salad-storybook.fly.dev](https://salad-storybook.fly.dev/)
 
-####  In Construction: Salad UI is in its early stages. Expect breaking changes in minor releases until 1.0 is ready! 🚀
+<a href='https://ko-fi.com/F1F1CEZ91' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi2.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 ## Installation
 
