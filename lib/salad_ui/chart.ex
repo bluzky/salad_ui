@@ -1,4 +1,4 @@
-defmodule SaladUI.Chart do
+defmodule SaladUI.LiveChart do
   @moduledoc """
   The entrypoint for creating a chart component.
 
@@ -120,23 +120,10 @@ defmodule SaladUI.Chart do
   All data points that do not match any datasets will be ignored.
   """
   use SaladUI, :component
+  use Phoenix.LiveComponent
 
-  defmacro __using__(_) do
-    quote do
-      use Phoenix.LiveComponent
-
-      import SaladUI.Chart
-
-      unquote(update_callback())
-    end
-  end
-
-  attr :id, :string, required: true
-  attr :name, :string, doc: "Name of the chart for screen readers", default: ""
-  attr :chart_config, :map
-  attr :chart_data, :map
-
-  def chart(assigns) do
+  @impl true
+  def render(assigns) do
     ~H"""
     <canvas
       id={@id}
@@ -149,17 +136,34 @@ defmodule SaladUI.Chart do
     """
   end
 
-  defp update_callback do
-    quote do
-      @impl true
-      def update(%{id: id, chart_data: chart_data} = assigns, socket) do
-        socket =
-          socket
-          |> assign(assigns)
-          |> push_event("update-chart-#{id}", %{data: chart_data})
+  @impl true
+  def update(%{id: id, chart_data: chart_data} = assigns, socket) do
+    socket =
+      socket
+      |> assign(assigns)
+      |> push_event("update-chart-#{id}", %{data: chart_data})
 
-        {:ok, socket}
-      end
-    end
+    {:ok, socket}
+  end
+end
+
+defmodule SaladUI.Chart do
+  use SaladUI, :component
+
+  attr :id, :string, default: nil
+  attr :name, :string, default: nil
+  attr :chart_config, :map, required: true
+  attr :chart_data, :map, required: true
+
+  def chart(assigns) do
+    ~H"""
+    <.live_component
+      module={SaladUI.LiveChart}
+      id={@id}
+      name={@name}
+      chart_config={@chart_config}
+      chart_data={@chart_data}
+    />
+    """
   end
 end
