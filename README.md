@@ -89,15 +89,16 @@ To run the failing tests only, just run `mix test.watch --stale`.
 
 - ✅ Accordion
 - ✅ Alert
-- [ ] Alert Dialog
+- 🚧 Alert Dialog
 - ✅ Avatar
 - ✅ Badge
 - ✅ Breadcrumb
 - ✅ Button
 - ✅ Card
 - [ ] Carousel
+- ✅ Chart
 - ✅ Checkbox
-- [ ] Collapsible
+- 🚧 Collapsible
 - [ ] Combobox
 - [ ] Command
 - [ ] Context Menu
