@@ -97,10 +97,7 @@ defmodule Mix.Tasks.Salad.Add do
   end
 
   defp maybe_apply_additional_insertions(source, module_name, "chart") do
-    source
-    |> String.replace("use Phoenix.LiveComponent", "use #{module_name}, :live_component")
-    |> String.replace("use Phoenix.LiveView", "use #{module_name}, :live_view")
-    |> String.replace("SaladUI.Chart", "#{module_name}.Component.Chart")
+    String.replace(source, "SaladUI.LiveChart", "#{module_name}.Component.LiveChart")
   end
 
   defp maybe_apply_additional_insertions(source, _, _), do: source
