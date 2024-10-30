@@ -21,7 +21,8 @@ An attemp to bring [shadcn ui](https://ui.shadcn.com/) components to Phoenix Liv
 ```elixir
 def deps do
   [
-    {:salad_ui, "~> 0.11.0", only: [:dev]}
+    {:salad_ui, "~> 0.11.0", only: [:dev]},
+    {:tails, "~> 0.1"}
   ]
 end
 ```
