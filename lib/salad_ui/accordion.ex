@@ -58,11 +58,13 @@ defmodule SaladUI.Accordion do
 
   attr :group, :string, default: nil
   attr :class, :string, default: nil
+  attr :open, :boolean, default: false
   slot :inner_block, required: true
+
 
   def accordion_trigger(assigns) do
     ~H"""
-    <details name={@group} class="group/accordion peer/accordion">
+    <details name={@group} class="group/accordion peer/accordion" open={@open}>
       <summary class={
         classes([
           "flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline",
