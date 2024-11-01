@@ -137,7 +137,7 @@ defmodule SaladUI.AlertDialog do
 
   def alert_dialog_title(assigns) do
     ~H"""
-    <div
+    <h2
       class={
         classes([
           "text-lg font-semibold",
@@ -147,7 +147,7 @@ defmodule SaladUI.AlertDialog do
       {@rest}
     >
       <%= render_slot(@inner_block) %>
-    </div>
+    </h2>
     """
   end
 
@@ -160,7 +160,7 @@ defmodule SaladUI.AlertDialog do
 
   def alert_dialog_description(assigns) do
     ~H"""
-    <div
+    <p
       class={
         classes([
           "text-sm text-muted-foreground",
@@ -170,7 +170,7 @@ defmodule SaladUI.AlertDialog do
       {@rest}
     >
       <%= render_slot(@inner_block) %>
-    </div>
+    </p>
     """
   end
 
