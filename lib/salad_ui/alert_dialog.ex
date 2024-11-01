@@ -250,17 +250,23 @@ defmodule SaladUI.AlertDialog do
     """
   end
 
-  defp show_alert_dialog(%{id: id}) do
-    {"data-state", "open"}
-    |> JS.set_attribute(to: "##{id} .alert-dialog-content")
+  @doc """
+  Show alert dialog
+  """
+  def show_alert_dialog( js \\ %JS{}, %{id: id} = _builder) do
+    js
+    |> JS.set_attribute(    {"data-state", "open"}, to: "##{id} .alert-dialog-content")
     |> JS.show(to: "##{id} .alert-dialog-content", transition: {"_", "_", "_"}, time: 150)
     |> JS.add_class("overflow-hidden", to: "body")
     |> JS.focus_first(to: "##{id} .alert-dialog-content")
   end
 
-  defp hide_alert_dialog(%{id: id}) do
-    {"data-state", "closed"}
-    |> JS.set_attribute(to: "##{id} .alert-dialog-content")
+  @doc """
+  Hide alert dialog
+  """
+  def hide_alert_dialog(js \\ %JS{}, %{id: id} = _builder) do
+    js
+    |> JS.set_attribute(    {"data-state", "closed"}, to: "##{id} .alert-dialog-content")
     |> JS.hide(to: "##{id} .alert-dialog-content", transition: {"_", "_", "_"}, time: 130)
     |> JS.remove_class("overflow-hidden", to: "body")
     |> JS.pop_focus()
