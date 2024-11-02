@@ -14,11 +14,13 @@
 </div>
 <br></br>
 
-![Tests](https://github.com/bluzky/salad_ui/actions/workflows/tests.yml/badge.svg)
-[![Module Version](https://img.shields.io/hexpm/v/salad_ui.svg)](https://hex.pm/packages/salad_ui)
-[![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/salad_ui/)
-[![Total Download](https://img.shields.io/hexpm/dt/salad_ui.svg)](https://hex.pm/packages/salad_ui)
-[![Last Updated](https://img.shields.io/github/last-commit/bluzky/salad_ui.svg)](https://github.com/bluzky/salad_ui/commits/main)
+<div align="center">
+<img src="https://github.com/bluzky/salad_ui/actions/workflows/tests.yml/badge.svg" alt="Tests">
+<a href="https://hex.pm/packages/salad_ui"><img src="https://img.shields.io/hexpm/v/salad_ui.svg" alt="Module Version"></a>
+<a href="https://hexdocs.pm/salad_ui/"><img src="https://img.shields.io/badge/hex-docs-lightgreen.svg" alt="Hex Docs"></a>
+<a href="https://hex.pm/packages/salad_ui"><img src="https://img.shields.io/hexpm/dt/salad_ui.svg" alt="Total Download"></a>
+<a href="https://github.com/bluzky/salad_ui/commits/main"><img src="https://img.shields.io/github/last-commit/bluzky/salad_ui.svg" alt="Last Updated"></a>
+</div>
 
 ## [Demo storybook](https://salad-storybook.fly.dev/)
 
@@ -154,4 +156,3 @@ This project could not be available without these awesome works:
 - `tails` for merging tailwind class
 - `shadcn/ui` which this project is inspired from
 - `Phoenix Framework` of course
-
