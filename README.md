@@ -1,7 +1,6 @@
-
 <p align="center">
     <a href="https://salad-storybook.fly.dev/" alt="SaladUI Logo">
-    <img src="https://github.com/bluzky/salad_ui/blob/main/docs/SaladUI_logo.png?raw=true" height="120"/></a>
+    <img src="https://github.com/bluzky/salad_ui/blob/main/docs/images/SaladUI_logo.png?raw=true" height="120"/></a>
 </p>
 <h4 align="center">
     A collection of Live View components inspired by shadcn
@@ -10,7 +9,7 @@
 <div align="center">
     <a href="https://salad-storybook.fly.dev/">Demo</a> |
     <a href="https://hexdocs.pm/salad_ui/readme.html">Documentation</a> |
-    <a href="https://ko-fi.com/bluzky">Sponsor</a>
+    <a href="https://ko-fi.com/bluzky">Support project</a>
 </div>
 <br></br>
 
