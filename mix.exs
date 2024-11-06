@@ -4,7 +4,7 @@ defmodule SaladUI.MixProject do
   def project do
     [
       app: :salad_ui,
-      version: "0.12.0",
+      version: "0.13.0",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
