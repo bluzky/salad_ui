@@ -1,5 +1,6 @@
 defmodule SaladUI.ChartTest do
   use ComponentCase
+
   alias SaladUI.LiveChart
 
   @sample_config %{
