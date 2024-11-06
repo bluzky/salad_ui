@@ -29,6 +29,9 @@
 
 1. **Using `salad_ui` as part of your project:**
 
+> This way you can install only components that you want to use or you want to edit SaladUI's component source code to fit your need.
+> If you just want to use SaladUI's components, see **Using as library** below.
+
 - Adding `salad_ui` to your list of dependencies in `mix.exs`:
 
 ```elixir
@@ -67,6 +70,20 @@ end
 #> mix salad.init --as-lib
 ```
 
+- Using in your project
+```
+defmodule MyModule do
+    # import any component you need
+    import SaladUI.Button
+
+    def render(_) do
+      ~H"""
+      <.button>Click me</.button>
+      """
+    end
+end
+```
+
 
 ## More configuration
 1. Custom error translate function
@@ -102,7 +119,7 @@ To run the failing tests only, just run `mix test.watch --stale`.
 
 - ✅ Accordion
 - ✅ Alert
-- 🚧 Alert Dialog
+- ✅ Alert Dialog
 - ✅ Avatar
 - ✅ Badge
 - ✅ Breadcrumb
@@ -111,7 +128,7 @@ To run the failing tests only, just run `mix test.watch --stale`.
 - [ ] Carousel
 - ✅ Chart
 - ✅ Checkbox
-- 🚧 Collapsible
+- ✅ Collapsible
 - [ ] Combobox
 - [ ] Command
 - [ ] Context Menu
