@@ -37,7 +37,6 @@ defmodule SaladUI.Accordion do
   slot :inner_block, required: true
 
   def accordion(assigns) do
-
     ~H"""
     <div class={classes(["", @class])}>
       <%= render_slot(@inner_block) %>
@@ -60,7 +59,6 @@ defmodule SaladUI.Accordion do
   attr :class, :string, default: nil
   attr :open, :boolean, default: false
   slot :inner_block, required: true
-
 
   def accordion_trigger(assigns) do
     ~H"""

@@ -1,8 +1,8 @@
 defmodule SaladUI.CollapsibleTest do
   use ExUnit.Case
   use Phoenix.Component
-  import Phoenix.LiveViewTest
 
+  import Phoenix.LiveViewTest
   import SaladUI.Collapsible
 
   describe "collapsible/1" do
@@ -86,6 +86,7 @@ defmodule SaladUI.CollapsibleTest do
       for class <- ~w(collapsible-content hidden transition-all duration-200 ease-in-out) do
         assert html =~ class
       end
+
       assert html =~ "Hidden content"
     end
 
@@ -122,13 +123,16 @@ defmodule SaladUI.CollapsibleTest do
       js = toggle_collapsible(%Phoenix.LiveView.JS{}, %{id: "test-collapsible"})
 
       assert js.ops == [
-        ["toggle", %{
-          to: "#test-collapsible .collapsible-content",
-ins: [["ease-out", "duration-200"], ["opacity-0"], ["opacity-100"]],
-                  outs: [["ease-out"], ["opacity-100"], ["opacity-70"]],
-          time: 200
-        }]
-      ]
+               [
+                 "toggle",
+                 %{
+                   to: "#test-collapsible .collapsible-content",
+                   ins: [["ease-out", "duration-200"], ["opacity-0"], ["opacity-100"]],
+                   outs: [["ease-out"], ["opacity-100"], ["opacity-70"]],
+                   time: 200
+                 }
+               ]
+             ]
     end
   end
 
@@ -137,7 +141,7 @@ ins: [["ease-out", "duration-200"], ["opacity-0"], ["opacity-100"]],
 
     html =
       rendered_to_string(~H"""
-      <.collapsible id="test-collapsible" :let={builder} open={false}>
+      <.collapsible :let={builder} id="test-collapsible" open={false}>
         <.collapsible_trigger builder={builder}>
           <button>Toggle</button>
         </.collapsible_trigger>

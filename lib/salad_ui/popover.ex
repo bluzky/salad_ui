@@ -43,8 +43,11 @@ defmodule SaladUI.Popover do
   Render popover trigger
   """
   attr :class, :string, default: nil
-  attr :target, :string, required: true,
-       doc: "The id of target element to show popover"
+
+  attr :target, :string,
+    required: true,
+    doc: "The id of target element to show popover"
+
   attr :rest, :global
   slot :inner_block, required: true
 
@@ -77,9 +80,15 @@ defmodule SaladUI.Popover do
 
   def popover_content(assigns) do
     assigns =
-      assign(assigns, :variant_class, side_variant(assigns.side, assigns.align))
-   |> assign_new(:state, fn -> if assigns[:open] in ["true", true] do "open" else "closed" end  end)
-
+      assigns
+      |> assign(:variant_class, side_variant(assigns.side, assigns.align))
+      |> assign_new(:state, fn ->
+        if assigns[:open] in ["true", true] do
+          "open"
+        else
+          "closed"
+        end
+      end)
 
     ~H"""
     <div
@@ -105,8 +114,7 @@ defmodule SaladUI.Popover do
     JS.toggle_attribute({"data-state", "open", "closed"}, to: "##{id}")
   end
 
-  defp hide() do
+  defp hide do
     JS.set_attribute({"data-state", "closed"})
   end
-
 end
