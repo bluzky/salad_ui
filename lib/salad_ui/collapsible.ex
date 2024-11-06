@@ -53,15 +53,7 @@ defmodule SaladUI.Collapsible do
 
   def collapsible_trigger(assigns) do
     ~H"""
-    <div
-      phx-click={JS.exec("phx-toggle-collapsible", to: "#" <> @builder.id)}
-      class={
-        classes([
-          "",
-          @class
-        ])
-      }
-    >
+    <div phx-click={JS.exec("phx-toggle-collapsible", to: "#" <> @builder.id)} class={@class}>
       <%= render_slot(@inner_block) %>
     </div>
     """
