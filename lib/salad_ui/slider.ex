@@ -29,8 +29,8 @@ defmodule SaladUI.Slider do
 
     assigns =
       assigns
-      |> Map.put(:value, normalize_integer(assigns[:value]))
-      |> Map.put(:min, normalize_integer(assigns[:min]))
+      |> Map.put(:value, normalize_integer(assigns[:value] || 0))
+      |> Map.put(:min, normalize_integer(assigns[:min] || 0))
       |> Map.put(:max, normalize_integer(assigns[:max]))
       |> Map.put(:step, normalize_integer(assigns[:step]))
 

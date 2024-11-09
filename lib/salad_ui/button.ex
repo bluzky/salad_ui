@@ -11,7 +11,7 @@ defmodule SaladUI.Button do
       <.button phx-click="go" class="ml-2">Send!</.button>
   """
   attr :type, :string, default: nil
-  attr :class, :string, default: nil
+  attr :class, :any, default: nil
 
   attr :variant, :string,
     values: ~w(default secondary destructive outline ghost link),

@@ -4,6 +4,7 @@ defmodule SaladUI.Avatar do
 
   attr :class, :string, default: nil
   attr :rest, :global
+  slot :inner_block, required: false
 
   def avatar(assigns) do
     ~H"""
@@ -17,7 +18,7 @@ defmodule SaladUI.Avatar do
   end
 
   attr :class, :string, default: nil
-  attr :rest, :global
+  attr :rest, :global, include: ~w(alt src)
 
   def avatar_image(assigns) do
     ~H"""
