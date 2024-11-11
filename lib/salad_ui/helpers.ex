@@ -123,6 +123,61 @@ defmodule SaladUI.Helpers do
     "#{shared_classes} #{variation_classes}"
   end
 
+  @doc """
+  Common function for building variant
+
+  ## Examples
+
+  ```elixir
+  config =
+  %{
+    variants: %{
+      variant: %{
+        default: "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+        outline:
+          "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
+      },
+      size: %{
+        default: "h-8 text-sm",
+        sm: "h-7 text-xs",
+        lg: "h-12 text-sm group-data-[collapsible=icon]:!p-0",
+      },
+    },
+    default_variants: %{
+      variant: "default",
+      size: "default",
+    },
+  }
+
+  class_input = %{variant: "outline", size: "lg"}
+  variant_class(config, class_input)
+  ```
+
+  """
+  def variant_class(config, class_input) do
+    variants = Map.get(config, :variants, %{})
+    default_variants = Map.get(config, :default_variants, %{})
+
+    variants
+    |> Map.keys()
+    |> Enum.map(fn variant_key ->
+      # Get the variant value from input or use default
+      variant_value = Map.get(class_input, variant_key) ||
+                     Map.get(default_variants, variant_key)
+
+      # Get the variant options map
+      variant_options = Map.get(variants, variant_key, %{})
+
+      # Get the CSS classes for this variant value
+      Map.get(variant_options, String.to_existing_atom(variant_value))
+    end)
+    |> Enum.reject(&is_nil/1)
+    |> Enum.join(" ")
+  end
+
+
+
+
   # Translate error message
   # borrowed from https://github.com/petalframework/petal_components/blob/main/lib/petal_components/field.ex#L414
   defp translate_error({msg, opts}) do
