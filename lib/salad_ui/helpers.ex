@@ -162,8 +162,9 @@ defmodule SaladUI.Helpers do
     |> Map.keys()
     |> Enum.map(fn variant_key ->
       # Get the variant value from input or use default
-      variant_value = Map.get(class_input, variant_key) ||
-                     Map.get(default_variants, variant_key)
+      variant_value =
+        Map.get(class_input, variant_key) ||
+          Map.get(default_variants, variant_key)
 
       # Get the variant options map
       variant_options = Map.get(variants, variant_key, %{})
@@ -175,8 +176,26 @@ defmodule SaladUI.Helpers do
     |> Enum.join(" ")
   end
 
+  @doc """
+  This function build css style string from map of css style
 
+  ## Examples
 
+  ```elixir
+  css_style = %{
+    "background-color": "red",
+    "color": "white",
+    "font-size": "16px",
+  }
+
+  style(css_style)
+
+  # => "background-color: red; color: white; font-size: 16px;"
+  ```
+  """
+  def style(css_map) do
+    Enum.map_join(css_map, "; ", fn {k, v} -> "#{k}: #{v}" end) <> ";"
+  end
 
   # Translate error message
   # borrowed from https://github.com/petalframework/petal_components/blob/main/lib/petal_components/field.ex#L414

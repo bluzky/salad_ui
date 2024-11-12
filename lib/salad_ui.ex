@@ -49,6 +49,15 @@ defmodule SaladUI do
       import SaladUI.Tabs
       import SaladUI.Textarea
       import SaladUI.Tooltip
+      import SaladUI.Collapsible
+      import SaladUI.Chart
+      import SaladUI.AlertDialog
+      import SaladUI.Popover
+      import SaladUI.Accordion
+      import SaladUI.RadioGroup
+      import SaladUI.ToggleGroup
+      import SaladUI.Toggle
+      import SaladUI.Sidebar
     end
   end
 end

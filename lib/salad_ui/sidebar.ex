@@ -6,11 +6,43 @@ defmodule SaladUI.Sidebar do
   import SaladUI.Input
   import SaladUI.Separator
   import SaladUI.Sheet
+  import SaladUI.Skeleton
   import SaladUI.Tooltip
 
   @sidebar_width "16rem"
   @sidebar_width_mobile "18rem"
   @sidebar_width_icon "3rem"
+
+
+    @doc """
+  Render
+    """
+  attr(:class, :string, default: nil)
+  attr(:rest, :global)
+  slot(:inner_block, required: true)
+
+  def sidebar_provider(assigns) do
+    assigns = assign(assigns, %{sidebar_width: @sidebar_width, sidebar_width_icon: @sidebar_width_icon})
+    ~H"""
+    <div
+      style={
+              style(%{
+                "--sidebar-width": @sidebar_width,
+                "--sidebar-width-icon": @sidebar_width_icon
+              })
+            }
+      class={
+        classes([
+"group/sidebar-wrapper flex min-h-svh w-full has-[[data-variant=inset]]:bg-sidebar",
+        @class
+        ])
+      }
+      {@rest}
+    >
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
 
   @doc """
   Render
@@ -72,7 +104,6 @@ defmodule SaladUI.Sidebar do
       data-variant={@variant}
       data-side={@side}
     >
-      {/* This is what handles the sidebar gap on desktop */}
       <div class={
         classes([
           "duration-200 relative h-svh w-[--sidebar-width] bg-transparent transition-[width] ease-linear",
@@ -87,10 +118,10 @@ defmodule SaladUI.Sidebar do
         class={
           classes([
             "duration-200 fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-linear md:flex",
-            (side == "left" &&
+            (@side == "left" &&
                "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]") ||
               "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
-            ((variant == "floating" || variant == "inset") &&
+            ((@variant == "floating" || @variant == "inset") &&
                "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+2px)]") ||
               "group-data-[collapsible=icon]:w-[--sidebar-width-icon] group-data-[side=left]:border-r group-data-[side=right]:border-l",
             @class
@@ -208,6 +239,7 @@ defmodule SaladUI.Sidebar do
   """
   attr(:class, :string, default: nil)
   attr(:rest, :global)
+  slot(:inner_block, required: true)
 
   def sidebar_header(assigns) do
     ~H"""
@@ -221,6 +253,7 @@ defmodule SaladUI.Sidebar do
       }
       {@rest}
     >
+      <%= render_slot(@inner_block) %>
     </div>
     """
   end
@@ -231,7 +264,7 @@ defmodule SaladUI.Sidebar do
   attr(:class, :string, default: nil)
   attr(:rest, :global)
 
-  def assigns do
+  def sidebar_footer(assigns) do
     ~H"""
     <div
       data-sidebar="footer"
@@ -257,7 +290,7 @@ defmodule SaladUI.Sidebar do
     ~H"""
     <.separator
       data-sidebar="separator"
-      class={classes(["mx-2 w-auto bg-sidebar-border", className])}
+      class={classes(["mx-2 w-auto bg-sidebar-border", @class])}
       {@rest}
     />
     """
@@ -313,6 +346,7 @@ defmodule SaladUI.Sidebar do
 
   @doc """
   Render
+  TODO: class merge not work well here
   """
   attr(:class, :string, default: nil)
   attr(:rest, :global)
@@ -323,11 +357,11 @@ defmodule SaladUI.Sidebar do
     <div
       data-sidebar="group-label"
       class={
-        classes([
-          "duration-200 flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-sidebar-foreground/70 outline-none ring-sidebar-ring transition-[margin,opa] ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+        Enum.join([
+          "duration-200 flex h-8 shrink-0 items-center rounded-md px-2 font-medium text-sidebar-foreground/70 outline-none ring-sidebar-ring transition-[margin,opa] ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0 text-xs",
           "group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
           @class
-        ])
+        ], " ")
       }
       {@rest}
     >
@@ -440,38 +474,37 @@ defmodule SaladUI.Sidebar do
   attr :variant, :string, values: ~w(default outline), default: "default"
   attr :size, :string, values: ~w(default sm lg), default: "default"
   attr :is_active, :boolean, default: false
-  attr :tooltip, :map, default: nil
   attr(:class, :string, default: nil)
   attr :is_mobile, :boolean, default: false
   attr :state, :string, default: "expanded"
   attr(:rest, :global)
   slot(:inner_block, required: true)
+  slot :tooltip, required: true
 
   def sidebar_menu_button(assigns) do
     button = ~H"""
     <button
       data-sidebar="menu-button"
-      data-size={size}
-      data-active={isActive}
+      data-size={@size}
+      data-active={@is_active}
       class={classes([get_variant(%{variant: @variant, size: @size}), @class])}
       {@rest}
     >
-      <%= render_slot(innerBlock) %>
+      <%= render_slot(@inner_block) %>
     </button>
     """
+
+    assigns = assign(assigns, :button, button)
 
     if assigns[:tooltip] do
       ~H"""
       <.tooltip>
         <.tooltip_trigger>
-          <%= button %>
+          <%= @button %>
         </.tooltip_trigger>
-        <.tooltip_content
-          side="right"
-          align="center"
-          hidden={state != "collapsed" || @is_mobile}
-          {@tooltip}
-        />
+        <.tooltip_content side="right" align="center" hidden={@state != "collapsed" || @is_mobile}>
+          <%= render_slot(@tooltip) %>
+        </.tooltip_content>
       </.tooltip>
       """
     else
@@ -508,6 +541,145 @@ defmodule SaladUI.Sidebar do
     >
       <%= render_slot(@inner_block) %>
     </button>
+    """
+  end
+
+  @doc """
+  Render
+  """
+  attr(:class, :string, default: nil)
+  attr(:rest, :global)
+  slot(:inner_block, required: true)
+
+  def sidebar_menu_badge(assigns) do
+    ~H"""
+    <div
+      data-sidebar="menu-badge"
+      class={
+        classes([
+          "absolute right-1 flex h-5 min-w-5 items-center justify-center rounded-md px-1 text-xs font-medium tabular-nums text-sidebar-foreground select-none pointer-events-none",
+          "peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[active=true]/menu-button:text-sidebar-accent-foreground",
+          "peer-data-[size=sm]/menu-button:top-1",
+          "peer-data-[size=default]/menu-button:top-1.5",
+          "peer-data-[size=lg]/menu-button:top-2.5",
+          "group-data-[collapsible=icon]:hidden",
+          @class
+        ])
+      }
+      {@rest}
+    >
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
+  @doc """
+  Render
+  """
+  attr(:class, :string, default: nil)
+  attr :show_icon, :boolean, default: false
+  attr(:rest, :global)
+
+  def sidebar_menu_skeleton(assigns) do
+    width = :rand.uniform(40) + 50
+    assigns = assign(assigns, :width, width)
+
+    ~H"""
+    <div
+      data-sidebar="menu-skeleton"
+      class={classes(["rounded-md h-8 flex gap-2 px-2 items-center", @class])}
+      {@rest}
+    >
+      <.skeleton :if={@show_icon} class="size-4 rounded-md" data-sidebar="menu-skeleton-icon" />
+      <.skeleton
+        class="h-4 flex-1 max-w-[--skeleton-width]"
+        data-sidebar="menu-skeleton-text"
+        style={
+          %{
+            "--skeleton-width": @width
+          }
+        }
+      />
+    </div>
+    """
+  end
+
+  @doc """
+  Render
+  """
+  attr(:class, :string, default: nil)
+  attr(:rest, :global)
+  slot(:inner_block, required: true)
+
+  def sidebar_menu_sub(assigns) do
+    ~H"""
+    <ul
+      data-sidebar="menu-sub"
+      class={
+        classes([
+          "mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l border-sidebar-border px-2.5 py-0.5",
+          "group-data-[collapsible=icon]:hidden",
+          @class
+        ])
+      }
+      {@rest}
+    >
+      <%= render_slot(@inner_block) %>
+    </ul>
+    """
+  end
+
+  @doc """
+  Render
+  """
+  attr(:class, :string, default: nil)
+  attr(:rest, :global)
+  slot(:inner_block, required: true)
+
+  def sidebar_menu_sub_item(assigns) do
+    ~H"""
+    <li
+      class={
+        classes([
+          @class
+        ])
+      }
+      {@rest}
+    >
+      <%= render_slot(@inner_block) %>
+    </li>
+    """
+  end
+
+  @doc """
+  Render
+  """
+  attr :size, :string, values: ~w(sm md), default: "md"
+  attr :is_active, :boolean, default: false
+  attr(:class, :string, default: nil)
+  attr(:rest, :global)
+  slot(:inner_block, required: true)
+
+  def sidebar_menu_sub_button(assigns) do
+    ~H"""
+    <a
+      data-sidebar="menu-sub-button"
+      data-size={@size}
+      data-active={@is_active}
+      class={
+        classes([
+          "flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 text-sidebar-foreground outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground",
+          "data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground",
+          @size == "sm" && "text-xs",
+          @size == "md" && "text-sm",
+          "group-data-[collapsible=icon]:hidden",
+          @class
+        ])
+      }
+      {@rest}
+    >
+      <%= render_slot(@inner_block) %>
+    </a>
     """
   end
 
