@@ -48,11 +48,6 @@ defmodule Mix.Tasks.Salad.InitTest do
       :timer.sleep(100)
 
       assert File.exists?(@default_components_path)
-
-      config_content = File.read!("config/config.exs")
-      assert config_content =~ "config :tails, colors_file:"
-      assert config_content =~ "Path.join(File.cwd!(), \"assets/tailwind.colors.json\")"
-
       dev_config_content = File.read!("config/dev.exs")
       assert dev_config_content =~ "config :salad_ui, components_path:"
       assert dev_config_content =~ "Path.join(File.cwd!(), \"#{@default_components_path}\")"

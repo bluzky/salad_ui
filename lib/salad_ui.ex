@@ -5,7 +5,6 @@ defmodule SaladUI do
       use Phoenix.Component
 
       import SaladUI.Helpers
-      # import Tails, only: [classes: 1]
 
       # alias OrangeCmsWeb.Components.LadUI.LadJS
       alias Phoenix.LiveView.JS
