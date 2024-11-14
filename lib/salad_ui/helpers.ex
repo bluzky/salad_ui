@@ -1,6 +1,7 @@
 defmodule SaladUI.Helpers do
   @moduledoc false
   import Phoenix.Component
+  use Phoenix.Component
 
   @doc """
   Prepare input assigns for use in a form. Extract required attribute from the Form.Field struct and update current assigns.
@@ -223,6 +224,43 @@ defmodule SaladUI.Helpers do
     """
     var el = this.closest("#{ancestor_selector}"); liveSocket.execJS(el, el.getAttribute("#{attribute}"));
     """
+  end
+
+@doc """
+  Generates a dynamically named HTML tag.
+
+  Raises an `ArgumentError` if the tag name is found to be unsafe HTML.
+
+  [INSERT LVATTRDOCS]
+
+  ## Examples
+
+  ```heex
+  <.dynamic_tag name="input" type="text"/>
+  ```
+
+  ```html
+  <input type="text"/>
+  ```
+
+  ```heex
+  <.dynamic_tag name="p">content</.dynamic_tag>
+  ```
+
+  ```html
+  <p>content</p>
+  ```
+  """
+  def dynamic(%{as: name} = assigns) when is_function(name, 1) do
+        assigns = Map.delete(assigns, :as)
+    name.(assigns)
+  end
+
+  def dynamic(assigns) do
+    name = assigns[:as] || "div"
+    assigns = Map.delete(assigns, :as)
+    |> assign(:name, name)
+    dynamic_tag(assigns)
   end
 
   # Translate error message

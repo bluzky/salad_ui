@@ -357,13 +357,12 @@ defmodule SaladUI.Sidebar do
   TODO: class merge not work well here
   """
   attr(:class, :string, default: nil)
-  attr :as, :string, default: "div"
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
   def sidebar_group_label(assigns) do
     ~H"""
-    <.dynamic_tag name={@as}
+    <.dynamic
       data-sidebar="group-label"
       class={
         Enum.join(
@@ -378,7 +377,7 @@ defmodule SaladUI.Sidebar do
       {@rest}
     >
       <%= render_slot(@inner_block) %>
-    </.dynamic_tag>
+    </.dynamic>
     """
   end
 

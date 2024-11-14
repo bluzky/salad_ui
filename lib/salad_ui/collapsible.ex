@@ -33,6 +33,7 @@ defmodule SaladUI.Collapsible do
 
     ~H"""
     <div
+      data-state="closed"
       phx-toggle-collapsible={toggle_collapsible(@id)}
       phx-mounted={@open && JS.exec("phx-toggle-collapsible", to: "##{@id}")}
       class={classes(["inline-block relative collapsible-root", @class])}
@@ -92,5 +93,6 @@ defmodule SaladUI.Collapsible do
       out: {"ease-out", "opacity-100", "opacity-70"},
       time: 200
     )
+    |> JS.toggle_attribute({"data-state", "open", "closed"}, to: "##{id}")
   end
 end
