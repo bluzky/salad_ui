@@ -74,17 +74,7 @@ npm i -D tailwindcss-animate
 yarn add -D tailwindcss-animate
 ```
 
-3. Configure `tails`
-SaladUI use `tails` to properly merge Tailwindcss classes
-
-```elixir
-# config/config.exs
-
-config :tails, colors_file: Path.join(File.cwd!(), "assets/tailwind.colors.json")
-```
-
-
-4. **Add javascript to handle event from server**
+3. **Add javascript to handle event from server**
 This add ability to execute client action from server. It's similar to `JS.exec/2`. Thanks to [this post](https://fly.io/phoenix-files/server-triggered-js/) from fly.io.
 
 Add this code snippet to the end of `app.js`
@@ -106,7 +96,7 @@ Then from server side, you can close an opening sheet like this.
   end
 ```
 
-5. Some tweaks
+4. Some tweaks
 Thanks to @ahacking
 
 - To make dark and light mode work correctly, add following to your `app.css`

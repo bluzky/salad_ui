@@ -27,21 +27,19 @@
 
 ## Installation
 
-1. **Using `salad_ui` as part of your project:**
-
-> This way you can install only components that you want to use or you want to edit SaladUI's component source code to fit your need.
-> If you just want to use SaladUI's components, see **Using as library** below.
-
-- Adding `salad_ui` to your list of dependencies in `mix.exs`:
-
+1. Add `salad_ui` to your `mix.exs`
 ```elixir
 def deps do
   [
-    {:salad_ui, "~> 0.13.0", only: [:dev]},
-    {:tails, "~> 0.1"}
+    {:salad_ui, "~> 0.13.0"},
   ]
 end
 ```
+
+2. **Using `salad_ui` as part of your project:**
+
+> This way you can install only components that you want to use or you want to edit SaladUI's component source code to fit your need.
+> If you just want to use SaladUI's components, see **Using as library** below.
 
 - Init Salad UI in your project
 ```
@@ -52,18 +50,7 @@ end
 #> mix salad.add label button
 ```
 
-2. **Using `salad_ui` as a library:**
-
-- Adding `salad_ui` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:salad_ui, "~> 0.13.0", only: [:dev]}
-  ]
-end
-```
-
+3. **Using `salad_ui` as a library:**
 - Init Salad UI in your project with option `--as-lib`
 ```
 #> cd your_project
@@ -169,6 +156,6 @@ To run the failing tests only, just run `mix test.watch --stale`.
 This project could not be available without these awesome works:
 
 - `tailwind css` an awesome css utility project
-- `tails` for merging tailwind class
+- `turboprop` I borrow code from here for merging tailwinds classes
 - `shadcn/ui` which this project is inspired from
 - `Phoenix Framework` of course

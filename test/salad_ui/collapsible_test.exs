@@ -1,8 +1,5 @@
 defmodule SaladUI.CollapsibleTest do
-  use ExUnit.Case
-  use Phoenix.Component
-
-  import Phoenix.LiveViewTest
+  use ComponentCase
   import SaladUI.Collapsible
 
   describe "collapsible/1" do

@@ -1,8 +1,5 @@
 defmodule SaladUI.AlertDialogTest do
-  use ExUnit.Case
-  use Phoenix.Component
-
-  import Phoenix.LiveViewTest
+  use ComponentCase
   import SaladUI.AlertDialog
 
   # Helper function to set up assigns
