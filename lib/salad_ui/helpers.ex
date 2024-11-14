@@ -49,6 +49,16 @@ defmodule SaladUI.Helpers do
   end
 
   @doc """
+  Normalize id to be used in HTML id attribute
+  It will replace all non-alphanumeric characters with `-` and downcase the string
+  """
+  def id(id) do
+    id
+    |> String.replace(~r/[^a-zA-Z0-9]/, "-")
+    |> String.downcase()
+  end
+
+  @doc """
   Variant helper for generating classes based on side and align
   """
   @variants %{
@@ -195,6 +205,24 @@ defmodule SaladUI.Helpers do
   """
   def style(css_map) do
     Enum.map_join(css_map, "; ", fn {k, v} -> "#{k}: #{v}" end) <> ";"
+  end
+
+  @doc """
+  This function build js script to invoke JS stored in given attribute.
+  Similar to JS.exec/2 but this function target the nearest ancestor element.
+
+  ## Examples
+
+  ```heex
+  <button click={exec_closest("phx-hide-sheet", ".ancestor_class")}>
+    Close
+  </button>
+  ```
+  """
+  def exec_closest(attribute, ancestor_selector) do
+    """
+    var el = this.closest("#{ancestor_selector}"); liveSocket.execJS(el, el.getAttribute("#{attribute}"));
+    """
   end
 
   # Translate error message

@@ -13,28 +13,28 @@ defmodule SaladUI.Sidebar do
   @sidebar_width_mobile "18rem"
   @sidebar_width_icon "3rem"
 
-
-    @doc """
+  @doc """
   Render
-    """
+  """
   attr(:class, :string, default: nil)
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
   def sidebar_provider(assigns) do
     assigns = assign(assigns, %{sidebar_width: @sidebar_width, sidebar_width_icon: @sidebar_width_icon})
+
     ~H"""
     <div
       style={
-              style(%{
-                "--sidebar-width": @sidebar_width,
-                "--sidebar-width-icon": @sidebar_width_icon
-              })
-            }
+        style(%{
+          "--sidebar-width": @sidebar_width,
+          "--sidebar-width-icon": @sidebar_width_icon
+        })
+      }
       class={
         classes([
-"group/sidebar-wrapper flex min-h-svh w-full has-[[data-variant=inset]]:bg-sidebar",
-        @class
+          "group/sidebar-wrapper flex min-h-svh w-full has-[[data-variant=inset]]:bg-sidebar",
+          @class
         ])
       }
       {@rest}
@@ -48,11 +48,12 @@ defmodule SaladUI.Sidebar do
   Render
   """
 
+  attr :id, :string, required: true, doc: "The id of the sidebar, used for the trigger to identify the target sidebar"
   attr :side, :string, values: ~w(left right), default: "left"
   attr :variant, :string, values: ~w(sidebar floating inset), default: "sidebar"
   attr :collapsible, :string, values: ~w(offcanvas icon none), default: "offcanvas"
   attr :is_mobile, :boolean, default: false
-  attr :state, :string, default: "expanded"
+  attr :state, :string, values: ~w(expanded collapsed), default: "expanded"
   attr(:class, :string, default: nil)
   attr(:rest, :global)
   slot(:inner_block, required: true)
@@ -98,11 +99,13 @@ defmodule SaladUI.Sidebar do
   def sidebar(assigns) do
     ~H"""
     <div
-      class="group peer hidden md:block text-sidebar-foreground"
+      class="group peer hidden md:block text-sidebar-foreground sidebar-root"
       data-state={@state}
-      data-collapsible={(@state == "collapsed" && @collapsible) || ""}
+      data-collapsible={(@state == "collapsed" && @collapsible) || "none"}
       data-variant={@variant}
       data-side={@side}
+      id={@id}
+      phx-toggle-sidebar={toggle_sidebar({"none", @collapsible})}
     >
       <div class={
         classes([
@@ -144,8 +147,9 @@ defmodule SaladUI.Sidebar do
   Render
   """
   attr(:class, :string, default: nil)
+  attr :target, :string, required: true, doc: "The id of the target sidebar"
   attr(:rest, :global)
-  # slot(:inner_block, required: true)
+  slot(:inner_block, required: true)
 
   def sidebar_trigger(assigns) do
     ~H"""
@@ -154,10 +158,11 @@ defmodule SaladUI.Sidebar do
       variant="ghost"
       size="icon"
       class={classes(["h-7 w-7", @class])}
-      onclick="TODO togleSidebar()"
+      phx-click={JS.exec("phx-toggle-sidebar", to: "#" <> @target)}
       {@rest}
     >
-      Close <span class="sr-only">Toggle Sidebar</span>
+      <%= render_slot(@inner_block) %>
+      <span class="sr-only">Toggle Sidebar</span>
     </.button>
     """
   end
@@ -174,7 +179,7 @@ defmodule SaladUI.Sidebar do
       data-sidebar="rail"
       aria-label="Toggle Sidebar"
       tab-index={-1}
-      onclick="toggleSidebar() //TODO"
+      onclick={exec_closest("phx-toggle-sidebar", ".sidebar-root")}
       title="Toggle Sidebar"
       class={
         classes([
@@ -197,6 +202,7 @@ defmodule SaladUI.Sidebar do
   """
   attr(:class, :string, default: nil)
   attr(:rest, :global)
+  slot :inner_block, required: true
 
   def sidebar_inset(assigns) do
     ~H"""
@@ -209,7 +215,9 @@ defmodule SaladUI.Sidebar do
         ])
       }
       {@rest}
-    />
+    >
+      <%= render_slot(@inner_block) %>
+    </main>
     """
   end
 
@@ -349,24 +357,28 @@ defmodule SaladUI.Sidebar do
   TODO: class merge not work well here
   """
   attr(:class, :string, default: nil)
+  attr :as, :string, default: "div"
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
   def sidebar_group_label(assigns) do
     ~H"""
-    <div
+    <.dynamic_tag name={@as}
       data-sidebar="group-label"
       class={
-        Enum.join([
-          "duration-200 flex h-8 shrink-0 items-center rounded-md px-2 font-medium text-sidebar-foreground/70 outline-none ring-sidebar-ring transition-[margin,opa] ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0 text-xs",
-          "group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
-          @class
-        ], " ")
+        Enum.join(
+          [
+            "duration-200 flex h-8 shrink-0 items-center rounded-md px-2 font-medium text-sidebar-foreground/70 outline-none ring-sidebar-ring transition-[margin,opa] ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0 text-xs",
+            "group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
+            @class
+          ],
+          " "
+        )
       }
       {@rest}
     >
       <%= render_slot(@inner_block) %>
-    </div>
+    </.dynamic_tag>
     """
   end
 
@@ -406,10 +418,10 @@ defmodule SaladUI.Sidebar do
   def sidebar_group_content(assigns) do
     ~H"""
     <div
-      data-sidebar="menu"
+      data-sidebar="group-content"
       class={
         classes([
-          "flex w-full min-w-0 flex-col gap-1",
+          "w-full text-sm",
           @class
         ])
       }
@@ -706,5 +718,14 @@ defmodule SaladUI.Sidebar do
     @shared_classes <>
       " " <>
       variant_class(@variant_config, input)
+  end
+
+  @doc """
+  Toggle sidebar between collapsed and expanded state.
+  """
+  def toggle_sidebar({state1, state2} = _collapsible_states) do
+    {"data-state", "collapsed", "expanded"}
+    |> JS.toggle_attribute()
+    |> JS.toggle_attribute({"data-collapsible", state1, state2})
   end
 end

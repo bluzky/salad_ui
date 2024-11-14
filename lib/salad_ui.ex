@@ -21,6 +21,7 @@ defmodule SaladUI do
 
   defmacro __using__(_) do
     quote do
+      import SaladUI.Helpers
       import SaladUI.Alert
       import SaladUI.Avatar
       import SaladUI.Badge

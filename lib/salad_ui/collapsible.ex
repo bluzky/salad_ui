@@ -22,24 +22,23 @@ defmodule SaladUI.Collapsible do
     required: true,
     doc: "Id to identify collapsible component, collapsible_trigger uses this id to toggle content visibility"
 
-  attr :open, :boolean, default: false, doc: "Initial state of collapsible content"
+  attr :open, :boolean, default: true, doc: "Initial state of collapsible content"
   attr :class, :string, default: nil
   slot(:inner_block, required: true)
 
   def collapsible(assigns) do
     assigns =
       assigns
-      |> assign(:builder, %{open: assigns[:open], id: assigns[:id]})
       |> assign(:open, normalize_boolean(assigns[:open]))
 
     ~H"""
     <div
-      phx-toggle-collapsible={toggle_collapsible(@builder)}
+      phx-toggle-collapsible={toggle_collapsible(@id)}
       phx-mounted={@open && JS.exec("phx-toggle-collapsible", to: "##{@id}")}
-      class={classes(["inline-block relative", @class])}
+      class={classes(["inline-block relative collapsible-root", @class])}
       id={@id}
     >
-      <%= render_slot(@inner_block, @builder) %>
+      <%= render_slot(@inner_block) %>
     </div>
     """
   end
@@ -47,15 +46,16 @@ defmodule SaladUI.Collapsible do
   @doc """
   Render trigger for collapsible component.
   """
-  attr :builder, :map, required: true, doc: "Builder instance for collapsible component"
   attr(:class, :string, default: nil)
+  attr :as, :string, default: "button"
   slot(:inner_block, required: true)
 
   def collapsible_trigger(assigns) do
     ~H"""
-    <div phx-click={JS.exec("phx-toggle-collapsible", to: "#" <> @builder.id)} class={@class}>
+    <.dynamic_tag name={@as}
+      onclick={exec_closest("phx-toggle-collapsible", ".collapsible-root")} class={@class}>
       <%= render_slot(@inner_block) %>
-    </div>
+    </.dynamic_tag>
     """
   end
 
@@ -85,7 +85,7 @@ defmodule SaladUI.Collapsible do
   @doc """
   Show collapsible content.
   """
-  def toggle_collapsible(js \\ %JS{}, %{id: id} = _builder) do
+  def toggle_collapsible(js \\ %JS{}, id) do
     JS.toggle(js,
       to: "##{id} .collapsible-content",
       in: {"ease-out duration-200", "opacity-0", "opacity-100"},
