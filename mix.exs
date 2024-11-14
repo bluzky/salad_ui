@@ -59,7 +59,8 @@ defmodule SaladUI.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:tails, "~> 0.1"},
+      {:nimble_parsec, "~> 1.0"},
+      {:deep_merge, "~> 1.0"},
       {:phoenix_live_view, "~> 0.20.1"},
       {:mix_test_watch, "~> 1.2", only: [:dev, :test]},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
