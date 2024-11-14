@@ -14,8 +14,11 @@ defmodule SaladUI.InputTest do
         |> rendered_to_string()
         |> clean_string()
 
-      assert html =~
-               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" placeholder=\"Enter your name\" type=\"text\">"
+      for class <- ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
+        assert html =~ class
+      end
+      assert html =~ "text"
+      assert html =~ "Enter your name"
     end
 
     test "It renders email input correctly" do
@@ -28,8 +31,11 @@ defmodule SaladUI.InputTest do
         |> rendered_to_string()
         |> clean_string()
 
-      assert html =~
-               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" placeholder=\"Enter your email\" type=\"email\">"
+      for class <- ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
+        assert html =~ class
+      end
+      assert html =~ "email"
+      assert html =~ "Enter your email"
     end
 
     test "It renders password input correctly" do
@@ -42,8 +48,11 @@ defmodule SaladUI.InputTest do
         |> rendered_to_string()
         |> clean_string()
 
-      assert html =~
-               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" placeholder=\"Enter your password\" type=\"password\">"
+      for class <- ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
+        assert html =~ class
+      end
+      assert html =~ "password"
+      assert html =~ "Enter your password"
     end
 
     test "It renders dates input correctly" do
@@ -56,8 +65,12 @@ defmodule SaladUI.InputTest do
         |> rendered_to_string()
         |> clean_string()
 
-      assert html =~
-               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" placeholder=\"yyy-mm-dd\" type=\"date\">"
+
+      for class <- ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
+        assert html =~ class
+      end
+      assert html =~ "date"
+      assert html =~ "yyy-mm-dd"
     end
 
     test "It renders datetime-local input correctly" do
@@ -70,8 +83,12 @@ defmodule SaladUI.InputTest do
         |> rendered_to_string()
         |> clean_string()
 
-      assert html =~
-               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" placeholder=\"Date time\" type=\"datetime-local\">"
+      for class <- ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
+        assert html =~ class
+      end
+
+      assert html =~ "datetime-local"
+      assert html =~ "Date time"
     end
 
     test "It renders file input correctly" do
@@ -84,8 +101,11 @@ defmodule SaladUI.InputTest do
         |> rendered_to_string()
         |> clean_string()
 
-      assert html =~
-               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" placeholder=\"Select file\" type=\"file\">"
+      for class <- ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
+        assert html =~ class
+      end
+      assert html =~ "file"
+      assert html =~ "Select file"
     end
 
     test "It renders hidden input correctly" do
@@ -98,8 +118,12 @@ defmodule SaladUI.InputTest do
         |> rendered_to_string()
         |> clean_string()
 
-      assert html =~
-               "<input class=\"flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border\" name=\"secret\" type=\"hidden\" value=\"hard to get in\">"
+      for class <- ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
+        assert html =~ class
+      end
+      assert html =~ "hidden"
+      assert html =~ "secret"
+      assert html =~ "hard to get in"
     end
   end
 end

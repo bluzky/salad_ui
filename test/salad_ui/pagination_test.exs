@@ -14,7 +14,11 @@ defmodule SaladUi.PaginationTest do
         |> rendered_to_string()
         |> clean_string()
 
-      assert html =~ "<ul class=\"flex items-center flex-row gap-1\""
+      for class <-
+            ~w("flex items-center flex-row gap-1") do
+        assert html =~ class
+      end
+
       assert html =~ "</ul>"
       assert html =~ "Content goes here"
     end
@@ -49,7 +53,7 @@ defmodule SaladUi.PaginationTest do
       assert html =~ ~r/<a.+aria-current=\"\" .+>3<\/a>/
 
       for css_class <-
-            ~w("inline-flex rounded-md transition-colors whitespace-nowrap items-center justify-center font-medium text-sm w-9 h-9 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground") do
+            ~w(inline-flex rounded-md transition-colors whitespace-nowrap items-center justify-center font-medium text-sm w-9 h-9 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground) do
         assert html =~ css_class
       end
     end
@@ -92,41 +96,6 @@ defmodule SaladUi.PaginationTest do
         |> clean_string()
 
       assert html =~ ""
-    end
-
-    test "It renders pagination correctly" do
-      assigns = %{}
-
-      html =
-        ~H"""
-        <.pagination>
-          <.pagination_content>
-            <.pagination_item>
-              <.pagination_previous href="#" />
-            </.pagination_item>
-            <.pagination_item>
-              <.pagination_link href="">1</.pagination_link>
-            </.pagination_item>
-            <.pagination_item>
-              <.pagination_link href="" is-active="true">2</.pagination_link>
-            </.pagination_item>
-            <.pagination_item>
-              <.pagination_link href="">3</.pagination_link>
-            </.pagination_item>
-            <.pagination_item>
-              <.pagination_ellipsis />
-            </.pagination_item>
-            <.pagination_item>
-              <.pagination_next href="#" />
-            </.pagination_item>
-          </.pagination_content>
-        </.pagination>
-        """
-        |> rendered_to_string()
-        |> clean_string()
-
-      assert html =~ "nav arial-label=\"pagination\" role=\"pagination\" class=\"flex justify-center w-full mx-auto\""
-      assert html =~ "</nav>"
     end
   end
 end

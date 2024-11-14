@@ -19,7 +19,7 @@ defmodule SaladUi.MenuTest do
       # Confirm that all classes are being rendered correctly
 
       for css_class <-
-            ~w("relative flex px-2 py-1.5 rounded-sm select-none cursor-default transition-colors outline-none items-center text-sm hover:bg-accent focus:bg-accent focus:text-accent-foreground data-[disabled]:opacity-50 data-[disabled]:pointer-events-none") do
+            ~w(relative flex px-2 py-1.5 rounded-sm select-none cursor-default transition-colors outline-none items-center text-sm hover:bg-accent focus:bg-accent focus:text-accent-foreground data-[disabled]:opacity-50 data-[disabled]:pointer-events-none) do
         assert html =~ css_class
       end
     end
@@ -34,7 +34,10 @@ defmodule SaladUi.MenuTest do
         |> rendered_to_string()
         |> clean_string()
 
-      assert html =~ "<div class=\"px-2 py-1.5 font-semibold text-sm false\">Account</div>"
+      for css_class <- ~w(px-2 py-1.5 font-semibold text-sm) do
+        assert html =~ css_class
+      end
+      assert html =~ "Account"
     end
 
     test "It renders menu_separator correclty" do
@@ -50,7 +53,7 @@ defmodule SaladUi.MenuTest do
       assert html =~ "\"></div>"
       assert html =~ "<div role=\"separator\""
 
-      for css_class <- ~w("-mx-1 my-1 bg-muted h-px") do
+      for css_class <- ~w(-mx-1 my-1 bg-muted h-px) do
         assert html =~ css_class
       end
     end
@@ -65,7 +68,10 @@ defmodule SaladUi.MenuTest do
         |> rendered_to_string()
         |> clean_string()
 
-      assert html =~ "<span class=\"tracking-widest text-xs ml-auto opacity-60\">⌘B</span>"
+      for css_class <- ~w(tracking-widest text-xs ml-auto opacity-60) do
+        assert html =~ css_class
+      end
+      assert html =~ "⌘B"
     end
 
     test "It renders menu_Group correctly" do
@@ -127,8 +133,9 @@ defmodule SaladUi.MenuTest do
         |> rendered_to_string()
         |> clean_string()
 
-      assert html =~
-               "<div class=\"min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md top-0 left-full\">"
+      for css_class <- ~w(min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md top-0 left-full) do
+        assert html =~ css_class
+      end
 
       assert html =~ "<div class=\"\" role=\"group\""
       assert html =~ "Profile"

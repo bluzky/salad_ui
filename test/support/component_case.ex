@@ -2,13 +2,9 @@ defmodule ComponentCase do
   @moduledoc false
   use ExUnit.CaseTemplate
 
-  setup_all do
-    SaladUI.Cache.start_link([])
-    :ok
-  end
-
   setup do
     # This will run before each test that uses this case
+    SaladUI.Cache.create_table()
     :ok
   end
 
