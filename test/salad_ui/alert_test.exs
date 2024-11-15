@@ -16,7 +16,9 @@ defmodule SaladUI.AlertTest do
         </.alert>
         """)
 
-      assert html =~ "<h5 class=\"mb-1 tracking-tight font-medium leading-none\">"
+      for class <- ~w(mb-1 tracking-tight font-medium leading-none) do
+        assert html =~ class
+      end
       assert html =~ "Heads up!"
       assert html =~ "Alert Descriptions"
 

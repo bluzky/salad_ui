@@ -91,9 +91,7 @@ defmodule Mix.Tasks.Salad.Init do
   end
 
   defp write_config(component_path) do
-    with :ok <- write_dev_config(component_path) do
-      write_tails_config()
-    end
+    write_dev_config(component_path)
   end
 
   defp write_dev_config(component_path) do
@@ -108,20 +106,6 @@ defmodule Mix.Tasks.Salad.Init do
     ]
 
     patch_config(dev_config_path, components_config)
-  end
-
-  defp write_tails_config do
-    Mix.shell().info("Writing tails config to config.exs")
-    config_path = Path.join(File.cwd!(), "config/config.exs")
-
-    tails_config = [
-      tails: %{
-        description: "SaladUI use tails to properly merge Tailwind CSS classes",
-        values: [colors_file: "Path.join(File.cwd!(), \"assets/tailwind.colors.json\")"]
-      }
-    ]
-
-    patch_config(config_path, tails_config)
   end
 
   defp patch_config(config_path, config) do

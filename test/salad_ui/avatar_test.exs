@@ -12,7 +12,9 @@ defmodule SaladUI.AvatarTest do
         <.avatar_image src="https://github.com/shadcn.png" />
         """)
 
-      assert html =~ "<img class=\"aspect-square w-full h-full\""
+      for class <- ~w(aspect-square w-full h-full) do
+        assert html =~ class
+      end
       assert html =~ "src=\"https:\/\/github.com\/shadcn.png\" "
     end
 
@@ -24,7 +26,9 @@ defmodule SaladUI.AvatarTest do
         <.avatar_fallback class="bg-primary text-white">CN</.avatar_fallback>
         """)
 
-      assert html =~ "<span class=\"flex rounded-full bg-primary text-white items-center justify-center w-full h-full\">"
+      for class <- ~w(flex rounded-full bg-primary text-white items-center justify-center w-full h-full) do
+        assert html =~ class
+      end
       assert html =~ "CN"
     end
 
@@ -39,7 +43,9 @@ defmodule SaladUI.AvatarTest do
         </.avatar>
         """)
 
-      assert html =~ "<span class=\"flex rounded-full bg-primary text-white items-center justify-center w-full h-full\">"
+     for class <- ~w(flex rounded-full bg-primary text-white items-center justify-center w-full h-full) do
+        assert html =~ class
+      end
       assert html =~ "CN"
     end
   end

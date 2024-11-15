@@ -29,8 +29,10 @@ defmodule SaladUI.FormTest do
         |> rendered_to_string()
         |> clean_string()
 
-      assert html =~
-               "<label class=\"font-medium leading-none text-sm false peer-disabled:cursor-not-allowed peer-disabled:opacity-70\">This is a label</label>"
+      for class <- ~w(font-medium leading-none text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70) do
+        assert html =~ class
+      end
+      assert html =~ "This is a label"
     end
 
     test "It renders form_control" do
@@ -69,7 +71,10 @@ defmodule SaladUI.FormTest do
         |> rendered_to_string()
         |> clean_string()
 
-      assert html =~ "<p class=\"text-destructive font-medium text-sm\">This is a form message</p>"
+      for class <- ~w(text-destructive font-medium text-sm) do
+        assert html =~ class
+      end
+      assert html =~ "This is a form message"
     end
 
     test "It renders an entire form correctly" do
@@ -106,11 +111,14 @@ defmodule SaladUI.FormTest do
         |> rendered_to_string()
         |> clean_string()
 
+
       assert html =~
                "<form class=\"space-y-6\" id=\"project-form\" phx-change=\"validate\" phx-submit=\"save\" phx-target=\"test-string\""
 
-      assert html =~
-               "<label class=\"font-medium leading-none text-sm false peer-disabled:cursor-not-allowed peer-disabled:opacity-70\">\What is your project's name?</label>"
+      for class <- ~w(font-medium leading-none text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70) do
+        assert html =~ class
+      end
+      assert html =~ "What is your project's name?"
 
       assert html =~ "<p class=\"text-muted-foreground text-sm\">This is your public display name.</p>"
       assert html =~ "Save project</button>"

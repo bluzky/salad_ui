@@ -4,6 +4,7 @@ defmodule ComponentCase do
 
   setup do
     # This will run before each test that uses this case
+    SaladUI.Cache.create_table()
     :ok
   end
 
