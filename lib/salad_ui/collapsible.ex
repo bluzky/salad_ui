@@ -53,10 +53,10 @@ defmodule SaladUI.Collapsible do
 
   def collapsible_trigger(assigns) do
     ~H"""
-    <.dynamic_tag name={@as}
+    <.dynamic as={@as}
       onclick={exec_closest("phx-toggle-collapsible", ".collapsible-root")} class={@class}>
       <%= render_slot(@inner_block) %>
-    </.dynamic_tag>
+    </.dynamic>
     """
   end
 

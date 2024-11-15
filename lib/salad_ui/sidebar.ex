@@ -17,6 +17,7 @@ defmodule SaladUI.Sidebar do
   Render
   """
   attr(:class, :string, default: nil)
+  attr :style, :map, default: %{}
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
@@ -26,10 +27,10 @@ defmodule SaladUI.Sidebar do
     ~H"""
     <div
       style={
-        style(%{
+        style(Map.merge(%{
           "--sidebar-width": @sidebar_width,
           "--sidebar-width-icon": @sidebar_width_icon
-        })
+        }, @style))
       }
       class={
         classes([
