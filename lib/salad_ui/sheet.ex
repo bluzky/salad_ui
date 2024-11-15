@@ -82,6 +82,7 @@ defmodule SaladUI.Sheet do
   attr :id, :string, required: true, doc: "The id of the sheet"
   attr :class, :string, default: nil
   attr :side, :string, default: "right", values: ~w(left right top bottom), doc: "The side of the sheet"
+  attr :rest, :global
   slot :inner_block, required: true
   slot :custom_close_btn, required: false
 
@@ -102,6 +103,7 @@ defmodule SaladUI.Sheet do
       id={@id}
       phx-show-sheet={show_sheet(@id, @side)}
       phx-hide-sheet={hide_sheet(@id, @side)}
+      {@rest}
     >
       <.sheet_overlay />
       <.focus_wrap

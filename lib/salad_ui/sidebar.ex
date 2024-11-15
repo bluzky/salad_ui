@@ -83,9 +83,9 @@ defmodule SaladUI.Sidebar do
         data-mobile="true"
         class="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
         style={
-          %{
+          style(%{
             "--sidebar-width": @sidebar_width_mobile
-          }
+          })
         }
         side={@side}
       >
@@ -154,7 +154,7 @@ defmodule SaladUI.Sidebar do
 
   def sidebar_trigger(assigns) do
     ~H"""
-    <.button
+    <.dynamic tag="button"
       data-sidebar="trigger"
       variant="ghost"
       size="icon"
@@ -164,7 +164,7 @@ defmodule SaladUI.Sidebar do
     >
       <%= render_slot(@inner_block) %>
       <span class="sr-only">Toggle Sidebar</span>
-    </.button>
+    </.dynamic>
     """
   end
 
@@ -607,9 +607,9 @@ defmodule SaladUI.Sidebar do
         class="h-4 flex-1 max-w-[--skeleton-width]"
         data-sidebar="menu-skeleton-text"
         style={
-          %{
+          style(%{
             "--skeleton-width": @width
-          }
+          })
         }
       />
     </div>

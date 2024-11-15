@@ -1,7 +1,8 @@
 defmodule SaladUI.Helpers do
   @moduledoc false
-  import Phoenix.Component
   use Phoenix.Component
+
+  import Phoenix.Component
 
   @doc """
   Prepare input assigns for use in a form. Extract required attribute from the Form.Field struct and update current assigns.
@@ -226,7 +227,7 @@ defmodule SaladUI.Helpers do
     """
   end
 
-@doc """
+  @doc """
   Generates a dynamically named HTML tag.
 
   Raises an `ArgumentError` if the tag name is found to be unsafe HTML.
@@ -252,14 +253,19 @@ defmodule SaladUI.Helpers do
   ```
   """
   def dynamic(%{as: name} = assigns) when is_function(name, 1) do
-        assigns = Map.delete(assigns, :as)
+    assigns = Map.delete(assigns, :as)
     name.(assigns)
   end
 
   def dynamic(assigns) do
-    name = assigns[:as] || "div"
-    assigns = Map.delete(assigns, :as)
-    |> assign(:name, name)
+    name = assigns[:as] || assigns[:tag] || "div"
+
+    assigns =
+      assigns
+      |> Map.delete(:as)
+      |> Map.delete(:tag)
+      |> assign(:name, name)
+
     dynamic_tag(assigns)
   end
 
