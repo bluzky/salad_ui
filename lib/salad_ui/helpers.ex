@@ -244,28 +244,6 @@ defmodule SaladUI.Helpers do
 
   @doc """
   Generates a dynamically named HTML tag.
-
-  Raises an `ArgumentError` if the tag name is found to be unsafe HTML.
-
-  [INSERT LVATTRDOCS]
-
-  ## Examples
-
-  ```heex
-  <.dynamic_tag name="input" type="text"/>
-  ```
-
-  ```html
-  <input type="text"/>
-  ```
-
-  ```heex
-  <.dynamic_tag name="p">content</.dynamic_tag>
-  ```
-
-  ```html
-  <p>content</p>
-  ```
   """
   def dynamic(%{as: name} = assigns) when is_function(name, 1) do
     assigns = Map.delete(assigns, :as)
@@ -273,12 +251,11 @@ defmodule SaladUI.Helpers do
   end
 
   def dynamic(assigns) do
-    name = assigns[:as] || assigns[:tag] || "div"
+    name = assigns[:as] || "div"
 
     assigns =
       assigns
       |> Map.delete(:as)
-      |> Map.delete(:tag)
       |> assign(:name, name)
 
     dynamic_tag(assigns)

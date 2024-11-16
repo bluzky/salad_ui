@@ -157,13 +157,14 @@ defmodule SaladUI.Sidebar do
   """
   attr(:class, :string, default: nil)
   attr :target, :string, required: true, doc: "The id of the target sidebar"
+  attr :as, :any, default: "button"
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
   def sidebar_trigger(assigns) do
     ~H"""
     <.dynamic
-      tag="button"
+      as={@as}
       data-sidebar="trigger"
       variant="ghost"
       size="icon"
@@ -367,7 +368,7 @@ defmodule SaladUI.Sidebar do
   TODO: class merge not work well here
   """
   attr(:class, :string, default: nil)
-  attr :as, :any
+  attr :as, :any, default: "div"
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
@@ -375,6 +376,7 @@ defmodule SaladUI.Sidebar do
     ~H"""
     <.dynamic
       data-sidebar="group-label"
+      as={@as}
       class={
         Enum.join(
           [
@@ -499,13 +501,14 @@ defmodule SaladUI.Sidebar do
   attr(:class, :string, default: nil)
   attr :is_mobile, :boolean, default: false
   attr :state, :string, default: "expanded"
+  attr :as, :any, default: "button"
   attr(:rest, :global)
   slot(:inner_block, required: true)
-  slot :tooltip, required: true
+  slot :tooltip, required: false
 
   def sidebar_menu_button(assigns) do
     button = ~H"""
-    <button
+    <.dynamic as={@as}
       data-sidebar="menu-button"
       data-size={@size}
       data-active={@is_active}
@@ -513,12 +516,12 @@ defmodule SaladUI.Sidebar do
       {@rest}
     >
       <%= render_slot(@inner_block) %>
-    </button>
+    </.dynamic>
     """
 
     assigns = assign(assigns, :button, button)
 
-    if assigns[:tooltip] do
+    if not Enum.empty?(assigns[:tooltip]) do
       ~H"""
       <.tooltip>
         <.tooltip_trigger>
@@ -681,12 +684,13 @@ defmodule SaladUI.Sidebar do
   attr :size, :string, values: ~w(sm md), default: "md"
   attr :is_active, :boolean, default: false
   attr(:class, :string, default: nil)
+  attr :as, :any, default: "a"
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
   def sidebar_menu_sub_button(assigns) do
     ~H"""
-    <a
+    <.dynamic as={@as}
       data-sidebar="menu-sub-button"
       data-size={@size}
       data-active={@is_active}
@@ -703,7 +707,7 @@ defmodule SaladUI.Sidebar do
       {@rest}
     >
       <%= render_slot(@inner_block) %>
-    </a>
+    </.dynamic>
     """
   end
 

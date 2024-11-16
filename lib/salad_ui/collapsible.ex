@@ -47,6 +47,7 @@ defmodule SaladUI.Collapsible do
   Render trigger for collapsible component.
   """
   attr(:class, :string, default: nil)
+  attr :as, :any, default: "button"
   attr :rest, :global
   slot(:inner_block, required: true)
 
@@ -54,7 +55,7 @@ defmodule SaladUI.Collapsible do
   def collapsible_trigger(assigns) do
     ~H"""
     <.dynamic
-      tag="button"
+      as={@as}
       onclick={exec_closest("phx-toggle-collapsible", ".collapsible-root")}
       class={@class}
       {@rest}
