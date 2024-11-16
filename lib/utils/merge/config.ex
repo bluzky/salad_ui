@@ -106,11 +106,15 @@ defmodule SaladUI.Merge.Config do
         "shrink" => %{"shrink" => zero_and_empty()},
         "order" => %{"order" => ["first", "last", "none", &integer?/1, &arbitrary_value?/1]},
         "grid-cols" => %{"grid-cols" => [&any?/1]},
-        "col-start-end" => %{"col" => ["auto", %{"span" => ["full", &integer?/1, &arbitrary_value?/1]}, &arbitrary_value?/1]},
+        "col-start-end" => %{
+          "col" => ["auto", %{"span" => ["full", &integer?/1, &arbitrary_value?/1]}, &arbitrary_value?/1]
+        },
         "col-start" => %{"col-start" => number_with_auto_and_arbitrary()},
         "col-end" => %{"col-end" => number_with_auto_and_arbitrary()},
         "grid-rows" => %{"grid-rows" => [&any?/1]},
-        "row-start-end" => %{"row" => ["auto", %{"span" => ["full", &integer?/1, &arbitrary_value?/1]}, &arbitrary_value?/1]},
+        "row-start-end" => %{
+          "row" => ["auto", %{"span" => ["full", &integer?/1, &arbitrary_value?/1]}, &arbitrary_value?/1]
+        },
         "row-start" => %{"row-start" => number_with_auto_and_arbitrary()},
         "row-end" => %{"row-end" => number_with_auto_and_arbitrary()},
         "grid-flow" => %{"grid-flow" => ["row", "col", "dense", "row-dense", "col-dense"]},
@@ -150,7 +154,9 @@ defmodule SaladUI.Merge.Config do
         "space-x-reverse" => ["space-x-reverse"],
         "space-y" => %{"space-y" => [&from_theme(&1, "space")]},
         "space-y-reverse" => ["space-y-reverse"],
-        "w" => %{"w" => ["auto", "min", "max", "fit", "svw", "lvw", "dvw", &from_theme(&1, "spacing"), &arbitrary_value?/1]},
+        "w" => %{
+          "w" => ["auto", "min", "max", "fit", "svw", "lvw", "dvw", &from_theme(&1, "spacing"), &arbitrary_value?/1]
+        },
         "min-w" => %{"min-w" => ["min", "max", "fit", &from_theme(&1, "spacing"), &arbitrary_value?/1]},
         "max-w" => %{
           "max-w" => [
@@ -179,8 +185,12 @@ defmodule SaladUI.Merge.Config do
             &arbitrary_value?/1
           ]
         },
-        "min-h" => %{"min-h" => ["min", "max", "fit", "svh", "lvh", "dvh", &from_theme(&1, "spacing"), &arbitrary_value?/1]},
-        "max-h" => %{"max-h" => ["min", "max", "fit", "svh", "lvh", "dvh", &from_theme(&1, "spacing"), &arbitrary_value?/1]},
+        "min-h" => %{
+          "min-h" => ["min", "max", "fit", "svh", "lvh", "dvh", &from_theme(&1, "spacing"), &arbitrary_value?/1]
+        },
+        "max-h" => %{
+          "max-h" => ["min", "max", "fit", "svh", "lvh", "dvh", &from_theme(&1, "spacing"), &arbitrary_value?/1]
+        },
         "size" => %{"size" => ["auto", "min", "max", "fit", &from_theme(&1, "spacing"), &arbitrary_value?/1]},
         "font-size" => %{"text" => ["base", &tshirt_size?/1, &arbitrary_length?/1]},
         "font-smoothing" => ["antialiased", "subpixel-antialiased"],

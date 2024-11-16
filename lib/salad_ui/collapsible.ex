@@ -28,8 +28,7 @@ defmodule SaladUI.Collapsible do
 
   def collapsible(assigns) do
     assigns =
-      assigns
-      |> assign(:open, normalize_boolean(assigns[:open]))
+      assign(assigns, :open, normalize_boolean(assigns[:open]))
 
     ~H"""
     <div
@@ -52,8 +51,11 @@ defmodule SaladUI.Collapsible do
 
   def collapsible_trigger(assigns) do
     ~H"""
-    <.dynamic tag="button"
-      onclick={exec_closest("phx-toggle-collapsible", ".collapsible-root")} class={@class}>
+    <.dynamic
+      tag="button"
+      onclick={exec_closest("phx-toggle-collapsible", ".collapsible-root")}
+      class={@class}
+    >
       <%= render_slot(@inner_block) %>
     </.dynamic>
     """
@@ -86,7 +88,8 @@ defmodule SaladUI.Collapsible do
   Show collapsible content.
   """
   def toggle_collapsible(js \\ %JS{}, id) do
-    JS.toggle(js,
+    js
+    |> JS.toggle(
       to: "##{id} .collapsible-content",
       in: {"ease-out duration-200", "opacity-0", "opacity-100"},
       out: {"ease-out", "opacity-100", "opacity-70"},

@@ -37,6 +37,7 @@ defmodule SaladUi.MenuTest do
       for css_class <- ~w(px-2 py-1.5 font-semibold text-sm) do
         assert html =~ css_class
       end
+
       assert html =~ "Account"
     end
 
@@ -71,6 +72,7 @@ defmodule SaladUi.MenuTest do
       for css_class <- ~w(tracking-widest text-xs ml-auto opacity-60) do
         assert html =~ css_class
       end
+
       assert html =~ "⌘B"
     end
 
@@ -133,7 +135,8 @@ defmodule SaladUi.MenuTest do
         |> rendered_to_string()
         |> clean_string()
 
-      for css_class <- ~w(min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md top-0 left-full) do
+      for css_class <-
+            ~w(min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md top-0 left-full) do
         assert html =~ css_class
       end
 

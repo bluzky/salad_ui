@@ -63,7 +63,9 @@ defmodule SaladUI.MergeTest do
       assert merge("basis-full basis-auto") == "basis-auto"
       assert merge("w-full w-fit") == "w-fit"
       assert merge("overflow-x-auto overflow-x-hidden overflow-x-scroll") == "overflow-x-scroll"
-      assert merge(["overflow-x-auto", "hover:overflow-x-hidden", "overflow-x-scroll"]) == "hover:overflow-x-hidden overflow-x-scroll"
+
+      assert merge(["overflow-x-auto", "hover:overflow-x-hidden", "overflow-x-scroll"]) ==
+               "hover:overflow-x-hidden overflow-x-scroll"
 
       assert merge(["overflow-x-auto", "hover:overflow-x-hidden", "hover:overflow-x-auto", "overflow-x-scroll"]) ==
                "hover:overflow-x-auto overflow-x-scroll"
@@ -104,7 +106,10 @@ defmodule SaladUI.MergeTest do
       assert merge("touch-none touch-pan-x") == "touch-pan-x"
       assert merge("touch-pan-x touch-none") == "touch-none"
       assert merge(["touch-pan-x", "touch-pan-y", "touch-pinch-zoom"]) == "touch-pan-x touch-pan-y touch-pinch-zoom"
-      assert merge(["touch-manipulation", "touch-pan-x", "touch-pan-y", "touch-pinch-zoom"]) == "touch-pan-x touch-pan-y touch-pinch-zoom"
+
+      assert merge(["touch-manipulation", "touch-pan-x", "touch-pan-y", "touch-pinch-zoom"]) ==
+               "touch-pan-x touch-pan-y touch-pinch-zoom"
+
       assert merge(["touch-pan-x", "touch-pan-y", "touch-pinch-zoom", "touch-auto"]) == "touch-auto"
     end
 
@@ -132,7 +137,9 @@ defmodule SaladUI.MergeTest do
                "m-[10dvh]"
              ]) == "m-[10dvh]"
 
-      assert merge(["h-[10px]", "h-[11cqw]", "h-[12cqh]", "h-[13cqi]", "h-[14cqb]", "h-[15cqmin]", "h-[16cqmax]"]) == "h-[16cqmax]"
+      assert merge(["h-[10px]", "h-[11cqw]", "h-[12cqh]", "h-[13cqi]", "h-[14cqb]", "h-[15cqmin]", "h-[16cqmax]"]) ==
+               "h-[16cqmax]"
+
       assert merge("z-20 z-[99]") == "z-[99]"
       assert merge("my-[2px] m-[10rem]") == "m-[10rem]"
       assert merge("cursor-pointer cursor-[grab]") == "cursor-[grab]"
@@ -188,16 +195,21 @@ defmodule SaladUI.MergeTest do
     end
 
     test "handles arbitrary property conflicts with modifiers correctly" do
-      assert merge("[paint-order:markers] hover:[paint-order:normal]") == "[paint-order:markers] hover:[paint-order:normal]"
+      assert merge("[paint-order:markers] hover:[paint-order:normal]") ==
+               "[paint-order:markers] hover:[paint-order:normal]"
+
       assert merge("hover:[paint-order:markers] hover:[paint-order:normal]") == "hover:[paint-order:normal]"
-      assert merge("hover:focus:[paint-order:markers] focus:hover:[paint-order:normal]") == "focus:hover:[paint-order:normal]"
+
+      assert merge("hover:focus:[paint-order:markers] focus:hover:[paint-order:normal]") ==
+               "focus:hover:[paint-order:normal]"
 
       assert merge(["[paint-order:markers]", "[paint-order:normal]", "[--my-var:2rem]", "lg:[--my-var:4px]"]) ==
                "[paint-order:normal] [--my-var:2rem] lg:[--my-var:4px]"
     end
 
     test "handles complex arbitrary property conflicts correctly" do
-      assert merge("[-unknown-prop:::123:::] [-unknown-prop:url(https://hi.com)]") == "[-unknown-prop:url(https://hi.com)]"
+      assert merge("[-unknown-prop:::123:::] [-unknown-prop:url(https://hi.com)]") ==
+               "[-unknown-prop:url(https://hi.com)]"
     end
 
     test "handles important modifier correctly" do
@@ -225,7 +237,10 @@ defmodule SaladUI.MergeTest do
   describe "arbitrary variants" do
     test "basic arbitrary variants" do
       assert merge("[&>*]:underline [&>*]:line-through") == "[&>*]:line-through"
-      assert merge(["[&>*]:underline", "[&>*]:line-through", "[&_div]:line-through"]) == "[&>*]:line-through [&_div]:line-through"
+
+      assert merge(["[&>*]:underline", "[&>*]:line-through", "[&_div]:line-through"]) ==
+               "[&>*]:line-through [&_div]:line-through"
+
       assert merge("supports-[display:grid]:flex supports-[display:grid]:grid") == "supports-[display:grid]:grid"
     end
 
@@ -242,7 +257,9 @@ defmodule SaladUI.MergeTest do
       assert merge(["[@media_screen{@media(hover:hover)}]:underline", "[@media_screen{@media(hover:hover)}]:line-through"]) ==
                "[@media_screen{@media(hover:hover)}]:line-through"
 
-      assert merge("hover:[@media_screen{@media(hover:hover)}]:underline hover:[@media_screen{@media(hover:hover)}]:line-through") ==
+      assert merge(
+               "hover:[@media_screen{@media(hover:hover)}]:underline hover:[@media_screen{@media(hover:hover)}]:line-through"
+             ) ==
                "hover:[@media_screen{@media(hover:hover)}]:line-through"
     end
 
@@ -251,18 +268,29 @@ defmodule SaladUI.MergeTest do
     end
 
     test "arbitrary variants with multiple attribute selectors" do
-      assert merge(["[&[data-foo][data-bar]:not([data-baz])]:underline", "[&[data-foo][data-bar]:not([data-baz])]:line-through"]) ==
+      assert merge([
+               "[&[data-foo][data-bar]:not([data-baz])]:underline",
+               "[&[data-foo][data-bar]:not([data-baz])]:line-through"
+             ]) ==
                "[&[data-foo][data-bar]:not([data-baz])]:line-through"
     end
 
     test "multiple arbitrary variants" do
       assert merge("[&>*]:[&_div]:underline [&>*]:[&_div]:line-through") == "[&>*]:[&_div]:line-through"
-      assert merge(["[&>*]:[&_div]:underline", "[&_div]:[&>*]:line-through"]) == "[&>*]:[&_div]:underline [&_div]:[&>*]:line-through"
 
-      assert merge(["hover:dark:[&>*]:focus:disabled:[&_div]:underline", "dark:hover:[&>*]:disabled:focus:[&_div]:line-through"]) ==
+      assert merge(["[&>*]:[&_div]:underline", "[&_div]:[&>*]:line-through"]) ==
+               "[&>*]:[&_div]:underline [&_div]:[&>*]:line-through"
+
+      assert merge([
+               "hover:dark:[&>*]:focus:disabled:[&_div]:underline",
+               "dark:hover:[&>*]:disabled:focus:[&_div]:line-through"
+             ]) ==
                "dark:hover:[&>*]:disabled:focus:[&_div]:line-through"
 
-      assert merge(["hover:dark:[&>*]:focus:[&_div]:disabled:underline", "dark:hover:[&>*]:disabled:focus:[&_div]:line-through"]) ==
+      assert merge([
+               "hover:dark:[&>*]:focus:[&_div]:disabled:underline",
+               "dark:hover:[&>*]:disabled:focus:[&_div]:line-through"
+             ]) ==
                "hover:dark:[&>*]:focus:[&_div]:disabled:underline dark:hover:[&>*]:disabled:focus:[&_div]:line-through"
     end
 

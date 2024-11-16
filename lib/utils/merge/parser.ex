@@ -31,16 +31,20 @@ defmodule SaladUI.Merge.Parser do
     |> ascii_string([?a..?z, ?0..?9], min: 1)
     |> unwrap_and_tag(:postfix)
 
-  defparsec :arbitrary,
-            "["
-            |> string()
-            |> concat(times(choice([parsec(:arbitrary), ascii_string(@chars ++ [?:, ?/], min: 1)]), min: 1))
-            |> concat(string("]"))
+  defparsec(
+    :arbitrary,
+    "["
+    |> string()
+    |> concat(times(choice([parsec(:arbitrary), ascii_string(@chars ++ [?:, ?/], min: 1)]), min: 1))
+    |> concat(string("]"))
+  )
 
-  defparsec :class,
-            modifier
-            |> optional()
-            |> concat(optional(important))
-            |> concat(base)
-            |> concat(optional(postfix))
+  defparsec(
+    :class,
+    modifier
+    |> optional()
+    |> concat(optional(important))
+    |> concat(base)
+    |> concat(optional(postfix))
+  )
 end

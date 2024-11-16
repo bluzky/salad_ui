@@ -1,5 +1,6 @@
 defmodule SaladUI.CollapsibleTest do
   use ComponentCase
+
   import SaladUI.Collapsible
 
   describe "collapsible/1" do

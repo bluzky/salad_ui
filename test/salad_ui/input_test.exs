@@ -14,9 +14,11 @@ defmodule SaladUI.InputTest do
         |> rendered_to_string()
         |> clean_string()
 
-      for class <- ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
+      for class <-
+            ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
         assert html =~ class
       end
+
       assert html =~ "text"
       assert html =~ "Enter your name"
     end
@@ -31,9 +33,11 @@ defmodule SaladUI.InputTest do
         |> rendered_to_string()
         |> clean_string()
 
-      for class <- ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
+      for class <-
+            ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
         assert html =~ class
       end
+
       assert html =~ "email"
       assert html =~ "Enter your email"
     end
@@ -48,9 +52,11 @@ defmodule SaladUI.InputTest do
         |> rendered_to_string()
         |> clean_string()
 
-      for class <- ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
+      for class <-
+            ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
         assert html =~ class
       end
+
       assert html =~ "password"
       assert html =~ "Enter your password"
     end
@@ -65,10 +71,11 @@ defmodule SaladUI.InputTest do
         |> rendered_to_string()
         |> clean_string()
 
-
-      for class <- ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
+      for class <-
+            ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
         assert html =~ class
       end
+
       assert html =~ "date"
       assert html =~ "yyy-mm-dd"
     end
@@ -83,7 +90,8 @@ defmodule SaladUI.InputTest do
         |> rendered_to_string()
         |> clean_string()
 
-      for class <- ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
+      for class <-
+            ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
         assert html =~ class
       end
 
@@ -101,9 +109,11 @@ defmodule SaladUI.InputTest do
         |> rendered_to_string()
         |> clean_string()
 
-      for class <- ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
+      for class <-
+            ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
         assert html =~ class
       end
+
       assert html =~ "file"
       assert html =~ "Select file"
     end
@@ -118,9 +128,11 @@ defmodule SaladUI.InputTest do
         |> rendered_to_string()
         |> clean_string()
 
-      for class <- ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
+      for class <-
+            ~w(flex px-3 py-2 rounded-md ring-offset-background border-input bg-background text-sm w-full h-10 placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 file:border-0 file:bg-transparent file:font-medium file:text-sm border) do
         assert html =~ class
       end
+
       assert html =~ "hidden"
       assert html =~ "secret"
       assert html =~ "hard to get in"

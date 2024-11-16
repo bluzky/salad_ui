@@ -19,6 +19,7 @@ defmodule SaladUI.AlertTest do
       for class <- ~w(mb-1 tracking-tight font-medium leading-none) do
         assert html =~ class
       end
+
       assert html =~ "Heads up!"
       assert html =~ "Alert Descriptions"
 

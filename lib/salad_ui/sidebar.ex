@@ -27,10 +27,15 @@ defmodule SaladUI.Sidebar do
     ~H"""
     <div
       style={
-        style(Map.merge(%{
-          "--sidebar-width": @sidebar_width,
-          "--sidebar-width-icon": @sidebar_width_icon
-        }, @style))
+        style(
+          Map.merge(
+            %{
+              "--sidebar-width": @sidebar_width,
+              "--sidebar-width-icon": @sidebar_width_icon
+            },
+            @style
+          )
+        )
       }
       class={
         classes([
@@ -154,7 +159,8 @@ defmodule SaladUI.Sidebar do
 
   def sidebar_trigger(assigns) do
     ~H"""
-    <.dynamic tag="button"
+    <.dynamic
+      tag="button"
       data-sidebar="trigger"
       variant="ghost"
       size="icon"

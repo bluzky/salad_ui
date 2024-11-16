@@ -33,7 +33,6 @@ defmodule SaladUI.Patcher.ConfigPatcherTest do
       assert File.read!(@config_file) =~ "components_path: Path.join(File.cwd!(), \"#{@components_path}\")"
     end
 
-
     test "patch/2 adds both salad_ui configs when they're missing" do
       initial_content = """
       import Config
@@ -64,7 +63,8 @@ defmodule SaladUI.Patcher.ConfigPatcherTest do
         salad_ui: %{
           description: "Path to install SaladUI components",
           values: [components_path: "Path.join(File.cwd!(), \"#{@components_path}\")"]
-        }      ]
+        }
+      ]
 
       File.write!(@config_file, initial_content)
 
@@ -86,7 +86,8 @@ defmodule SaladUI.Patcher.ConfigPatcherTest do
         salad_ui: %{
           description: "Path to install SaladUI components",
           values: [components_path: "Path.join(File.cwd!(), \"#{@components_path}\")"]
-        }      ]
+        }
+      ]
 
       ConfigPatcher.patch(@config_file, configs: configs_to_add)
 

@@ -114,7 +114,8 @@ defmodule SaladUI.Merge do
     |> Enum.join(" ")
   end
 
-  defp handle_class(%{raw: raw, tailwind?: false}, acc, _config), do: Map.update!(acc, :classes, fn classes -> [raw | classes] end)
+  defp handle_class(%{raw: raw, tailwind?: false}, acc, _config),
+    do: Map.update!(acc, :classes, fn classes -> [raw | classes] end)
 
   defp handle_class(%{conflict_id: conflict_id} = class, acc, config) do
     if Enum.member?(acc.groups, conflict_id), do: acc, else: add_class(acc, class, config)
