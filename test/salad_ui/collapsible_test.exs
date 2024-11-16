@@ -48,7 +48,6 @@ defmodule SaladUI.CollapsibleTest do
         </.collapsible>
         """)
 
-      assert html =~ ~s(phx-click)
       assert html =~ "test-collapsible"
       assert html =~ "Click me"
     end
@@ -118,7 +117,7 @@ defmodule SaladUI.CollapsibleTest do
 
   describe "toggle_collapsible/2" do
     test "returns JavaScript commands for toggling content" do
-      js = toggle_collapsible(%Phoenix.LiveView.JS{}, %{id: "test-collapsible"})
+      js = toggle_collapsible(%Phoenix.LiveView.JS{}, "test-collapsible")
 
       assert js.ops == [
                [
@@ -129,7 +128,8 @@ defmodule SaladUI.CollapsibleTest do
                    outs: [["ease-out"], ["opacity-100"], ["opacity-70"]],
                    time: 200
                  }
-               ]
+               ],
+               ["toggle_attr", %{attr: ["data-state", "open", "closed"], to: "#test-collapsible"}]
              ]
     end
   end
@@ -153,6 +153,5 @@ defmodule SaladUI.CollapsibleTest do
     assert html =~ "Hidden Content"
     assert html =~ "collapsible-content"
     assert html =~ ~s(phx-toggle-collapsible)
-    assert html =~ ~s(phx-click)
   end
 end
