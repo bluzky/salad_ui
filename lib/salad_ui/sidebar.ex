@@ -367,6 +367,7 @@ defmodule SaladUI.Sidebar do
   TODO: class merge not work well here
   """
   attr(:class, :string, default: nil)
+  attr :as, :any
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
