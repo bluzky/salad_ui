@@ -79,7 +79,7 @@ defmodule SaladUI.Sheet do
     """
   end
 
-  attr :id, :string, required: true, doc: "The id of the sheet"
+  attr :id, :string, default: nil, doc: "The id of the sheet, this is the target of sheet_trigger"
   attr :class, :string, default: nil
   attr :side, :string, default: "right", values: ~w(left right top bottom), doc: "The side of the sheet"
   attr :rest, :global

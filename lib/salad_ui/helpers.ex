@@ -205,8 +205,23 @@ defmodule SaladUI.Helpers do
   # => "background-color: red; color: white; font-size: 16px;"
   ```
   """
-  def style(css_map) do
-    Enum.map_join(css_map, "; ", fn {k, v} -> "#{k}: #{v}" end) <> ";"
+  def style(items) when is_list(items) do
+    {acc_map, acc_list} =
+      Enum.reduce(items, {%{}, []}, fn item, {acc_map, acc_list} ->
+        cond do
+          is_map(item) ->
+            {Map.merge(acc_map, item), acc_list}
+
+          is_binary(item) ->
+            {acc_map, [item | acc_list]}
+
+          true ->
+            {acc_map, [item | acc_list]}
+        end
+      end)
+
+    style = Enum.map_join(acc_map, "; ", fn {k, v} -> "#{k}: #{v}" end) <> ";"
+    Enum.join([style | acc_list], "; ")
   end
 
   @doc """

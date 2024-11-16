@@ -2,7 +2,6 @@ defmodule SaladUI.Sidebar do
   @moduledoc false
   use SaladUI, :component
 
-  import SaladUI.Button
   import SaladUI.Input
   import SaladUI.Separator
   import SaladUI.Sheet
@@ -27,15 +26,13 @@ defmodule SaladUI.Sidebar do
     ~H"""
     <div
       style={
-        style(
-          Map.merge(
-            %{
-              "--sidebar-width": @sidebar_width,
-              "--sidebar-width-icon": @sidebar_width_icon
-            },
-            @style
-          )
-        )
+        style([
+          %{
+            "--sidebar-width": @sidebar_width,
+            "--sidebar-width-icon": @sidebar_width_icon
+          },
+          @style
+        ])
       }
       class={
         classes([
@@ -61,6 +58,7 @@ defmodule SaladUI.Sidebar do
   attr :is_mobile, :boolean, default: false
   attr :state, :string, values: ~w(expanded collapsed), default: "expanded"
   attr(:class, :string, default: nil)
+  attr :style, :map, default: %{}
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
@@ -81,6 +79,8 @@ defmodule SaladUI.Sidebar do
   end
 
   def sidebar(%{is_mobile: true} = assigns) do
+    assigns = assign(assigns, :sidebar_width_mobile, @sidebar_width_mobile)
+
     ~H"""
     <.sheet>
       <.sheet_content
@@ -88,9 +88,12 @@ defmodule SaladUI.Sidebar do
         data-mobile="true"
         class="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
         style={
-          style(%{
-            "--sidebar-width": @sidebar_width_mobile
-          })
+          style([
+            %{
+              "--sidebar-width": @sidebar_width_mobile
+            },
+            @style
+          ])
         }
         side={@side}
       >
@@ -520,7 +523,7 @@ defmodule SaladUI.Sidebar do
         <.tooltip_trigger>
           <%= @button %>
         </.tooltip_trigger>
-        <.tooltip_content side="right" align="center" hidden={@state != "collapsed" || @is_mobile}>
+        <.tooltip_content side="right" hidden={@state != "collapsed" || @is_mobile}>
           <%= render_slot(@tooltip) %>
         </.tooltip_content>
       </.tooltip>
@@ -613,9 +616,11 @@ defmodule SaladUI.Sidebar do
         class="h-4 flex-1 max-w-[--skeleton-width]"
         data-sidebar="menu-skeleton-text"
         style={
-          style(%{
-            "--skeleton-width": @width
-          })
+          style([
+            %{
+              "--skeleton-width": @width
+            }
+          ])
         }
       />
     </div>
