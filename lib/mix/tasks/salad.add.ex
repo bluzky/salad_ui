@@ -67,6 +67,7 @@ defmodule Mix.Tasks.Salad.Add do
          :ok <- File.mkdir_p(Path.dirname(target_path)),
          modified_content = insert_target_module_name(source_content, file_name),
          :ok <- File.write(target_path, modified_content),
+         :ok <- setup_zag_integration(source_content, file_name),
          :ok <- maybe_perform_additional_setup(file_name) do
       Mix.shell().info("#{file_name} component installed successfully ✅")
     else
@@ -129,6 +130,37 @@ defmodule Mix.Tasks.Salad.Add do
     end
 
     :ok
+  end
+
+  defp setup_zag_integration(source, file_name) do
+    # grab the component we are targeting in Zag
+    case Regex.run(~r/data-component="([^"]+)"/, source) do
+      [_, target_zag_component] ->
+        zag_imports_path = Path.join(File.cwd!(), "assets/js/zag/index.js")
+
+        File.open!(
+          zag_imports_path,
+          [:append],
+          fn file ->
+            IO.write(file, "export * as #{target_zag_component} from '@zag-js/#{target_zag_component}';\n")
+          end
+        )
+
+        unless Mix.env() == :test do
+          Mix.shell().cmd("npm install @zag-js/#{target_zag_component} --prefix assets")
+        end
+
+        :ok
+
+      _ ->
+        Mix.shell().info("""
+        The component you are trying to install (#{file_name}) does not have a data-component attribute set, so you cannot use Zag with it. The component will lack accessibility support and interactive features
+        """)
+
+        continue? = Mix.shell().yes?("Do you want to continue with the installation?")
+
+        if continue?, do: :ok, else: {:error, "Installation aborted"}
+    end
   end
 
   defp get_module_name do
