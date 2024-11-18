@@ -123,6 +123,13 @@ defmodule SaladUI.Helpers do
     "#{shared_classes} #{variation_classes}"
   end
 
+  def unique_id(seed \\ 16, length \\ 22) do
+    seed
+    |> :crypto.strong_rand_bytes()
+    |> Base.url_encode64()
+    |> binary_part(0, length)
+  end
+
   # Translate error message
   # borrowed from https://github.com/petalframework/petal_components/blob/main/lib/petal_components/field.ex#L414
   defp translate_error({msg, opts}) do
