@@ -245,17 +245,17 @@ defmodule SaladUI.Helpers do
   @doc """
   Generates a dynamically named HTML tag.
   """
-  def dynamic(%{as: name} = assigns) when is_function(name, 1) do
-    assigns = Map.delete(assigns, :as)
+  def dynamic(%{tag: name} = assigns) when is_function(name, 1) do
+    assigns = Map.delete(assigns, :tag)
     name.(assigns)
   end
 
   def dynamic(assigns) do
-    name = assigns[:as] || "div"
+    name = assigns[:tag] || "div"
 
     assigns =
       assigns
-      |> Map.delete(:as)
+      |> Map.delete(:tag)
       |> assign(:name, name)
 
     dynamic_tag(assigns)
