@@ -20,26 +20,28 @@ defmodule SaladUI.Collapsible do
 
   attr :id, :string,
     required: true,
-    doc: "Id to identify collapsible component, collapsible_trigger uses this id to toggle content visibility"
+    doc: "Id to identify collapsible component"
 
   attr :open, :boolean, default: false, doc: "Initial state of collapsible content"
+  attr :listeners, :list, default: []
   attr :class, :string, default: nil
   slot(:inner_block, required: true)
 
   def collapsible(assigns) do
-    assigns =
-      assigns
-      |> assign(:builder, %{open: assigns[:open], id: assigns[:id]})
-      |> assign(:open, normalize_boolean(assigns[:open]))
+    assigns = assign(assigns, :open, normalize_boolean(assigns[:open]))
 
     ~H"""
     <div
-      phx-toggle-collapsible={toggle_collapsible(@builder)}
-      phx-mounted={@open && JS.exec("phx-toggle-collapsible", to: "##{@id}")}
+      data-component="collapsible"
+      data-parts={Jason.encode!(["trigger", "content"])}
+      data-options={Jason.encode!(%{open: :bool})}
+      data-open={@open}
+      data-listeners={Jason.encode!(@listeners)}
+      phx-hook="ZagHook"
       class={classes(["inline-block relative", @class])}
       id={@id}
     >
-      <%= render_slot(@inner_block, @builder) %>
+      <%= render_slot(@inner_block) %>
     </div>
     """
   end
@@ -47,13 +49,12 @@ defmodule SaladUI.Collapsible do
   @doc """
   Render trigger for collapsible component.
   """
-  attr :builder, :map, required: true, doc: "Builder instance for collapsible component"
   attr(:class, :string, default: nil)
   slot(:inner_block, required: true)
 
   def collapsible_trigger(assigns) do
     ~H"""
-    <div phx-click={JS.exec("phx-toggle-collapsible", to: "#" <> @builder.id)} class={@class}>
+    <div data-part="trigger" class={@class}>
       <%= render_slot(@inner_block) %>
     </div>
     """
@@ -69,9 +70,10 @@ defmodule SaladUI.Collapsible do
   def collapsible_content(assigns) do
     ~H"""
     <div
+      data-part="content"
       class={
         classes([
-          "collapsible-content hidden transition-all duration-200 ease-in-out",
+          "transition-all duration-200 ease-in-out",
           @class
         ])
       }
@@ -85,9 +87,9 @@ defmodule SaladUI.Collapsible do
   @doc """
   Show collapsible content.
   """
-  def toggle_collapsible(js \\ %JS{}, %{id: id} = _builder) do
+  def toggle_collapsible(js \\ %JS{}, id) do
     JS.toggle(js,
-      to: "##{id} .collapsible-content",
+      to: "##{id} [data-part='content']",
       in: {"ease-out duration-200", "opacity-0", "opacity-100"},
       out: {"ease-out", "opacity-100", "opacity-70"},
       time: 200
