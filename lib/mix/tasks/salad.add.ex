@@ -137,14 +137,13 @@ defmodule Mix.Tasks.Salad.Add do
     case Regex.run(~r/data-component="([^"]+)"/, source) do
       [_, target_zag_component] ->
         zag_imports_path = Path.join(File.cwd!(), "assets/js/zag/index.js")
+        export_statement = "export * as #{target_zag_component} from \"@zag-js/#{target_zag_component}\";\n"
 
-        File.open!(
-          zag_imports_path,
-          [:append],
-          fn file ->
-            IO.write(file, "export * as #{target_zag_component} from '@zag-js/#{target_zag_component}';\n")
-          end
-        )
+        existing_content = File.read!(zag_imports_path)
+
+        unless String.contains?(existing_content, export_statement) do
+          File.write!(zag_imports_path, export_statement, [:append])
+        end
 
         unless Mix.env() == :test do
           Mix.shell().cmd("npm install @zag-js/#{target_zag_component} --prefix assets")

@@ -85,13 +85,13 @@ class Component {
   }
 
   renderPart(root, name, api, opts = {}) {
-    const part =
-      name === "root" ? root : root.querySelector(`[data-part='${name}']`);
+    const isRoot = name === "root";
+    const part = isRoot ? root : root.querySelector(`[data-part='${name}']`);
 
     const getterName = `get${camelize(name, true)}Props`;
 
     if (part && api[getterName]) {
-      const cleanup = this.spreadProps(part, api[getterName](opts));
+      const cleanup = this.spreadProps(part, api[getterName](opts), isRoot);
       this.cleanupFunctions.set(part, cleanup);
     }
   }
@@ -111,41 +111,71 @@ class Component {
     }
   }
 
-  spreadProps(el, attrs) {
-    const oldAttrs = el;
+  spreadProps(el, attrs, isRoot = false) {
     const prevAttrsMap = new WeakMap();
+    const oldAttrs = prevAttrsMap.get(el) || {};
+    const eventHandlers = new Map();
     const attrKeys = Object.keys(attrs);
 
     const addEvent = (event, callback) => {
-      el.addEventListener(event.toLowerCase(), callback);
+      const existingHandler = eventHandlers.get(event);
+      if (existingHandler && oldAttrs[`on${event}`] === callback) {
+        return;
+      }
+
+      if (existingHandler) {
+        el.removeEventListener(event.toLowerCase(), existingHandler);
+      }
+
+      const handler = (e) => callback(e);
+      eventHandlers.set(event, handler);
+      el.addEventListener(event.toLowerCase(), handler);
     };
 
-    const removeEvent = (event, callback) => {
-      el.removeEventListener(event.toLowerCase(), callback);
+    const removeEvent = (event) => {
+      const handler = eventHandlers.get(event);
+      if (handler) {
+        el.removeEventListener(event.toLowerCase(), handler);
+        eventHandlers.delete(event);
+      }
     };
 
-    const setup = (attr) => addEvent(attr.substring(2), attrs[attr]);
-    const teardown = (attr) => removeEvent(attr.substring(2), attrs[attr]);
+    const setup = (attr) => {
+      const eventName = attr.substring(2);
+      const newHandler = attrs[attr];
+      const existingHandler = oldAttrs[attr];
+
+      if (newHandler !== existingHandler) {
+        addEvent(eventName, newHandler);
+      }
+    };
 
     const apply = (attrName) => {
-      // avoid overriding element's id because LiveView will lose
-      // track of it and DOM patching will not work as expected
-      if (attrName === "id") return;
+      // avoid replacing id on root element because LiveView
+      // will lose track of it and DOM patching will not work as expected
+      if (attrName === "id" && isRoot) return;
 
       let value = attrs[attrName];
       const oldValue = oldAttrs[attrName];
+
       if (value === oldValue) return;
 
       if (typeof value === "boolean") value = value || undefined;
 
-      if (value != null) {
-        if (["value", "checked", "htmlFor", "id"].includes(attrName)) {
+      if (value == null) {
+        el.removeAttribute(attrName.toLowerCase());
+        return;
+      }
+
+      if (["value", "checked", "htmlFor"].includes(attrName)) {
+        if (el[attrName] !== value) {
           el[attrName] = value;
-        } else {
-          el.setAttribute(attrName.toLowerCase(), value);
         }
       } else {
-        el.removeAttribute(attrName.toLowerCase());
+        const currentAttr = el.getAttribute(attrName.toLowerCase());
+        if (currentAttr !== String(value)) {
+          el.setAttribute(attrName.toLowerCase(), value);
+        }
       }
     };
 
@@ -157,7 +187,13 @@ class Component {
     prevAttrsMap.set(el, attrs);
 
     return () => {
-      attrKeys.filter((key) => key.startsWith("on")).forEach(teardown);
+      attrKeys
+        .filter((key) => key.startsWith("on"))
+        .forEach((key) => {
+          const eventName = key.substring(2).toLowerCase();
+          removeEvent(eventName);
+        });
+      prevAttrsMap.delete(el);
     };
   }
 }
@@ -170,6 +206,10 @@ export default {
     } catch (error) {
       console.error("Error mounting component:", error);
     }
+  },
+
+  updated() {
+    this.component.render();
   },
 
   destroyed() {
@@ -204,7 +244,11 @@ export default {
             .reduce((acc, listener) => ({ ...acc, ...listener }), {})
         : {};
 
-      return { id: this.el.id || "", ...options, ...listeners };
+      return {
+        id: this.el.id || "",
+        ...options,
+        ...listeners,
+      };
     } catch (error) {
       console.error("Error parsing context:", error);
       return {};
