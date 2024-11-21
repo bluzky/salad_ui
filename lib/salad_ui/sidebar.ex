@@ -282,6 +282,7 @@ defmodule SaladUI.Sidebar do
   """
   attr(:class, :string, default: nil)
   attr(:rest, :global)
+  slot :inner_block, required: true
 
   def sidebar_footer(assigns) do
     ~H"""
@@ -295,6 +296,7 @@ defmodule SaladUI.Sidebar do
       }
       {@rest}
     >
+      <%= render_slot(@inner_block) %>
     </div>
     """
   end
@@ -504,11 +506,12 @@ defmodule SaladUI.Sidebar do
   attr :as_tag, :any, default: "button"
   attr(:rest, :global)
   slot(:inner_block, required: true)
-  slot :tooltip, required: false
+  attr :tooltip, :string, required: false
 
   def sidebar_menu_button(assigns) do
     button = ~H"""
-    <.dynamic tag={@as_tag}
+    <.dynamic
+      tag={@as_tag}
       data-sidebar="menu-button"
       data-size={@size}
       data-active={@is_active}
@@ -521,14 +524,14 @@ defmodule SaladUI.Sidebar do
 
     assigns = assign(assigns, :button, button)
 
-    if not Enum.empty?(assigns[:tooltip]) do
+    if assigns[:tooltip] do
       ~H"""
-      <.tooltip>
+      <.tooltip class="block">
         <.tooltip_trigger>
           <%= @button %>
         </.tooltip_trigger>
         <.tooltip_content side="right" hidden={@state != "collapsed" || @is_mobile}>
-          <%= render_slot(@tooltip) %>
+          <%= @tooltip %>
         </.tooltip_content>
       </.tooltip>
       """
@@ -690,7 +693,8 @@ defmodule SaladUI.Sidebar do
 
   def sidebar_menu_sub_button(assigns) do
     ~H"""
-    <.dynamic tag={@as_tag}
+    <.dynamic
+      tag={@as_tag}
       data-sidebar="menu-sub-button"
       data-size={@size}
       data-active={@is_active}
@@ -731,9 +735,7 @@ defmodule SaladUI.Sidebar do
   }
   @shared_classes "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0"
   defp get_variant(input) do
-    @shared_classes <>
-      " " <>
-      variant_class(@variant_config, input)
+    @shared_classes <> " " <> variant_class(@variant_config, input)
   end
 
   @doc """

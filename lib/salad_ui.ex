@@ -10,7 +10,7 @@ defmodule SaladUI do
       alias Phoenix.LiveView.JS
 
       defp classes(input) do
-        SaladUI.Merge.merge(input)
+        TwMerge.merge(input)
       end
     end
   end
