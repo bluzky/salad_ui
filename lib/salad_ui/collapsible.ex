@@ -24,6 +24,7 @@ defmodule SaladUI.Collapsible do
 
   attr :open, :boolean, default: true, doc: "Initial state of collapsible content"
   attr :class, :string, default: nil
+  attr :rest, :global, include: ~w(title)
   slot(:inner_block, required: true)
 
   def collapsible(assigns) do
@@ -37,6 +38,7 @@ defmodule SaladUI.Collapsible do
       phx-mounted={@open && JS.exec("phx-toggle-collapsible", to: "##{@id}")}
       class={classes(["inline-block relative collapsible-root", @class])}
       id={@id}
+      {@rest}
     >
       <%= render_slot(@inner_block) %>
     </div>

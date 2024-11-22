@@ -243,7 +243,17 @@ defmodule SaladUI.Helpers do
   end
 
   @doc """
-  Generates a dynamically named HTML tag.
+  This component is used to render dynamic tag based on the `tag` attribute. `tag` attribute can be a string or a function component.
+
+  This is just a wrapper around `dynamic_tag` function from Phoenix LiveView which only support string tag.
+
+  ## Examples
+
+  ```heex
+  <.dynamic tag={@tag} class="bg-primary text-primary-foreground">
+     Hello World
+  </.dynamic>
+  ```
   """
   def dynamic(%{tag: name} = assigns) when is_function(name, 1) do
     assigns = Map.delete(assigns, :tag)
@@ -259,6 +269,34 @@ defmodule SaladUI.Helpers do
       |> assign(:name, name)
 
     dynamic_tag(assigns)
+  end
+
+  @doc """
+  This component mimic behavior of `asChild` attribute from shadcn/ui.
+  It works by passing all attribute from `as_child` tag to `tag` function component, add pass `child` attribute to the `as_tag` attribute of the `tag` function component.
+
+  The `tag` function component should accept `as_tag` attribute to render the child component.
+
+  ## Examples
+
+  ```heex
+  <.as_child tag={&dropdown_menu_trigger/1} child={&sidebar_menu_button/1} class="bg-primary text-primary-foreground">
+     Hello World
+  </.as_child>
+  ```
+
+  Normally this can be archieved by using `dropdown_menu_trigger` component directly but this will fire copile warning.
+
+  ```heex
+  <.dropdown_menu_trigger as_tag={&sidebar_menu_button/1} class="bg-primary text-primary-foreground">
+     Hello World
+  </.dropdown_menu_trigger>
+  """
+  def as_child(%{tag: tag, child: child_tag} = assigns) when is_function(tag, 1) do
+    assigns
+    |> Map.drop([:tag, :child])
+    |> assign(:as_tag, child_tag)
+    |> tag.()
   end
 
   # Translate error message
