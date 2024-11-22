@@ -49,7 +49,7 @@ defmodule SaladUI.Collapsible do
   Render trigger for collapsible component.
   """
   attr(:class, :string, default: nil)
-  attr :as_tag, :any, default: "button"
+  attr :as_tag, :any, default: "div"
   attr :rest, :global
   slot(:inner_block, required: true)
 

@@ -330,6 +330,7 @@ defmodule SaladUI.Sidebar do
       data-sidebar="content"
       class={
         classes([
+        "salad-scroll-area",
           "flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
           @class
         ])
