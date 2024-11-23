@@ -42,7 +42,7 @@ defmodule SaladUI.CollapsibleTest do
       html =
         rendered_to_string(~H"""
         <.collapsible id="test-collapsible">
-          <.collapsible_trigger builder={%{id: "test-collapsible", open: false}}>
+          <.collapsible_trigger>
             Click me
           </.collapsible_trigger>
         </.collapsible>
@@ -58,7 +58,6 @@ defmodule SaladUI.CollapsibleTest do
       html =
         rendered_to_string(~H"""
         <.collapsible_trigger
-          builder={%{id: "test-collapsible", open: false}}
           class="custom-trigger-class"
         >
           Click me

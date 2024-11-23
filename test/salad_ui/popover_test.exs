@@ -18,11 +18,11 @@ defmodule SaladUI.PopoverTest do
     end
 
     test "popover_content top" do
-      assigns = %{}
+      assigns = %{id: "xxx-id"}
 
       html =
         ~H"""
-        <.popover_content>Popover Content</.popover_content>
+        <.popover_content id={@id}>Popover Content</.popover_content>
         """
         |> rendered_to_string()
         |> clean_string()
@@ -37,11 +37,11 @@ defmodule SaladUI.PopoverTest do
     end
 
     test "It renders popover_content bottom correctly" do
-      assigns = %{}
+      assigns = %{id: "xxx-id"}
 
       html =
         ~H"""
-        <.popover_content side="bottom">Popover Content</.popover_content>
+        <.popover_content id={@id} side="bottom">Popover Content</.popover_content>
         """
         |> rendered_to_string()
         |> clean_string()
@@ -55,11 +55,11 @@ defmodule SaladUI.PopoverTest do
     end
 
     test "It renders popover_content right correctly" do
-      assigns = %{}
+      assigns = %{id: "xxx-id"}
 
       html =
         ~H"""
-        <.popover_content side="right">Popover Content</.popover_content>
+        <.popover_content id={@id} side="right">Popover Content</.popover_content>
         """
         |> rendered_to_string()
         |> clean_string()
