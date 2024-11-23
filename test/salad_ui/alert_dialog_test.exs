@@ -1,5 +1,6 @@
 defmodule SaladUI.AlertDialogTest do
   use ComponentCase
+
   import SaladUI.AlertDialog
 
   # Helper function to set up assigns

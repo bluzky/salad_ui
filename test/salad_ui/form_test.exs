@@ -32,6 +32,7 @@ defmodule SaladUI.FormTest do
       for class <- ~w(font-medium leading-none text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70) do
         assert html =~ class
       end
+
       assert html =~ "This is a label"
     end
 
@@ -74,6 +75,7 @@ defmodule SaladUI.FormTest do
       for class <- ~w(text-destructive font-medium text-sm) do
         assert html =~ class
       end
+
       assert html =~ "This is a form message"
     end
 
@@ -111,13 +113,13 @@ defmodule SaladUI.FormTest do
         |> rendered_to_string()
         |> clean_string()
 
-
       assert html =~
                "<form class=\"space-y-6\" id=\"project-form\" phx-change=\"validate\" phx-submit=\"save\" phx-target=\"test-string\""
 
       for class <- ~w(font-medium leading-none text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70) do
         assert html =~ class
       end
+
       assert html =~ "What is your project's name?"
 
       assert html =~ "<p class=\"text-muted-foreground text-sm\">This is your public display name.</p>"

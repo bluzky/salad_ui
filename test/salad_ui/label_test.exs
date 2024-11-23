@@ -14,9 +14,11 @@ defmodule SaladUI.LabelTest do
         |> rendered_to_string()
         |> clean_string()
 
-      for class <- ~w(text-green-500 font-medium leading-none text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70) do
+      for class <-
+            ~w(text-green-500 font-medium leading-none text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70) do
         assert html =~ class
       end
+
       assert html =~ "Send!"
     end
   end
