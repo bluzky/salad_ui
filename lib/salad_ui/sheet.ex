@@ -101,16 +101,16 @@ defmodule SaladUI.Sheet do
     <div
       class="sheet-content relative z-50"
       id={@id}
-      phx-show-sheet={show_sheet(@id, @side)}
-      phx-hide-sheet={hide_sheet(@id, @side)}
+      phx-show-sheet={@id && show_sheet(@id, @side)}
+      phx-hide-sheet={@id && hide_sheet(@id, @side)}
       {@rest}
     >
       <.sheet_overlay />
       <.focus_wrap
-        id={"sheet-" <> @id}
-        phx-window-keydown={JS.exec("phx-hide-sheet", to: "#" <> @id)}
+        id={"sheet-#{@id}"}
+        phx-window-keydown={@id && JS.exec("phx-hide-sheet", to: "#" <> @id)}
         phx-key="escape"
-        phx-click-away={JS.exec("phx-hide-sheet", to: "#" <> @id)}
+        phx-click-away={@id && JS.exec("phx-hide-sheet", to: "#" <> @id)}
         role="sheet"
         class={
           classes([
