@@ -34,9 +34,21 @@ def deps do
     {:salad_ui, "~> 0.13.0"},
   ]
 end
+
+
+2. Add `TwMerge.Cache` to `application.ex`
+
+```elixir
+children = [
+    ...,
+    TwMerge.Cache
+]
+
 ```
 
-2. **Using `salad_ui` as part of your project:**
+3. Setup `salad_ui`
+
+3.1 **Using `salad_ui` as part of your project:**
 
 > This way you can install only components that you want to use or you want to edit SaladUI's component source code to fit your need.
 > If you just want to use SaladUI's components, see **Using as library** below.
@@ -50,7 +62,7 @@ end
 #> mix salad.add label button
 ```
 
-3. **Using `salad_ui` as a library:**
+3.2 **Using `salad_ui` as a library:**
 - Init Salad UI in your project with option `--as-lib`
 ```
 #> cd your_project
@@ -135,6 +147,7 @@ To run the failing tests only, just run `mix test.watch --stale`.
 - ✅ Select
 - ✅ Separator
 - ✅ Sheet
+- ✅ Sidebar
 - ✅ Skeleton
 - ✅ Slider
 - ✅ Switch
