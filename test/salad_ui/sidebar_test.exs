@@ -74,13 +74,7 @@ defmodule SaladUI.SidebarTest do
 
       html =
         ~H"""
-        <.sidebar
-          id="test-sidebar"
-          side="left"
-          variant="sidebar"
-          collapsible="offcanvas"
-          state="expanded"
-        >
+        <.sidebar id="test-sidebar" side="left" variant="sidebar" collapsible="offcanvas" state="expanded">
           Content
         </.sidebar>
         """

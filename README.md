@@ -31,7 +31,7 @@
 ```elixir
 def deps do
   [
-    {:salad_ui, "~> 0.13.0"},
+    {:salad_ui, "~> 0.14.0"},
   ]
 end
 

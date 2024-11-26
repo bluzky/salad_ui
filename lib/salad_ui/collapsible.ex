@@ -53,7 +53,6 @@ defmodule SaladUI.Collapsible do
   attr :rest, :global
   slot(:inner_block, required: true)
 
-
   def collapsible_trigger(assigns) do
     ~H"""
     <.dynamic

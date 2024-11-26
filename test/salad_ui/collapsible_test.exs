@@ -57,9 +57,7 @@ defmodule SaladUI.CollapsibleTest do
 
       html =
         rendered_to_string(~H"""
-        <.collapsible_trigger
-          class="custom-trigger-class"
-        >
+        <.collapsible_trigger class="custom-trigger-class">
           Click me
         </.collapsible_trigger>
         """)
