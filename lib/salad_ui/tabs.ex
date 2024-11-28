@@ -1,29 +1,28 @@
 defmodule SaladUI.Tabs do
   @moduledoc """
-  Implement of card components from https://ui.shadcn.com/docs/components/card
-
+  Implementation of tabs components from https://ui.shadcn.com/docs/components/tabs
 
   ## Example:
 
       <.tabs default="account" id="settings" :let={builder} class="w-[400px]">
-      <.tabs_list class="grid w-full grid-cols-2">
-        <.tabs_trigger builder={builder} value="account">account</.tabs_trigger>
-        <.tabs_trigger builder={builder} value="password">password</.tabs_trigger>
-      </.tabs_list>
-      <.tabs_content value="account">
+        <.tabs_list class="grid w-full grid-cols-2">
+          <.tabs_trigger builder={builder} value="account">account</.tabs_trigger>
+          <.tabs_trigger builder={builder} value="password">password</.tabs_trigger>
+        </.tabs_list>
+        <.tabs_content value="account">
           <.card>
-          <.card_content class="p-6">
-            Account
-          </.card_content>
-        </.card>
-      </.tabs_content>
-      <.tabs_content value="password">
-        <.card>
-          <.card_content class="p-6">
-            Password
-          </.card_content>
-        </.card>
-      </.tabs_content>
+            <.card_content class="p-6">
+              Account
+            </.card_content>
+          </.card>
+        </.tabs_content>
+        <.tabs_content value="password">
+          <.card>
+            <.card_content class="p-6">
+              Password
+            </.card_content>
+          </.card>
+        </.tabs_content>
       </.tabs>
   """
   use SaladUI, :component
