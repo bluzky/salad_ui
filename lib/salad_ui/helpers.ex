@@ -266,7 +266,7 @@ defmodule SaladUI.Helpers do
     assigns =
       assigns
       |> Map.delete(:tag)
-      |> assign(:name, name)
+      |> assign(:tag_name, name)
 
     dynamic_tag(assigns)
   end
