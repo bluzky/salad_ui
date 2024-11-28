@@ -80,8 +80,8 @@ defmodule SaladUI.Tabs do
         ])
       }
       data-target={@value}
-      phx-click={show_tab(@builder.id, @value)}
       {@rest}
+      phx-click={show_tab(@builder.id, @value)}
     >
       <%= render_slot(@inner_block) %>
     </button>
