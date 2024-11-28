@@ -135,6 +135,12 @@ defmodule SaladUI.Helpers do
     "#{shared_classes} #{variation_classes}"
   end
 
+  def unique_id(seed \\ 16, length \\ 22) do
+    seed
+    |> :crypto.strong_rand_bytes()
+    |> Base.url_encode64()
+    |> binary_part(0, length)
+  end
   @doc """
   Common function for building variant
 
