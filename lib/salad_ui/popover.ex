@@ -71,6 +71,10 @@ defmodule SaladUI.Popover do
   @doc """
   Render popover content
   """
+  attr :id, :string,
+    required: true,
+    doc: "The id of target element to show popover, this must be the same as the target in popover_trigger"
+
   attr :class, :string, default: nil
   attr :side, :string, values: ~w(bottom left right top), default: "top"
   attr :align, :string, values: ["start", "center", "end"], default: "center"
@@ -95,6 +99,7 @@ defmodule SaladUI.Popover do
       data-side={@side}
       data-state={@state}
       phx-click-away={hide()}
+      id={@id}
       class={
         classes([
           "absolute block",

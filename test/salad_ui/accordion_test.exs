@@ -101,7 +101,8 @@ defmodule SaladUI.AccordionTest do
 
       assert html =~ ~s(name="my-group")
 
-      for class <- ~w(flex py-4 transition-all items-center justify-between flex-1 font-medium hover:underline custom-class) do
+      for class <-
+            ~w(flex py-4 transition-all items-center justify-between flex-1 font-medium hover:underline custom-class) do
         assert html =~ class
       end
     end
@@ -115,7 +116,8 @@ defmodule SaladUI.AccordionTest do
           inner_block: []
         })
 
-      for class <- ~w(text-sm overflow-hidden grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 peer-open/accordion:grid-rows-[1fr]) do
+      for class <-
+            ~w(text-sm overflow-hidden grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 peer-open/accordion:grid-rows-[1fr]) do
         assert html =~ class
       end
 

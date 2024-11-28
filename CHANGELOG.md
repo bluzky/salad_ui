@@ -1,3 +1,14 @@
+# 0.14.0
+
+**Changes**
+- Implement Sidebar component
+- Introduce `as_child` tag to merge multiple `SaladUI` tag
+- Introduce `dynamic` tag which allow dynamic rendering a tag.
+
+**Breaking changes**
+- Replace `tails` by `tw_merge` which extracted from `turboprop`. You have to add `TwMerge.Cache` to children list in your `application.ex`
+- `Collapsible` component doesn't use builder anymore.
+
 # 0.9.0
 
 - ashkan117: fix: Explicitly include the <a> attributes to avoid lsp warning

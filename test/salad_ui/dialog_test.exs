@@ -20,6 +20,7 @@ defmodule SaladUI.DialogTest do
       for class <- ~w(flex text-center flex-col space-y-1.5 sm:text-left) do
         assert html =~ class
       end
+
       assert html =~ "This is the content of the header"
 
       for css_class <- ~w(flex flex-col space-y-1.5 text-center sm:text-left) do

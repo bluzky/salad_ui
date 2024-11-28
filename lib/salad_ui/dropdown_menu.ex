@@ -50,12 +50,15 @@ defmodule SaladUI.DropdownMenu do
   end
 
   attr :class, :string, default: nil
+  attr :as_tag, :any, default: "div"
   slot :inner_block, required: true
+
   attr :rest, :global
 
   def dropdown_menu_trigger(assigns) do
     ~H"""
-    <div
+    <.dynamic
+      tag={@as_tag}
       class={classes(["dropdown-menu-trigger peer", @class])}
       data-state="closed"
       {@rest}
@@ -63,7 +66,7 @@ defmodule SaladUI.DropdownMenu do
       phx-click-away={hide()}
     >
       <%= render_slot(@inner_block) %>
-    </div>
+    </.dynamic>
     """
   end
 
@@ -91,6 +94,29 @@ defmodule SaladUI.DropdownMenu do
         <%= render_slot(@inner_block) %>
       </div>
     </div>
+    """
+  end
+
+  @doc """
+  Render
+  """
+  attr(:class, :string, default: nil)
+  attr(:rest, :global)
+  slot(:inner_block, required: true)
+
+  def dropdown_menu_shortcut(assigns) do
+    ~H"""
+    <span
+      class={
+        classes([
+          "ml-auto text-xs tracking-widest opacity-60",
+          @class
+        ])
+      }
+      {@rest}
+    >
+      <%= render_slot(@inner_block) %>
+    </span>
     """
   end
 
