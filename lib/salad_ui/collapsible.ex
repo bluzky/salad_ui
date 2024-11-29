@@ -58,7 +58,7 @@ defmodule SaladUI.Collapsible do
 
   def collapsible_trigger(assigns) do
     ~H"""
-    <div data-part="trigger" class={@class}>
+    <.dynamic tag={@as_tag} data-part="trigger" class={@class}>
       <%= render_slot(@inner_block) %>
     </.dynamic>
     """
