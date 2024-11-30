@@ -28,13 +28,14 @@
 ## Installation
 
 1. Add `salad_ui` to your `mix.exs`
+
 ```elixir
 def deps do
   [
-    {:salad_ui, "~> 0.14.0"},
+    {:salad_ui, "~> 0.14"},
   ]
 end
-
+```
 
 2. Add `TwMerge.Cache` to `application.ex`
 
@@ -43,7 +44,6 @@ children = [
     ...,
     TwMerge.Cache
 ]
-
 ```
 
 3. Setup `salad_ui`
@@ -54,6 +54,7 @@ children = [
 > If you just want to use SaladUI's components, see **Using as library** below.
 
 - Init Salad UI in your project
+
 ```
 #> cd your_project
 #> mix salad.init
@@ -63,14 +64,17 @@ children = [
 ```
 
 3.2 **Using `salad_ui` as a library:**
+
 - Init Salad UI in your project with option `--as-lib`
+
 ```
 #> cd your_project
 #> mix salad.init --as-lib
 ```
 
 - Using in your project
-```
+
+```elixir
 defmodule MyModule do
     # import any component you need
     import SaladUI.Button
@@ -83,8 +87,8 @@ defmodule MyModule do
 end
 ```
 
-
 ## More configuration
+
 1. Custom error translate function
 
 ```elixir
@@ -98,7 +102,8 @@ Here is how to start develop SaladUI on local machine.
 1. Clone this repo
 2. Clone `https://github.com/bluzky/salad_storybook` in the same directory with **Salad UI**
 3. Start storybook
-```ex
+
+```
 cd salad_storybook
 mix phx.server
 ```
@@ -112,9 +117,9 @@ In your project folder make sure the dependencies are installed by running `mix 
 
 To run the failing tests only, just run `mix test.watch --stale`.
 
-  It's also important to note that you must format your code with `mix format` before sending a pull request, otherwise the build in github will fail.
+It's also important to note that you must format your code with `mix format` before sending a pull request, otherwise the build in github will fail.
 
-##  List of components
+## List of components
 
 - ✅ Accordion
 - ✅ Alert
@@ -166,6 +171,7 @@ To run the failing tests only, just run `mix test.watch --stale`.
 </p>
 
 ## 😘 Credits
+
 This project could not be available without these awesome works:
 
 - `tailwind css` an awesome css utility project
