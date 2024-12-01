@@ -141,9 +141,11 @@ It's also important to note that you must format your code with `mix format` bef
 - ✅ Dropdown Menu
 - ✅ Form
 - ✅ Hover Card
+- ✅ Icon
 - ✅ Input
 - [ ] Input OTP
 - ✅ Label
+- ✅ Menu
 - ✅ Pagination
 - ✅ Popover
 - ✅ Progress
@@ -159,9 +161,9 @@ It's also important to note that you must format your code with `mix format` bef
 - ✅ Table
 - ✅ Tabs
 - ✅ Textarea
-- ✅ Tooltip
 - ✅ Toggle
 - ✅ Toggle Group
+- ✅ Tooltip
 
 ## 🌟 Contributors
 
