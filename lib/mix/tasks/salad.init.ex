@@ -50,7 +50,7 @@ defmodule Mix.Tasks.Salad.Init do
          :ok <- maybe_write_component_module(component_path, app_name, opts),
          :ok <- install_node_dependencies(node_opts) do
       if opts[:as_lib] do
-        Mix.shell().info("Done. Now you can use any component by importSaladUI.<ComponentName> in your project.")
+        Mix.shell().info("Done. Now you can use any component by `import SaladUI.<ComponentName>` in your project.")
       else
         Mix.shell().info("Done. Now you can add components by running mix salad.add <component_name>")
       end
