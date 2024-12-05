@@ -113,8 +113,11 @@ defmodule SaladUI.FormTest do
         |> rendered_to_string()
         |> clean_string()
 
-      assert html =~
-               "<form class=\"space-y-6\" id=\"project-form\" phx-change=\"validate\" phx-submit=\"save\" phx-target=\"test-string\""
+      assert String.contains?(html, "class=\"space-y-6\"")
+      assert String.contains?(html, "id=\"project-form\"")
+      assert String.contains?(html, "phx-change=\"validate\"")
+      assert String.contains?(html, "phx-submit=\"save\"")
+      assert String.contains?(html, "phx-target=\"test-string\"")
 
       for class <- ~w(font-medium leading-none text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70) do
         assert html =~ class

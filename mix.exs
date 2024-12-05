@@ -5,7 +5,7 @@ defmodule SaladUI.MixProject do
     [
       app: :salad_ui,
       version: "0.14.1",
-      elixir: "~> 1.14",
+      elixir: "~> 1.16",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -60,7 +60,7 @@ defmodule SaladUI.MixProject do
   defp deps do
     [
       {:tw_merge, "~> 0.1.0"},
-      {:phoenix_live_view, "~> 0.20.1"},
+      {:phoenix_live_view, "~> 1.0.0"},
       {:mix_test_watch, "~> 1.2", only: [:dev, :test]},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:styler, "~> 0.7", only: [:dev, :test], runtime: false},
