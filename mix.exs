@@ -60,7 +60,7 @@ defmodule SaladUI.MixProject do
   defp deps do
     [
       {:tw_merge, "~> 0.1"},
-      {:phoenix_live_view, "~> 0.20.1"},
+      {:phoenix_live_view, "~> 1.0"},
       {:mix_test_watch, "~> 1.2", only: [:dev, :test]},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:styler, "~> 0.7", only: [:dev, :test], runtime: false},
