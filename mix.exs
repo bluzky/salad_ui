@@ -4,7 +4,7 @@ defmodule SaladUI.MixProject do
   def project do
     [
       app: :salad_ui,
-      version: "0.14.1",
+      version: "0.14.2",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -59,8 +59,8 @@ defmodule SaladUI.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:tw_merge, "~> 0.1.0"},
-      {:phoenix_live_view, "~> 1.0.0"},
+      {:tw_merge, "~> 0.1"},
+      {:phoenix_live_view, "~> 1.0"},
       {:mix_test_watch, "~> 1.2", only: [:dev, :test]},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:styler, "~> 0.7", only: [:dev, :test], runtime: false},
