@@ -64,12 +64,12 @@ defmodule SaladUI.Select do
     <div
       id={@id}
       class={classes(["relative group", @class])}
-      data-state="closed"
+      data-component="select"
+      data-parts={Jason.encode!(["trigger", "content", "item"])}
+      data-options={Jason.encode!(%{value: ["hi"]})}
+      data-value="hi"
+      phx-hook="ZagHook"
       {@rest}
-      x-hide-select={hide_select(@id)}
-      x-show-select={show_select(@id)}
-      x-toggle-select={toggle_select(@id)}
-      phx-click-away={JS.exec("x-hide-select")}
     >
       <%= render_slot(@inner_block, @builder) %>
     </div>
@@ -84,13 +84,15 @@ defmodule SaladUI.Select do
     ~H"""
     <button
       type="button"
+      data-part="trigger"
       class={
         classes([
           "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
           @class
         ])
       }
-      phx-click={toggle_select(@builder.id)}
+            phx-click={toggle_select(@builder.id)}
+
       {@rest}
     >
       <span
@@ -126,6 +128,7 @@ defmodule SaladUI.Select do
     ~H"""
     <.focus_wrap
       id={@id}
+      data-part="content"
       data-side={@side}
       class={
         classes([
@@ -184,6 +187,8 @@ defmodule SaladUI.Select do
     ~H"""
     <label
       role="option"
+      data-part="item"
+      data-value={@value}
       class={
         classes([
           "group/item",
@@ -192,7 +197,6 @@ defmodule SaladUI.Select do
         ])
       }
       {%{"data-disabled": @disabled}}
-      phx-click={select_value(@builder.id, @label)}
       {@rest}
     >
       <input
@@ -202,8 +206,6 @@ defmodule SaladUI.Select do
         value={@value}
         checked={@builder.value == @value}
         disabled={@disabled}
-        phx-key="Escape"
-        phx-keydown={JS.exec("x-hide-select", to: "##{@builder.id}")}
       />
       <div class="absolute top-0 left-0 w-full h-full group-hover/item:bg-accent rounded"></div>
       <span class="hidden peer-checked:block absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
@@ -266,7 +268,6 @@ defmodule SaladUI.Select do
     )
     # show if closed
     |> JS.remove_class("hidden", to: "##{id}[data-state=closed] .select-content")
-    |> JS.toggle_attribute({"data-state", "open", "closed"}, to: "##{id}")
     |> JS.focus_first(to: "##{id}[data-state=open] .select-content")
     |> JS.focus_first(to: "##{id}[data-state=open] .select-content label:has(input:checked)")
   end
@@ -275,6 +276,6 @@ defmodule SaladUI.Select do
   defp select_value(root_id, value) do
     %JS{}
     |> JS.set_attribute({"data-content", value}, to: "##{root_id} .select-value")
-    |> JS.exec("x-hide-select", to: "##{root_id}")
+    # |> JS.exec("x-hide-select", to: "##{root_id}")
   end
 end
