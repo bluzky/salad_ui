@@ -38,7 +38,7 @@ defmodule SaladUI.Tabs do
 
     ~H"""
     <div class={@class} id={@id} {@rest} phx-mounted={show_tab(@id, @default)}>
-      <%= render_slot(@inner_block, @builder) %>
+      {render_slot(@inner_block, @builder)}
     </div>
     """
   end
@@ -58,7 +58,7 @@ defmodule SaladUI.Tabs do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -83,7 +83,7 @@ defmodule SaladUI.Tabs do
       {@rest}
       phx-click={show_tab(@builder.id, @value)}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </button>
     """
   end
@@ -106,7 +106,7 @@ defmodule SaladUI.Tabs do
       value={@value}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end

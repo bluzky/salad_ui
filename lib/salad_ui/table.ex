@@ -51,7 +51,7 @@ defmodule SaladUI.Table do
   def table(assigns) do
     ~H"""
     <table class={classes(["w-full caption-bottom text-sm", @class])} {@rest}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </table>
     """
   end
@@ -63,7 +63,7 @@ defmodule SaladUI.Table do
   def table_header(assigns) do
     ~H"""
     <thead class={classes(["[&_tr]:border-b", @class])} {@rest}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </thead>
     """
   end
@@ -83,7 +83,7 @@ defmodule SaladUI.Table do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </tr>
     """
   end
@@ -103,7 +103,7 @@ defmodule SaladUI.Table do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </th>
     """
   end
@@ -115,7 +115,7 @@ defmodule SaladUI.Table do
   def table_body(assigns) do
     ~H"""
     <tbody class={classes(["[&_tr:last-child]:border-0", @class])} {@rest}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </tbody>
     """
   end
@@ -127,7 +127,7 @@ defmodule SaladUI.Table do
   def table_cell(assigns) do
     ~H"""
     <td class={classes(["p-4 align-middle [&:has([role=checkbox])]:pr-0", @class])} {@rest}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </td>
     """
   end
@@ -150,7 +150,7 @@ defmodule SaladUI.Table do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -162,7 +162,7 @@ defmodule SaladUI.Table do
   def table_caption(assigns) do
     ~H"""
     <caption class={classes(["mt-4 text-sm text-muted-foreground", @class])} {@rest}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </caption>
     """
   end

@@ -34,7 +34,7 @@ defmodule SaladUI.Badge do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end

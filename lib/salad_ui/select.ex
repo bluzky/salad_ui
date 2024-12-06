@@ -71,7 +71,7 @@ defmodule SaladUI.Select do
       x-toggle-select={toggle_select(@id)}
       phx-click-away={JS.exec("x-hide-select")}
     >
-      <%= render_slot(@inner_block, @builder) %>
+      {render_slot(@inner_block, @builder)}
     </div>
     """
   end
@@ -138,7 +138,7 @@ defmodule SaladUI.Select do
       {@rest}
     >
       <div class="relative w-full p-1">
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </div>
     </.focus_wrap>
     """
@@ -151,7 +151,7 @@ defmodule SaladUI.Select do
   def select_group(assigns) do
     ~H"""
     <div role="group" class={classes([@class])} {@rest}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -163,7 +163,7 @@ defmodule SaladUI.Select do
   def select_label(assigns) do
     ~H"""
     <div class={classes(["py-1.5 pl-8 pr-2 text-sm font-semibold", @class])} {@rest}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -224,7 +224,7 @@ defmodule SaladUI.Select do
           </svg>
         </span>
       </span>
-      <span class="z-0 peer-focus:text-accent-foreground"><%= @label %></span>
+      <span class="z-0 peer-focus:text-accent-foreground">{@label}</span>
     </label>
     """
   end

@@ -47,7 +47,7 @@ defmodule SaladUI.Form do
   def form_item(assigns) do
     ~H"""
     <div class={classes(["space-y-2", @class])} {@rest}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -80,7 +80,7 @@ defmodule SaladUI.Form do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </SaladUI.Label.label>
     """
   end
@@ -91,7 +91,7 @@ defmodule SaladUI.Form do
 
   def form_control(assigns) do
     ~H"""
-    <%= render_slot(@inner_block) %>
+    {render_slot(@inner_block)}
     """
   end
 
@@ -102,7 +102,7 @@ defmodule SaladUI.Form do
   def form_description(assigns) do
     ~H"""
     <p class={classes(["text-muted-foreground text-sm", @class])} {@rest}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </p>
     """
   end
@@ -125,9 +125,9 @@ defmodule SaladUI.Form do
       class={classes(["text-destructive text-sm font-medium", @class])}
       {@rest}
     >
-      <span :for={msg <- @errors} class="block"><%= msg %></span>
+      <span :for={msg <- @errors} class="block">{msg}</span>
       <%= if @errors == [] do %>
-        <%= msg %>
+        {msg}
       <% end %>
     </p>
     """

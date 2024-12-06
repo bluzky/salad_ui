@@ -46,7 +46,7 @@ defmodule SaladUI.AlertDialog do
       class="inline-block relative"
       id={@id}
     >
-      <%= render_slot(@inner_block, @builder) %>
+      {render_slot(@inner_block, @builder)}
     </div>
     """
   end
@@ -69,7 +69,7 @@ defmodule SaladUI.AlertDialog do
         ])
       }
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -98,7 +98,7 @@ defmodule SaladUI.AlertDialog do
           }
           {@rest}
         >
-          <%= render_slot(@inner_block) %>
+          {render_slot(@inner_block)}
         </div>
       </div>
     </div>
@@ -123,7 +123,7 @@ defmodule SaladUI.AlertDialog do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -146,7 +146,7 @@ defmodule SaladUI.AlertDialog do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </h2>
     """
   end
@@ -169,7 +169,7 @@ defmodule SaladUI.AlertDialog do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </p>
     """
   end
@@ -192,7 +192,7 @@ defmodule SaladUI.AlertDialog do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -220,7 +220,7 @@ defmodule SaladUI.AlertDialog do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </button>
     """
   end
@@ -245,7 +245,7 @@ defmodule SaladUI.AlertDialog do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </button>
     """
   end

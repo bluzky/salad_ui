@@ -40,7 +40,7 @@ defmodule SaladUI.Collapsible do
       id={@id}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -61,7 +61,7 @@ defmodule SaladUI.Collapsible do
       class={@class}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </.dynamic>
     """
   end
@@ -84,7 +84,7 @@ defmodule SaladUI.Collapsible do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end

@@ -12,7 +12,7 @@ defmodule SaladUI.Avatar do
       class={classes(["relative h-10 w-10 shrink-0 overflow-hidden rounded-full", @class])}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </span>
     """
   end
@@ -44,7 +44,7 @@ defmodule SaladUI.Avatar do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </span>
     """
   end

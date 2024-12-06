@@ -15,7 +15,7 @@ defmodule SaladUi.ScrollAreaTest do
             <h4 class="mb-4 text-sm font-medium leading-none">Tags</h4>
             <%= for tag <- 1..50 do %>
               <div class="text-sm">
-                v1.2.0-beta.<%= tag %>
+                v1.2.0-beta.{tag}
               </div>
               <.separator class="my-2" />
             <% end %>
