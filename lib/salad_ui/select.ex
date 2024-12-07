@@ -93,7 +93,6 @@ defmodule SaladUI.Select do
           @class
         ])
       }
-      phx-click={toggle_select(@builder.id)}
       {@rest}
     >
       <span
@@ -133,13 +132,12 @@ defmodule SaladUI.Select do
       data-side={@side}
       class={
         classes([
-          "select-content absolute hidden",
+          "select-content absolute",
           "z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md group-data-[state=open]:animate-in group-data-[state=closed]:animate-out group-data-[state=closed]:fade-out-0 group-data-[state=open]:fade-in-0 group-data-[state=closed]:zoom-out-95 group-data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
           @position_class,
           @class
         ])
       }
-      phx-click-away={hide_select(@builder.id)}
       {@rest}
     >
       <div class="relative w-full p-1">
@@ -191,7 +189,7 @@ defmodule SaladUI.Select do
       role="option"
       data-part="item"
       data-value={@value}
-      data-parts={Jason.encode!(["text", "indicator"])}
+      data-parts={Jason.encode!(["indicator"])}
       class={
         classes([
           "group/item",
@@ -210,7 +208,7 @@ defmodule SaladUI.Select do
         checked={@builder.value == @value}
         disabled={@disabled}
       />
-      <div class="absolute top-0 left-0 w-full h-full group-hover/item:bg-accent group-data-[highlighted]/item:bg-accent rounded" ></div>
+      <div class="absolute top-0 left-0 w-full h-full group-data-[highlighted]/item:bg-accent rounded" ></div>
       <span class="hidden peer-checked:block absolute left-2 flex h-3.5 w-3.5 items-center justify-center"
       data-part="item-indicator">
         <span aria-hidden="true">
@@ -245,13 +243,6 @@ defmodule SaladUI.Select do
     %JS{}
     |> JS.pop_focus()
     |> JS.hide(to: "##{id} .select-content")
-  end
-
-  # show select and focus first selected item or first item if no selected item
-  defp show_select(id) do
-    %JS{}
-    |> JS.show(to: "##{id} .select-content")
-    |> JS.focus_first(to: "##{id}.select-content")
   end
 
   # show or hide select
