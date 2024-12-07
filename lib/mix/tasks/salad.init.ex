@@ -36,12 +36,14 @@ defmodule Mix.Tasks.Salad.Init do
     env = Atom.to_string(Mix.env())
     app_name = Mix.Project.config()[:app] |> Atom.to_string() |> String.downcase()
     assets_path = build_assets_path(env)
+    application_file_path = Path.join(File.cwd!(), "lib/#{app_name}/application.ex")
 
     node_opts = if env == "test", do: [skip: true], else: []
 
     File.mkdir_p!(component_path)
 
     with :ok <- write_config(component_path),
+         :ok <- init_tw_merge_cache(application_file_path),
          :ok <- patch_css(color_scheme, assets_path),
          :ok <- patch_js(assets_path),
          :ok <- copy_tailwind_colors(assets_path),
@@ -115,6 +117,23 @@ defmodule Mix.Tasks.Salad.Init do
       :ok
     else
       {:error, "#{Path.basename(config_path)} not found"}
+    end
+  end
+
+  defp init_tw_merge_cache(application_file_path) do
+    cache_module = "TwMerge.Cache"
+    description = "Start TwMerge cache"
+
+    Mix.shell().info("Adding Tailwind merge cache to application supervisor")
+
+    if File.exists?(application_file_path) do
+      Patcher.patch_elixir_application(
+        application_file_path,
+        cache_module,
+        description
+      )
+    else
+      {:error, "application.ex not found"}
     end
   end
 
