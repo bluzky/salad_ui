@@ -51,6 +51,7 @@ defmodule SaladUI.Dialog do
       phx-remove={JS.exec("phx-hide-modal", to: "##{@id}")}
       phx-show-modal={show_modal(@id)}
       phx-hide-modal={hide_modal(@id)}
+      phx-on-cancel={@on_cancel}
       class="relative z-50 hidden group/dialog"
     >
       <div
@@ -167,5 +168,6 @@ defmodule SaladUI.Dialog do
     |> JS.hide(to: "##{id}", transition: {"_", "_", "_"}, time: 130)
     |> JS.remove_class("overflow-hidden", to: "body")
     |> JS.pop_focus()
+    |> JS.exec("phx-on-cancel", to: "##{id}")
   end
 end
