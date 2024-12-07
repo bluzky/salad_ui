@@ -48,10 +48,8 @@ defmodule SaladUI.Dialog do
     <div
       id={@id}
       phx-mounted={@show && JS.exec("phx-show-modal", to: "##{@id}")}
-      phx-remove={JS.exec("phx-hide-modal", to: "##{@id}")}
       phx-show-modal={show_modal(@id)}
-      phx-hide-modal={hide_modal(@id)}
-      data-cancel={JS.exec(@on_cancel, "phx-remove")}
+      phx-hide-modal={@on_cancel |> hide_modal(@id)}
       class="relative z-50 hidden group/dialog"
     >
       <div
