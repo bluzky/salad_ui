@@ -45,6 +45,7 @@ defmodule SaladUI.Select do
   attr :placeholder, :string, default: nil, doc: "The placeholder text when no value is selected."
 
   attr :class, :string, default: nil
+  attr :items, :list, default: [], doc: "The list of items to be selected"
   slot :inner_block, required: true
   attr :rest, :global
 
@@ -66,8 +67,9 @@ defmodule SaladUI.Select do
       class={classes(["relative group", @class])}
       data-component="select"
       data-parts={Jason.encode!(["trigger", "content", "item"])}
-      data-options={Jason.encode!(%{value: ["hi"]})}
-      data-value="hi"
+      data-options={Jason.encode!(%{value: [@value], collection:  "json"})}
+      data-collection={Jason.encode!(%{items: @items})}
+      data-value={@value}
       phx-hook="ZagHook"
       {@rest}
     >
@@ -91,8 +93,7 @@ defmodule SaladUI.Select do
           @class
         ])
       }
-            phx-click={toggle_select(@builder.id)}
-
+      phx-click={toggle_select(@builder.id)}
       {@rest}
     >
       <span
@@ -126,7 +127,7 @@ defmodule SaladUI.Select do
       |> assign(:id, assigns.builder.id <> "-content")
 
     ~H"""
-    <.focus_wrap
+    <div
       id={@id}
       data-part="content"
       data-side={@side}
@@ -138,12 +139,13 @@ defmodule SaladUI.Select do
           @class
         ])
       }
+      phx-click-away={hide_select(@builder.id)}
       {@rest}
     >
       <div class="relative w-full p-1">
         <%= render_slot(@inner_block) %>
       </div>
-    </.focus_wrap>
+    </div>
     """
   end
 
@@ -189,6 +191,7 @@ defmodule SaladUI.Select do
       role="option"
       data-part="item"
       data-value={@value}
+      data-parts={Jason.encode!(["text", "indicator"])}
       class={
         classes([
           "group/item",
@@ -207,8 +210,9 @@ defmodule SaladUI.Select do
         checked={@builder.value == @value}
         disabled={@disabled}
       />
-      <div class="absolute top-0 left-0 w-full h-full group-hover/item:bg-accent rounded"></div>
-      <span class="hidden peer-checked:block absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+      <div class="absolute top-0 left-0 w-full h-full group-hover/item:bg-accent group-data-[highlighted]/item:bg-accent rounded" ></div>
+      <span class="hidden peer-checked:block absolute left-2 flex h-3.5 w-3.5 items-center justify-center"
+      data-part="item-indicator">
         <span aria-hidden="true">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -226,7 +230,7 @@ defmodule SaladUI.Select do
           </svg>
         </span>
       </span>
-      <span class="z-0 peer-focus:text-accent-foreground"><%= @label %></span>
+      <span class="z-0 peer-focus:text-accent-foreground" data-part="item-text"><%= @label %></span>
     </label>
     """
   end
@@ -240,36 +244,20 @@ defmodule SaladUI.Select do
   defp hide_select(id) do
     %JS{}
     |> JS.pop_focus()
-    |> JS.add_class("hidden",
-      transition: "ease-out",
-      to: "##{id}[data-state=open] .select-content",
-      time: 150
-    )
-    |> JS.set_attribute({"data-state", "closed"}, to: "##{id}")
+    |> JS.hide(to: "##{id} .select-content")
   end
 
   # show select and focus first selected item or first item if no selected item
   defp show_select(id) do
     %JS{}
-    # show if closed
-    |> JS.focus_first(to: "##{id}[data-state=closed] .select-content")
-    |> JS.set_attribute({"data-state", "open"}, to: "##{id}")
-    |> JS.focus_first(to: "##{id}[data-state=open] .select-content")
-    |> JS.focus_first(to: "##{id}[data-state=open] .select-content label:has(input:checked)")
+    |> JS.show(to: "##{id} .select-content")
+    |> JS.focus_first(to: "##{id}.select-content")
   end
 
   # show or hide select
   defp toggle_select(id) do
     %JS{}
-    |> JS.add_class("hidden",
-      transition: "ease-out",
-      to: "##{id}[data-state=open] .select-content",
-      time: 150
-    )
-    # show if closed
-    |> JS.remove_class("hidden", to: "##{id}[data-state=closed] .select-content")
-    |> JS.focus_first(to: "##{id}[data-state=open] .select-content")
-    |> JS.focus_first(to: "##{id}[data-state=open] .select-content label:has(input:checked)")
+    |> JS.toggle(to: "##{id} .select-content")
   end
 
   # set value to select and hide select
