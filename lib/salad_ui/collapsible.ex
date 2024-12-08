@@ -4,8 +4,8 @@ defmodule SaladUI.Collapsible do
 
     ## Examples:
 
-        <.collapsible id="collapsible-1" open let={builder}>
-          <.collapsible_trigger builder={builder}>
+        <.collapsible id="collapsible-1" open>
+          <.collapsible_trigger>
             <.button variant="outline">Show content</.button>
           </.collapsible_trigger>
           <.collapsible_content>
@@ -26,7 +26,7 @@ defmodule SaladUI.Collapsible do
   attr :listeners, :list, default: []
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(title)
-  slot(:inner_block, required: true)
+  slot :inner_block, required: true
 
   def collapsible(assigns) do
     assigns = assign(assigns, :open, normalize_boolean(assigns[:open]))
@@ -86,19 +86,5 @@ defmodule SaladUI.Collapsible do
       <%= render_slot(@inner_block) %>
     </div>
     """
-  end
-
-  @doc """
-  Show collapsible content.
-  """
-  def toggle_collapsible(js \\ %JS{}, id) do
-    js
-    |> JS.toggle(
-      to: "##{id} [data-part='content']",
-      in: {"ease-out duration-200", "opacity-0", "opacity-100"},
-      out: {"ease-out", "opacity-100", "opacity-70"},
-      time: 200
-    )
-    |> JS.toggle_attribute({"data-state", "open", "closed"}, to: "##{id}")
   end
 end
