@@ -3,21 +3,18 @@ defmodule SaladUI.Select do
   Implement of select components from https://ui.shadcn.com/docs/components/select
 
   ## Examples:
-
       <form>
-         <.select default="banana" id="fruit-select">
-            <.select_trigger class="w-[180px]">
-              <.select_value placeholder=".select a fruit"/>
-            </.select_trigger>
+         <.select default="banana" id="fruit-select" placeholder="Select a fruit" items={[%{label: "Apple", value: "apple"}, %{label: "Banana", value: "banana"}, %{label: "Blueberry", value: "blueberry"}, %{label: "Grapes", value: "grapes", disabled: true}, %{label: "Pineapple", value: "pineapple"}]} :let={builder}>
+            <.select_trigger class="w-[180px]" builder={builder}/>
             <.select_content>
               <.select_group>
                 <.select_label>Fruits</.select_label>
-                <.select_item name="fruit" value="apple">Apple</.select_item>
-                <.select_item name="fruit" value="banana">Banana</.select_item>
-                <.select_item name="fruit" value="blueberry">Blueberry</.select_item>
+                <.select_item name="fruit" value="apple" builder={builder}>Apple</.select_item>
+                <.select_item name="fruit" value="banana" builder={builder}>Banana</.select_item>
+                <.select_item name="fruit" value="blueberry" builder={builder}>Blueberry</.select_item>
                 <.select_separator />
-                <.select_item  name="fruit" disabled value="grapes">Grapes</.select_item>
-                <.select_item  name="fruit" value="pineapple">Pineapple</.select_item>
+                <.select_item  name="fruit" disabled value="grapes" builder={builder}>Grapes</.select_item>
+                <.select_item  name="fruit" value="pineapple" builder={builder}>Pineapple</.select_item>
               </.select_group>
         </.select_content>
           </.select>
@@ -38,38 +35,54 @@ defmodule SaladUI.Select do
 
   attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
-  attr :label, :string,
-    default: nil,
-    doc: "The display label of the select value. If not provided, the value will be used."
-
   attr :placeholder, :string, default: nil, doc: "The placeholder text when no value is selected."
 
   attr :class, :string, default: nil
+
+  attr :items, :list,
+    default: [],
+    doc: "The list of items to be selected. Each item is a map with 2 fields: label & value"
+
+  attr :on_value_change, :string, default: nil, doc: "`push_event` event to push to server when select value changed"
   slot :inner_block, required: true
   attr :rest, :global
 
+  @select_handler """
+  (details, el)=>{
+    el.querySelector("[data-part=value-text]").setAttribute("data-content", details.items[0].label);
+    el.querySelector(`input[value=${details.value[0]}]`).checked = true;
+  }
+  """
   def select(assigns) do
-    assigns = prepare_assign(assigns)
+    assigns =
+      assigns
+      |> prepare_assign()
+      |> assign(:select_handler, @select_handler)
 
     assigns =
       assign(assigns, :builder, %{
         id: assigns.id,
         name: assigns.name,
         value: assigns.value,
-        label: assigns.label,
-        placeholder: assigns.placeholder
+        placeholder: assigns.placeholder,
+        items: assigns.items,
+        selected_item: Enum.find(assigns.items, &(&1.value == assigns.value))
       })
 
     ~H"""
     <div
       id={@id}
       class={classes(["relative group", @class])}
-      data-state="closed"
+      data-component="select"
+      data-parts={Jason.encode!(["trigger", "value-text", "content", "item"])}
+      data-options={Jason.encode!(%{value: "json", collection: "json"})}
+      data-collection={Jason.encode!(%{items: @items})}
+      data-value={Jason.encode!([@value])}
+      data-listeners={
+        Jason.encode!(%{value: ["exec:#{@select_handler}", "push:#{@on_value_change}"]})
+      }
+      phx-hook="ZagHook"
       {@rest}
-      x-hide-select={hide_select(@id)}
-      x-show-select={show_select(@id)}
-      x-toggle-select={toggle_select(@id)}
-      phx-click-away={JS.exec("x-hide-select")}
     >
       <%= render_slot(@inner_block, @builder) %>
     </div>
@@ -84,18 +97,21 @@ defmodule SaladUI.Select do
     ~H"""
     <button
       type="button"
+      data-part="trigger"
       class={
         classes([
           "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
           @class
         ])
       }
-      phx-click={toggle_select(@builder.id)}
       {@rest}
     >
       <span
         class="select-value pointer-events-none before:content-[attr(data-content)]"
-        data-content={@builder.label || @builder.value || @builder.placeholder}
+        data-part="value-text"
+        data-content={
+          (@builder.selected_item && @builder.selected_item.label) || @builder.placeholder
+        }
       >
       </span>
       <span class="h-4 w-4 opacity-50" />
@@ -103,12 +119,9 @@ defmodule SaladUI.Select do
     """
   end
 
-  attr :builder, :map, required: true, doc: "The builder of the select component"
-
   attr :class, :string, default: nil
   attr :side, :string, values: ~w(top bottom), default: "bottom"
   slot :inner_block, required: true
-
   attr :rest, :global
 
   def select_content(assigns) do
@@ -119,17 +132,15 @@ defmodule SaladUI.Select do
       end
 
     assigns =
-      assigns
-      |> assign(:position_class, position_class)
-      |> assign(:id, assigns.builder.id <> "-content")
+      assign(assigns, :position_class, position_class)
 
     ~H"""
-    <.focus_wrap
-      id={@id}
+    <div
+      data-part="content"
       data-side={@side}
       class={
         classes([
-          "select-content absolute hidden",
+          "select-content absolute",
           "z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md group-data-[state=open]:animate-in group-data-[state=closed]:animate-out group-data-[state=closed]:fade-out-0 group-data-[state=open]:fade-in-0 group-data-[state=closed]:zoom-out-95 group-data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
           @position_class,
           @class
@@ -140,7 +151,7 @@ defmodule SaladUI.Select do
       <div class="relative w-full p-1">
         <%= render_slot(@inner_block) %>
       </div>
-    </.focus_wrap>
+    </div>
     """
   end
 
@@ -169,21 +180,22 @@ defmodule SaladUI.Select do
   end
 
   attr :builder, :map, required: true, doc: "The builder of the select component"
-
   attr :value, :string, required: true
   attr :label, :string, default: nil
   attr :disabled, :boolean, default: false
   attr :class, :string, default: nil
   slot :inner_block, required: true
-
   attr :rest, :global
 
   def select_item(assigns) do
-    assigns = assign(assigns, :label, assigns.label || assigns.value)
+    assigns = assign(assigns, :item, Enum.find(assigns.builder.items, &(&1.value == assigns.value)))
 
     ~H"""
     <label
       role="option"
+      data-part="item"
+      data-value={@value}
+      data-parts={Jason.encode!(["indicator", "item-text"])}
       class={
         classes([
           "group/item",
@@ -192,7 +204,6 @@ defmodule SaladUI.Select do
         ])
       }
       {%{"data-disabled": @disabled}}
-      phx-click={select_value(@builder.id, @label)}
       {@rest}
     >
       <input
@@ -202,11 +213,13 @@ defmodule SaladUI.Select do
         value={@value}
         checked={@builder.value == @value}
         disabled={@disabled}
-        phx-key="Escape"
-        phx-keydown={JS.exec("x-hide-select", to: "##{@builder.id}")}
       />
-      <div class="absolute top-0 left-0 w-full h-full group-hover/item:bg-accent rounded"></div>
-      <span class="hidden peer-checked:block absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+      <div class="absolute top-0 left-0 w-full h-full group-data-[highlighted]/item:bg-accent rounded">
+      </div>
+      <span
+        class="hidden peer-checked:block absolute left-2 flex h-3.5 w-3.5 items-center justify-center"
+        data-part="item-indicator"
+      >
         <span aria-hidden="true">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -224,7 +237,9 @@ defmodule SaladUI.Select do
           </svg>
         </span>
       </span>
-      <span class="z-0 peer-focus:text-accent-foreground"><%= @label %></span>
+      <span class="z-0 peer-focus:text-accent-foreground" data-part="item-text">
+        <%= @item.label %>
+      </span>
     </label>
     """
   end
@@ -233,48 +248,5 @@ defmodule SaladUI.Select do
     ~H"""
     <div class={classes(["-mx-1 my-1 h-px bg-muted"])}></div>
     """
-  end
-
-  defp hide_select(id) do
-    %JS{}
-    |> JS.pop_focus()
-    |> JS.add_class("hidden",
-      transition: "ease-out",
-      to: "##{id}[data-state=open] .select-content",
-      time: 150
-    )
-    |> JS.set_attribute({"data-state", "closed"}, to: "##{id}")
-  end
-
-  # show select and focus first selected item or first item if no selected item
-  defp show_select(id) do
-    %JS{}
-    # show if closed
-    |> JS.focus_first(to: "##{id}[data-state=closed] .select-content")
-    |> JS.set_attribute({"data-state", "open"}, to: "##{id}")
-    |> JS.focus_first(to: "##{id}[data-state=open] .select-content")
-    |> JS.focus_first(to: "##{id}[data-state=open] .select-content label:has(input:checked)")
-  end
-
-  # show or hide select
-  defp toggle_select(id) do
-    %JS{}
-    |> JS.add_class("hidden",
-      transition: "ease-out",
-      to: "##{id}[data-state=open] .select-content",
-      time: 150
-    )
-    # show if closed
-    |> JS.remove_class("hidden", to: "##{id}[data-state=closed] .select-content")
-    |> JS.toggle_attribute({"data-state", "open", "closed"}, to: "##{id}")
-    |> JS.focus_first(to: "##{id}[data-state=open] .select-content")
-    |> JS.focus_first(to: "##{id}[data-state=open] .select-content label:has(input:checked)")
-  end
-
-  # set value to select and hide select
-  defp select_value(root_id, value) do
-    %JS{}
-    |> JS.set_attribute({"data-content", value}, to: "##{root_id} .select-value")
-    |> JS.exec("x-hide-select", to: "##{root_id}")
   end
 end

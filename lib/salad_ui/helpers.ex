@@ -141,6 +141,7 @@ defmodule SaladUI.Helpers do
     |> Base.url_encode64()
     |> binary_part(0, length)
   end
+
   @doc """
   Common function for building variant
 
