@@ -92,7 +92,8 @@ defmodule SaladUI.Collapsible do
   Show collapsible content.
   """
   def toggle_collapsible(js \\ %JS{}, id) do
-    JS.toggle(js,
+    js
+    |> JS.toggle(
       to: "##{id} [data-part='content']",
       in: {"ease-out duration-200", "opacity-0", "opacity-100"},
       out: {"ease-out", "opacity-100", "opacity-70"},
