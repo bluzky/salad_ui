@@ -46,11 +46,19 @@ defmodule SaladUI.Select do
 
   attr :class, :string, default: nil
   attr :items, :list, default: [], doc: "The list of items to be selected"
+  attr :on_value_change, :string, default: nil, doc: "`push_event` event to push to server when select value changed"
   slot :inner_block, required: true
   attr :rest, :global
 
+  @select_handler """
+  (details, el)=>{
+    el.querySelector("[data-part=value-text]").setAttribute("data-content", details.items[0].label);
+    el.querySelector(`input[value=${details.value[0]}]`).checked = true;
+  }
+  """
   def select(assigns) do
     assigns = prepare_assign(assigns)
+    |> assign(:select_handler, @select_handler)
 
     assigns =
       assign(assigns, :builder, %{
@@ -66,9 +74,10 @@ defmodule SaladUI.Select do
       id={@id}
       class={classes(["relative group", @class])}
       data-component="select"
-      data-parts={Jason.encode!(["trigger", "content", "item"])}
+      data-parts={Jason.encode!(["trigger", "value-text", "content", "item"])}
       data-options={Jason.encode!(%{value: [@value], collection:  "json"})}
       data-collection={Jason.encode!(%{items: @items})}
+      data-listeners={Jason.encode!(%{value: ["exec:#{@select_handler}", "push:#{@on_value_change}"]})}
       data-value={@value}
       phx-hook="ZagHook"
       {@rest}
@@ -97,6 +106,7 @@ defmodule SaladUI.Select do
     >
       <span
         class="select-value pointer-events-none before:content-[attr(data-content)]"
+        data-part="value-text"
         data-content={@builder.label || @builder.value || @builder.placeholder}
       >
       </span>
