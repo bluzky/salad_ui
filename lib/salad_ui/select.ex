@@ -74,7 +74,7 @@ defmodule SaladUI.Select do
       id={@id}
       class={classes(["relative group", @class])}
       data-component="select"
-      data-parts={Jason.encode!(["trigger", "value-text", "content", "item"])}
+      data-parts={Jason.encode!(["trigger", "value-text", "positioner", "content", "item"])}
       data-options={Jason.encode!(%{value: "json", collection: "json"})}
       data-collection={Jason.encode!(%{items: @items})}
       data-value={Jason.encode!([@value])}
@@ -125,31 +125,19 @@ defmodule SaladUI.Select do
   attr :rest, :global
 
   def select_content(assigns) do
-    position_class =
-      case assigns.side do
-        "top" -> "bottom-full mb-1"
-        "bottom" -> "top-full mt-1"
-      end
-
-    assigns =
-      assign(assigns, :position_class, position_class)
-
     ~H"""
     <div
-      data-part="content"
+      data-part="positioner"
       data-side={@side}
-      hidden
       class={
         classes([
-          "select-content absolute",
           "z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
-          @position_class,
           @class
         ])
       }
       {@rest}
     >
-      <div class="relative w-full p-1">
+      <div class="relative w-full p-1" data-part="content">
         {render_slot(@inner_block)}
       </div>
     </div>
