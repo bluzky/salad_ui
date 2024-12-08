@@ -26,14 +26,19 @@ defmodule SaladUI.Patcher.ElixirPatcher do
            ~r/(children\s*=\s*\[)([^\]]*)/m,
            content,
            fn _, opening, existing_elements ->
+             existing_elements =
+               if single_element_list?(existing_elements),
+                 do: "",
+                 else: ", #{existing_elements}"
+
              if single_line_list?(existing_elements) do
-               "#{opening}#{new_children}, #{existing_elements}"
+               "#{opening}#{new_children}#{existing_elements}"
              else
                indentation =
                  extract_indentation(existing_elements) || "  "
 
                to_add = build_addition(new_children, description, indentation)
-               "#{opening}\n#{to_add},#{existing_elements}"
+               "#{opening}\n#{to_add}#{existing_elements}"
              end
            end
          )}
@@ -45,13 +50,18 @@ defmodule SaladUI.Patcher.ElixirPatcher do
            ~r/(Supervisor\.start_link\(\s*\[)([^\]]*)/m,
            content,
            fn _, opening, existing_elements ->
+             existing_elements =
+               if single_element_list?(existing_elements),
+                 do: "",
+                 else: ", #{existing_elements}"
+
              if single_line_list?(existing_elements) do
-               "#{opening}#{new_children}, #{existing_elements}"
+               "#{opening}#{new_children}#{existing_elements}"
              else
                indentation = extract_indentation(existing_elements) || "  "
 
                to_add = build_addition(new_children, description, indentation)
-               "#{opening}\n#{to_add},#{existing_elements}"
+               "#{opening}\n#{to_add}#{existing_elements}"
              end
            end
          )}
@@ -65,6 +75,10 @@ defmodule SaladUI.Patcher.ElixirPatcher do
 
   defp single_line_list?(list_content) do
     not String.contains?(list_content, "\n")
+  end
+
+  defp single_element_list?(list_content) do
+    list_content == ""
   end
 
   defp extract_indentation(list_content) do
