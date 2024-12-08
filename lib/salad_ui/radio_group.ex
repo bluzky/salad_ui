@@ -43,7 +43,7 @@ defmodule SaladUI.RadioGroup do
       tabindex="0"
       style="outline: none;"
     >
-      <%= render_slot(@inner_block, @builder) %>
+      {render_slot(@inner_block, @builder)}
     </div>
     """
   end

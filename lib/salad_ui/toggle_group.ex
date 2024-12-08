@@ -48,7 +48,7 @@ defmodule SaladUI.ToggleGroup do
 
     ~H"""
     <div class={classes(["flex items-center justify-center gap-1", @class])}>
-      <%= render_slot(@inner_block, assigns) %>
+      {render_slot(@inner_block, assigns)}
     </div>
     """
   end
@@ -99,7 +99,7 @@ defmodule SaladUI.ToggleGroup do
         checked={@checked}
         {@rest}
       />
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </button>
     """
   end
@@ -131,7 +131,7 @@ defmodule SaladUI.ToggleGroup do
         checked={@checked}
         {@rest}
       />
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </button>
     """
   end

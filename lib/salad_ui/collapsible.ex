@@ -43,7 +43,7 @@ defmodule SaladUI.Collapsible do
       id={@id}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -59,7 +59,7 @@ defmodule SaladUI.Collapsible do
   def collapsible_trigger(assigns) do
     ~H"""
     <.dynamic tag={@as_tag} data-part="trigger" class={@class} {@rest}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </.dynamic>
     """
   end
@@ -83,7 +83,7 @@ defmodule SaladUI.Collapsible do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end

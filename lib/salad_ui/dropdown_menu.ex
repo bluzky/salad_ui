@@ -44,7 +44,7 @@ defmodule SaladUI.DropdownMenu do
   def dropdown_menu(assigns) do
     ~H"""
     <div class={classes(["relative group inline-block", @class])} {@rest}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -65,7 +65,7 @@ defmodule SaladUI.DropdownMenu do
       phx-click={toggle()}
       phx-click-away={hide()}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </.dynamic>
     """
   end
@@ -91,7 +91,7 @@ defmodule SaladUI.DropdownMenu do
       {@rest}
     >
       <div class="">
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </div>
     </div>
     """
@@ -115,7 +115,7 @@ defmodule SaladUI.DropdownMenu do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </span>
     """
   end

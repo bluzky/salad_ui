@@ -48,9 +48,8 @@ defmodule SaladUI.Dialog do
     <div
       id={@id}
       phx-mounted={@show && JS.exec("phx-show-modal", to: "##{@id}")}
-      phx-remove={JS.exec("phx-hide-modal", to: "##{@id}")}
       phx-show-modal={show_modal(@id)}
-      phx-hide-modal={hide_modal(@id)}
+      phx-hide-modal={@on_cancel |> hide_modal(@id)}
       class="relative z-50 hidden group/dialog"
     >
       <div
@@ -66,9 +65,9 @@ defmodule SaladUI.Dialog do
       >
         <.focus_wrap
           id={"#{@id}-wrap"}
-          phx-window-keydown={JS.exec("phx-hide-modal", to: "##{@id}")}
+          phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
           phx-key="escape"
-          phx-click-away={JS.exec("phx-hide-modal", to: "##{@id}")}
+          phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
           class="w-full sm:max-w-[425px]"
         >
           <div
@@ -82,7 +81,7 @@ defmodule SaladUI.Dialog do
               ])
             }
           >
-            <%= render_slot(@inner_block) %>
+            {render_slot(@inner_block)}
 
             <button
               type="button"
@@ -115,7 +114,7 @@ defmodule SaladUI.Dialog do
   def dialog_header(assigns) do
     ~H"""
     <div class={classes(["flex flex-col space-y-1.5 text-center sm:text-left", @class])}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -126,7 +125,7 @@ defmodule SaladUI.Dialog do
   def dialog_title(assigns) do
     ~H"""
     <h3 class={classes(["text-lg font-semibold leading-none tracking-tight", @class])}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </h3>
     """
   end
@@ -137,7 +136,7 @@ defmodule SaladUI.Dialog do
   def dialog_description(assigns) do
     ~H"""
     <p class={classes(["text-sm text-muted-foreground", @class])}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </p>
     """
   end
@@ -148,7 +147,7 @@ defmodule SaladUI.Dialog do
   def dialog_footer(assigns) do
     ~H"""
     <div class={classes(["flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", @class])}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end

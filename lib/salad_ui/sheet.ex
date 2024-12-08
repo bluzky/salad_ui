@@ -45,7 +45,7 @@ defmodule SaladUI.Sheet do
   def sheet(assigns) do
     ~H"""
     <div class={classes([@class])}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -57,7 +57,7 @@ defmodule SaladUI.Sheet do
   def sheet_trigger(assigns) do
     ~H"""
     <div class={classes([@class])} phx-click={JS.exec("phx-show-sheet", to: "#" <> @target)}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -122,11 +122,11 @@ defmodule SaladUI.Sheet do
       >
         <div class={classes(["relative h-full"])}>
           <div class={classes(["p-6 overflow-y-auto h-full", @class])}>
-            <%= render_slot(@inner_block) %>
+            {render_slot(@inner_block)}
           </div>
 
           <%= if close_btn = render_slot(@custom_close_btn) do %>
-            <%= close_btn %>
+            {close_btn}
           <% else %>
             <button
               type="button"
@@ -159,7 +159,7 @@ defmodule SaladUI.Sheet do
   def sheet_header(assigns) do
     ~H"""
     <div class={classes(["flex flex-col space-y-2 text-center sm:text-left", @class])}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -170,7 +170,7 @@ defmodule SaladUI.Sheet do
   def sheet_title(assigns) do
     ~H"""
     <h3 class={classes(["text-lg font-semibold text-foreground", @class])}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </h3>
     """
   end
@@ -181,7 +181,7 @@ defmodule SaladUI.Sheet do
   def sheet_description(assigns) do
     ~H"""
     <p class={classes(["text-sm text-muted-foreground", @class])}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </p>
     """
   end
@@ -192,7 +192,7 @@ defmodule SaladUI.Sheet do
   def sheet_footer(assigns) do
     ~H"""
     <div class={classes(["flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", @class])}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -204,7 +204,7 @@ defmodule SaladUI.Sheet do
   def sheet_close(assigns) do
     ~H"""
     <div class={classes(["", @class])} phx-click={JS.exec("phx-hide-sheet", to: "#" <> @target)}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end

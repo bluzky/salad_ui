@@ -42,7 +42,7 @@ defmodule SaladUI.Sidebar do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -73,7 +73,7 @@ defmodule SaladUI.Sidebar do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -98,7 +98,7 @@ defmodule SaladUI.Sidebar do
         side={@side}
       >
         <div class="flex h-full w-full flex-col">
-          <%= render_slot(@inner_block) %>
+          {render_slot(@inner_block)}
         </div>
       </.sheet_content>
     </.sheet>
@@ -145,7 +145,7 @@ defmodule SaladUI.Sidebar do
           data-sidebar="sidebar"
           class="flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"
         >
-          <%= render_slot(@inner_block) %>
+          {render_slot(@inner_block)}
         </div>
       </div>
     </div>
@@ -172,7 +172,7 @@ defmodule SaladUI.Sidebar do
       phx-click={JS.exec("phx-toggle-sidebar", to: "#" <> @target)}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
       <span class="sr-only">Toggle Sidebar</span>
     </.dynamic>
     """
@@ -227,7 +227,7 @@ defmodule SaladUI.Sidebar do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </main>
     """
   end
@@ -272,7 +272,7 @@ defmodule SaladUI.Sidebar do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -296,7 +296,7 @@ defmodule SaladUI.Sidebar do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -337,7 +337,7 @@ defmodule SaladUI.Sidebar do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -361,7 +361,7 @@ defmodule SaladUI.Sidebar do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -392,7 +392,7 @@ defmodule SaladUI.Sidebar do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </.dynamic>
     """
   end
@@ -418,7 +418,7 @@ defmodule SaladUI.Sidebar do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </button>
     """
   end
@@ -442,7 +442,7 @@ defmodule SaladUI.Sidebar do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -466,7 +466,7 @@ defmodule SaladUI.Sidebar do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </ul>
     """
   end
@@ -490,7 +490,7 @@ defmodule SaladUI.Sidebar do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -519,7 +519,7 @@ defmodule SaladUI.Sidebar do
       class={classes([get_variant(%{variant: @variant, size: @size}), @class])}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </.dynamic>
     """
 
@@ -529,10 +529,10 @@ defmodule SaladUI.Sidebar do
       ~H"""
       <.tooltip class="block">
         <.tooltip_trigger>
-          <%= @button %>
+          {@button}
         </.tooltip_trigger>
         <.tooltip_content side="right" hidden={@state != "collapsed" || @is_mobile}>
-          <%= @tooltip %>
+          {@tooltip}
         </.tooltip_content>
       </.tooltip>
       """
@@ -568,7 +568,7 @@ defmodule SaladUI.Sidebar do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </button>
     """
   end
@@ -597,7 +597,7 @@ defmodule SaladUI.Sidebar do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -655,7 +655,7 @@ defmodule SaladUI.Sidebar do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </ul>
     """
   end
@@ -677,7 +677,7 @@ defmodule SaladUI.Sidebar do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </li>
     """
   end
@@ -711,7 +711,7 @@ defmodule SaladUI.Sidebar do
       }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </.dynamic>
     """
   end
