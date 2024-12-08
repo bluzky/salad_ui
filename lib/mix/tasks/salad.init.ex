@@ -45,6 +45,7 @@ defmodule Mix.Tasks.Salad.Init do
          :ok <- patch_css(color_scheme, assets_path),
          :ok <- patch_js(assets_path),
          :ok <- copy_tailwind_colors(assets_path),
+         :ok <- copy_zag_files(assets_path),
          :ok <- patch_tailwind_config(opts),
          :ok <- maybe_write_helpers_module(component_path, app_name, opts),
          :ok <- maybe_write_component_module(component_path, app_name, opts),
@@ -151,6 +152,25 @@ defmodule Mix.Tasks.Salad.Init do
     unless File.exists?(target_path) do
       File.cp!(source_path, target_path)
     end
+
+    :ok
+  end
+
+  defp copy_zag_files(assets_path) do
+    Mix.shell().info("Copying zag files to assets folder")
+    source_path = Path.join(assets_path, "zag")
+    target_path = Path.join(File.cwd!(), "assets/js/zag")
+
+    File.mkdir_p!(target_path)
+
+    Enum.each(File.ls!(source_path), fn file ->
+      unless File.exists?(Path.join(target_path, file)) do
+        File.cp!(Path.join(source_path, file), Path.join(target_path, file))
+      end
+    end)
+
+    Mix.shell().info("\nZagHook installed successfully")
+    Mix.shell().info("Do not forget to import it into your app.js file and pass it to your live socket")
 
     :ok
   end
