@@ -5,6 +5,7 @@ defmodule Mix.Tasks.Salad.InitTest do
 
   @tmp_dir "test_init"
   @default_components_path Path.join(["lib/test_app_web/components"])
+  @application_file_path "lib/salad_ui/application.ex"
 
   setup do
     # The shell asks for a path to install components.
@@ -25,12 +26,14 @@ defmodule Mix.Tasks.Salad.InitTest do
       File.write!("mix.exs", "defmodule SaladUI.MixProject do use Mix.Project\nend")
 
       File.mkdir_p!("config")
+      File.mkdir_p!(Path.dirname(@application_file_path))
       File.mkdir_p!("assets/css")
       File.mkdir_p!("assets/js")
       File.mkdir_p!(@default_components_path)
 
       File.write!("config/config.exs", "import Config\n")
       File.write!("config/dev.exs", "import Config\n")
+      File.write!(@application_file_path, "children = []\n")
       File.write!("assets/css/app.css", "/* Original app.css content */\n")
       File.write!("assets/js/app.js", "// Original app.js content\n")
       File.write!("assets/tailwind.config.js", "module.exports = {\n  // Original tailwind config\n}\n")
@@ -51,6 +54,9 @@ defmodule Mix.Tasks.Salad.InitTest do
       dev_config_content = File.read!("config/dev.exs")
       assert dev_config_content =~ "config :salad_ui, components_path:"
       assert dev_config_content =~ "Path.join(File.cwd!(), \"#{@default_components_path}\")"
+
+      application_file_content = File.read!(@application_file_path)
+      assert application_file_content =~ "TwMerge.Cache"
 
       assert File.read!("assets/css/app.css") =~ "/* gray theme */"
       assert File.read!("assets/js/app.js") =~ "// server events"
