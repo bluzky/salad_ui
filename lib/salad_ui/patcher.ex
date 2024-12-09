@@ -8,6 +8,7 @@ defmodule SaladUI.Patcher do
 
   alias SaladUI.Patcher.ConfigPatcher
   alias SaladUI.Patcher.CSSPatcher
+  alias SaladUI.Patcher.ElixirPatcher
   alias SaladUI.Patcher.JSPatcher
   alias SaladUI.Patcher.TailwindPatcher
 
@@ -23,6 +24,19 @@ defmodule SaladUI.Patcher do
   """
   def patch_config(config_path, configs) do
     ConfigPatcher.patch(config_path, configs: configs)
+  end
+
+  @doc """
+  Patches the Elixir application supervisor to add a new child.
+
+  ## Parameters
+
+  - application_file_path: Path to the Elixir application file
+  - new_children: The new children to add to the supervisor
+  - description: A description for the new children
+  """
+  def patch_elixir_application(application_file_path, new_children, description \\ nil) do
+    ElixirPatcher.patch_application_supervisor(application_file_path, new_children, description)
   end
 
   @doc """
