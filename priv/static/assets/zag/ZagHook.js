@@ -77,15 +77,30 @@ export default {
     return listeners;
   },
 
+  parseCollection() {
+    let collection = {};
+
+    if (this.el.dataset.collection) {
+      const parsed = JSON.parse(this.el.dataset.collection);
+      collection = Object.fromEntries(
+        Object.entries(parsed).map(([key, value]) => [camelize(key), value])
+      );
+    }
+
+    return collection;
+  },
+
   context() {
     try {
       const options = this.parseOptions();
       const listeners = this.parseListeners();
+      const collection = this.parseCollection();
       console.log("listeners", listeners);
       return {
         id: this.el.id || "",
         ...options,
         ...listeners,
+        ...collection,
       };
     } catch (error) {
       console.error("Error parsing context:", error);
