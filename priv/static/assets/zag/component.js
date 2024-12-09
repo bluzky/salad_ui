@@ -106,20 +106,16 @@ export class Component {
 
   // Render an item in a list item
   renderItem(item) {
-    const value = item.dataset.value;
-    if (!value) {
-      console.error("Missing `data-value` attribute on item.");
-      return;
+    let itemProps = {};
+    if (item.dataset.props) {
+      itemProps = JSON.parse(item.dataset.props);
     }
 
-    const cleanup = this.spreadProps(
-      item,
-      this.api.getItemProps({ item: { value } }),
-    );
+    const cleanup = this.spreadProps(item, this.api.getItemProps(itemProps));
     this.cleanupFunctions.set(item, cleanup);
 
     for (const part of this.parts(item)) {
-      this.renderPart(item, `item-${part}`, this.api, { item: { value } });
+      this.renderPart(item, `item-${part}`, this.api, itemProps);
     }
   }
 
