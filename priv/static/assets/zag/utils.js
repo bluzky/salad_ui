@@ -16,7 +16,7 @@ export const camelize = (str, capitalizeFirst = false) => {
     .toLowerCase()
     .replace(/[-_](.)/g, (_match, letter) => letter.toUpperCase())
     .replace(/^(.)/, (_match, firstLetter) =>
-      capitalizeFirst ? firstLetter.toUpperCase() : firstLetter
+      capitalizeFirst ? firstLetter.toUpperCase() : firstLetter,
     );
 };
 
@@ -31,8 +31,8 @@ export const getOption = (el, name, validOptions) => {
   ) {
     console.error(
       `Invalid '${name}' specified: '${initial}'. Expected one of '${validOptions.join(
-        "', '"
-      )}'.`
+        "', '",
+      )}'.`,
     );
     initial = undefined;
   }
@@ -43,6 +43,11 @@ export const getOption = (el, name, validOptions) => {
 export const getBooleanOption = (el, name) => {
   const kebabName = name.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
   return el.dataset[kebabName] === "true" || el.dataset[kebabName] === "";
+};
+
+export const getJsonOption = (el, name) => {
+  const kebabName = name.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+  return JSON.parse(el.dataset[kebabName] || "{}");
 };
 
 export const normalizeProps = createNormalizer((props) => {
