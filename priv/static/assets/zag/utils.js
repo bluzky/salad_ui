@@ -20,36 +20,6 @@ export const camelize = (str, capitalizeFirst = false) => {
     );
 };
 
-export const getOption = (el, name, validOptions) => {
-  const kebabName = name.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
-  let initial = el.dataset[kebabName];
-
-  if (
-    validOptions &&
-    initial !== undefined &&
-    !validOptions.includes(initial)
-  ) {
-    console.error(
-      `Invalid '${name}' specified: '${initial}'. Expected one of '${validOptions.join(
-        "', '",
-      )}'.`,
-    );
-    initial = undefined;
-  }
-
-  return initial;
-};
-
-export const getBooleanOption = (el, name) => {
-  const kebabName = name.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
-  return el.dataset[kebabName] === "true" || el.dataset[kebabName] === "";
-};
-
-export const getJsonOption = (el, name) => {
-  const kebabName = name.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
-  return JSON.parse(el.dataset[kebabName] || "{}");
-};
-
 export const normalizeProps = createNormalizer((props) => {
   return Object.entries(props).reduce((acc, [key, value]) => {
     if (value === undefined) return acc;

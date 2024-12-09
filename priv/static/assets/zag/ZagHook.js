@@ -1,5 +1,5 @@
 import { Component } from "./component";
-import { camelize, getBooleanOption, getJsonOption, getOption } from "./utils";
+import { camelize } from "./utils";
 
 export default {
   mounted() {
@@ -28,24 +28,7 @@ export default {
     let options = {};
 
     if (this.el.dataset.options) {
-      const entries = Object.entries(JSON.parse(this.el.dataset.options)).map(
-        ([key, value]) => {
-          switch (value) {
-            case "bool":
-              value = getBooleanOption(this.el, key);
-              break;
-            case "json":
-              value = getJsonOption(this.el, key);
-              break;
-            default:
-              value = getOption(this.el, key, value);
-              break;
-          }
-
-          return [camelize(key), value];
-        },
-      );
-      options = Object.fromEntries(entries);
+      options = JSON.parse(this.el.dataset.options);
     }
 
     return options;
