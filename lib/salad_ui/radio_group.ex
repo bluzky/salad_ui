@@ -23,11 +23,13 @@ defmodule SaladUI.RadioGroup do
     </.radio_group>
 
   """
+  attr :id, :string, default: nil, doc: "The id of the radio group."
   attr :name, :string, default: nil
   attr :value, :any, default: nil
   attr :"default-value", :any
   attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
   attr :class, :string, default: nil
+  attr :disabled, :boolean, default: false
   slot :inner_block, required: true
 
   def radio_group(assigns) do
@@ -36,11 +38,14 @@ defmodule SaladUI.RadioGroup do
 
     ~H"""
     <div
-      role="radiogroup"
-      aria-required="false"
-      dir="ltr"
+      id={@id}
+      data-component="radio_group"
+      data-parts={Jason.encode!(~w(item))}
+      data-options={Jason.encode!(%{value: @value, name: @name, disabled: @disabled})}
+      data-listeners={Jason.encode!(%{value: ["exec:(e)=>{console.log(e)}"]})}
+      data-part="root"
+      phx-hook="ZagHook"
       class={classes(["grid gap-2", @class])}
-      tabindex="0"
       style="outline: none;"
     >
       {render_slot(@inner_block, @builder)}
@@ -50,42 +55,69 @@ defmodule SaladUI.RadioGroup do
 
   attr :builder, :map, required: true
   attr :class, :string, default: nil
-  attr :checked, :any, default: false
   attr :value, :string, default: nil
   attr :rest, :global
+  slot :inner_block, required: true
 
   def radio_group_item(assigns) do
     ~H"""
-    <label class={
-      classes([
-        "aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 inline-grid",
-        @class
-      ])
-    }>
+    <div
+      class={classes(["inline-flex space-x-2", @class])}
+      data-part="item"
+      data-parts={Jason.encode!(~w(item-hidden-input item-control item-text))}
+      data-props={Jason.encode!(%{value: @value})}
+    >
+      <label
+        data-part="item-control"
+        class="group/radio aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 inline-grid"
+      >
+        <span class="hidden items-center justify-center group-data-[state=checked]/radio:flex">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-circle h-2.5 w-2.5 fill-current text-current"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+          </svg>
+        </span>
+      </label>
       <input
+        data-part="item-hidden-input"
         type="radio"
-        class="hidden peer/radio"
-        name={@builder.name}
+        class="hidden"
         value={@value}
-        checked={normalize_boolean(@checked) || @builder.value == @value}
+        checked={@builder.value == @value}
         {@rest}
       />
-      <span class="hidden items-center justify-center peer-checked/radio:flex">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-circle h-2.5 w-2.5 fill-current text-current"
-        >
-          <circle cx="12" cy="12" r="10"></circle>
-        </svg>
-      </span>
+      {render_slot(@inner_block)}
+    </div>
+    """
+  end
+
+  attr :class, :string, default: nil
+  attr :rest, :global, include: ~w(disabled form name value for)
+  slot :inner_block, required: true
+
+  def radio_group_item_label(assigns) do
+    ~H"""
+    <label
+      data-part="item-text"
+      class={
+        classes([
+          "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+          @class
+        ])
+      }
+      {@rest}
+    >
+      {render_slot(@inner_block)}
     </label>
     """
   end

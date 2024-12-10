@@ -181,7 +181,7 @@ defmodule SaladUI.Select do
     <label
       data-part="item"
       data-props={Jason.encode!(%{item: @item})}
-      data-parts={Jason.encode!(["indicator", "item-text"])}
+      data-parts={Jason.encode!(["item-indicator", "item-text"])}
       class={
         classes([
           "group/item",
