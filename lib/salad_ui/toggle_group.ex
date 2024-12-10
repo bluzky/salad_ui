@@ -20,6 +20,7 @@ defmodule SaladUI.ToggleGroup do
       </.toggle_group_item>
     </.toggle_group>
   """
+  attr :id, :string, default: nil, doc: "The id of the toggle group."
   attr :name, :string, default: nil
   attr :multiple, :any, values: [true, false, "true", "false"], default: false
 
@@ -35,25 +36,49 @@ defmodule SaladUI.ToggleGroup do
   attr :class, :string, default: nil
   attr :variant, :string, default: "default"
   attr :size, :string, default: "default"
+  attr :on_value_change, :string, default: nil, doc: "`push_event` event to push to server when select value changed"
   attr :rest, :global
   slot :inner_block
 
+  @change_handler """
+  (details, el)=>{
+    el.querySelectorAll("input").forEach((input)=>{
+      details.value.indexOf(input.value) < 0 ? input.checked = false : input.checked = true;
+    });
+  }
+  """
   def toggle_group(assigns) do
-    assigns = prepare_assign(assigns)
+    assigns =
+      assigns
+      |> prepare_assign()
+      |> assign(:change_handler, @change_handler)
 
     assigns =
       assign_new(assigns, :checked, fn -> Phoenix.HTML.Form.normalize_value("checkbox", assigns.multiple) end)
 
-    ensure_valid_value_type!(assigns)
+    value = ensure_value(assigns)
+
+    assigns = assign(assigns, :value, value)
 
     ~H"""
-    <div class={classes(["flex items-center justify-center gap-1", @class])}>
+    <div
+      id={@id}
+      data-component="toggle_group"
+      data-part="root"
+      data-parts={Jason.encode!(~w(item))}
+      data-options={Jason.encode!(%{value: @value, multiple: @multiple, disabled: @disabled})}
+      data-listeners={
+        Jason.encode!(%{value: ["exec:#{@change_handler}", "push:#{@on_value_change}"]})
+      }
+      phx-hook="ZagHook"
+      class={classes(["flex items-center justify-center gap-1", @class])}
+    >
       {render_slot(@inner_block, assigns)}
     </div>
     """
   end
 
-  defp ensure_valid_value_type!(%{value: value, multiple: multiple} = _assigns) do
+  defp ensure_value(%{value: value, multiple: multiple} = _assigns) do
     cond do
       multiple and not is_list(value) ->
         raise ArgumentError, "The value of the toggle group must be a list for multiple type."
@@ -61,8 +86,11 @@ defmodule SaladUI.ToggleGroup do
       not multiple and not (is_nil(value) or is_binary(value)) ->
         raise ArgumentError, "The value of the toggle group must be a single value for single type."
 
+      is_list(value) ->
+        value
+
       true ->
-        nil
+        [value]
     end
   end
 
@@ -73,7 +101,7 @@ defmodule SaladUI.ToggleGroup do
   attr :rest, :global
   slot :inner_block
 
-  def toggle_group_item(%{builder: %{multiple: true}} = assigns) do
+  def toggle_group_item(assigns) do
     assigns =
       assigns
       |> assign(:variant_class, variant(assigns.builder))
@@ -81,11 +109,12 @@ defmodule SaladUI.ToggleGroup do
 
     ~H"""
     <button
-      onclick="this.querySelector('.toggle-input').click()"
+      data-part="item"
+      data-props={Jason.encode!(%{value: @value, disabled: @disabled})}
       disabled={@disabled || @builder.disabled}
       class={
         classes([
-          "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 has-[:checked]:bg-accent has-[:checked]:text-accent-foreground",
+          "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground",
           @variant_class,
           @class
         ])
@@ -93,38 +122,6 @@ defmodule SaladUI.ToggleGroup do
     >
       <input
         type="checkbox"
-        class="toggle-input hidden"
-        name={@builder.name}
-        value={@value}
-        checked={@checked}
-        {@rest}
-      />
-      {render_slot(@inner_block)}
-    </button>
-    """
-  end
-
-  # single type
-  def toggle_group_item(assigns) do
-    assigns =
-      assigns
-      |> assign(:variant_class, variant(assigns.builder))
-      |> assign(:checked, assigns.value == assigns.builder.value)
-
-    ~H"""
-    <button
-      onclick="this.querySelector('.toggle-input').click()"
-      disabled={@disabled || @builder.disabled}
-      class={
-        classes([
-          "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 has-[:checked]:bg-accent has-[:checked]:text-accent-foreground",
-          @variant_class,
-          @class
-        ])
-      }
-    >
-      <input
-        type="radio"
         class="toggle-input hidden"
         name={@builder.name}
         value={@value}
