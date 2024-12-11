@@ -28,6 +28,59 @@ defmodule SaladUI.Helpers do
     assign(assigns, value: value)
   end
 
+  @doc """
+  Prepare a collection map containing items and optional transformation functions.
+
+  Takes a map with an `:items` key containing a list of items, and optional transformation functions:
+  - `:item_to_string` - Function to transform the item's label
+  - `:item_to_value` - Function to transform the item's value
+  - `:item_disabled?` - Function to determine if an item should be disabled
+
+  Each item in the list represents an option a user can choose. Each item should be a map with the required `:label` and `:value` keys, and an optional `:disabled` key. `:label` is the value that will be displayed to the user, `:value` specifies the value captured when the user selects the item and `:disabled` key is a boolean that determines if the item should be disabled.
+
+  Returns a list of transformed items with updated `:label`, `:value` and `:disabled` fields based on the provided functions.
+
+  ## Examples
+
+      iex> collection = %{
+        items: [%{label: "Apple", value: "apple"}],
+        item_to_string: &String.upcase/1,
+        item_disabled?: fn item -> item.value == "apple" end
+      }
+      iex> parse_collection(collection)
+      [%{label: "APPLE", value: "apple", disabled: true}]
+  """
+  def prepare_collection(%{items: items} = collection) when is_map(collection) and is_list(items) do
+    Enum.map(items, fn item ->
+      item_to_string = collection[:item_to_string]
+      item_to_value = collection[:item_to_value]
+      item_disabled? = collection[:item_disabled?]
+
+      item
+      |> Map.put(
+        :label,
+        case item_to_string do
+          fun when is_function(fun, 1) -> fun.(item.label)
+          _ -> item.label
+        end
+      )
+      |> Map.put(
+        :value,
+        case item_to_value do
+          fun when is_function(fun, 1) -> fun.(item.value)
+          _ -> item.value
+        end
+      )
+      |> Map.put(
+        :disabled,
+        case item_disabled? do
+          fun when is_function(fun, 1) -> fun.(item)
+          _ -> false
+        end
+      )
+    end)
+  end
+
   # normalize_integer
   def normalize_integer(value) when is_integer(value), do: value
 
