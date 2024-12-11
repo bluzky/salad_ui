@@ -62,7 +62,6 @@ export class Component {
   }
 
   initService(component, context) {
-    // TODO experiment
     if (context.collection) {
       context.collection = component.collection(context.collection);
     }
@@ -75,7 +74,7 @@ export class Component {
     return component.connect(
       this.service.state,
       this.service.send,
-      normalizeProps,
+      normalizeProps
     );
   }
 
