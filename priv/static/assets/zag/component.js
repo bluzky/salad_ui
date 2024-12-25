@@ -25,7 +25,7 @@ export class Component {
 
     // Re-render on state updates
     this.service.subscribe((e) => {
-      console.log("State updated", e.event);
+      // console.log("State updated", e.event);
       this.api = this.initApi(this.componentModule);
       this.render();
     });
@@ -66,9 +66,7 @@ export class Component {
     if (context.collection) {
       context.collection = component.collection(context.collection);
     }
-    return component.machine({
-      ...context,
-    });
+    return component.machine(context);
   }
 
   initApi(component) {
@@ -82,7 +80,7 @@ export class Component {
   render() {
     this.cleanup();
 
-    for (const part of ["root", ...this.parts(this.el)]) {
+    for (const part of this.parts(this.el)) {
       if (part === "item") continue;
       this.renderPart(this.el, part, this.api);
     }
@@ -93,10 +91,11 @@ export class Component {
   }
 
   renderPart(root, name, api, opts = {}) {
-    const isRoot = name === "root";
+    const isRoot = name === root.dataset.part;
     const part = isRoot ? root : root.querySelector(`[data-part='${name}']`);
 
     const getterName = `get${camelize(name, true)}Props`;
+    // console.log(getterName, opts);
 
     if (part && api[getterName]) {
       const cleanup = this.spreadProps(part, api[getterName](opts), isRoot);
@@ -110,12 +109,12 @@ export class Component {
     if (item.dataset.props) {
       itemProps = JSON.parse(item.dataset.props);
     }
-
+    // console.log("itemProps", this.api.getItemProps(itemProps));
     const cleanup = this.spreadProps(item, this.api.getItemProps(itemProps));
     this.cleanupFunctions.set(item, cleanup);
 
     for (const part of this.parts(item)) {
-      this.renderPart(item, `item-${part}`, this.api, itemProps);
+      this.renderPart(item, part, this.api, itemProps);
     }
   }
 

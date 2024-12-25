@@ -34,7 +34,8 @@ defmodule SaladUI.Collapsible do
     ~H"""
     <div
       data-component="collapsible"
-      data-parts={Jason.encode!(["trigger", "content"])}
+      data-parts={Jason.encode!(["root", "trigger", "content"])}
+      data-part="root"
       data-options={Jason.encode!(%{open: @open})}
       data-listeners={Jason.encode!(@listeners)}
       phx-hook="ZagHook"
