@@ -30,7 +30,7 @@ defmodule SaladUI.RadioGroup do
   attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
   attr :class, :string, default: nil
   attr :disabled, :boolean, default: false
-    attr :on_value_change, :string, default: nil, doc: "`push_event` event to push to server when select value changed"
+  attr :on_value_change, :string, default: nil, doc: "`push_event` event to push to server when select value changed"
 
   slot :inner_block, required: true
 
@@ -91,7 +91,7 @@ defmodule SaladUI.RadioGroup do
         </span>
       </span>
       {render_slot(@inner_block)}
-            <input
+      <input
         data-part="item-hidden-input"
         type="radio"
         class="hidden"
@@ -99,7 +99,6 @@ defmodule SaladUI.RadioGroup do
         checked={@builder.value == @value}
         {@rest}
       />
-
     </label>
     """
   end
