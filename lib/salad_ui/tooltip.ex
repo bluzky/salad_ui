@@ -22,6 +22,10 @@ defmodule SaladUI.Tooltip do
   def tooltip(assigns) do
     ~H"""
     <div
+      data-component="tooltip"
+      data-parts={Jason.encode!(["trigger", "content"])}
+            data-options={Jason.encode!(%{})}
+            phx-hook="ZagHook"
       class={
         classes([
           "relative group/tooltip inline-block",
@@ -60,6 +64,7 @@ defmodule SaladUI.Tooltip do
 
     ~H"""
     <div
+      data-part="positioner"
       data-side={@side}
       class={
         classes([
@@ -71,7 +76,9 @@ defmodule SaladUI.Tooltip do
       }
       {@rest}
     >
-      {render_slot(@inner_block)}
+      <div data-part="content">
+        {render_slot(@inner_block)}
+        </div>
     </div>
     """
   end
