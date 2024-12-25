@@ -65,7 +65,7 @@ defmodule SaladUI.ToggleGroup do
       id={@id}
       data-component="toggle_group"
       data-part="root"
-      data-parts={Jason.encode!(~w(item))}
+      data-parts={Jason.encode!(~w(root item))}
       data-options={Jason.encode!(%{value: @value, multiple: @multiple, disabled: @disabled})}
       data-listeners={
         Jason.encode!(%{value: ["exec:#{@change_handler}", "push:#{@on_value_change}"]})
