@@ -30,6 +30,8 @@ defmodule SaladUI.RadioGroup do
   attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
   attr :class, :string, default: nil
   attr :disabled, :boolean, default: false
+    attr :on_value_change, :string, default: nil, doc: "`push_event` event to push to server when select value changed"
+
   slot :inner_block, required: true
 
   def radio_group(assigns) do
@@ -40,9 +42,9 @@ defmodule SaladUI.RadioGroup do
     <div
       id={@id}
       data-component="radio_group"
-      data-parts={Jason.encode!(~w(item))}
+      data-parts={Jason.encode!(~w(root item))}
       data-options={Jason.encode!(%{value: @value, name: @name, disabled: @disabled})}
-      data-listeners={Jason.encode!(%{value: ["exec:(e)=>{console.log(e)}"]})}
+      data-listeners={Jason.encode!(%{value: ["push:#{@on_value_change}"]})}
       data-part="root"
       phx-hook="ZagHook"
       class={classes(["grid gap-2", @class])}
@@ -61,13 +63,13 @@ defmodule SaladUI.RadioGroup do
 
   def radio_group_item(assigns) do
     ~H"""
-    <div
+    <label
       class={classes(["inline-flex space-x-2", @class])}
       data-part="item"
       data-parts={Jason.encode!(~w(item-hidden-input item-control item-text))}
       data-props={Jason.encode!(%{value: @value})}
     >
-      <label
+      <span
         data-part="item-control"
         class="group/radio aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 inline-grid"
       >
@@ -87,8 +89,9 @@ defmodule SaladUI.RadioGroup do
             <circle cx="12" cy="12" r="10"></circle>
           </svg>
         </span>
-      </label>
-      <input
+      </span>
+      {render_slot(@inner_block)}
+            <input
         data-part="item-hidden-input"
         type="radio"
         class="hidden"
@@ -96,8 +99,8 @@ defmodule SaladUI.RadioGroup do
         checked={@builder.value == @value}
         {@rest}
       />
-      {render_slot(@inner_block)}
-    </div>
+
+    </label>
     """
   end
 
@@ -107,7 +110,7 @@ defmodule SaladUI.RadioGroup do
 
   def radio_group_item_label(assigns) do
     ~H"""
-    <label
+    <span
       data-part="item-text"
       class={
         classes([
@@ -118,7 +121,7 @@ defmodule SaladUI.RadioGroup do
       {@rest}
     >
       {render_slot(@inner_block)}
-    </label>
+    </span>
     """
   end
 end
