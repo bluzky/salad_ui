@@ -74,7 +74,8 @@ defmodule SaladUI.Select do
       id={@id}
       class={classes(["relative group", @class])}
       data-component="select"
-      data-parts={Jason.encode!(["trigger", "value-text", "positioner", "content", "item"])}
+      data-parts={Jason.encode!(["root", "trigger", "value-text", "positioner", "content", "item"])}
+      data-part="root"
       data-options={Jason.encode!(%{value: [@value], collection: %{items: @items}})}
       data-listeners={
         Jason.encode!(%{value: ["exec:#{@select_handler}", "push:#{@on_value_change}"]})
@@ -181,7 +182,7 @@ defmodule SaladUI.Select do
     <label
       data-part="item"
       data-props={Jason.encode!(%{item: @item})}
-      data-parts={Jason.encode!(["indicator", "item-text"])}
+      data-parts={Jason.encode!(["item-indicator", "item-text"])}
       class={
         classes([
           "group/item",

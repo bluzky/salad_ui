@@ -81,7 +81,6 @@ export default {
     try {
       const options = this.parseOptions();
       const listeners = this.parseListeners();
-      console.log("listeners", listeners);
       return {
         id: this.el.id || "",
         ...options,
