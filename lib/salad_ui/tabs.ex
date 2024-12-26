@@ -29,16 +29,23 @@ defmodule SaladUI.Tabs do
 
   attr :id, :string, required: true, doc: "id for root tabs tag"
   attr :default, :string, default: nil, doc: "default tab value"
+
   attr :class, :string, default: nil
   slot :inner_block, required: true
   attr :rest, :global
 
   def tabs(assigns) do
-    assigns = assign(assigns, :builder, %{default: assigns.default, id: assigns.id})
-
     ~H"""
-    <div class={@class} id={@id} {@rest} phx-mounted={show_tab(@id, @default)}>
-      {render_slot(@inner_block, @builder)}
+    <div
+      class={@class}
+      id={@id}
+      phx-hook="ZagHook"
+      data-component="tabs"
+      data-parts={Jason.encode!(["list", "trigger", "content"])}
+      data-options={Jason.encode!(%{value: @selected})}
+      {@rest}
+    >
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -50,6 +57,7 @@ defmodule SaladUI.Tabs do
   def tabs_list(assigns) do
     ~H"""
     <div
+      data-part="list"
       class={
         classes([
           "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
@@ -63,8 +71,8 @@ defmodule SaladUI.Tabs do
     """
   end
 
-  attr :builder, :map, required: true, doc: "builder instance of tabs"
   attr :value, :string, required: true, doc: "target value of tab content"
+  attr :disabled, :boolean, default: false
   attr :class, :string, default: nil
   slot :inner_block, required: true
   attr :rest, :global
@@ -72,52 +80,41 @@ defmodule SaladUI.Tabs do
   def tabs_trigger(assigns) do
     ~H"""
     <button
+      data-part="trigger"
+      data-options={Jason.encode!(%{value: @value, disabled: @disabled})}
       class={
         classes([
-          "tabs-trigger",
           "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
           @class
         ])
       }
-      data-target={@value}
       {@rest}
-      phx-click={show_tab(@builder.id, @value)}
     >
       {render_slot(@inner_block)}
     </button>
     """
   end
 
-  attr :value, :string, required: true, doc: "unique for tab content"
   attr :class, :string, default: nil
+  attr :value, :string, required: true, doc: "target value of tab content"
   slot :inner_block, required: true
   attr :rest, :global
 
   def tabs_content(assigns) do
     ~H"""
     <div
+      data-part="content"
+      data-options={Jason.encode!(%{value: @value})}
       class={
         classes([
-          "tabs-content",
           "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
           @class
         ])
       }
-      value={@value}
       {@rest}
     >
       {render_slot(@inner_block)}
     </div>
     """
-  end
-
-  # Set selected tab to active
-  # show appropriate tab content
-  defp show_tab(root, value) do
-    %JS{}
-    |> JS.set_attribute({"data-state", ""}, to: "##{root} .tabs-trigger[data-state=active]")
-    |> JS.set_attribute({"data-state", "active"}, to: "##{root} .tabs-trigger[data-target=#{value}]")
-    |> JS.hide(to: "##{root} .tabs-content:not([value=#{value}])")
-    |> JS.show(to: "##{root} .tabs-content[value=#{value}]")
   end
 end
