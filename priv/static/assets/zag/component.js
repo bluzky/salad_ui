@@ -90,15 +90,28 @@ export class Component {
   }
 
   renderPart(root, name, api, opts = {}) {
-    const isRoot = name === root.dataset.part;
-    const part = isRoot ? root : root.querySelector(`[data-part='${name}']`);
-
     const getterName = `get${camelize(name, true)}Props`;
-    // console.log(getterName, opts);
+    if (!api[getterName]) return;
 
-    if (part && api[getterName]) {
-      const cleanup = this.spreadProps(part, api[getterName](opts), isRoot);
-      this.cleanupFunctions.set(part, cleanup);
+    // wrapper around spreadProps
+    const spreadProps = (el, attrs, isRoot = false) => {
+      const cleanup = this.spreadProps(el, attrs, isRoot);
+      this.cleanupFunctions.set(el, cleanup);
+    };
+
+    const isRoot = name === "root";
+    if (isRoot) {
+      spreadProps(root, api[getterName](opts), isRoot);
+      return;
+    }
+
+    const elements = root.querySelectorAll(`[data-part='${name}']`);
+
+    for (const el of elements) {
+      let elOpts = { ...opts };
+      if (el.dataset.options) elOpts = JSON.parse(el.dataset.options);
+
+      spreadProps(el, api[getterName](elOpts));
     }
   }
 
