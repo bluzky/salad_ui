@@ -117,4 +117,18 @@ defmodule SaladUI.Tabs do
     </div>
     """
   end
+
+  def show_tab(js \\ %JS{}, root, value) do
+    js
+    |> JS.set_attribute({"tabindex", "-1"}, to: "##{root} [aria-selected=true]")
+    |> JS.remove_attribute("aria-selected", to: "##{root} [aria-selected=true]")
+    |> JS.set_attribute({"hidden", "true"},
+      to: "##{root} [data-part='content']:not([data-value='#{value}'])"
+    )
+    |> JS.set_attribute({"tabindex", "0"}, to: "##{root} [data-value='#{value}']")
+    |> JS.set_attribute({"aria-selected", "true"}, to: "##{root} [data-value='#{value}']")
+    |> JS.remove_attribute("hidden",
+      to: "##{root} [aria-labelledby='tabs:#{root}:trigger-#{value}'][data-part='content']"
+    )
+  end
 end
