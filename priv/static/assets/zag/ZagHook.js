@@ -34,42 +34,26 @@ export default {
     return options;
   },
 
-  // this parse listener list and return an array of functions
-  // each listener is a string with the format "type:action"
-  parseHandler(handlerArr) {
-    return handlerArr.map((str) => {
-      const index = str.indexOf(":");
-      if (index !== -1) {
-        const handlerType = str.substring(0, index);
-        const handlerAction = str.substring(index + 1);
-        switch (handlerType) {
-          case "push":
-            // push event to server
-            return (details) =>
-              handlerAction != ""
-                ? this.pushEvent(handlerAction, details)
-                : null;
-          case "exec":
-            // execute javascript code from string
-            return window.eval(handlerAction);
-          default:
-            throw new Error("Invalid handler type");
-        }
-      } else {
-        throw new Error("Delimiter not found in handler string");
-      }
-    });
-  },
-
   parseListeners() {
     let listeners = {};
     if (this.el.dataset.listeners) {
       const listenersConfig = JSON.parse(this.el.dataset.listeners);
-      Object.keys(listenersConfig).map((event) => {
-        const handlers = this.parseHandler(listenersConfig[event]);
+      listenersConfig.forEach((listener) => {
+        const [event, ...env] = listener;
+        // the event will be dispatched and/or pushed with this name
+        const eventFacade = `${this.el.dataset.component}:${event.replace(
+          /_/g,
+          "-"
+        )}`;
 
-        listeners[`on${camelize(event, true)}Change`] = (details) => {
-          handlers.forEach((handler) => handler(details, this.el));
+        listeners[camelize(event)] = (detail) => {
+          if (env.includes("client")) {
+            window.dispatchEvent(new CustomEvent(eventFacade, { detail }));
+          }
+
+          if (env.includes("server")) {
+            this.pushEvent(eventFacade, detail);
+          }
         };
       });
     }
