@@ -68,7 +68,7 @@ defmodule SaladUI.ToggleGroup do
       data-parts={Jason.encode!(~w(root item))}
       data-options={Jason.encode!(%{value: @value, multiple: @multiple, disabled: @disabled})}
       data-listeners={
-        Jason.encode!(%{value: ["exec:#{@change_handler}", "push:#{@on_value_change}"]})
+        Jason.encode!(%{on_value_change: ["exec:#{@change_handler}", "push:#{@on_value_change}"]})
       }
       phx-hook="ZagHook"
       class={classes(["flex items-center justify-center gap-1", @class])}
