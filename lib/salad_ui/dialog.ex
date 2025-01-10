@@ -65,9 +65,9 @@ defmodule SaladUI.Dialog do
       >
         <.focus_wrap
           id={"#{@id}-wrap"}
-          phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
+          phx-window-keydown={JS.exec("phx-hide-modal", to: "##{@id}")}
           phx-key="escape"
-          phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
+          phx-click-away={JS.exec("phx-hide-modal", to: "##{@id}")}
           class="w-full sm:max-w-[425px]"
         >
           <div
