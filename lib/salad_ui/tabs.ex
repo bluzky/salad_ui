@@ -1,41 +1,57 @@
 defmodule SaladUI.Tabs do
   @moduledoc """
-  Implementation of tabs components from https://ui.shadcn.com/docs/components/tabs
+  Tabs component.
 
-  ## Example:
+  ## Examples
 
-      <.tabs default="account" id="settings" :let={builder} class="w-[400px]">
-        <.tabs_list class="grid w-full grid-cols-2">
-          <.tabs_trigger builder={builder} value="account">account</.tabs_trigger>
-          <.tabs_trigger builder={builder} value="password">password</.tabs_trigger>
-        </.tabs_list>
-        <.tabs_content value="account">
-          <.card>
-            <.card_content class="p-6">
-              Account
-            </.card_content>
-          </.card>
-        </.tabs_content>
-        <.tabs_content value="password">
-          <.card>
-            <.card_content class="p-6">
-              Password
-            </.card_content>
-          </.card>
-        </.tabs_content>
-      </.tabs>
+    <.tabs id="settings" selected="account" class="w-[400px]">
+      <.tabs_list class="grid w-full grid-cols-2">
+        <.tabs_trigger value="account">account</.tabs_trigger>
+        <.tabs_trigger value="password">password</.tabs_trigger>
+      </.tabs_list>
+      <.tabs_content value="account">
+        <.card>
+          <.card_content class="p-6">
+            Account
+          </.card_content>
+        </.card>
+      </.tabs_content>
+      <.tabs_content value="password">
+        <.card>
+          <.card_content class="p-6">
+            Password
+          </.card_content>
+        </.card>
+      </.tabs_content>
+    </.tabs>
   """
   use SaladUI, :component
 
   attr :id, :string, required: true, doc: "id for root tabs tag"
   attr :selected, :string, default: nil, doc: "selected tab value"
-  attr :options, :map, default: %{}, doc: ""
-  attr :listeners, :list, default: []
+
+  attr :options, :map,
+    default: %{},
+    doc: """
+    Options supported by the Zag.js library for configuring this component.
+    See https://zagjs.com/components/react/tabs#machine-context for full list of available options.
+    """
+
+  attr :listeners, :list,
+    default: [],
+    doc: """
+    Event listeners supported by the Zag.js library for configuring this component.
+    Each listener it's a tuple with the event name as an atom and where to handle it (`:client`, `:server` or both).
+    See https://zagjs.com/components/react/tabs#listening-for-events for full list of available listeners.
+    """
 
   attr :class, :string, default: nil
   slot :inner_block, required: true
   attr :rest, :global
 
+  @doc """
+  Renders the root container for the tabs component.
+  """
   def tabs(assigns) do
     ~H"""
     <div
@@ -57,6 +73,9 @@ defmodule SaladUI.Tabs do
   slot :inner_block, required: true
   attr :rest, :global
 
+  @doc """
+  Renders a container for the tabs list.
+  """
   def tabs_list(assigns) do
     ~H"""
     <div
@@ -80,6 +99,11 @@ defmodule SaladUI.Tabs do
   slot :inner_block, required: true
   attr :rest, :global
 
+  @doc """
+  Renders a tabs trigger.
+
+  The `value` attribute is used to identify the tab content to be shown when the tab is selected.
+  """
   def tabs_trigger(assigns) do
     ~H"""
     <button
@@ -103,6 +127,9 @@ defmodule SaladUI.Tabs do
   slot :inner_block, required: true
   attr :rest, :global
 
+  @doc """
+  Renders a tabs content
+  """
   def tabs_content(assigns) do
     ~H"""
     <div
@@ -121,6 +148,9 @@ defmodule SaladUI.Tabs do
     """
   end
 
+  @doc """
+  Shows the content for the tab with the specified `value` inside the tabs component with the given `root` id
+  """
   def show_tab(js \\ %JS{}, root, value) do
     js
     |> JS.set_attribute({"tabindex", "-1"}, to: "##{root} [aria-selected=true]")
