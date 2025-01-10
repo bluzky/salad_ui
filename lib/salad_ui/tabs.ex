@@ -160,6 +160,9 @@ defmodule SaladUI.Tabs do
     )
     |> JS.set_attribute({"tabindex", "0"}, to: "##{root} [data-value='#{value}']")
     |> JS.set_attribute({"aria-selected", "true"}, to: "##{root} [data-value='#{value}']")
+    |> JS.set_attribute({"aria-controls", "tabs:#{root}:content-#{value}"},
+      to: "##{root} [data-value='#{value}'][data-part='trigger']"
+    )
     |> JS.remove_attribute("hidden",
       to: "##{root} [aria-labelledby='tabs:#{root}:trigger-#{value}'][data-part='content']"
     )
