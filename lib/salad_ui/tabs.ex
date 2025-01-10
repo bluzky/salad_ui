@@ -29,6 +29,7 @@ defmodule SaladUI.Tabs do
 
   attr :id, :string, required: true, doc: "id for root tabs tag"
   attr :default, :string, default: nil, doc: "default tab value"
+  attr :listeners, :list, default: []
 
   attr :class, :string, default: nil
   slot :inner_block, required: true
@@ -43,6 +44,7 @@ defmodule SaladUI.Tabs do
       data-component="tabs"
       data-parts={Jason.encode!(["list", "trigger", "content"])}
       data-options={Jason.encode!(%{value: @selected})}
+      data-listeners={@listeners |> tuples_to_lists() |> Jason.encode!()}
       {@rest}
     >
       {render_slot(@inner_block)}

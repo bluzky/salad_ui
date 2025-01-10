@@ -138,6 +138,18 @@ defmodule SaladUI.Helpers do
     Enum.map_join(%{side: side, align: align(align, side)}, " ", fn {key, value} -> @variants[key][value] end)
   end
 
+  @doc """
+  Converts a list of tuples into a list of lists.
+
+  Normally used to prepare a list of tuples for JSON encoding
+
+  ## Examples
+
+      iex> tuples_to_lists([{1, 2}, {3, 4}])
+      [[1, 2], [3, 4]]
+  """
+  def tuples_to_lists(tuples), do: Enum.map(tuples, &Tuple.to_list/1)
+
   # decide align class based on side
   defp align(align, side) do
     cond do
