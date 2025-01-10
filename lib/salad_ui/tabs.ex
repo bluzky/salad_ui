@@ -28,7 +28,8 @@ defmodule SaladUI.Tabs do
   use SaladUI, :component
 
   attr :id, :string, required: true, doc: "id for root tabs tag"
-  attr :default, :string, default: nil, doc: "default tab value"
+  attr :selected, :string, default: nil, doc: "selected tab value"
+  attr :options, :map, default: %{}, doc: ""
   attr :listeners, :list, default: []
 
   attr :class, :string, default: nil
@@ -43,7 +44,7 @@ defmodule SaladUI.Tabs do
       phx-hook="ZagHook"
       data-component="tabs"
       data-parts={Jason.encode!(["list", "trigger", "content"])}
-      data-options={Jason.encode!(%{value: @selected})}
+      data-options={%{value: @selected} |> Map.merge(@options) |> Jason.encode!()}
       data-listeners={@listeners |> tuples_to_lists() |> Jason.encode!()}
       {@rest}
     >
