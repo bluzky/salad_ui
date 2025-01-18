@@ -16,6 +16,7 @@ defmodule Mix.Tasks.Salad.Init do
   @default_components_path "lib/%APP_NAME%_web/components"
   @color_schemes ~w(zinc slate stone gray neutral red rose orange green blue yellow violet)
   @default_color_scheme "gray"
+  @default_tailwind_animate_version "1.0.7"
 
   @impl true
   def run(argv) do
@@ -38,8 +39,6 @@ defmodule Mix.Tasks.Salad.Init do
     assets_path = build_assets_path(env)
     application_file_path = Path.join(File.cwd!(), "lib/#{app_name}/application.ex")
 
-    node_opts = if env == "test", do: [skip: true], else: []
-
     File.mkdir_p!(component_path)
 
     with :ok <- write_config(component_path),
@@ -50,7 +49,7 @@ defmodule Mix.Tasks.Salad.Init do
          :ok <- patch_tailwind_config(opts),
          :ok <- maybe_write_helpers_module(component_path, app_name, opts),
          :ok <- maybe_write_component_module(component_path, app_name, opts),
-         :ok <- install_node_dependencies(node_opts) do
+         :ok <- install_tailwind_animate(opts) do
       if opts[:as_lib] do
         Mix.shell().info("Done. Now you can use any component by `import SaladUI.<ComponentName>` in your project.")
       else
@@ -218,15 +217,28 @@ defmodule Mix.Tasks.Salad.Init do
     File.write!(target_path, source_code)
   end
 
-  defp install_node_dependencies(opts) do
-    if Keyword.get(opts, :skip, false) do
-      Mix.shell().info("Skipping npm install (running in test environment)")
-    else
-      Mix.shell().info("Installing tailwindcss-animate")
-      Mix.shell().cmd("npm install -D tailwindcss-animate --prefix assets")
-    end
+  defp install_tailwind_animate(opts) do
+    tag = Keyword.get(opts, :tailwind_animate_version, @default_tailwind_animate_version)
+    Mix.shell().info("Downloading tailwindcss-animate.js v#{tag}")
 
-    :ok
+    url = "https://raw.githubusercontent.com/jamiebuilds/tailwindcss-animate/refs/tags/v#{tag}/index.js"
+    output_path = Keyword.get(opts, :output_path, Path.join(File.cwd!(), "assets/vendor/tailwindcss-animate.js"))
+
+    :inets.start()
+    :ssl.start()
+
+    case :httpc.request(:get, {url, []}, [], body_format: :binary) do
+      {:ok, {{_version, 200, _reason_phrase}, _headers, body}} ->
+        # Write the body to file
+        File.write!(output_path, body)
+        :ok
+
+      {:ok, {{_version, status_code, _reason_phrase}, _headers, _body}} ->
+        {:error, "Failed to download tailwindcss-animate with status #{status_code}"}
+
+      {:error, reason} ->
+        {:error, "Failed to download tailwindcss-animate.js: #{inspect(reason)}"}
+    end
   end
 
   defp print_usage, do: Mix.shell().info(@moduledoc)
