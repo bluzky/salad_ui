@@ -22,17 +22,10 @@
           buildInputs = with pkgs; [
             beam27Packages.elixir_1_17
             beam27Packages.erlang
-            nodejs_20
 
             # LSPs
             # lexical
             erlang-ls
-
-            # Tools
-            # yamllint
-            # yaml-language-server
-            # shfmt
-            # shellcheck
           ];
         };
       });
