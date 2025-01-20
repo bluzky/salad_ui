@@ -3,14 +3,20 @@ defmodule SaladUI.Slider do
   use SaladUI, :component
 
   @doc """
-  Render Slider range input
+  Renders a slider range input
 
-  ## Example
+  ## Examples
 
-
-      <.slider class="w-[60%]" id="slider-single-default-slider" max={50} min={10} step={5} value={20}/>
-
+    <.slider
+      class="w-[60%]"
+      id="single-slider"
+      max={50}
+      min={10}
+      step={5}
+      value={20}
+    />
   """
+
   attr :id, :string, required: true
   attr :name, :string, default: nil
   attr :value, :integer, default: 0
