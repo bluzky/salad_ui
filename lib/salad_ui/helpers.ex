@@ -166,6 +166,16 @@ defmodule SaladUI.Helpers do
     }
   }
 
+  @doc """
+  Helper to build ZagJS placement option from side and align
+  """
+  def placement(side, align) do
+    case {side, align} do
+      {side, "center"} -> side
+      {side, align} -> "#{side}-#{align}"
+    end
+  end
+
   @default_variants %{
     variant: "default",
     size: "default"

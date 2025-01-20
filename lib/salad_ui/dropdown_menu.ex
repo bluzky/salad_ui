@@ -2,8 +2,6 @@ defmodule SaladUI.DropdownMenu do
   @moduledoc false
   use SaladUI, :component
 
-  alias Phoenix.LiveView.JS
-
   @doc """
   Render dropdown menu
 
@@ -38,7 +36,7 @@ defmodule SaladUI.DropdownMenu do
   """
 
   attr :class, :string, default: nil
-    attr :on_select, :string, default: nil, doc: "`push_event` event to push to server when select value changed"
+  attr :on_select, :string, default: nil, doc: "`push_event` event to push to server when select value changed"
 
   slot :inner_block, required: true
   attr :rest, :global
@@ -49,13 +47,12 @@ defmodule SaladUI.DropdownMenu do
       id={unique_id()}
       data-parts={Jason.encode!(["trigger", "content", "positioner"])}
       data-component="menu"
-            data-listeners={
-        Jason.encode!(%{on_select: ["push:#{@on_select}"]})
-      }
+      data-listeners={Jason.encode!(%{on_select: ["push:#{@on_select}"]})}
       data-options={Jason.encode!(%{additional_context: ["positioning"]})}
-
       phx-hook="ZagHook"
-      class={classes(["relative group inline-block", @class])} {@rest}>
+      class={classes(["relative group inline-block", @class])}
+      {@rest}
+    >
       {render_slot(@inner_block)}
     </div>
     """
@@ -69,13 +66,7 @@ defmodule SaladUI.DropdownMenu do
 
   def dropdown_menu_trigger(assigns) do
     ~H"""
-    <.dynamic
-      data-part="trigger"
-      tag={@as_tag}
-      class={classes(["dropdown-menu-trigger peer", @class])}
-      data-state="closed"
-      {@rest}
-    >
+    <.dynamic data-part="trigger" tag={@as_tag} class={classes(["", @class])} {@rest}>
       {render_slot(@inner_block)}
     </.dynamic>
     """
@@ -89,21 +80,24 @@ defmodule SaladUI.DropdownMenu do
 
   def dropdown_menu_content(assigns) do
     ~H"""
-    <div data-part="positioner"
-      data-ctx-positioning={Jason.encode!(%{placement: placement(@side, @align), offset: 8, strategy: "fixed"})}
-    >
     <div
-      data-part="content"
-      class={[
-        "z-50 animate-in peer-data-[state=closed]:fade-out-0 peer-data-[state=open]:fade-in-0 peer-data-[state=closed]:zoom-out-95 peer-data-[state=open]:zoom-in-95 peer-data-[side=bottom]:slide-in-from-top-2 peer-data-[side=left]:slide-in-from-right-2 peer-data-[side=right]:slide-in-from-left-2 peer-data-[side=top]:slide-in-from-bottom-2",
-        "min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md",
-        @class
-      ]}
-      {@rest}
+      data-part="positioner"
+      data-ctx-positioning={
+        Jason.encode!(%{placement: placement(@side, @align), offset: 8, strategy: "fixed"})
+      }
     >
+      <div
+        data-part="content"
+        class={[
+          "z-50 animate-in peer-data-[state=closed]:fade-out-0 peer-data-[state=open]:fade-in-0 peer-data-[state=closed]:zoom-out-95 peer-data-[state=open]:zoom-in-95 peer-data-[side=bottom]:slide-in-from-top-2 peer-data-[side=left]:slide-in-from-right-2 peer-data-[side=right]:slide-in-from-left-2 peer-data-[side=top]:slide-in-from-bottom-2",
+          "min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md",
+          @class
+        ]}
+        {@rest}
+      >
         {render_slot(@inner_block)}
-    </div>
       </div>
+    </div>
     """
   end
 
@@ -178,12 +172,5 @@ defmodule SaladUI.DropdownMenu do
     ~H"""
     <div class={classes([@class])} role="group" {@rest}>{render_slot(@inner_block)}</div>
     """
-  end
-
-  defp placement(side, align) do
-    case {side, align} do
-      {side, "center"} -> side
-      {side, align} -> "#{side}-#{align}"
-    end
   end
 end

@@ -16,7 +16,6 @@ defmodule SaladUI.Tooltip do
 
   """
   attr :class, :string, default: nil
-  attr :side, :string, default: "top", values: ~w(bottom left right top)
   attr :rest, :global
   slot :inner_block, required: true
 
@@ -29,7 +28,7 @@ defmodule SaladUI.Tooltip do
       data-options={
         Jason.encode!(%{
           id: unique_id(),
-          positioning: %{strategy: "fixed", placement: @side}
+          additional_context: ["positioning"]
         })
       }
       phx-hook="ZagHook"
@@ -60,12 +59,17 @@ defmodule SaladUI.Tooltip do
   Render
   """
   attr :class, :string, default: nil
+  attr :side, :string, default: "top", values: ~w(bottom left right top)
+
   attr :rest, :global
   slot :inner_block, required: true
 
   def tooltip_content(assigns) do
     ~H"""
-    <div data-part="positioner">
+    <div
+      data-part="positioner"
+      data-ctx-positioning={Jason.encode!(%{strategy: "fixed", placement: @side})}
+    >
       <div
         data-part="content"
         hidden
