@@ -21,7 +21,7 @@ defmodule SaladUI.Patcher.TailwindPatcherTest do
       patched_content = File.read!(@tailwind_config)
       assert patched_content =~ "plugins: ["
       assert patched_content =~ "require(\"@tailwindcss/typography\")"
-      assert patched_content =~ "require(\"tailwindcss-animate\")"
+      assert patched_content =~ "require(\"./vendor/tailwindcss-animate\")"
     end
 
     test "patch/1 doesn't duplicate existing plugins" do
@@ -29,7 +29,7 @@ defmodule SaladUI.Patcher.TailwindPatcherTest do
       module.exports = {
         plugins: [
           require("@tailwindcss/typography"),
-          require("tailwindcss-animate")
+          require("./vendor/tailwindcss-animate")
         ]
       }
       """
@@ -41,11 +41,11 @@ defmodule SaladUI.Patcher.TailwindPatcherTest do
       patched_content = File.read!(@tailwind_config)
 
       assert patched_content =~ "require(\"@tailwindcss/typography\")"
-      assert patched_content =~ "require(\"tailwindcss-animate\")"
+      assert patched_content =~ "require(\"./vendor/tailwindcss-animate\")"
 
       # Count occurrences of each plugin
       typography_count = patched_content |> String.split("@tailwindcss/typography") |> length() |> Kernel.-(1)
-      animate_count = patched_content |> String.split("tailwindcss-animate") |> length() |> Kernel.-(1)
+      animate_count = patched_content |> String.split("./vendor/tailwindcss-animate") |> length() |> Kernel.-(1)
 
       assert typography_count == 1
       assert animate_count == 1

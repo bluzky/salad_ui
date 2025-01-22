@@ -5,7 +5,7 @@ defmodule SaladUI.Patcher.TailwindPatcher do
   # so the user does not to manually format his `tailwind.config.js`
   # file after patching it.
 
-  @plugins ["@tailwindcss/typography", "tailwindcss-animate"]
+  @plugins ["@tailwindcss/typography", "./vendor/tailwindcss-animate"]
   @tailwind_colors "./tailwind.colors.json"
 
   def patch(tailwind_config_path, opts \\ []) do

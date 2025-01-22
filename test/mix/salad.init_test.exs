@@ -29,6 +29,7 @@ defmodule Mix.Tasks.Salad.InitTest do
       File.mkdir_p!(Path.dirname(@application_file_path))
       File.mkdir_p!("assets/css")
       File.mkdir_p!("assets/js")
+      File.mkdir_p!("assets/vendor")
       File.mkdir_p!(@default_components_path)
 
       File.write!("config/config.exs", "import Config\n")
