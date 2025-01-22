@@ -82,6 +82,7 @@ defmodule SaladUI.ToggleGroup do
     ~H"""
     <button
       onclick="this.querySelector('.toggle-input').click()"
+      type="button"
       disabled={@disabled || @builder.disabled}
       class={
         classes([
@@ -114,6 +115,7 @@ defmodule SaladUI.ToggleGroup do
     ~H"""
     <button
       onclick="this.querySelector('.toggle-input').click()"
+      type="button"
       disabled={@disabled || @builder.disabled}
       class={
         classes([
