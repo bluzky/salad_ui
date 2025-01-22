@@ -44,7 +44,7 @@ defmodule SaladUI.RadioGroup do
       data-component="radio_group"
       data-parts={Jason.encode!(~w(root item))}
       data-options={Jason.encode!(%{value: @value, name: @name, disabled: @disabled})}
-      data-listeners={Jason.encode!(%{value: ["push:#{@on_value_change}"]})}
+      data-listeners={Jason.encode!(%{on_value_change: ["push:#{@on_value_change}"]})}
       data-part="root"
       phx-hook="ZagHook"
       class={classes(["grid gap-2", @class])}

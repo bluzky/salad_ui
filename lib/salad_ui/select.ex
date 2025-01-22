@@ -78,7 +78,7 @@ defmodule SaladUI.Select do
       data-part="root"
       data-options={Jason.encode!(%{value: [@value], collection: %{items: @items}})}
       data-listeners={
-        Jason.encode!(%{value: ["exec:#{@select_handler}", "push:#{@on_value_change}"]})
+        Jason.encode!(%{on_value_change: ["exec:#{@select_handler}", "push:#{@on_value_change}"]})
       }
       phx-hook="ZagHook"
       {@rest}
