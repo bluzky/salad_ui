@@ -112,6 +112,15 @@ export class Component {
       if (el.dataset.options) elOpts = JSON.parse(el.dataset.options);
 
       spreadProps(el, api[getterName](elOpts));
+      if (!el.hasAttribute("data-api-bind")) continue;
+
+      // if the element has a data-api-bind attribute,
+      // bind its text content to the value provided by the api
+      const apiBind = el.dataset.apiBind;
+      if (!apiBind || !this.api[apiBind]) continue;
+
+      const apiValue = this.api[apiBind];
+      el.textContent = Array.isArray(apiValue) ? apiValue[0] : apiValue;
     }
   }
 
