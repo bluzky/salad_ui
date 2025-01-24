@@ -116,7 +116,7 @@ export class Component {
 
       // if the element has a data-api-bind attribute,
       // bind its text content to the value provided by the api
-      const apiBind = el.dataset.apiBind;
+      const apiBind = camelize(el.dataset.apiBind);
       if (!apiBind || !this.api[apiBind]) continue;
 
       const apiValue = this.api[apiBind];

@@ -24,6 +24,10 @@ defmodule SaladUI.Slider do
   attr :max, :integer, default: 100
   attr :step, :integer, default: 1
 
+  attr :output, :boolean,
+    default: false,
+    doc: "whether to show the value of the slider as a number"
+
   attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
   attr :options, :map,
@@ -61,7 +65,7 @@ defmodule SaladUI.Slider do
       id={@id}
       phx-hook="ZagHook"
       data-component="slider"
-      data-parts={Jason.encode!(["control", "track", "range", "thumb", "hidden-input"])}
+      data-parts={Jason.encode!(["value-text", "control", "track", "range", "thumb", "hidden-input"])}
       data-options={
         %{
           # zag expects the value as an array
@@ -76,6 +80,11 @@ defmodule SaladUI.Slider do
       }
       data-listeners={@listeners |> tuples_to_lists() |> Jason.encode!()}
     >
+      <div :if={@output} class="flex justify-end py-1">
+        <output data-part="value-text" data-api-bind="value">
+          {@value}
+        </output>
+      </div>
       <span data-part="control" class="flex w-full items-center">
         <span data-part="track" class="h-2 w-full grow overflow-hidden rounded-full bg-secondary">
           <span data-part="range" class="h-full bg-primary"></span>
