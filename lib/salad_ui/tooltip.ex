@@ -33,7 +33,7 @@ defmodule SaladUI.Tooltip do
     default: [],
     values: [[], [:client], [:server], [:client, :server]],
     doc: """
-    A list of atom indicating where to emits custom events each time the tooltip is opened/closed
+    A list of atoms indicating where to emit custom events each time the tooltip is opened/closed
     """
 
   attr :class, :string, default: nil
