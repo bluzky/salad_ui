@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "tailwindcss-animate": "^1.0.7"
+  },
+  "dependencies": {
+    "@zag-js/types": "^0.82.1"
   }
 }
