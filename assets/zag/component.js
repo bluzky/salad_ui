@@ -1,4 +1,3 @@
-import * as componentsModules from "./index";
 import { camelize, normalizeProps } from "./utils";
 
 /*
@@ -13,9 +12,10 @@ export class Component {
   cleanupFunctions = new Map(); // cleanup functions for event listeners
   prevAttrsMap = new WeakMap();
 
-  constructor(el, context) {
+  constructor(el, context, componentsModules) {
     this.el = el;
     this.context = context;
+    this.componentsModules = componentsModules;
   }
 
   // Initialize the component
@@ -51,12 +51,12 @@ export class Component {
     // component name is set on the root element via data-component attribute
     const componentName = this.el.dataset.component;
 
-    if (!componentName || !componentsModules[componentName]) {
+    if (!componentName || !this.componentsModules[componentName]) {
       console.error(`Component "${componentName}" not found.`);
       return;
     }
 
-    this.componentModule = componentsModules[componentName];
+    this.componentModule = this.componentsModules[componentName];
     this.service = this.initService(this.componentModule, this.context);
     this.api = this.initApi(this.componentModule);
   }
