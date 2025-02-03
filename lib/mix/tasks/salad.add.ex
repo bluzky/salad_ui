@@ -67,7 +67,7 @@ defmodule Mix.Tasks.Salad.Add do
          :ok <- File.mkdir_p(Path.dirname(target_path)),
          modified_content = insert_target_module_name(source_content, file_name),
          :ok <- File.write(target_path, modified_content),
-         :ok <- setup_zag_integration(source_content, file_name),
+         :ok <- setup_zag_integration(source_content),
          :ok <- maybe_perform_additional_setup(file_name) do
       Mix.shell().info("#{file_name} component installed successfully ✅")
     else
@@ -132,34 +132,35 @@ defmodule Mix.Tasks.Salad.Add do
     :ok
   end
 
-  defp setup_zag_integration(source, file_name) do
+  defp setup_zag_integration(source) do
     # grab the component we are targeting in Zag
     case Regex.run(~r/data-component="([^"]+)"/, source) do
       [_, target_zag_component] ->
-        zag_imports_path = Path.join(File.cwd!(), "assets/js/zag/index.js")
-        export_statement = "export * as #{target_zag_component} from \"@zag-js/#{target_zag_component}\";\n"
-
-        existing_content = File.read!(zag_imports_path)
-
-        unless String.contains?(existing_content, export_statement) do
-          File.write!(zag_imports_path, export_statement, [:append])
-        end
-
-        unless Mix.env() == :test do
-          Mix.shell().cmd("npm install @zag-js/#{target_zag_component} --prefix assets")
-        end
-
-        :ok
-
-      _ ->
         Mix.shell().info("""
-        The component you are trying to install (#{file_name}) does not have a data-component attribute set, so you cannot use Zag with it. The component will lack accessibility support and interactive features
+        The component you are installing requires Zag to work.
+
+        In order to use it, go to your app.js file and add the following lines:
+
+          import { createZagHook } from '../../deps/salad_ui/assets/zag'
+          import * as components from '../vendor/zag'
+
+        Then, register a hook named `ZagHook` in your LiveSocket constructor:
+
+          new LiveSocket(..., {..., hooks: { ZagHook: createZagHook(components) }})
         """)
 
-        continue? = Mix.shell().yes?("Do you want to continue with the installation?")
+        install_zag_package(target_zag_component)
 
-        if continue?, do: :ok, else: {:error, "Installation aborted"}
+      _ ->
+        :ok
     end
+  end
+
+  # TODO: Download the source code of the zag package,
+  # place it in the `assets/vendor/zag` folder in the user project
+  # and patch the `assets/vendor/zag/index.js` to export the package
+  defp install_zag_package(_component_name) do
+    :ok
   end
 
   defp get_module_name do
