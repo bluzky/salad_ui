@@ -79,6 +79,9 @@ export class Component {
   render() {
     this.cleanup();
 
+    // render the root container
+    this.renderPart(this.el, "root", this.api);
+
     for (const part of this.parts(this.el)) {
       if (part === "item") continue;
       this.renderPart(this.el, part, this.api);
@@ -89,8 +92,10 @@ export class Component {
     }
   }
 
-  renderPart(root, name, api, opts = {}) {
-    const getterName = `get${camelize(name, true)}Props`;
+  renderPart(root, name, api, opts = {}, isItemChild = false) {
+    const getterName = isItemChild
+      ? `getItem${camelize(name, true)}Props`
+      : `get${camelize(name, true)}Props`;
     if (!api[getterName]) return;
 
     // wrapper around spreadProps
@@ -126,16 +131,16 @@ export class Component {
 
   // Render an item in a list item
   renderItem(item) {
-    let itemProps = {};
-    if (item.dataset.props) {
-      itemProps = JSON.parse(item.dataset.props);
+    let itemOpts = {};
+    if (item.dataset.options) {
+      itemOpts = JSON.parse(item.dataset.options);
     }
     // console.log("itemProps", this.api.getItemProps(itemProps));
-    const cleanup = this.spreadProps(item, this.api.getItemProps(itemProps));
+    const cleanup = this.spreadProps(item, this.api.getItemProps(itemOpts));
     this.cleanupFunctions.set(item, cleanup);
 
     for (const part of this.parts(item)) {
-      this.renderPart(item, part, this.api, itemProps);
+      this.renderPart(item, part, this.api, itemOpts, true);
     }
   }
 
