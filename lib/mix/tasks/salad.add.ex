@@ -88,16 +88,17 @@ defmodule Mix.Tasks.Salad.Add do
   end
 
   defp insert_target_module_name(source, file_name) do
-    module_name = get_module_name()
+    module_name = get_module_prefix()
 
     source
-    |> String.replace(~r/defmodule SaladUI\.([a-zA-Z0-9_]+)/, "defmodule #{module_name}.Component.\\1")
-    |> String.replace(~r/use SaladUI,\s*:component/, "use #{module_name}.Component")
+    |> String.replace(~r/defmodule SaladUI\.([a-zA-Z0-9_]+)/, "defmodule #{module_name}.\\1")
+    |> String.replace(~r/use SaladUI,\s*:component/, "use #{String.trim_trailing(module_name, "s")}")
+    |> String.replace(~r/import SaladUI\./, "import #{module_name}.")
     |> maybe_apply_additional_insertions(module_name, file_name)
   end
 
   defp maybe_apply_additional_insertions(source, module_name, "chart") do
-    String.replace(source, "SaladUI.LiveChart", "#{module_name}.Component.LiveChart")
+    String.replace(source, "SaladUI.LiveChart", "#{module_name}.LiveChart")
   end
 
   defp maybe_apply_additional_insertions(source, _, _), do: source
@@ -131,11 +132,18 @@ defmodule Mix.Tasks.Salad.Add do
     :ok
   end
 
-  defp get_module_name do
-    Mix.Project.config()[:app]
-    |> Atom.to_string()
-    |> Macro.camelize()
-    |> Kernel.<>("Web")
+  # get module prefix from config or build default from app name
+  defp get_module_prefix do
+    module_prefix = Application.get_env(:salad_ui, :component_module_prefix)
+
+    if is_nil(module_prefix) do
+      Mix.Project.config()[:app]
+      |> Atom.to_string()
+      |> Macro.camelize()
+      |> Kernel.<>("Web.Components")
+    else
+      module_prefix
+    end
   end
 
   defp component_dir do
