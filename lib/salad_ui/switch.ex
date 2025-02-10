@@ -50,6 +50,6 @@ defmodule SaladUI.Switch do
   defp toggle(id) do
     %JS{}
     |> JS.toggle_attribute({"data-state", "checked", "unchecked"})
-    |> JS.toggle_attribute({"checked", true}, to: "##{id} input[type=checkbox]")
+    |> JS.dispatch("click", to: "##{id} input[type=checkbox]", bubbles: false)
   end
 end
