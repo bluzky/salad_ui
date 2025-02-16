@@ -78,7 +78,7 @@ defmodule SaladUI.Chart do
   attr :id, :string, required: true
   attr :name, :string, default: "", doc: "name of the chart for screen readers"
   attr :chart_config, :map, required: true
-  attr :chart_data, :map, required: true
+  attr :chart_data, :list, required: true
 
   def chart(assigns) do
     ~H"""
