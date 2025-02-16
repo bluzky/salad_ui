@@ -1,38 +1,63 @@
 defmodule SaladUI.Tooltip do
-  @moduledoc false
-  use SaladUI, :component
-
-  @doc """
-  Render a tooltip
+  @moduledoc """
+  Tooltip component
 
   ## Examples:
 
-  <.tooltip>
-    <.button variant="outline">Hover me</.button>
-    <.tooltip_content class="bg-primary text-white" theme={nil}>
+  <.tooltip id="my-tooltip">
+    <.tooltip_trigger>
+      <.button variant="outline">Hover me</.button>
+    </.tooltip_trigger>
+    <.tooltip_content class="bg-primary text-white">
      <p>Hi! I'm a tooltip.</p>
     </.tooltip_content>
   </.tooltip>
-
   """
+
+  use SaladUI, :component
+
+  attr :id, :string, required: true
+
+  attr :side, :string,
+    default: "top",
+    values: ~w(bottom bottom-start bottom-end left left-start left-end right right-start right-end top top-start top-end)
+
+  attr :options, :map,
+    default: %{},
+    doc: """
+    Options supported by the Zag.js library for configuring this component.
+    See https://zagjs.com/components/react/tooltip#machine-context for full list of available options.
+    """
+
+  attr :on_open, :list,
+    default: [],
+    values: [[], [:client], [:server], [:client, :server]],
+    doc: """
+    A list of atoms indicating where to emit custom events each time the tooltip is opened/closed
+    """
+
   attr :class, :string, default: nil
   attr :rest, :global
   slot :inner_block, required: true
 
+  @doc """
+  Renders the root container for the tooltip component
+  """
   def tooltip(assigns) do
     ~H"""
     <div
-      data-component="tooltip"
-      data-parts={Jason.encode!(["root", "trigger", "positioner", "content"])}
-      data-part="root"
-      data-options={
-        Jason.encode!(%{
-          id: unique_id(),
-          additional_context: ["positioning"]
-        })
+      class={
+        classes([
+          "relative group/tooltip inline-block",
+          @class
+        ])
       }
+      id={@id}
       phx-hook="ZagHook"
-      class={@class}
+      data-component="tooltip"
+      data-parts={Jason.encode!(["trigger", "positioner", "content"])}
+      data-options={%{positioning: %{placement: @side}} |> Map.merge(@options) |> Jason.encode!()}
+      data-listeners={[[:on_open_change | @on_open]] |> Jason.encode!()}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -41,41 +66,34 @@ defmodule SaladUI.Tooltip do
   end
 
   @doc """
-  Render only for compatible with shad ui
+  Renders the trigger for the tooltip
   """
-  attr :class, :string, default: nil
-  attr :rest, :global
   slot :inner_block, required: true
 
   def tooltip_trigger(assigns) do
     ~H"""
-    <div data-part="trigger" class={@class} {@rest}>
+    <div class="inline-block" data-part="trigger">
       {render_slot(@inner_block)}
     </div>
     """
   end
 
   @doc """
-  Render
+  Renders the content for the tooltip
   """
   attr :class, :string, default: nil
-  attr :side, :string, default: "top", values: ~w(bottom left right top)
-
   attr :rest, :global
   slot :inner_block, required: true
 
   def tooltip_content(assigns) do
     ~H"""
-    <div
-      data-part="positioner"
-      data-ctx-positioning={Jason.encode!(%{strategy: "fixed", placement: @side})}
-    >
+    <div data-part="positioner">
       <div
         data-part="content"
-        hidden
         class={
           classes([
-            "z-50 overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[placement=bottom]:slide-in-from-top-2 data-[placement=left]:slide-in-from-right-2 data-[placement=right]:slide-in-from-left-2 data-[placement=top]:slide-in-from-bottom-2",
+            "whitespace-nowrap opacity-0 group-hover/tooltip:opacity-100",
+            "z-50 w-auto overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95",
             @class
           ])
         }
