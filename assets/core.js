@@ -10,8 +10,9 @@ class Component {
     };
 
     this.parseOptions();
+    this.initEventMappings();
     this.initStateMachine();
-    this.setupEvents();
+    // setupEvents is now called externally by the registry
     this.updateUI();
   }
 
@@ -20,12 +21,19 @@ class Component {
       const optionsString = this.el.getAttribute("data-options");
       this.options = optionsString ? JSON.parse(optionsString) : {};
       this.initialState = this.el.getAttribute("data-state") || "idle";
-      this.serverEvents = this.el.getAttribute("data-server-events")
-        ? this.el.getAttribute("data-server-events").split(" ")
-        : [];
     } catch (error) {
       console.error("SaladUI: Error parsing component options:", error);
       this.options = {};
+    }
+  }
+
+  initEventMappings() {
+    try {
+      const mappingsString = this.el.getAttribute("data-event-mappings");
+      this.eventMappings = mappingsString ? JSON.parse(mappingsString) : {};
+    } catch (error) {
+      console.error("SaladUI: Error parsing event mappings:", error);
+      this.eventMappings = {};
     }
   }
 
@@ -289,17 +297,31 @@ class Component {
     return Array.from(this.el.querySelectorAll(this.config.focusableSelector));
   }
 
-  pushEvent(event, payload = {}) {
+  pushEvent(clientEvent, payload = {}) {
     if (!this.hook || !this.hook.pushEventTo) return;
 
-    if (this.serverEvents.includes(event) || event === 'state_changed') {
+    // Check if this client event has a server mapping
+    const serverEvent = this.eventMappings[clientEvent];
+
+    if (serverEvent) {
       const fullPayload = {
         ...payload,
         componentId: this.el.id,
         component: this.el.getAttribute('data-component')
       };
 
-      this.hook.pushEventTo(this.el, event, fullPayload);
+      this.hook.pushEventTo(this.el, serverEvent, fullPayload);
+    }
+
+    // Always push state_changed events
+    if (clientEvent === 'state_changed') {
+      const fullPayload = {
+        ...payload,
+        componentId: this.el.id,
+        component: this.el.getAttribute('data-component')
+      };
+
+      this.hook.pushEventTo(this.el, clientEvent, fullPayload);
     }
   }
 

@@ -16,6 +16,7 @@ const SaladUIHook = {
       return;
     }
 
+    // The registry.create method will handle creating the component and calling setupEvents
     this.component = registry.create(componentType, el, this);
   },
 
@@ -51,4 +52,4 @@ const SaladUIHook = {
   }
 };
 
-export { SaladUIHook};
+export { SaladUIHook };

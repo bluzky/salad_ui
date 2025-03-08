@@ -1,10 +1,7 @@
 // saladui/factory.js
-import Component from './core';
-
 class ComponentRegistry {
   constructor() {
     this.registry = new Map();
-    this.register('component', Component);
   }
 
   register(type, ComponentClass) {
@@ -13,42 +10,21 @@ class ComponentRegistry {
   }
 
   create(type, el, hookContext) {
-    const ComponentClass = this.registry.get(type) || this.registry.get('component');
-    return new ComponentClass(el, hookContext);
-  }
-}
-
-function defineComponent(type, config = {}) {
-  class CustomComponent extends Component {
-    constructor(el, hookContext) {
-      super(el, hookContext);
-
-      if (config.init) {
-        config.init.call(this);
-      }
+    const ComponentClass = this.registry.get(type);
+    if (!ComponentClass) {
+      console.error(`Component type '${type}' not registered`);
+      return null;
     }
 
-    getStateMachine() {
-      return config.stateMachine || super.getStateMachine();
-    }
+    const instance = new ComponentClass(el, hookContext);
 
-    setupComponentEvents() {
-      super.setupComponentEvents();
-      if (config.setupEvents) {
-        config.setupEvents.call(this);
-      }
-    }
+    // Call setupEvents after the component is fully initialized
+    instance.setupEvents();
+
+    return instance;
   }
-
-  if (config.methods) {
-    Object.entries(config.methods).forEach(([name, fn]) => {
-      CustomComponent.prototype[name] = fn;
-    });
-  }
-
-  return CustomComponent;
 }
 
 const registry = new ComponentRegistry();
 
-export { registry, defineComponent };
+export { registry };

@@ -1,7 +1,5 @@
-# dialog.ex
 defmodule SaladUI.Components.Dialog do
   use Phoenix.Component
-  use Phoenix.HTML
 
   attr :id, :string, required: true
   attr :class, :string, default: ""
@@ -17,19 +15,34 @@ defmodule SaladUI.Components.Dialog do
   slot :inner_block, required: true
 
   def dialog(assigns) do
-    # Determine which events to send to server
-    server_events = []
-    server_events = if(assigns.on_open, do: ["opened" | server_events], else: server_events)
-    server_events = if(assigns.on_close, do: ["closed" | server_events], else: server_events)
+    # Create a mapping of client events to server handlers
+    event_mappings = %{}
+
+    # Add opened -> on_open mapping if on_open is provided
+    event_mappings = if assigns.on_open do
+      Map.put(event_mappings, "opened", assigns.on_open)
+    else
+      event_mappings
+    end
+
+    # Add closed -> on_close mapping if on_close is provided
+    event_mappings = if assigns.on_close do
+      Map.put(event_mappings, "closed", assigns.on_close)
+    else
+      event_mappings
+    end
+
+    # Encode the event mappings
+    event_mappings_json = Jason.encode!(event_mappings)
+
+    # Set initial state based on open attribute
+    initial_state = if(assigns.open, do: "open", else: "closed")
 
     # Prepare the options JSON
     options = Jason.encode!(%{
       closeOnOutsideClick: assigns.close_on_outside_click,
       animations: get_animation_config(assigns.animation_type)
     })
-
-    # Set initial state based on open attribute
-    initial_state = if(assigns.open, do: "open", else: "closed")
 
     ~H"""
     <div
@@ -38,44 +51,49 @@ defmodule SaladUI.Components.Dialog do
       data-component="dialog"
       data-options={options}
       data-state={initial_state}
-      data-server-events={Enum.join(server_events, " ")}
-      style={if(@open, do: "display: flex", else: "display: none")}
+      data-event-mappings={event_mappings_json}
       phx-hook="SaladUI"
+      data-part="root"
     >
       <%= if render_slot(@trigger) do %>
-        <div data-trigger>
+        <div data-part="trigger" class="saladui-dialog-trigger">
           <%= render_slot(@trigger) %>
         </div>
       <% end %>
 
-      <div data-part="content" class="saladui-dialog-content">
-        <%= if @title do %>
-          <h2 data-part="title" id={"#{@id}-title"} class="saladui-dialog-title">
-            <%= @title %>
-          </h2>
-        <% end %>
+      <div data-part="content" class="saladui-dialog-content" aria-hidden={if(@open, do: "false", else: "true")} role="dialog">
+        <div class="saladui-dialog-overlay" data-action="close"></div>
+        <div class="saladui-dialog-panel">
+          <div class="saladui-dialog-header">
+            <%= if @title do %>
+              <h2 id={"#{@id}-title"} class="saladui-dialog-title">
+                <%= @title %>
+              </h2>
+            <% end %>
 
-        <%= if @description do %>
-          <p data-part="description" id={"#{@id}-desc"} class="saladui-dialog-description">
-            <%= @description %>
-          </p>
-        <% end %>
+            <%= if @close_button do %>
+              <button
+                type="button"
+                data-part="close-trigger"
+                class="saladui-dialog-close-button"
+                aria-label="Close dialog"
+                data-action="close"
+              >
+                &times;
+              </button>
+            <% end %>
+          </div>
 
-        <div data-part="body" class="saladui-dialog-body">
-          <%= render_slot(@inner_block) %>
+          <%= if @description do %>
+            <p id={"#{@id}-desc"} class="saladui-dialog-description">
+              <%= @description %>
+            </p>
+          <% end %>
+
+          <div class="saladui-dialog-body">
+            <%= render_slot(@inner_block) %>
+          </div>
         </div>
-
-        <%= if @close_button do %>
-          <button
-            type="button"
-            data-part="close-button"
-            class="saladui-dialog-close-button"
-            aria-label="Close dialog"
-            data-action="close"
-          >
-            &times;
-          </button>
-        <% end %>
       </div>
     </div>
     """
@@ -97,7 +115,7 @@ defmodule SaladUI.Components.Dialog do
         start_class: "saladui-fade-out",
         end_class: "saladui-fade-out-active",
         duration: 200,
-        display: "flex",
+        display: "none",
         timing: "ease-in"
       }
     }
@@ -116,7 +134,7 @@ defmodule SaladUI.Components.Dialog do
         start_class: "saladui-dialog-exit",
         end_class: "saladui-dialog-exit-active",
         duration: 250,
-        display: "flex",
+        display: "none",
         timing: "ease-in"
       }
     }
@@ -135,7 +153,7 @@ defmodule SaladUI.Components.Dialog do
         start_class: "saladui-slide-up",
         end_class: "saladui-slide-up-active",
         duration: 300,
-        display: "flex",
+        display: "none",
         timing: "ease-in"
       }
     }
@@ -154,7 +172,7 @@ defmodule SaladUI.Components.Dialog do
         start_class: "saladui-slide-down-reverse",
         end_class: "saladui-slide-down-reverse-active",
         duration: 300,
-        display: "flex",
+        display: "none",
         timing: "ease-in"
       }
     }
