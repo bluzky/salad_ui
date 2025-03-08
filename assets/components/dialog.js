@@ -1,25 +1,26 @@
 // saladui/components/dialog.js
-import Component from '../core';
-import SaladUI from '../index';
+import Component from "../core";
+import SaladUI from "../index";
 
 class DialogComponent extends Component {
   constructor(el, hookContext) {
     super(el, hookContext);
 
-    // Initialize properties (previously in init())
+    // Initialize properties
     this.root = this.el;
-    this.trigger = this.getPart('trigger');
-    this.content = this.getPart('content');
-    this.closeTrigger = this.getPart('close-trigger');
+    this.trigger = this.getPart("trigger");
+    this.content = this.getPart("content");
+    this.contentPanel = this.getPart("content-panel");
+    this.closeTrigger = this.getPart("close-trigger");
 
     this.previouslyFocused = null;
-    this.config.preventDefaultKeys = ['Escape', 'Tab'];
+    this.config.preventDefaultKeys = ["Escape", "Tab"];
 
     // Initialize state based on open attribute
-    if (this.el.getAttribute('data-state') === 'open') {
-      this.content.style.display = 'flex';
+    if (this.el.getAttribute("data-state") === "open") {
+      this.content.style.display = "flex";
     } else {
-      this.content.style.display = 'none';
+      this.content.style.display = "none";
     }
   }
 
@@ -27,58 +28,60 @@ class DialogComponent extends Component {
   getStateMachine() {
     return {
       closed: {
-        enter: 'onClosedEnter',
-        exit: 'onClosedExit',
+        enter: "onClosedEnter",
+        exit: "onClosedExit",
         aria: {
-          "hidden": "true"
+          hidden: "true",
         },
         keyMap: {},
         transitions: {
-          open: "open"
-        }
+          open: "open",
+        },
       },
       open: {
-        enter: 'onOpenEnter',
-        exit: 'onOpenExit',
+        enter: "onOpenEnter",
+        exit: "onOpenExit",
         aria: {
-          "hidden": "false",
-          "modal": "true"
+          hidden: "false",
+          modal: "true",
         },
         keyMap: {
-          "Escape": "close",
-          "Tab": "onTabKey"
+          Escape: "close",
+          Tab: "onTabKey",
         },
         transitions: {
-          close: "closed"
-        }
-      }
+          close: "closed",
+        },
+      },
     };
   }
 
   // Override the setupComponentEvents method
   setupComponentEvents() {
+    super.setupComponentEvents();
+
     // Only setup click handler if closeOnOutsideClick is enabled
     if (this.options.closeOnOutsideClick) {
       // Using event delegation for clicks on the overlay
-      this.content.addEventListener('click', (e) => {
+      this.content.addEventListener("click", (e) => {
         // Close if click was directly on the content container (overlay area)
-        if (e.target === this.content || e.target.classList.contains('saladui-dialog-overlay')) {
-          this.transition('close');
+        if (e.target === this.content || e.target.dataset.part == "overlay") {
+          this.transition("close");
         }
       });
     }
 
     // Setup trigger click event
     if (this.trigger) {
-      this.trigger.addEventListener('click', () => {
-        this.transition('open');
+      this.trigger.addEventListener("click", () => {
+        this.transition("open");
       });
     }
 
     // Setup close trigger click event
     if (this.closeTrigger) {
-      this.closeTrigger.addEventListener('click', () => {
-        this.transition('close');
+      this.closeTrigger.addEventListener("click", () => {
+        this.transition("close");
       });
     }
   }
@@ -88,19 +91,9 @@ class DialogComponent extends Component {
     super.updateAriaAttributes();
 
     // Setup proper ARIA attributes for accessibility
-    if (this.state === 'open' && this.content) {
-      this.content.setAttribute('role', 'dialog');
-      this.content.setAttribute('aria-modal', 'true');
-
-      const title = this.el.querySelector('.saladui-dialog-title');
-      if (title) {
-        this.content.setAttribute('aria-labelledby', title.id);
-      }
-
-      const description = this.el.querySelector('.saladui-dialog-description');
-      if (description) {
-        this.content.setAttribute('aria-describedby', description.id);
-      }
+    if (this.state === "open" && this.content) {
+      this.content.setAttribute("role", "dialog");
+      this.content.setAttribute("aria-modal", "true");
     }
   }
 
@@ -108,11 +101,11 @@ class DialogComponent extends Component {
   onClosedEnter(params = {}) {
     // Only hide the dialog content, not the entire component
     if (!params.animated) {
-      this.content.style.display = 'none';
+      this.content.style.display = "none";
     }
 
     // Update ARIA attributes
-    this.content.setAttribute('aria-hidden', 'true');
+    this.content.setAttribute("aria-hidden", "true");
 
     // Return focus to the element that had it before dialog opened
     if (this.previouslyFocused && this.previouslyFocused.focus) {
@@ -122,8 +115,9 @@ class DialogComponent extends Component {
       }, 0);
     }
 
-    // Notify the server of the state change
-    this.pushEvent('closed');
+    // Notify the server of the state change - now uses "closed" event
+    // which will be mapped to the proper server handler via eventMappings
+    this.pushEvent("closed");
   }
 
   onClosedExit() {
@@ -134,11 +128,11 @@ class DialogComponent extends Component {
   onOpenEnter(params = {}) {
     // Show the dialog content
     if (!params.animated) {
-      this.content.style.display = 'flex';
+      this.content.style.display = "flex";
     }
 
     // Update ARIA attributes
-    this.content.setAttribute('aria-hidden', 'false');
+    this.content.setAttribute("aria-hidden", "false");
 
     // Set focus on the first focusable element
     if (params.animated) {
@@ -147,8 +141,9 @@ class DialogComponent extends Component {
       this.setInitialFocus();
     }
 
-    // Notify the server of the state change
-    this.pushEvent('opened');
+    // Notify the server of the state change - now uses "opened" event
+    // which will be mapped to the proper server handler via eventMappings
+    this.pushEvent("opened");
   }
 
   onOpenExit() {
@@ -163,22 +158,19 @@ class DialogComponent extends Component {
   setInitialFocus() {
     // Get all focusable elements inside the dialog
     const focusableElements = Array.from(
-      this.content.querySelectorAll(this.config.focusableSelector)
-    ).filter(el => {
-      // Only include elements inside the panel, not in the overlay
-      return el.closest('.saladui-dialog-panel');
-    });
+      this.contentPanel.querySelectorAll(this.config.focusableSelector),
+    );
 
     // Set focus on the first focusable element, or the dialog content itself
     setTimeout(() => {
       if (focusableElements.length > 0) {
-        const autoFocusEl = this.content.querySelector('[autofocus]');
+        const autoFocusEl = this.content.querySelector("[autofocus]");
         const initialFocusEl = autoFocusEl || focusableElements[0];
         initialFocusEl.focus();
       } else {
         // If no focusable elements, make the content focusable and focus it
-        this.content.querySelector('.saladui-dialog-panel').setAttribute('tabindex', '-1');
-        this.content.querySelector('.saladui-dialog-panel').focus();
+        this.contentPanel.setAttribute("tabindex", "-1");
+        this.contentPanel.focus();
       }
     }, 50);
   }
@@ -186,10 +178,8 @@ class DialogComponent extends Component {
   handleTabKey(event) {
     // Get all focusable elements inside the dialog panel
     const focusableElements = Array.from(
-      this.content.querySelectorAll(this.config.focusableSelector)
-    ).filter(el => {
-      return el.closest('.saladui-dialog-panel');
-    });
+      this.contentPanel.querySelectorAll(this.config.focusableSelector),
+    );
 
     if (focusableElements.length === 0) return;
 
@@ -201,8 +191,7 @@ class DialogComponent extends Component {
     if (!event.shiftKey && activeElement === lastElement) {
       firstElement.focus();
       event.preventDefault();
-    }
-    else if (event.shiftKey && activeElement === firstElement) {
+    } else if (event.shiftKey && activeElement === firstElement) {
       lastElement.focus();
       event.preventDefault();
     }
@@ -210,6 +199,6 @@ class DialogComponent extends Component {
 }
 
 // Register the component
-SaladUI.register('dialog', DialogComponent);
+SaladUI.register("dialog", DialogComponent);
 
 export default DialogComponent;

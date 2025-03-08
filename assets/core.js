@@ -163,109 +163,123 @@ class Component {
     }
 
     this.updateUI();
-
-    this.pushEvent('state_changed', {
-      prevState,
-      newState: nextState,
-      event: params.event,
-      ...params
-    });
   }
 
-  animateTransition(prevState, nextState, params = {}) {
-    const transitionName = `${prevState}_to_${nextState}`;
-    const animConfig = this.options.animations[transitionName] ||
-                       this.options.animations[nextState];
+animateTransition(prevState, nextState, params = {}) {
+  const transitionName = `${prevState}_to_${nextState}`;
+  const animConfig = this.options.animations[transitionName] ||
+                     this.options.animations[nextState];
 
-    if (!animConfig) {
-      this.executeTransition(prevState, nextState, params);
-      return;
+  if (!animConfig) {
+    this.executeTransition(prevState, nextState, params);
+    return;
+  }
+
+  const {
+    start_class,
+    end_class,
+    duration = 200,
+    display = null,
+    final_display = null,
+    timing = null,
+    target_part = null
+  } = animConfig;
+
+  // Determine which element to animate
+  let targetElement = this.el;
+  if (target_part) {
+    const partElement = this.getPart(target_part);
+    if (partElement) {
+      targetElement = partElement;
     }
+  }
 
-    const {
-      start_class,
-      end_class,
-      duration = 300,
-      display = null,
-      timing = 'ease'
-    } = animConfig;
+  const currentStateConfig = this.stateMachine[prevState];
+  const newStateConfig = this.stateMachine[nextState];
 
-    const currentStateConfig = this.stateMachine[prevState];
-    const newStateConfig = this.stateMachine[nextState];
-
-    if (currentStateConfig.exit) {
-      if (typeof currentStateConfig.exit === 'string') {
-        if (typeof this[currentStateConfig.exit] === 'function') {
-          this[currentStateConfig.exit]({...params, animated: true});
-        }
-      } else if (typeof currentStateConfig.exit === 'function') {
-        currentStateConfig.exit.call(this, {...params, animated: true});
+  // Call exit handler with animated flag
+  if (currentStateConfig.exit) {
+    if (typeof currentStateConfig.exit === 'string') {
+      if (typeof this[currentStateConfig.exit] === 'function') {
+        this[currentStateConfig.exit]({...params, animated: true});
       }
+    } else if (typeof currentStateConfig.exit === 'function') {
+      currentStateConfig.exit.call(this, {...params, animated: true});
     }
+  }
 
-    this.state = nextState;
+  // Set the new state
+  this.state = nextState;
 
-    if (display !== null) {
-      this.el.style.display = display;
-    }
+  // Set initial display if specified
+  if (display !== null) {
+    targetElement.style.display = display;
+  }
 
+  // Add start class
+  if (start_class) {
+    targetElement.classList.add(start_class);
+  }
+
+  // Only modify transition style if timing is provided
+  let oldTransition = null;
+
+  if (timing) {
+    // Store original transition and set new one
+    oldTransition = targetElement.style.transition;
+    targetElement.style.transition = `all ${duration}ms ${timing}`;
+
+    // Force reflow to ensure transition starts
+    void targetElement.offsetWidth;
+  }
+
+  // Add end class
+  if (end_class) {
+    targetElement.classList.add(end_class);
+  }
+
+  // Setup the timeout to clean up after animation
+  setTimeout(() => {
+    // Remove animation classes
     if (start_class) {
-      this.el.classList.add(start_class);
+      targetElement.classList.remove(start_class);
     }
-
-    const oldTransition = this.el.style.transition;
-    this.el.style.transition = `all ${duration}ms ${timing}`;
-
-    void this.el.offsetWidth;
-
     if (end_class) {
-      this.el.classList.add(end_class);
+      targetElement.classList.remove(end_class);
     }
 
-    setTimeout(() => {
-      if (start_class) {
-        this.el.classList.remove(start_class);
-      }
-      if (end_class) {
-        this.el.classList.remove(end_class);
-      }
+    // Restore original transition if it was changed
+    if (oldTransition !== null) {
+      targetElement.style.transition = oldTransition;
+    }
 
-      this.el.style.transition = oldTransition;
+    // Set final display state if specified
+    if (final_display !== null) {
+      targetElement.style.display = final_display;
+    }
 
-      if (newStateConfig?.enter) {
-        if (typeof newStateConfig.enter === 'string') {
-          if (typeof this[newStateConfig.enter] === 'function') {
-            this[newStateConfig.enter]({...params, animated: true});
-          }
-        } else if (typeof newStateConfig.enter === 'function') {
-          newStateConfig.enter.call(this, {...params, animated: true});
+    // Call enter handler with animated flag
+    if (newStateConfig?.enter) {
+      if (typeof newStateConfig.enter === 'string') {
+        if (typeof this[newStateConfig.enter] === 'function') {
+          this[newStateConfig.enter]({...params, animated: true});
         }
+      } else if (typeof newStateConfig.enter === 'function') {
+        newStateConfig.enter.call(this, {...params, animated: true});
       }
+    }
+  }, duration);
+      // Update UI
+    this.updateUI();
 
-      this.updateUI();
-
-      this.pushEvent('state_changed', {
-        prevState,
-        newState: nextState,
-        event: params.event,
-        animated: true,
-        ...params
-      });
-
-    }, duration);
-  }
+}
 
   evaluateCondition(condition, params) {
     return params[condition] !== undefined;
   }
 
   updateUI() {
-    this.el.setAttribute('data-state', this.state);
-
-    Object.keys(this.stateMachine).forEach(state => {
-      this.el.classList.toggle(`is-${state}`, state === this.state);
-    });
-
+    this.el.querySelectorAll("[data-part]").forEach((el)=> el.setAttribute("data-state", this.state))
     this.updateAriaAttributes();
     this.updatePartsVisibility();
   }
@@ -311,17 +325,6 @@ class Component {
       };
 
       this.hook.pushEventTo(this.el, serverEvent, fullPayload);
-    }
-
-    // Always push state_changed events
-    if (clientEvent === 'state_changed') {
-      const fullPayload = {
-        ...payload,
-        componentId: this.el.id,
-        component: this.el.getAttribute('data-component')
-      };
-
-      this.hook.pushEventTo(this.el, clientEvent, fullPayload);
     }
   }
 
