@@ -56,8 +56,8 @@ defmodule SaladUI.Dialog do
   attr :open, :boolean, default: false
   attr :class, :string, default: nil
   attr :close_on_outside_click, :boolean, default: true
-  attr :on_open, :any, default: nil
-  attr :on_close, :any, default: nil
+  attr :on_open, :any, default: nil, doc: "Handler for dialog open event. Support both server event handler and JS command struct"
+  attr :on_close, :any, default: nil, doc: "Handler for dialog closed event. Support both server event handler and JS command struct"
   slot :inner_block, required: true
 
   def dialog(assigns) do
@@ -108,7 +108,7 @@ defmodule SaladUI.Dialog do
 
   def dialog_content(assigns) do
     ~H"""
-    <div data-part="content" role="dialog" aria-modal="true" tabindex="0">
+    <div data-part="content"  tabindex="0" style="display: none;">
       <div
         data-part="overlay"
         class="fixed inset-0 bg-black/80  data-[state=open]/dialog:animate-in data-[state=closed]/dialog:animate-out data-[state=closed]/dialog:fade-out-0 data-[state=open]/dialog:fade-in-0"
@@ -125,7 +125,6 @@ defmodule SaladUI.Dialog do
         <button
           type="button"
           data-part="close-trigger"
-          aria-label="Close dialog"
           data-action="close"
           class="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]/dialog:bg-accent data-[state=open]/dialog:text-muted-foreground"
         >

@@ -1,4 +1,3 @@
-# saladui_live_view.ex
 defmodule SaladUI.LiveView do
   @moduledoc """
   Helper functions for integrating SaladUI with Phoenix LiveView.
@@ -14,15 +13,10 @@ defmodule SaladUI.LiveView do
       target: component_id
     })
   end
+end
 
-  @doc """
-  Send a custom event to a SaladUI component.
-  """
-  def send_event(socket, component_id, event, params \\ %{}) do
-    Phoenix.LiveView.push_event(socket, "saladui:event", %{
-      event: event,
-      params: params,
-      target: component_id
-    })
+defimpl Jason.Encoder, for: Phoenix.LiveView.JS do
+  def encode(value, opts) do
+    Jason.Encode.list(value.ops, opts)
   end
 end

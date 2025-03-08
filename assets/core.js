@@ -385,16 +385,22 @@ class Component {
     if (!this.hook || !this.hook.pushEventTo) return;
 
     // Check if this client event has a server mapping
-    const serverEvent = this.eventMappings[clientEvent];
+    const eventHandler = this.eventMappings[clientEvent];
 
-    if (serverEvent) {
-      const fullPayload = {
-        ...payload,
-        componentId: this.el.id,
-        component: this.el.getAttribute("data-component"),
-      };
+    if (eventHandler) {
+      // if event handler is string then push event to server
+      if (typeof eventHandler === "string") {
+        const fullPayload = {
+          ...payload,
+          componentId: this.el.id,
+          component: this.el.getAttribute("data-component"),
+        };
 
-      this.hook.pushEventTo(this.el, serverEvent, fullPayload);
+        this.hook.pushEventTo(this.el, eventHandler, fullPayload);
+      } else {
+        // if event handler is encoded JS function, then execute it
+        this.hook.liveSocket.execJS(this.el, JSON.stringify(eventHandler));
+      }
     }
   }
 

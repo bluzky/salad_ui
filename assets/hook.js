@@ -30,14 +30,6 @@ const SaladUIHook = {
         this.component.handleCommand(command, params);
       }
     });
-
-    this.handleEvent("saladui:event", ({ event, params = {}, target }) => {
-      if (target && target !== this.el.id) return;
-
-      if (this.component && typeof this.component[event] === 'function') {
-        this.component[event](params);
-      }
-    });
   },
 
   updated() {
