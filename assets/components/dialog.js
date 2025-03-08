@@ -1,4 +1,4 @@
-// saladui/components/dialog.js
+// saladui/components/dialog.js - Refactored version
 import Component from "../core";
 import SaladUI from "../index";
 
@@ -24,15 +24,12 @@ class DialogComponent extends Component {
     }
   }
 
-  // Override the getStateMachine method
+  // Override the getStateMachine method - removed aria property
   getStateMachine() {
     return {
       closed: {
         enter: "onClosedEnter",
         exit: "onClosedExit",
-        aria: {
-          hidden: "true",
-        },
         keyMap: {},
         transitions: {
           open: "open",
@@ -41,10 +38,6 @@ class DialogComponent extends Component {
       open: {
         enter: "onOpenEnter",
         exit: "onOpenExit",
-        aria: {
-          hidden: "false",
-          modal: "true",
-        },
         keyMap: {
           Escape: "close",
           Tab: "onTabKey",
@@ -56,7 +49,35 @@ class DialogComponent extends Component {
     };
   }
 
-  // Override the setupComponentEvents method
+  getAriaConfig() {
+    return {
+      content: {
+        all: {
+          role: "dialog",
+        },
+        open: {
+          hidden: "false",
+          modal: "true",
+        },
+        closed: {
+          hidden: "true",
+        },
+      },
+      "content-panel": {
+        open: {
+          labelledby: () => this.getPartId("title"),
+          describedby: () => this.getPartId("description"),
+        },
+      },
+      "close-trigger": {
+        all: {
+          label: "Close dialog",
+        },
+      },
+    };
+  }
+
+  // Setup component events - no changes needed
   setupComponentEvents() {
     super.setupComponentEvents();
 
@@ -86,26 +107,14 @@ class DialogComponent extends Component {
     }
   }
 
-  // Override updateAriaAttributes - can now use super properly!
-  updateAriaAttributes() {
-    super.updateAriaAttributes();
+  // REMOVED: updateAriaAttributes method is no longer needed
 
-    // Setup proper ARIA attributes for accessibility
-    if (this.state === "open" && this.content) {
-      this.content.setAttribute("role", "dialog");
-      this.content.setAttribute("aria-modal", "true");
-    }
-  }
-
-  // State machine handlers
+  // State machine handlers - removed direct ARIA manipulation
   onClosedEnter(params = {}) {
     // Only hide the dialog content, not the entire component
     if (!params.animated) {
       this.content.style.display = "none";
     }
-
-    // Update ARIA attributes
-    this.content.setAttribute("aria-hidden", "true");
 
     // Return focus to the element that had it before dialog opened
     if (this.previouslyFocused && this.previouslyFocused.focus) {
@@ -115,8 +124,7 @@ class DialogComponent extends Component {
       }, 0);
     }
 
-    // Notify the server of the state change - now uses "closed" event
-    // which will be mapped to the proper server handler via eventMappings
+    // Notify the server of the state change
     this.pushEvent("closed");
   }
 
@@ -131,9 +139,6 @@ class DialogComponent extends Component {
       this.content.style.display = "flex";
     }
 
-    // Update ARIA attributes
-    this.content.setAttribute("aria-hidden", "false");
-
     // Set focus on the first focusable element
     if (params.animated) {
       setTimeout(() => this.setInitialFocus(), 50);
@@ -141,8 +146,7 @@ class DialogComponent extends Component {
       this.setInitialFocus();
     }
 
-    // Notify the server of the state change - now uses "opened" event
-    // which will be mapped to the proper server handler via eventMappings
+    // Notify the server of the state change
     this.pushEvent("opened");
   }
 
@@ -154,7 +158,7 @@ class DialogComponent extends Component {
     this.handleTabKey(event);
   }
 
-  // Helper methods
+  // Helper methods - unchanged
   setInitialFocus() {
     // Get all focusable elements inside the dialog
     const focusableElements = Array.from(
