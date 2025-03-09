@@ -108,7 +108,7 @@ defmodule SaladUI.Dialog do
 
   def dialog_content(assigns) do
     ~H"""
-    <div data-part="content"  tabindex="0" style="display: none;">
+    <div data-part="content"  tabindex="0" hidden>
       <div
         data-part="overlay"
         class="fixed inset-0 bg-black/80  data-[state=open]/dialog:animate-in data-[state=closed]/dialog:animate-out data-[state=closed]/dialog:fade-out-0 data-[state=open]/dialog:fade-in-0"
@@ -194,7 +194,6 @@ defmodule SaladUI.Dialog do
     %{
       "open_to_closed" => %{
         duration: 130,
-        final_display: "none",
         target_part: "content"
       }
     }

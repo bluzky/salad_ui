@@ -15,13 +15,6 @@ class DialogComponent extends Component {
 
     this.previouslyFocused = null;
     this.config.preventDefaultKeys = ["Escape", "Tab"];
-
-    // Initialize state based on open attribute
-    if (this.el.getAttribute("data-state") === "open") {
-      this.content.style.display = "flex";
-    } else {
-      this.content.style.display = "none";
-    }
   }
 
   // Override the getStateMachine method - removed aria property
@@ -34,6 +27,9 @@ class DialogComponent extends Component {
         transitions: {
           open: "open",
         },
+        hidden: {
+          content: true,
+        },
       },
       open: {
         enter: "onOpenEnter",
@@ -44,6 +40,9 @@ class DialogComponent extends Component {
         },
         transitions: {
           close: "closed",
+        },
+        hidden: {
+          content: false,
         },
       },
     };
@@ -111,11 +110,6 @@ class DialogComponent extends Component {
 
   // State machine handlers - removed direct ARIA manipulation
   onClosedEnter(params = {}) {
-    // Only hide the dialog content, not the entire component
-    if (!params.animated) {
-      this.content.style.display = "none";
-    }
-
     // Return focus to the element that had it before dialog opened
     if (this.previouslyFocused && this.previouslyFocused.focus) {
       setTimeout(() => {
@@ -134,11 +128,6 @@ class DialogComponent extends Component {
   }
 
   onOpenEnter(params = {}) {
-    // Show the dialog content
-    if (!params.animated) {
-      this.content.style.display = "flex";
-    }
-
     // Set focus on the first focusable element
     if (params.animated) {
       setTimeout(() => this.setInitialFocus(), 50);

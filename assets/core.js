@@ -19,8 +19,8 @@ class Component {
     this.initEventMappings();
     this.initStateMachine();
     this.ariaManager = new AriaManager(this);
-
     this.updateUI();
+    this.updatePartsVisibility();
   }
 
   parseOptions() {
@@ -46,6 +46,7 @@ class Component {
 
   initStateMachine() {
     this.state = this.initialState;
+    this.previousState = null;
     this.stateMachine = this.getStateMachine();
   }
 
@@ -157,6 +158,7 @@ class Component {
 
     // Update state
     this.state = nextState;
+    this.previousState = prevState;
 
     // Execute enter handlers
     this.executeStateHandlers(nextState, "enter", params);
@@ -178,6 +180,11 @@ class Component {
       }
     } else if (typeof handler === "function") {
       handler.call(this, params);
+    }
+
+    // update hidden state for parts
+    if (handlerType === "enter") {
+      this.updatePartsVisibility();
     }
   }
 
@@ -201,6 +208,7 @@ class Component {
 
     // Update state
     this.state = nextState;
+    this.previousState = prevState;
 
     // Start animation
     this.performAnimation(targetElement, animOptions);
@@ -218,8 +226,6 @@ class Component {
       start_class,
       end_class,
       duration = 200,
-      display = null,
-      final_display = null,
       timing = null,
       target_part = null,
     } = animConfig;
@@ -239,20 +245,13 @@ class Component {
         start_class,
         end_class,
         duration,
-        display,
-        final_display,
         timing,
       },
     };
   }
 
   performAnimation(targetElement, animOptions) {
-    const { start_class, end_class, display, timing, duration } = animOptions;
-
-    // Set initial display if specified
-    if (display !== null) {
-      targetElement.style.display = display;
-    }
+    const { start_class, end_class, timing, duration } = animOptions;
 
     // Add start class
     if (start_class) {
@@ -280,7 +279,7 @@ class Component {
   }
 
   completeAnimation(targetElement, animOptions, nextState, params) {
-    const { start_class, end_class, duration, final_display } = animOptions;
+    const { start_class, end_class, duration } = animOptions;
     const oldTransition = targetElement._transitionInfo?.oldTransition;
 
     // Setup the timeout to clean up after animation
@@ -301,11 +300,6 @@ class Component {
       // Clean up stored transition info
       delete targetElement._transitionInfo;
 
-      // Set final display state if specified
-      if (final_display !== null) {
-        targetElement.style.display = final_display;
-      }
-
       // Call enter handler with animated flag
       this.executeStateHandlers(nextState, "enter", {
         ...params,
@@ -320,22 +314,22 @@ class Component {
 
   // Update UI to reflect current state
   updateUI() {
+    if (this.state === this.previousState) return;
+
     this.el
       .querySelectorAll("[data-part]")
       .forEach((el) => el.setAttribute("data-state", this.state));
 
     this.ariaManager.applyAriaAttributes(this.state);
-    this.updatePartsVisibility();
   }
 
   updatePartsVisibility() {
-    const stateParts = this.el.querySelectorAll(
-      "[data-part][data-visible-states]",
-    );
-
-    stateParts.forEach((part) => {
-      const visibleStates = part.getAttribute("data-visible-states").split(" ");
-      part.classList.toggle("hidden", !visibleStates.includes(this.state));
+    const hiddenParts = this.stateMachine[this.state].hidden || {};
+    Object.entries(hiddenParts).forEach(([part, hidden]) => {
+      const partElement = this.getPart(part);
+      if (partElement) {
+        partElement.hidden = hidden;
+      }
     });
   }
 
@@ -401,6 +395,9 @@ class Component {
     this.options = null;
     this.stateMachine = null;
   }
+
+  // Lifecycle hooks
+  beforeDestroy() {}
 
   // Alias for transition()
   handleCommand(command, params = {}) {

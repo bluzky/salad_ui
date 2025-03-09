@@ -12,6 +12,9 @@ class SelectComponent extends Component {
     this.valueDisplay = this.getPart("value");
     this.items = this.el.querySelectorAll("[data-part='item']");
 
+    // Determine if this is a multi-select
+    this.multiSelect = this.options.multiple;
+
     // Set up configuration
     this.config.preventDefaultKeys = [
       "Escape",
@@ -28,7 +31,10 @@ class SelectComponent extends Component {
       this.hideContent();
     }
 
-    // Find the initially selected item
+    // Selected values array for multiple select
+    this.selectedValues = [];
+
+    // Find the initially selected item(s)
     this.updateSelectedItem();
   }
 
@@ -98,6 +104,8 @@ class SelectComponent extends Component {
 
   setupComponentEvents() {
     super.setupComponentEvents();
+    // Setup click outside listener
+    document.addEventListener("click", this.handleClickOutside.bind(this));
 
     // Setup trigger click event
     if (this.trigger) {
