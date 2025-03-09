@@ -51,10 +51,8 @@ class SelectComponent extends Component {
         exit: "onOpenExit",
         keyMap: {
           Escape: "close",
-          ArrowUp: "navigateUp",
-          ArrowDown: "navigateDown",
-          Enter: "selectHighlighted",
-          " ": "selectHighlighted",
+          ArrowUp: this.navigateUp,
+          ArrowDown: this.navigateDown,
         },
         transitions: {
           close: "closed",
@@ -104,7 +102,6 @@ class SelectComponent extends Component {
     document.addEventListener("click", this.handleClickOutside.bind(this));
     this.setupTriggerEvents();
     this.setupItemEvents();
-    this.setupKeyboardNavigation();
   }
 
   setupTriggerEvents() {
@@ -112,12 +109,8 @@ class SelectComponent extends Component {
 
     this.trigger.addEventListener("click", (e) => {
       e.preventDefault();
-      this.toggleDropdown();
+      this.transition(this.state === "closed" ? "open" : "close");
     });
-  }
-
-  toggleDropdown() {
-    this.transition(this.state === "closed" ? "open" : "close");
   }
 
   setupItemEvents() {
@@ -147,6 +140,7 @@ class SelectComponent extends Component {
     if (e.key !== "Enter" && e.key !== " ") return;
 
     e.preventDefault();
+    e.stopPropagation();
 
     const value = item.getAttribute("data-value");
     const label = item.textContent.trim();
@@ -169,15 +163,6 @@ class SelectComponent extends Component {
     }
   }
 
-  setupKeyboardNavigation() {
-    if (this.content) {
-      this.content.addEventListener(
-        "keydown",
-        this.handleContentKeyDown.bind(this),
-      );
-    }
-  }
-
   beforeDestroy() {
     document.removeEventListener("click", this.handleClickOutside);
   }
@@ -193,28 +178,6 @@ class SelectComponent extends Component {
     }
   }
 
-  handleContentKeyDown(event) {
-    if (this.state !== "open") return;
-
-    const keyActions = {
-      ArrowUp: () => {
-        event.preventDefault();
-        this.navigateUp();
-      },
-      ArrowDown: () => {
-        event.preventDefault();
-        this.navigateDown();
-      },
-      Escape: () => {
-        event.preventDefault();
-        this.transition("close");
-      },
-    };
-
-    const action = keyActions[event.key];
-    if (action) action();
-  }
-
   // State machine handlers
   onClosedEnter() {
     this.unhighlightAllItems();
@@ -222,17 +185,9 @@ class SelectComponent extends Component {
     this.pushEvent("closed");
   }
 
-  onClosedExit() {
-    // No specific action needed
-  }
-
   onOpenEnter() {
     this.focusSelectedOrFirstItem();
     this.pushEvent("opened");
-  }
-
-  onOpenExit() {
-    // No specific action needed
   }
 
   focusTrigger() {
@@ -270,22 +225,6 @@ class SelectComponent extends Component {
     if (item) {
       this.highlightItem(item);
       item.focus();
-    }
-  }
-
-  selectHighlighted() {
-    const highlighted = document.activeElement;
-
-    const isSelectableItem =
-      highlighted &&
-      highlighted.getAttribute("data-part") === "item" &&
-      highlighted.getAttribute("data-disabled") !== "true";
-
-    if (isSelectableItem) {
-      const value = highlighted.getAttribute("data-value");
-      const label = highlighted.textContent.trim();
-      this.setSelectedValue(value, label);
-      this.transition("select");
     }
   }
 

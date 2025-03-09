@@ -229,7 +229,7 @@ defmodule SaladUI.Select do
     <div
       data-part="item"
       data-value={@value}
-      data-disabled={@disabled}
+      data-disabled={to_string(@disabled)}
       class={
         classes([
           "group/item",

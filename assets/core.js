@@ -70,6 +70,9 @@ class Component {
   // Override in component subclasses
   setupComponentEvents() {}
 
+  // Handle keydown events
+  // each state defines a keyMap object to map key events to actions
+  // actions can be strings (state transitions) or functions
   handleKeyDown(event) {
     const stateConfig = this.stateMachine[this.state];
     if (!stateConfig?.keyMap) return;
@@ -170,6 +173,11 @@ class Component {
   // Split from executeTransition
   executeStateHandlers(stateName, handlerType, params) {
     const stateConfig = this.stateMachine[stateName];
+    // update hidden state for parts
+    if (handlerType === "enter") {
+      this.updatePartsVisibility();
+    }
+
     if (!stateConfig || !stateConfig[handlerType]) return;
 
     const handler = stateConfig[handlerType];
@@ -180,11 +188,6 @@ class Component {
       }
     } else if (typeof handler === "function") {
       handler.call(this, params);
-    }
-
-    // update hidden state for parts
-    if (handlerType === "enter") {
-      this.updatePartsVisibility();
     }
   }
 
@@ -319,6 +322,7 @@ class Component {
     this.el
       .querySelectorAll("[data-part]")
       .forEach((el) => el.setAttribute("data-state", this.state));
+    this.el.setAttribute("data-state", this.state);
 
     this.ariaManager.applyAriaAttributes(this.state);
   }

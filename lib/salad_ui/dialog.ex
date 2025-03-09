@@ -97,7 +97,7 @@ defmodule SaladUI.Dialog do
 
   def dialog_trigger(assigns) do
     ~H"""
-    <.dynamic data-part="trigger" tag={@as_tag} class={classes(["", @class])} {@rest}>
+    <.dynamic data-part="trigger" data-action="open" tag={@as_tag} class={classes(["", @class])} {@rest}>
       {render_slot(@inner_block)}
     </.dynamic>
     """

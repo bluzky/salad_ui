@@ -8,10 +8,8 @@ class DialogComponent extends Component {
 
     // Initialize properties
     this.root = this.el;
-    this.trigger = this.getPart("trigger");
     this.content = this.getPart("content");
     this.contentPanel = this.getPart("content-panel");
-    this.closeTrigger = this.getPart("close-trigger");
 
     this.previouslyFocused = null;
     this.config.preventDefaultKeys = ["Escape", "Tab"];
@@ -33,10 +31,9 @@ class DialogComponent extends Component {
       },
       open: {
         enter: "onOpenEnter",
-        exit: "onOpenExit",
         keyMap: {
           Escape: "close",
-          Tab: "onTabKey",
+          Tab: this.onTabKey,
         },
         transitions: {
           close: "closed",
@@ -90,23 +87,7 @@ class DialogComponent extends Component {
         }
       });
     }
-
-    // Setup trigger click event
-    if (this.trigger) {
-      this.trigger.addEventListener("click", () => {
-        this.transition("open");
-      });
-    }
-
-    // Setup close trigger click event
-    if (this.closeTrigger) {
-      this.closeTrigger.addEventListener("click", () => {
-        this.transition("close");
-      });
-    }
   }
-
-  // REMOVED: updateAriaAttributes method is no longer needed
 
   // State machine handlers - removed direct ARIA manipulation
   onClosedEnter(params = {}) {
@@ -139,14 +120,6 @@ class DialogComponent extends Component {
     this.pushEvent("opened");
   }
 
-  onOpenExit() {
-    // No action needed
-  }
-
-  onTabKey(event) {
-    this.handleTabKey(event);
-  }
-
   // Helper methods - unchanged
   setInitialFocus() {
     // Get all focusable elements inside the dialog
@@ -168,7 +141,7 @@ class DialogComponent extends Component {
     }, 50);
   }
 
-  handleTabKey(event) {
+  onTabKey(event) {
     // Get all focusable elements inside the dialog panel
     const focusableElements = Array.from(
       this.contentPanel.querySelectorAll(this.config.focusableSelector),
