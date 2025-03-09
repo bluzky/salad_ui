@@ -72,12 +72,15 @@ defmodule SaladUI.Select do
         label: assigns.label,
         placeholder: assigns.placeholder
       })
-      |> assign(:options, Jason.encode!(%{
-        initialValue: assigns.value,
-        name: assigns.name,
-        multiple: assigns.multiple,
-        animations: get_animation_config()
-      }))
+      |> assign(
+        :options,
+        Jason.encode!(%{
+          initialValue: assigns.value,
+          name: assigns.name,
+          multiple: assigns.multiple,
+          animations: get_animation_config()
+        })
+      )
 
     ~H"""
     <div
@@ -141,7 +144,9 @@ defmodule SaladUI.Select do
     ~H"""
     <span
       data-part="value"
-      class={classes(["select-value pointer-events-none before:content-[attr(data-content)]", @class])}
+      class={
+        classes(["select-value pointer-events-none before:content-[attr(data-content)]", @class])
+      }
       data-content={@placeholder}
       data-placeholder={@placeholder}
       {@rest}
@@ -241,7 +246,8 @@ defmodule SaladUI.Select do
       tabindex={if @disabled, do: "-1", else: "0"}
       {@rest}
     >
-      <div class="absolute top-0 left-0 w-full h-full group-hover/item:bg-accent rounded group-data-[highlighted=true]/item:bg-accent"></div>
+      <div class="absolute top-0 left-0 w-full h-full group-hover/item:bg-accent rounded group-data-[highlighted=true]/item:bg-accent">
+      </div>
       <span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
         <span aria-hidden="true" class="hidden group-data-[selected=true]/item:block">
           <svg
@@ -271,16 +277,7 @@ defmodule SaladUI.Select do
     """
   end
 
-  # Helper function to add event mappings
-  defp add_event_mapping(map, assigns, event, key) do
-    if assigns[key] do
-      Map.put(map, event, assigns[key])
-    else
-      map
-    end
-  end
-
-    defp get_animation_config() do
+  defp get_animation_config do
     %{
       "open_to_closed" => %{
         duration: 130,

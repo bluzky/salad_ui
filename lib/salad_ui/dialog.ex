@@ -39,38 +39,36 @@ defmodule SaladUI.Dialog do
       </.dialog>
   """
 
-  def collect_event_mappings(assigns, mappings) do
-    event_map =
-      Enum.reduce(mappings, %{}, fn {event, action}, acc ->
-        if assigns[action] do
-          Map.put(acc, event, assigns[action])
-        else
-          acc
-        end
-      end)
-
-    assign(assigns, event_map: Jason.encode!(event_map))
-  end
-
   attr :id, :string, required: true
   attr :open, :boolean, default: false
   attr :class, :string, default: nil
   attr :close_on_outside_click, :boolean, default: true
-  attr :on_open, :any, default: nil, doc: "Handler for dialog open event. Support both server event handler and JS command struct"
-  attr :on_close, :any, default: nil, doc: "Handler for dialog closed event. Support both server event handler and JS command struct"
+
+  attr :on_open, :any,
+    default: nil,
+    doc: "Handler for dialog open event. Support both server event handler and JS command struct"
+
+  attr :on_close, :any,
+    default: nil,
+    doc: "Handler for dialog closed event. Support both server event handler and JS command struct"
+
   slot :inner_block, required: true
 
   def dialog(assigns) do
+    event_map =
+      %{}
+      |> add_event_mapping(assigns, "opened", :on_open)
+      |> add_event_mapping(assigns, "closed", :on_close)
+
     assigns =
       assigns
-      |> collect_event_mappings([{"opened", :on_open}, {"closed", :on_close}])
+      |> assign(:event_map, Jason.encode!(event_map))
       |> assign(initial_state: if(assigns.open, do: "open", else: "closed"))
       |> assign(
         options:
           Jason.encode!(%{
             closeOnOutsideClick: assigns.close_on_outside_click,
             animations: get_animation_config()
-
           })
       )
 
@@ -97,7 +95,13 @@ defmodule SaladUI.Dialog do
 
   def dialog_trigger(assigns) do
     ~H"""
-    <.dynamic data-part="trigger" data-action="open" tag={@as_tag} class={classes(["", @class])} {@rest}>
+    <.dynamic
+      data-part="trigger"
+      data-action="open"
+      tag={@as_tag}
+      class={classes(["", @class])}
+      {@rest}
+    >
       {render_slot(@inner_block)}
     </.dynamic>
     """
@@ -108,18 +112,21 @@ defmodule SaladUI.Dialog do
 
   def dialog_content(assigns) do
     ~H"""
-    <div data-part="content"  tabindex="0" hidden>
+    <div data-part="content" tabindex="0" hidden>
       <div
         data-part="overlay"
         class="fixed inset-0 bg-black/80  data-[state=open]/dialog:animate-in data-[state=closed]/dialog:animate-out data-[state=closed]/dialog:fade-out-0 data-[state=open]/dialog:fade-in-0"
       />
 
-      <div data-part="content-panel" class={
-        classes([
-          "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
-          @class
-        ])
-      }>
+      <div
+        data-part="content-panel"
+        class={
+          classes([
+            "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
+            @class
+          ])
+        }
+      >
         {render_slot(@inner_block)}
 
         <button
@@ -190,7 +197,7 @@ defmodule SaladUI.Dialog do
     """
   end
 
-  defp get_animation_config() do
+  defp get_animation_config do
     %{
       "open_to_closed" => %{
         duration: 130,
