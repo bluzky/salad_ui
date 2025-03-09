@@ -35,6 +35,7 @@ defmodule SaladUI.Select do
   attr :name, :any, default: nil
   attr :value, :any, default: nil, doc: "The value of the select"
   attr :"default-value", :any, default: nil, doc: "The default value of the select"
+  attr :multiple, :boolean, default: false, doc: "Allow multiple selection"
   attr :on_value_changed, :any, default: nil, doc: "Handler for value changed event"
   attr :on_open, :any, default: nil, doc: "Handler for select open event"
   attr :on_close, :any, default: nil, doc: "Handler for select closed event"
@@ -74,13 +75,14 @@ defmodule SaladUI.Select do
       |> assign(:options, Jason.encode!(%{
         initialValue: assigns.value,
         name: assigns.name,
-                    animations: get_animation_config()
+        multiple: assigns.multiple,
+        animations: get_animation_config()
       }))
 
     ~H"""
     <div
       id={@id}
-      class={classes(["relative", @class])}
+      class={classes(["relative inline-flex", @class])}
       data-component="select"
       data-state="closed"
       data-options={@options}
@@ -137,7 +139,13 @@ defmodule SaladUI.Select do
 
   def select_value(assigns) do
     ~H"""
-    <span data-part="value" class={classes(["select-value pointer-events-none before:content-[attr(data-content)]", @class])} data-content={@placeholder} {@rest}>
+    <span
+      data-part="value"
+      class={classes(["select-value pointer-events-none before:content-[attr(data-content)]", @class])}
+      data-content={@placeholder}
+      data-placeholder={@placeholder}
+      {@rest}
+    >
     </span>
     """
   end
@@ -167,9 +175,10 @@ defmodule SaladUI.Select do
       id={@id}
       data-part="content"
       data-side={@side}
+      hidden
       class={
         classes([
-          "select-content absolute hidden",
+          "absolute min-w-full",
           "z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
           @position_class,
           @class
@@ -208,6 +217,7 @@ defmodule SaladUI.Select do
     """
   end
 
+  attr :builder, :map, required: false, doc: "The builder of the select component"
   attr :value, :string, required: true
   attr :disabled, :boolean, default: false
   attr :class, :string, default: nil
@@ -222,7 +232,7 @@ defmodule SaladUI.Select do
       data-disabled={@disabled}
       class={
         classes([
-          "group",
+          "group/item",
           "relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none",
           @disabled && "pointer-events-none opacity-50",
           @class
@@ -231,9 +241,9 @@ defmodule SaladUI.Select do
       tabindex={if @disabled, do: "-1", else: "0"}
       {@rest}
     >
-      <div class="absolute top-0 left-0 w-full h-full group-hover:bg-accent rounded group-data-[highlighted=true]:bg-accent group-data-[selected=true]:bg-accent/20"></div>
+      <div class="absolute top-0 left-0 w-full h-full group-hover/item:bg-accent rounded group-data-[highlighted=true]/item:bg-accent"></div>
       <span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-        <span data-checkmark aria-hidden="true" class="hidden group-data-[selected=true]:block">
+        <span aria-hidden="true" class="hidden group-data-[selected=true]/item:block">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
