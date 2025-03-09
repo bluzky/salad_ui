@@ -455,7 +455,7 @@ class AriaManager {
 
   applyAriaAttribute(part, attr, value) {
     const resolvedValue =
-      typeof value === "function" ? value.call(this.component) : value;
+      typeof value === "function" ? value.call(this.component, part) : value;
 
     if (resolvedValue === null || resolvedValue === undefined) return;
 

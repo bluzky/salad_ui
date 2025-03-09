@@ -165,27 +165,37 @@ class TabsComponent extends Component {
     }
   }
 
-  // Single method for all tab navigation
+  // Single method for all tab navigation that skips disabled tabs
   navigateTab(direction) {
-    const currentTriggers = Array.from(this.triggers);
-    const currentIndex = currentTriggers.findIndex(
+    // Get only enabled triggers
+    const enabledTriggers = Array.from(this.triggers).filter(
+      (trigger) =>
+        trigger.getAttribute("data-disabled") !== "true" && !trigger.disabled,
+    );
+
+    // If no enabled triggers, do nothing
+    if (enabledTriggers.length === 0) return;
+
+    const currentIndex = enabledTriggers.findIndex(
       (trigger) => trigger.getAttribute("data-value") === this.selectedValue,
     );
 
     let newIndex;
 
     if (direction === "first") {
+      // First enabled tab
       newIndex = 0;
     } else if (direction === "last") {
-      newIndex = currentTriggers.length - 1;
+      // Last enabled tab
+      newIndex = enabledTriggers.length - 1;
     } else {
-      // Handle next/previous with wrapping
+      // Navigate with proper wrapping among enabled tabs
       newIndex =
-        (currentIndex + direction + currentTriggers.length) %
-        currentTriggers.length;
+        (currentIndex + direction + enabledTriggers.length) %
+        enabledTriggers.length;
     }
 
-    const newValue = currentTriggers[newIndex].getAttribute("data-value");
+    const newValue = enabledTriggers[newIndex].getAttribute("data-value");
     this.selectTab(newValue);
   }
 }
