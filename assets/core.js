@@ -1,4 +1,8 @@
 // saladui/core.js
+/**
+ * Base Component class for SaladUI framework
+ * Provides state management, event handling, and ARIA support
+ */
 class Component {
   constructor(el, hookContext) {
     this.el = el;
@@ -10,11 +14,12 @@ class Component {
         'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
     };
 
+    // Initialize component
     this.parseOptions();
     this.initEventMappings();
     this.initStateMachine();
-    this.ariaConfig = this.getAriaConfig();
-    // setupEvents is now called externally by the registry
+    this.ariaManager = new AriaManager(this);
+
     this.updateUI();
   }
 
@@ -44,6 +49,7 @@ class Component {
     this.stateMachine = this.getStateMachine();
   }
 
+  // Override in subclasses to define component-specific state machine
   getStateMachine() {
     return {
       idle: {
@@ -60,9 +66,8 @@ class Component {
     this.setupComponentEvents();
   }
 
-  setupComponentEvents() {
-    // Override in component subclasses
-  }
+  // Override in component subclasses
+  setupComponentEvents() {}
 
   handleKeyDown(event) {
     const stateConfig = this.stateMachine[this.state];
@@ -99,6 +104,7 @@ class Component {
     });
   }
 
+  // Transition to a new state
   transition(event, params = {}) {
     const currentStateConfig = this.stateMachine[this.state];
     if (!currentStateConfig) return false;
@@ -106,23 +112,7 @@ class Component {
     const transition = currentStateConfig.transitions?.[event];
     if (!transition) return false;
 
-    let nextState;
-    if (typeof transition === "string") {
-      nextState = transition;
-    } else if (typeof transition === "function") {
-      nextState = transition.call(this, params);
-    } else if (typeof transition === "object") {
-      for (const [condition, target] of Object.entries(transition)) {
-        if (
-          condition === "default" ||
-          this.evaluateCondition(condition, params)
-        ) {
-          nextState = target;
-          break;
-        }
-      }
-    }
-
+    const nextState = this.determineNextState(transition, params);
     if (!nextState) return false;
 
     const prevState = this.state;
@@ -142,35 +132,56 @@ class Component {
     return true;
   }
 
-  executeTransition(prevState, nextState, params = {}) {
-    const currentStateConfig = this.stateMachine[prevState];
-    const newStateConfig = this.stateMachine[nextState];
-
-    if (currentStateConfig.exit) {
-      if (typeof currentStateConfig.exit === "string") {
-        if (typeof this[currentStateConfig.exit] === "function") {
-          this[currentStateConfig.exit](params);
+  // Split from transition method for clarity
+  determineNextState(transition, params) {
+    if (typeof transition === "string") {
+      return transition;
+    } else if (typeof transition === "function") {
+      return transition.call(this, params);
+    } else if (typeof transition === "object") {
+      for (const [condition, target] of Object.entries(transition)) {
+        if (
+          condition === "default" ||
+          this.evaluateCondition(condition, params)
+        ) {
+          return target;
         }
-      } else if (typeof currentStateConfig.exit === "function") {
-        currentStateConfig.exit.call(this, params);
       }
     }
+    return null;
+  }
 
+  executeTransition(prevState, nextState, params = {}) {
+    // Execute exit handlers
+    this.executeStateHandlers(prevState, "exit", params);
+
+    // Update state
     this.state = nextState;
 
-    if (newStateConfig?.enter) {
-      if (typeof newStateConfig.enter === "string") {
-        if (typeof this[newStateConfig.enter] === "function") {
-          this[newStateConfig.enter](params);
-        }
-      } else if (typeof newStateConfig.enter === "function") {
-        newStateConfig.enter.call(this, params);
-      }
-    }
+    // Execute enter handlers
+    this.executeStateHandlers(nextState, "enter", params);
 
+    // Update UI
     this.updateUI();
   }
 
+  // Split from executeTransition
+  executeStateHandlers(stateName, handlerType, params) {
+    const stateConfig = this.stateMachine[stateName];
+    if (!stateConfig || !stateConfig[handlerType]) return;
+
+    const handler = stateConfig[handlerType];
+
+    if (typeof handler === "string") {
+      if (typeof this[handler] === "function") {
+        this[handler](params);
+      }
+    } else if (typeof handler === "function") {
+      handler.call(this, params);
+    }
+  }
+
+  // Split animation logic into smaller methods
   animateTransition(prevState, nextState, params = {}) {
     const transitionName = `${prevState}_to_${nextState}`;
     const animConfig =
@@ -182,6 +193,27 @@ class Component {
       return;
     }
 
+    // Prepare for animation
+    const { targetElement, animOptions } = this.prepareAnimation(animConfig);
+
+    // Execute exit handlers with animated flag
+    this.executeStateHandlers(prevState, "exit", { ...params, animated: true });
+
+    // Update state
+    this.state = nextState;
+
+    // Start animation
+    this.performAnimation(targetElement, animOptions);
+
+    // Set up completion handler
+    this.completeAnimation(targetElement, animOptions, nextState, params);
+
+    // Update UI
+    this.updateUI();
+  }
+
+  // Animation helper methods
+  prepareAnimation(animConfig) {
     const {
       start_class,
       end_class,
@@ -201,22 +233,21 @@ class Component {
       }
     }
 
-    const currentStateConfig = this.stateMachine[prevState];
-    const newStateConfig = this.stateMachine[nextState];
+    return {
+      targetElement,
+      animOptions: {
+        start_class,
+        end_class,
+        duration,
+        display,
+        final_display,
+        timing,
+      },
+    };
+  }
 
-    // Call exit handler with animated flag
-    if (currentStateConfig.exit) {
-      if (typeof currentStateConfig.exit === "string") {
-        if (typeof this[currentStateConfig.exit] === "function") {
-          this[currentStateConfig.exit]({ ...params, animated: true });
-        }
-      } else if (typeof currentStateConfig.exit === "function") {
-        currentStateConfig.exit.call(this, { ...params, animated: true });
-      }
-    }
-
-    // Set the new state
-    this.state = nextState;
+  performAnimation(targetElement, animOptions) {
+    const { start_class, end_class, display, timing, duration } = animOptions;
 
     // Set initial display if specified
     if (display !== null) {
@@ -228,11 +259,10 @@ class Component {
       targetElement.classList.add(start_class);
     }
 
-    // Only modify transition style if timing is provided
+    // Store original transition
     let oldTransition = null;
 
     if (timing) {
-      // Store original transition and set new one
       oldTransition = targetElement.style.transition;
       targetElement.style.transition = `all ${duration}ms ${timing}`;
 
@@ -240,10 +270,18 @@ class Component {
       void targetElement.offsetWidth;
     }
 
+    // Store transition info for cleanup
+    targetElement._transitionInfo = { oldTransition };
+
     // Add end class
     if (end_class) {
       targetElement.classList.add(end_class);
     }
+  }
+
+  completeAnimation(targetElement, animOptions, nextState, params) {
+    const { start_class, end_class, duration, final_display } = animOptions;
+    const oldTransition = targetElement._transitionInfo?.oldTransition;
 
     // Setup the timeout to clean up after animation
     setTimeout(() => {
@@ -260,91 +298,34 @@ class Component {
         targetElement.style.transition = oldTransition;
       }
 
+      // Clean up stored transition info
+      delete targetElement._transitionInfo;
+
       // Set final display state if specified
       if (final_display !== null) {
         targetElement.style.display = final_display;
       }
 
       // Call enter handler with animated flag
-      if (newStateConfig?.enter) {
-        if (typeof newStateConfig.enter === "string") {
-          if (typeof this[newStateConfig.enter] === "function") {
-            this[newStateConfig.enter]({ ...params, animated: true });
-          }
-        } else if (typeof newStateConfig.enter === "function") {
-          newStateConfig.enter.call(this, { ...params, animated: true });
-        }
-      }
+      this.executeStateHandlers(nextState, "enter", {
+        ...params,
+        animated: true,
+      });
     }, duration);
-    // Update UI
-    this.updateUI();
   }
 
   evaluateCondition(condition, params) {
     return params[condition] !== undefined;
   }
 
+  // Update UI to reflect current state
   updateUI() {
     this.el
       .querySelectorAll("[data-part]")
       .forEach((el) => el.setAttribute("data-state", this.state));
-    this.applyAriaAttributes();
+
+    this.ariaManager.applyAriaAttributes(this.state);
     this.updatePartsVisibility();
-  }
-
-  // Add to Component class
-  applyAriaAttributes() {
-    if (!this.ariaConfig) return;
-
-    // Process each component part specified in aria config
-    Object.entries(this.ariaConfig).forEach(([partName, states]) => {
-      const part = this.getPart(partName);
-      if (!part) return;
-
-      // Apply global ARIA attributes (for all states)
-      if (states.all) {
-        Object.entries(states.all).forEach(([attr, value]) => {
-          const resolvedValue =
-            typeof value === "function" ? value.call(this) : value;
-          if (resolvedValue !== null && resolvedValue !== undefined) {
-            part.setAttribute(`aria-${attr}`, resolvedValue);
-          }
-        });
-
-        // For "role" attribute which isn't prefixed with "aria-"
-        if (states.all.role) {
-          const role =
-            typeof states.all.role === "function"
-              ? states.all.role.call(this)
-              : states.all.role;
-          part.setAttribute("role", role);
-        }
-      }
-
-      // Apply state-specific ARIA attributes
-      const stateConfig = states[this.state];
-      if (stateConfig) {
-        Object.entries(stateConfig).forEach(([attr, value]) => {
-          // Skip role attribute as it's handled differently
-          if (attr === "role") return;
-
-          const resolvedValue =
-            typeof value === "function" ? value.call(this) : value;
-          if (resolvedValue !== null && resolvedValue !== undefined) {
-            part.setAttribute(`aria-${attr}`, resolvedValue);
-          }
-        });
-
-        // Handle role separately since it doesn't have aria- prefix
-        if (stateConfig.role) {
-          const role =
-            typeof stateConfig.role === "function"
-              ? stateConfig.role.call(this)
-              : stateConfig.role;
-          part.setAttribute("role", role);
-        }
-      }
-    });
   }
 
   updatePartsVisibility() {
@@ -358,8 +339,8 @@ class Component {
     });
   }
 
+  // Override in component subclasses
   getAriaConfig() {
-    // Override in component subclasses
     return {};
   }
 
@@ -381,14 +362,13 @@ class Component {
     return Array.from(this.el.querySelectorAll(this.config.focusableSelector));
   }
 
+  // Push event to server (for frameworks like Phoenix LiveView)
   pushEvent(clientEvent, payload = {}) {
     if (!this.hook || !this.hook.pushEventTo) return;
 
-    // Check if this client event has a server mapping
     const eventHandler = this.eventMappings[clientEvent];
 
     if (eventHandler) {
-      // if event handler is string then push event to server
       if (typeof eventHandler === "string") {
         const fullPayload = {
           ...payload,
@@ -398,18 +378,91 @@ class Component {
 
         this.hook.pushEventTo(this.el, eventHandler, fullPayload);
       } else {
-        // if event handler is encoded JS function, then execute it
         this.hook.liveSocket.execJS(this.el, JSON.stringify(eventHandler));
       }
     }
   }
 
+  // Cleanup method to remove event listeners and references
+  destroy() {
+    // Lifecycle hook before destruction
+    this.beforeDestroy();
+
+    // Remove event listeners
+    this.el.removeEventListener("keydown", this.handleKeyDown);
+    this.el.removeEventListener("click", this.handleActionClick);
+    this.ariaManager = null;
+
+    // No registry reference to remove
+
+    // Allow garbage collection
+    this.el = null;
+    this.hook = null;
+    this.options = null;
+    this.stateMachine = null;
+  }
+
+  // Alias for transition()
   handleCommand(command, params = {}) {
     return this.transition(command, params);
   }
 
+  // Alias for transition()
   trigger(event, params = {}) {
     return this.transition(event, params);
+  }
+}
+
+/**
+ * Extracted ARIA management into a separate class
+ */
+class AriaManager {
+  constructor(component) {
+    this.component = component;
+    this.ariaConfig = component.getAriaConfig();
+  }
+
+  applyAriaAttributes(currentState) {
+    if (!this.ariaConfig) return;
+
+    // Process each component part specified in aria config
+    Object.entries(this.ariaConfig).forEach(([partName, states]) => {
+      const part = this.component.getPart(partName);
+      if (!part) return;
+
+      this.applyGlobalAriaAttributes(part, states);
+      this.applyStateSpecificAriaAttributes(part, states, currentState);
+    });
+  }
+
+  applyGlobalAriaAttributes(part, states) {
+    if (!states.all) return;
+
+    Object.entries(states.all).forEach(([attr, value]) => {
+      this.applyAriaAttribute(part, attr, value);
+    });
+  }
+
+  applyStateSpecificAriaAttributes(part, states, currentState) {
+    const stateConfig = states[currentState];
+    if (!stateConfig) return;
+
+    Object.entries(stateConfig).forEach(([attr, value]) => {
+      this.applyAriaAttribute(part, attr, value);
+    });
+  }
+
+  applyAriaAttribute(part, attr, value) {
+    const resolvedValue =
+      typeof value === "function" ? value.call(this.component) : value;
+
+    if (resolvedValue === null || resolvedValue === undefined) return;
+
+    if (attr === "role") {
+      part.setAttribute("role", resolvedValue);
+    } else {
+      part.setAttribute(`aria-${attr}`, resolvedValue);
+    }
   }
 }
 
