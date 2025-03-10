@@ -132,13 +132,14 @@ defmodule SaladUI.Popover do
   slot :inner_block, required: true
 
   def popover_content(assigns) do
+    assigns = assign(assigns, side_offset: assigns[:"side-offset"], align_offset: assigns[:"align-offset"])
     ~H"""
     <div
       data-part="positioner"
       data-side={@side}
       data-align={@align}
-      data-side-offset={@side-offset}
-      data-align-offset={@align-offset}
+      data-side-offset={@side_offset}
+      data-align-offset={@align_offset}
       class="absolute z-50"
     >
       <div
