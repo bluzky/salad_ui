@@ -33,14 +33,14 @@ defmodule SaladUI.Tabs do
   attr :id, :string, required: true, doc: "Unique identifier for the tabs component"
   attr :default, :string, default: nil, doc: "Default selected tab value"
   attr :class, :string, default: nil
-  attr :on_tab_changed, :any, default: nil, doc: "Handler for tab change events"
+  attr :"on-tab-changed", :any, default: nil, doc: "Handler for tab change events"
   attr :rest, :global
   slot :inner_block, required: true
 
   def tabs(assigns) do
     # Collect event mappings
     event_map =
-      add_event_mapping(%{}, assigns, "tab-changed", :on_tab_changed)
+      add_event_mapping(%{}, assigns, "tab-changed", :"on-tab-changed")
 
     assigns =
       assigns

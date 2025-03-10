@@ -42,13 +42,13 @@ defmodule SaladUI.Dialog do
   attr :id, :string, required: true
   attr :open, :boolean, default: false
   attr :class, :string, default: nil
-  attr :close_on_outside_click, :boolean, default: true
+  attr :"close-on-outside-click", :boolean, default: true
 
-  attr :on_open, :any,
+  attr :"on-open", :any,
     default: nil,
     doc: "Handler for dialog open event. Support both server event handler and JS command struct"
 
-  attr :on_close, :any,
+  attr :"on-close", :any,
     default: nil,
     doc: "Handler for dialog closed event. Support both server event handler and JS command struct"
 
@@ -57,8 +57,8 @@ defmodule SaladUI.Dialog do
   def dialog(assigns) do
     event_map =
       %{}
-      |> add_event_mapping(assigns, "opened", :on_open)
-      |> add_event_mapping(assigns, "closed", :on_close)
+      |> add_event_mapping(assigns, "opened", :"on-open")
+      |> add_event_mapping(assigns, "closed", :"on-close")
 
     assigns =
       assigns
@@ -67,7 +67,7 @@ defmodule SaladUI.Dialog do
       |> assign(
         options:
           json(%{
-            closeOnOutsideClick: assigns.close_on_outside_click,
+            closeOnOutsideClick: assigns[:"close-on-outside-click"],
             animations: get_animation_config()
           })
       )

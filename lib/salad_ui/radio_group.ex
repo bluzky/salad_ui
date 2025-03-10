@@ -26,7 +26,7 @@ defmodule SaladUI.RadioGroup do
   attr :name, :string, default: nil
   attr :value, :any, default: nil, doc: "The current value of the radio group"
   attr :"default-value", :any, default: nil, doc: "The default value of the radio group"
-  attr :on_value_changed, :any, default: nil, doc: "Handler for value changed event"
+  attr :"on-value-changed", :any, default: nil, doc: "Handler for value changed event"
   attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
   attr :class, :string, default: nil
   attr :rest, :global
@@ -38,7 +38,7 @@ defmodule SaladUI.RadioGroup do
 
     # Collect event mappings
     event_map =
-      add_event_mapping(%{}, assigns, "value-changed", :on_value_changed)
+      add_event_mapping(%{}, assigns, "value-changed", :"on-value-changed")
 
     assigns =
       assigns

@@ -24,8 +24,8 @@ defmodule SaladUI.Popover do
   attr :id, :string, required: true, doc: "Unique identifier for the popover"
   attr :open, :boolean, default: false, doc: "Whether the popover is initially open"
   attr :class, :string, default: nil
-  attr :on_open, :any, default: nil, doc: "Handler for popover open event"
-  attr :on_close, :any, default: nil, doc: "Handler for popover close event"
+  attr :"on-open", :any, default: nil, doc: "Handler for popover open event"
+  attr :"on-close", :any, default: nil, doc: "Handler for popover close event"
   attr :rest, :global
   slot :inner_block, required: true
 
@@ -33,8 +33,8 @@ defmodule SaladUI.Popover do
     # Collect event mappings
     event_map =
       %{}
-      |> add_event_mapping(assigns, "opened", :on_open)
-      |> add_event_mapping(assigns, "closed", :on_close)
+      |> add_event_mapping(assigns, "opened", :"on-open")
+      |> add_event_mapping(assigns, "closed", :"on-close")
 
     assigns =
       assigns
@@ -97,11 +97,11 @@ defmodule SaladUI.Popover do
     <div data-part="positioner" data-side={@side} data-align={@align} class="absolute z-50">
       <div
         data-part="content"
+        data-side={@side}
+        data-align={@align}
         class={
           classes([
-            "rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none",
-            "animate-in fade-in-0 zoom-in-95",
-            "data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+            "z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
             @class
           ])
         }
@@ -116,7 +116,7 @@ defmodule SaladUI.Popover do
   defp get_animation_config do
     %{
       "open_to_closed" => %{
-        duration: 150,
+        duration: 140,
         target_part: "content"
       }
     }
