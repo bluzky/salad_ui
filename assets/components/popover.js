@@ -27,7 +27,6 @@ class PopoverComponent extends Component {
     return {
       closed: {
         enter: "onClosedEnter",
-        exit: "onClosedExit",
         keyMap: {},
         transitions: {
           open: "open",
@@ -39,7 +38,6 @@ class PopoverComponent extends Component {
       },
       open: {
         enter: "onOpenEnter",
-        exit: "onOpenExit",
         keyMap: {
           Escape: "close",
           Tab: this.handleTabKey,
@@ -95,11 +93,11 @@ class PopoverComponent extends Component {
         placement,
         alignment,
         flip: true,
-        shift: true,
         sideOffset,
         alignOffset,
         trapFocus: true,
         onEscape: () => this.transition("close"),
+        onOutsideClick: () => this.transition("close"),
       });
     }
   }
@@ -126,14 +124,11 @@ class PopoverComponent extends Component {
     this.pushEvent("opened");
   }
 
-  onOpenExit() {
-    // Deactivate the positioner if it exists
+  onClosedEnter() {
     if (this.positionerInstance) {
       this.positionerInstance.deactivate();
     }
-  }
 
-  onClosedEnter() {
     this.pushEvent("closed");
   }
 

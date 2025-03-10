@@ -17,7 +17,6 @@ class Positioner {
    * @param {string} options.alignment - Alignment (start, center, end)
    * @param {HTMLElement} options.container - Container to constrain element within
    * @param {boolean} options.flip - Whether to flip placement if not enough space
-   * @param {boolean} options.shift - Whether to shift element to keep in view
    * @param {number} options.sideOffset - Space between reference and element in the primary axis
    * @param {number} options.alignOffset - Offset in the secondary/alignment axis
    * @param {boolean} options.trapFocus - Whether to trap focus within the element
@@ -44,7 +43,6 @@ class Positioner {
       alignment = "center",
       container = document.body,
       flip = true,
-      shift = true,
       alignOffset = 0,
       sideOffset = 8,
     } = options;
@@ -101,16 +99,6 @@ class Positioner {
         x = flippedPosition.x;
         y = flippedPosition.y;
       }
-    }
-
-    // Shift to keep in view if needed
-    if (shift) {
-      const shiftedPosition = this.getShiftedPosition(
-        { x, y, width: elementRect.width, height: elementRect.height },
-        containerRect,
-      );
-      x = shiftedPosition.x;
-      y = shiftedPosition.y;
     }
 
     return {
@@ -228,29 +216,6 @@ class Positioner {
   }
 
   /**
-   * Shift position to ensure element stays within container bounds
-   */
-  static getShiftedPosition(elementCoords, containerRect) {
-    let { x, y, width, height } = elementCoords;
-
-    // Constrain horizontally
-    if (x < containerRect.left) {
-      x = containerRect.left;
-    } else if (x + width > containerRect.right) {
-      x = containerRect.right - width;
-    }
-
-    // Constrain vertically
-    if (y < containerRect.top) {
-      y = containerRect.top;
-    } else if (y + height > containerRect.bottom) {
-      y = containerRect.bottom - height;
-    }
-
-    return { x, y };
-  }
-
-  /**
    * Apply position to an element
    */
   static applyPosition(element, x, y) {
@@ -277,6 +242,31 @@ class Positioner {
       height: rect.height,
     };
   }
+
+  static findScrollableParents(element) {
+    const scrollableParents = [];
+    let currentElement = element;
+
+    while (currentElement && currentElement !== document.body) {
+      const style = window.getComputedStyle(currentElement);
+      if (
+        style.overflow === "auto" ||
+        style.overflow === "scroll" ||
+        style.overflowX === "auto" ||
+        style.overflowX === "scroll" ||
+        style.overflowY === "auto" ||
+        style.overflowY === "scroll"
+      ) {
+        scrollableParents.push(currentElement);
+      }
+      currentElement = currentElement.parentElement;
+    }
+
+    // Always include window for global scrolling
+    scrollableParents.push(window);
+
+    return scrollableParents;
+  }
 }
 
 /**
@@ -292,7 +282,6 @@ class PositionerInstance {
       placement: "bottom",
       alignment: "center",
       flip: true,
-      shift: true,
       alignOffset: 0,
       sideOffset: 8,
       trapFocus: false,
@@ -309,6 +298,7 @@ class PositionerInstance {
     this.isActive = false;
     this.isInPortal = false;
     this.originalParent = null;
+    this.originalStyles = null;
     this.eventHandlers = {
       scroll: this.handleScroll.bind(this),
       resize: this.handleResize.bind(this),
@@ -328,12 +318,20 @@ class PositionerInstance {
 
   /**
    * Move element to portal container (usually document.body)
-   * This avoids issues with overflow hidden containers
    */
   moveToPortal() {
     if (!this.isInPortal && this.options.usePortal) {
       // Store reference to original parent
       this.originalParent = this.element.parentElement;
+
+      // Save original styles before modifying
+      this.originalStyles = {
+        position: this.element.style.position,
+        top: this.element.style.top,
+        left: this.element.style.left,
+        zIndex: this.element.style.zIndex,
+        margin: this.element.style.margin,
+      };
 
       // Move to portal container (usually body)
       this.options.portalContainer.appendChild(this.element);
@@ -376,6 +374,8 @@ class PositionerInstance {
     if (!this.isActive) return;
 
     this.isActive = false;
+
+    this.restoreElement();
     this.detachEventListeners();
 
     if (this.options.trapFocus && this.focusTrapActive) {
@@ -383,6 +383,41 @@ class PositionerInstance {
     }
 
     return this;
+  }
+
+  /**
+   * Restore element to its original parent and reset positioning styles
+   */
+  restoreElement() {
+    // Move element back to original parent if it's in portal
+    if (this.isInPortal && this.element && this.originalParent) {
+      try {
+        this.originalParent.appendChild(this.element);
+
+        // Restore original styles if we saved them
+        if (this.originalStyles) {
+          this.element.style.position = this.originalStyles.position;
+          this.element.style.top = this.originalStyles.top;
+          this.element.style.left = this.originalStyles.left;
+          this.element.style.zIndex = this.originalStyles.zIndex;
+          this.element.style.margin = this.originalStyles.margin;
+        } else {
+          // Fallback if originalStyles wasn't set for some reason
+          this.element.style.position = "";
+          this.element.style.top = "";
+          this.element.style.left = "";
+          this.element.style.zIndex = "";
+          this.element.style.margin = "";
+        }
+
+        this.isInPortal = false;
+      } catch (e) {
+        console.warn(
+          "SaladUI: Failed to restore element to original parent",
+          e,
+        );
+      }
+    }
   }
 
   /**
@@ -413,6 +448,33 @@ class PositionerInstance {
     this.options = { ...this.options, ...options };
     this.update();
     return this;
+  }
+
+  /**
+   * Destroy the positioner instance and clean up references
+   */
+  destroy() {
+    this.deactivate();
+
+    // Clear any remaining throttle timeouts
+    if (this.scrollThrottleTimeout) {
+      clearTimeout(this.scrollThrottleTimeout);
+    }
+
+    if (this.resizeThrottleTimeout) {
+      clearTimeout(this.resizeThrottleTimeout);
+    }
+
+    // Clean up references
+    this.element = null;
+    this.reference = null;
+    this.originalParent = null;
+    this.originalStyles = null; // Add this line to clean up original styles
+    this.options = null;
+    this.eventHandlers = null;
+    this.scrollThrottleTimeout = null;
+    this.resizeThrottleTimeout = null;
+    this.resizeObserver = null;
   }
 
   /**
@@ -448,10 +510,16 @@ class PositionerInstance {
    * Attach event listeners for scroll and resize events
    */
   attachEventListeners() {
-    // Watch for scroll events that might affect positioning
-    window.addEventListener("scroll", this.eventHandlers.scroll, {
-      passive: true,
+    // Get all scrollable parents of the reference element
+    this.scrollableParents = Positioner.findScrollableParents(this.reference);
+
+    // Attach scroll event listeners to all scrollable parents
+    this.scrollableParents.forEach((parent) => {
+      parent.addEventListener("scroll", this.eventHandlers.scroll, {
+        passive: true,
+      });
     });
+
     window.addEventListener("resize", this.eventHandlers.resize, {
       passive: true,
     });
@@ -480,7 +548,11 @@ class PositionerInstance {
    * Detach event listeners
    */
   detachEventListeners() {
-    window.removeEventListener("scroll", this.eventHandlers.scroll);
+    if (this.scrollableParents) {
+      this.scrollableParents.forEach((parent) => {
+        parent.removeEventListener("scroll", this.eventHandlers.scroll);
+      });
+    }
     window.removeEventListener("resize", this.eventHandlers.resize);
 
     // Remove outside click handler if it was added
@@ -627,51 +699,6 @@ class PositionerInstance {
     return Array.from(
       this.element.querySelectorAll(this.options.focusableSelector),
     );
-  }
-
-  /**
-   * Destroy the positioner instance and clean up references
-   */
-  destroy() {
-    this.deactivate();
-
-    // Move element back to original parent if it's in portal
-    if (this.isInPortal && this.element && this.originalParent) {
-      try {
-        this.originalParent.appendChild(this.element);
-
-        // Reset positioning styles
-        this.element.style.position = "";
-        this.element.style.top = "";
-        this.element.style.left = "";
-        this.element.style.zIndex = "";
-        this.element.style.margin = "";
-      } catch (e) {
-        console.warn(
-          "SaladUI: Failed to restore element to original parent",
-          e,
-        );
-      }
-    }
-
-    // Clear any remaining throttle timeouts
-    if (this.scrollThrottleTimeout) {
-      clearTimeout(this.scrollThrottleTimeout);
-    }
-
-    if (this.resizeThrottleTimeout) {
-      clearTimeout(this.resizeThrottleTimeout);
-    }
-
-    // Clean up references
-    this.element = null;
-    this.reference = null;
-    this.originalParent = null;
-    this.options = null;
-    this.eventHandlers = null;
-    this.scrollThrottleTimeout = null;
-    this.resizeThrottleTimeout = null;
-    this.resizeObserver = null;
   }
 }
 
