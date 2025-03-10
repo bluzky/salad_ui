@@ -19,7 +19,7 @@ class RadioGroupComponent extends Component {
       "Home",
       "End",
       "Enter",
-      "Space",
+      " ",
     ];
 
     // Setup events and initialize
@@ -37,7 +37,7 @@ class RadioGroupComponent extends Component {
           ArrowDown: () => this.navigateRadio(1),
           Home: () => this.navigateRadio("first"),
           End: () => this.navigateRadio("last"),
-          Space: () => this.selectFocusedRadio(),
+          " ": () => this.selectFocusedRadio(),
           Enter: () => this.selectFocusedRadio(),
         },
         transitions: {
@@ -90,36 +90,14 @@ class RadioGroupComponent extends Component {
 
   setupItemEvents() {
     this.radioItems.forEach((item) => {
-      const input = item.querySelector('input[type="radio"]');
-      if (!input) return;
-
-      // Set data attributes for state tracking
-      item.setAttribute("data-value", input.value);
-      item.setAttribute("data-part", "item");
-      item.setAttribute("data-state", input.checked ? "checked" : "unchecked");
-
-      // Make the wrapper properly focusable
-      item.setAttribute("tabindex", input.checked ? "0" : "-1");
-
       // Handle click events directly on the wrapper
       item.addEventListener("click", (e) => {
         e.preventDefault();
         // Don't trigger if clicking on a disabled item
-        if (item.getAttribute("data-disabled") === "true" || input.disabled) {
+        if (item.dataset.disabled === "true") {
           return;
         }
-        this.selectRadio(input.value);
-      });
-
-      // Handle keyboard events on the wrapper
-      item.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          if (item.getAttribute("data-disabled") === "true" || input.disabled) {
-            return;
-          }
-          this.selectRadio(input.value);
-        }
+        this.selectRadio(item.dataset.value);
       });
     });
   }
@@ -148,6 +126,11 @@ class RadioGroupComponent extends Component {
       // Update the native input (for form submission)
       if (input) {
         input.checked = isSelected;
+
+        // Ensure name attribute is set for form submission
+        if (this.options.name && !input.name) {
+          input.name = this.options.name;
+        }
       }
 
       // Update the item state
@@ -200,8 +183,7 @@ class RadioGroupComponent extends Component {
   // Helper methods
   getEnabledRadios() {
     return Array.from(this.radioItems).filter((item) => {
-      const input = item.querySelector('input[type="radio"]');
-      return input && !input.disabled;
+      return item.dataset.disabled != "true";
     });
   }
 
@@ -212,8 +194,7 @@ class RadioGroupComponent extends Component {
 
   getSelectedRadio() {
     return Array.from(this.radioItems).find((item) => {
-      const input = item.querySelector('input[type="radio"]');
-      return input && input.checked;
+      return item.dataset.state == "checked";
     });
   }
 
