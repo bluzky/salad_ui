@@ -37,6 +37,11 @@ defmodule SaladUI.Helpers do
     end
   end
 
+  # Helper to encode data to JSON
+  def json(data) do
+    Phoenix.json_library().encode!(data)
+  end
+
   # normalize_integer
   def normalize_integer(value) when is_integer(value), do: value
 

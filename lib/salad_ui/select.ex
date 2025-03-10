@@ -64,7 +64,7 @@ defmodule SaladUI.Select do
 
     assigns =
       assigns
-      |> assign(:event_map, Jason.encode!(event_map))
+      |> assign(:event_map, json(event_map))
       |> assign(:builder, %{
         id: assigns.id,
         name: assigns.name,
@@ -74,7 +74,7 @@ defmodule SaladUI.Select do
       })
       |> assign(
         :options,
-        Jason.encode!(%{
+        json(%{
           initialValue: assigns.value,
           name: assigns.name,
           multiple: assigns.multiple,
