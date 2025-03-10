@@ -44,10 +44,10 @@ defmodule SaladUI.Tabs do
 
     assigns =
       assigns
-      |> assign(:event_map, Jason.encode!(event_map))
+      |> assign(:event_map, json(event_map))
       |> assign(
         :options,
-        Jason.encode!(%{
+        json(%{
           defaultValue: assigns.default
         })
       )

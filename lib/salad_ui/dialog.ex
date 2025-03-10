@@ -62,11 +62,11 @@ defmodule SaladUI.Dialog do
 
     assigns =
       assigns
-      |> assign(:event_map, Jason.encode!(event_map))
+      |> assign(:event_map, json(event_map))
       |> assign(initial_state: if(assigns.open, do: "open", else: "closed"))
       |> assign(
         options:
-          Jason.encode!(%{
+          json(%{
             closeOnOutsideClick: assigns.close_on_outside_click,
             animations: get_animation_config()
           })
