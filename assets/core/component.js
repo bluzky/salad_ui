@@ -1,4 +1,4 @@
-// saladui/core.js
+// saladui/core/component.js
 /**
  * Base Component class for SaladUI framework
  * Provides state management, event handling, and ARIA support

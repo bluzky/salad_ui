@@ -1,7 +1,7 @@
 // saladui/components/popover.js
-import Component from "../core";
+import Component from "../core/component";
 import SaladUI from "../index";
-import Positioner from "../utils/positioner";
+import Positioner from "../core/positioner";
 
 class PopoverComponent extends Component {
   constructor(el, hookContext) {

@@ -1,4 +1,4 @@
-// saladui/utils/positioner.js
+// saladui/core/positioner.js
 
 /**
  * Positioning utility for SaladUI components

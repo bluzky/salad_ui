@@ -1,5 +1,5 @@
 // saladui/components/tabs.js
-import Component from "../core";
+import Component from "../core/component";
 import SaladUI from "../index";
 
 class TabsComponent extends Component {
