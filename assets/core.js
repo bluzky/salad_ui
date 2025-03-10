@@ -3,6 +3,104 @@
  * Base Component class for SaladUI framework
  * Provides state management, event handling, and ARIA support
  */
+
+/**
+ * # Defining State Machines in SaladUI
+ *
+ * State machines are the core of SaladUI components, controlling component behavior and UI states.
+ * Here's how to define them:
+ *
+ * ## Basic Structure
+ *
+ * ```javascript
+ * getStateMachine() {
+ *   return {
+ *     idle: {                         // State name
+ *       enter: "onIdleEnter",         // Handler called when entering state
+ *       exit: "onIdleExit",           // Handler called when exiting state
+ *       keyMap: {                     // Key event mappings
+ *         ArrowDown: "open",          // Maps key to transition
+ *         Enter: this.someFunction    // Maps key to function
+ *       },
+ *       transitions: {                // Possible transitions from this state
+ *         open: "open",               // Event name → target state
+ *       },
+ *       hidden: {                     // Control visibility of parts
+ *         content: true,              // Hide the "content" part in this state
+ *       }
+ *     },
+ *     // Additional states...
+ *   };
+ * }
+ * ```
+ *
+ * ## Key Components
+ *
+ * 1. States: Named objects (like `idle`, `open`, `closed`) representing component states
+ * 2. Enter/Exit Handlers: Functions called when entering/exiting a state
+ * 3. Transitions: Define valid state changes and their triggers
+ * 4. KeyMap: Map keyboard events to transitions or functions
+ * 5. Hidden: Control part visibility in each state
+ *
+ * ## State Handler Types
+ *
+ * State handlers (enter/exit) can be defined in multiple ways:
+ *
+ * 1. String method name:
+ *    - `enter: "onIdleEnter"` - Calls the method `this.onIdleEnter(params)`
+ *    - The method must exist on the component instance
+ *
+ * 2. Function reference:
+ *    - `enter: function(params) { ... }` - Inline anonymous function
+ *    - `enter: this.customEnterHandler` - Reference to instance method
+ *    - Function receives state params and 'this' is bound to component
+ *
+ * 3. Null or undefined:
+ *    - If handler is not specified, no action is taken
+ *
+ * ## Transition Handler Types
+ *
+ * Transitions define how the component moves between states:
+ *
+ * 1. String target state:
+ *    - `open: "opened"` - Directly transitions to "opened" state
+ *
+ * 2. Function returning target state:
+ *    - ```
+ *      open: function(params) {
+ *        return params.condition ? "state1" : "state2";
+ *      }
+ *      ```
+ *    - Dynamically determines target state based on parameters
+ *
+ * 3. Conditional object:
+ *    - ```
+ *      open: {
+ *        "condition1": "state1",
+ *        "condition2": "state2",
+ *        "default": "fallbackState"
+ *      }
+ *      ```
+ *    - Tests conditions against params and selects matching state
+ *    - "default" serves as fallback when no condition matches
+ *
+ * 4. Null or undefined:
+ *    - If transition is not defined for an event, nothing happens
+ *
+ * ## Handler Methods
+ *
+ * Handlers can be either string references to methods or direct function references:
+ *
+ * ```javascript
+ * onOpenEnter(params = {}) {
+ *   // Logic when entering "open" state
+ *   this.pushEvent("opened");
+ * }
+ * ```
+ *
+ * State machines work with the `AriaManager` to automatically update ARIA attributes as states change.
+ */
+
 class Component {
   constructor(el, hookContext) {
     this.el = el;
@@ -330,10 +428,12 @@ class Component {
   updatePartsVisibility() {
     const hiddenParts = this.stateMachine[this.state].hidden || {};
     Object.entries(hiddenParts).forEach(([part, hidden]) => {
-      const partElement = this.getPart(part);
-      if (partElement) {
-        partElement.hidden = hidden;
-      }
+      const partElements = this.getAllParts(part);
+      partElements.forEach((element) => {
+        if (element) {
+          element.hidden = hidden;
+        }
+      });
     });
   }
 
@@ -344,6 +444,10 @@ class Component {
 
   getPart(name) {
     return this.el.querySelector(`[data-part="${name}"]`);
+  }
+
+  getAllParts(name) {
+    return this.el.querySelectorAll(`[data-part="${name}"]`);
   }
 
   getPartId(partName) {
@@ -415,7 +519,101 @@ class Component {
 }
 
 /**
- * Extracted ARIA management into a separate class
+ * # Defining ARIA Configuration in SaladUI
+ *
+ * ARIA configurations enable automatic accessibility attribute management based on component state.
+ * Here's how to define them:
+ *
+ * ## Basic Structure
+ *
+ * ```javascript
+ * getAriaConfig() {
+ *   return {
+ *     trigger: {                       // Part name (matching data-part attribute)
+ *       all: {                         // Attributes applied in all states
+ *         haspopup: "listbox",         // Sets aria-haspopup="listbox"
+ *         role: "button"               // Sets role="button"
+ *       },
+ *       open: {                        // State-specific attributes
+ *         expanded: "true",            // Sets aria-expanded="true" in open state
+ *       },
+ *       closed: {                      // Another state
+ *         expanded: "false",           // Sets aria-expanded="false" in closed state
+ *       }
+ *     },
+ *     content: {                       // Another component part
+ *       all: {
+ *         role: "listbox",             // Applied regardless of state
+ *       },
+ *       open: {
+ *         hidden: "false",             // Sets aria-hidden="false" in open state
+ *       },
+ *       closed: {
+ *         hidden: "true",              // Sets aria-hidden="true" in closed state
+ *       }
+ *     }
+ *   };
+ * }
+ * ```
+ *
+ * ## Key Components
+ *
+ * 1. Part Selectors: Keys matching data-part attributes in your component
+ * 2. State Selectors: `all` and specific state names (like `open`, `closed`)
+ * 3. ARIA Attributes: Key-value pairs defining attributes to apply
+ *
+ * ## Attribute Value Types
+ *
+ * Attribute values can be defined in multiple ways:
+ *
+ * 1. String values:
+ *    - `role: "dialog"` - Sets the attribute directly
+ *
+ * 2. Function returning string:
+ *    - ```
+ *      labelledby: (part) => `${part.id}-header`
+ *      ```
+ *    - Function receives the DOM element of the current part
+ *    - Dynamically determines value when applied
+ *    - Function is bound to component instance (`this` refers to component)
+ *    - Useful for referencing IDs of other parts or accessing part properties
+ *
+ * 3. Null or undefined:
+ *    - Skips applying the attribute
+ *
+ * ## Special Handling
+ *
+ * 1. Role attribute:
+ *    - `role: "dialog"` - Sets role directly without aria- prefix
+ *
+ * 2. Other attributes:
+ *    - All other attributes are prefixed with "aria-"
+ *    - `hidden: "true"` becomes `aria-hidden="true"`
+ *
+ * ## Dynamic Part IDs
+ *
+ * Use helper methods to reference other parts by ID:
+ *
+ * ```javascript
+ * getAriaConfig() {
+ *   return {
+ *     "content-panel": {
+ *       open: {
+ *         labelledby: () => this.getPartId("title"),
+ *         describedby: (part) => `${part.id}-desc`
+ *       }
+ *     }
+ *   };
+ * }
+ * ```
+ *
+ * The `getPartId()` method ensures parts have unique IDs and returns them.
+ *
+ * ## Update Timing
+ *
+ * - ARIA attributes are automatically applied after state transitions
+ * - Both global and state-specific attributes are applied
+ * - The AriaManager handles all updates based on this configuration
  */
 class AriaManager {
   constructor(component) {
@@ -426,13 +624,16 @@ class AriaManager {
   applyAriaAttributes(currentState) {
     if (!this.ariaConfig) return;
 
-    // Process each component part specified in aria config
     Object.entries(this.ariaConfig).forEach(([partName, states]) => {
-      const part = this.component.getPart(partName);
-      if (!part) return;
+      // Get all elements with this data-part, not just the first one
+      const parts = this.component.getAllParts(partName);
+      if (!parts || parts.length === 0) return;
 
-      this.applyGlobalAriaAttributes(part, states);
-      this.applyStateSpecificAriaAttributes(part, states, currentState);
+      // Apply attributes to all matching elements
+      parts.forEach((part) => {
+        this.applyGlobalAriaAttributes(part, states);
+        this.applyStateSpecificAriaAttributes(part, states, currentState);
+      });
     });
   }
 
