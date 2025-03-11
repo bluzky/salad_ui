@@ -14,13 +14,8 @@ class PopoverComponent extends Component {
       ? this.positioner.querySelector("[data-part='content']")
       : null;
 
-    this.isModal = this.options.modal || false;
-
     // Set keyboard navigation defaults
     this.config.preventDefaultKeys = ["Escape"];
-
-    // Initialize the positioner
-    this.initializePositioner();
   }
 
   getStateMachine() {
@@ -75,7 +70,7 @@ class PopoverComponent extends Component {
   }
 
   initializePositioner() {
-    if (this.positioner && this.trigger) {
+    if (this.positioner && this.trigger && !this.positionerInstance) {
       // Extract position config attributes
       const placement = this.positioner.getAttribute("data-side") || "bottom";
       const alignment = this.positioner.getAttribute("data-align") || "center";
@@ -107,11 +102,10 @@ class PopoverComponent extends Component {
     }
   }
 
-  setupComponentEvents() {
-    super.setupComponentEvents();
-  }
-
   onOpenEnter(params = {}) {
+    // Initialize the positioner
+    this.initializePositioner();
+
     // Simply activate the positioner if it exists
     if (this.positionerInstance) {
       this.updatePartsVisibility();
