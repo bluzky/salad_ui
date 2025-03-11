@@ -117,6 +117,7 @@ class Component {
     this.initEventMappings();
     this.initStateMachine();
     this.ariaManager = new AriaManager(this);
+    this.allParts = Array.from(this.el.querySelectorAll("[data-part]"));
     this.updateUI();
     this.updatePartsVisibility();
   }
@@ -264,6 +265,8 @@ class Component {
     // Execute enter handlers
     this.executeStateHandlers(nextState, "enter", params);
 
+    this.updatePartsVisibility();
+
     // Update UI
     this.updateUI();
   }
@@ -271,12 +274,7 @@ class Component {
   // Split from executeTransition
   executeStateHandlers(stateName, handlerType, params) {
     const stateConfig = this.stateMachine[stateName];
-    // update hidden state for parts
-    if (handlerType === "enter") {
-      this.updatePartsVisibility();
-    }
-
-    if (!stateConfig || !stateConfig[handlerType]) return;
+    if (!stateConfig) return;
 
     const handler = stateConfig[handlerType];
 
@@ -406,6 +404,8 @@ class Component {
         ...params,
         animated: true,
       });
+
+      this.updatePartsVisibility();
     }, duration);
   }
 
@@ -417,9 +417,7 @@ class Component {
   updateUI() {
     if (this.state === this.previousState) return;
 
-    this.el
-      .querySelectorAll("[data-part]")
-      .forEach((el) => el.setAttribute("data-state", this.state));
+    this.allParts.forEach((el) => el.setAttribute("data-state", this.state));
     this.el.setAttribute("data-state", this.state);
 
     this.ariaManager.applyAriaAttributes(this.state);
@@ -447,7 +445,7 @@ class Component {
   }
 
   getAllParts(name) {
-    return this.el.querySelectorAll(`[data-part="${name}"]`);
+    return this.allParts.filter((part) => part.dataset.part === name);
   }
 
   getPartId(partName) {

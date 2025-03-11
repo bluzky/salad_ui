@@ -75,7 +75,7 @@ class PopoverComponent extends Component {
   }
 
   initializePositioner() {
-    if (this.positioner && this.content && this.trigger) {
+    if (this.positioner && this.trigger) {
       // Extract position config attributes
       const placement = this.positioner.getAttribute("data-side") || "bottom";
       const alignment = this.positioner.getAttribute("data-align") || "center";
@@ -89,35 +89,32 @@ class PopoverComponent extends Component {
       );
 
       // Create the positioner instance
-      this.positionerInstance = Positioner.create(this.content, this.trigger, {
-        placement,
-        alignment,
-        flip: true,
-        sideOffset,
-        alignOffset,
-        trapFocus: true,
-        onEscape: () => this.transition("close"),
-        onOutsideClick: () => this.transition("close"),
-      });
+      this.positionerInstance = Positioner.create(
+        this.positioner,
+        this.trigger,
+        {
+          placement,
+          alignment,
+          flip: true,
+          sideOffset,
+          alignOffset,
+          portalContainer: document.querySelector(this.options.portalcontainer),
+          trapFocus: true,
+          onEscape: () => this.transition("close"),
+          onOutsideClick: () => this.transition("close"),
+        },
+      );
     }
   }
 
   setupComponentEvents() {
     super.setupComponentEvents();
-
-    // Handle click events on the trigger element
-    if (this.trigger) {
-      this.trigger.addEventListener("click", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        this.transition("toggle");
-      });
-    }
   }
 
   onOpenEnter(params = {}) {
     // Simply activate the positioner if it exists
     if (this.positionerInstance) {
+      this.updatePartsVisibility();
       this.positionerInstance.activate();
     }
 

@@ -51,6 +51,7 @@ defmodule SaladUI.Popover do
   attr :id, :string, required: true, doc: "Unique identifier for the popover"
   attr :open, :boolean, default: false, doc: "Whether the popover is initially open"
   attr :modal, :boolean, default: false, doc: "Whether to display an overlay behind the popover"
+  attr :"portal-container", :string, default: nil, doc: "The portal container to render the popover in"
   attr :class, :string, default: nil
   attr :"on-open", :any, default: nil, doc: "Handler for popover open event"
   attr :"on-close", :any, default: nil, doc: "Handler for popover close event"
@@ -72,7 +73,8 @@ defmodule SaladUI.Popover do
         :options,
         Jason.encode!(%{
           modal: assigns.modal,
-          animations: get_animation_config()
+          animations: get_animation_config(),
+          portalContainer: assigns[:"portal-container"]
         })
       )
 

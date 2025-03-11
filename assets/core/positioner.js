@@ -220,8 +220,9 @@ class Positioner {
    */
   static applyPosition(element, x, y) {
     element.style.position = "absolute";
-    element.style.top = `${y}px`;
-    element.style.left = `${x}px`;
+    element.style.transform = `translate(${x}px, ${y}px)`;
+    element.style.top = "0";
+    element.style.left = "0";
     element.style.margin = "0"; // Reset margins to avoid positioning issues
   }
 
@@ -285,8 +286,8 @@ class PositionerInstance {
       alignOffset: 0,
       sideOffset: 8,
       trapFocus: false,
-      usePortal: true, // New option to control portal usage
-      portalContainer: document.body, // Container to move element to
+      usePortal: true,
+      portalContainer: document.body,
       focusableSelector:
         'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
       onEscape: null,
@@ -294,11 +295,17 @@ class PositionerInstance {
       ...options,
     };
 
+    // handle case option is null
+    this.options.portalContainer =
+      this.options.portalContainer || document.body;
+
     // State
     this.isActive = false;
     this.isInPortal = false;
     this.originalParent = null;
     this.originalStyles = null;
+    this.animationFrameId = null; // Add this line for animation frame tracking
+
     this.eventHandlers = {
       scroll: this.handleScroll.bind(this),
       resize: this.handleResize.bind(this),
@@ -306,9 +313,6 @@ class PositionerInstance {
       outsideClick: this.handleOutsideClick.bind(this),
     };
 
-    // Throttling state
-    this.scrollThrottleTimeout = null;
-    this.resizeThrottleTimeout = null;
     this.resizeObserver = null;
 
     // Focus management
@@ -331,6 +335,7 @@ class PositionerInstance {
         left: this.element.style.left,
         zIndex: this.element.style.zIndex,
         margin: this.element.style.margin,
+        transform: this.element.style.transform,
       };
 
       // Move to portal container (usually body)
@@ -401,6 +406,7 @@ class PositionerInstance {
           this.element.style.left = this.originalStyles.left;
           this.element.style.zIndex = this.originalStyles.zIndex;
           this.element.style.margin = this.originalStyles.margin;
+          this.element.style.transform = this.originalStyles.transform || "";
         } else {
           // Fallback if originalStyles wasn't set for some reason
           this.element.style.position = "";
@@ -408,6 +414,7 @@ class PositionerInstance {
           this.element.style.left = "";
           this.element.style.zIndex = "";
           this.element.style.margin = "";
+          this.element.style.transform = "";
         }
 
         this.isInPortal = false;
@@ -456,13 +463,9 @@ class PositionerInstance {
   destroy() {
     this.deactivate();
 
-    // Clear any remaining throttle timeouts
-    if (this.scrollThrottleTimeout) {
-      clearTimeout(this.scrollThrottleTimeout);
-    }
-
-    if (this.resizeThrottleTimeout) {
-      clearTimeout(this.resizeThrottleTimeout);
+    // Cancel any pending animation frame
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
     }
 
     // Clean up references
@@ -472,8 +475,6 @@ class PositionerInstance {
     this.originalStyles = null; // Add this line to clean up original styles
     this.options = null;
     this.eventHandlers = null;
-    this.scrollThrottleTimeout = null;
-    this.resizeThrottleTimeout = null;
     this.resizeObserver = null;
   }
 
@@ -567,15 +568,10 @@ class PositionerInstance {
       this.resizeObserver = null;
     }
 
-    // Clear any pending throttle timeouts
-    if (this.scrollThrottleTimeout) {
-      clearTimeout(this.scrollThrottleTimeout);
-      this.scrollThrottleTimeout = null;
-    }
-
-    if (this.resizeThrottleTimeout) {
-      clearTimeout(this.resizeThrottleTimeout);
-      this.resizeThrottleTimeout = null;
+    // Cancel any pending animation frame
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
     }
 
     if (this.options.trapFocus) {
@@ -584,25 +580,27 @@ class PositionerInstance {
   }
 
   /**
-   * Handle scroll events with throttling
+   * Handle scroll events with requestAnimationFrame
    */
   handleScroll() {
-    if (this.scrollThrottleTimeout) return;
-    this.scrollThrottleTimeout = setTimeout(() => {
-      this.update();
-      this.scrollThrottleTimeout = null;
-    }, 16); // ~60fps throttle rate
+    if (this.animationFrameId === null) {
+      this.animationFrameId = requestAnimationFrame(() => {
+        this.update();
+        this.animationFrameId = null;
+      });
+    }
   }
 
   /**
-   * Handle window resize events with throttling
+   * Handle window resize events with requestAnimationFrame
    */
   handleResize() {
-    if (this.resizeThrottleTimeout) return;
-    this.resizeThrottleTimeout = setTimeout(() => {
-      this.update();
-      this.resizeThrottleTimeout = null;
-    }, 16); // ~60fps throttle rate
+    if (this.animationFrameId === null) {
+      this.animationFrameId = requestAnimationFrame(() => {
+        this.update();
+        this.animationFrameId = null;
+      });
+    }
   }
 
   /**
