@@ -1,7 +1,7 @@
-// saladui/components/popover.js
+// saladui/components/popover.js (Refactored)
 import Component from "../core/component";
 import SaladUI from "../index";
-import Positioner from "../core/positioner";
+import PositionedElement from "../core/positioned-element";
 
 class PopoverComponent extends Component {
   constructor(el, hookContext) {
@@ -35,7 +35,6 @@ class PopoverComponent extends Component {
         enter: "onOpenEnter",
         keyMap: {
           Escape: "close",
-          Tab: this.handleTabKey,
         },
         transitions: {
           close: "closed",
@@ -69,9 +68,9 @@ class PopoverComponent extends Component {
     };
   }
 
-  initializePositioner() {
-    if (this.positioner && this.trigger && !this.positionerInstance) {
-      // Extract position config attributes
+  initializePositionedElement() {
+    if (this.positioner && this.trigger && !this.positionedElement) {
+      // Extract position config attributes from DOM
       const placement = this.positioner.getAttribute("data-side") || "bottom";
       const alignment = this.positioner.getAttribute("data-align") || "center";
       const sideOffset = parseInt(
@@ -83,19 +82,19 @@ class PopoverComponent extends Component {
         10,
       );
 
-      // Create the positioner instance
-      this.positionerInstance = Positioner.create(
+      // Create the positioned element with our modular architecture
+      this.positionedElement = new PositionedElement(
         this.positioner,
         this.trigger,
         {
           placement,
           alignment,
-          flip: true,
           sideOffset,
           alignOffset,
+          flip: true,
+          usePortal: true,
           portalContainer: document.querySelector(this.options.portalcontainer),
           trapFocus: true,
-          onEscape: () => this.transition("close"),
           onOutsideClick: () => this.transition("close"),
         },
       );
@@ -103,31 +102,31 @@ class PopoverComponent extends Component {
   }
 
   onOpenEnter(params = {}) {
-    // Initialize the positioner
-    this.initializePositioner();
+    // Initialize the positioned element
+    this.initializePositionedElement();
 
-    // Simply activate the positioner if it exists
-    if (this.positionerInstance) {
+    // Activate the positioned element
+    if (this.positionedElement) {
       this.updatePartsVisibility();
-      this.positionerInstance.activate();
+      this.positionedElement.activate();
     }
 
     this.pushEvent("opened");
   }
 
   onClosedEnter() {
-    if (this.positionerInstance) {
-      this.positionerInstance.deactivate();
+    if (this.positionedElement) {
+      this.positionedElement.deactivate();
     }
 
     this.pushEvent("closed");
   }
 
   beforeDestroy() {
-    // Clean up the positioner instance if it exists
-    if (this.positionerInstance) {
-      this.positionerInstance.destroy();
-      this.positionerInstance = null;
+    // Clean up the positioned element
+    if (this.positionedElement) {
+      this.positionedElement.destroy();
+      this.positionedElement = null;
     }
   }
 }
