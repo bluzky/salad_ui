@@ -9,100 +9,145 @@ defmodule SaladUI.Dialog do
 
   ## Examples:
 
-        <.dialog :if={@live_action in [:new, :edit]} id="pro-dialog" show on_cancel={JS.navigate(~p"/p")}>
-          <.dialog_content class="sm:max-w-[425px]">
-            <.dialog_header>
-              <.dialog_title>Edit profile</.dialog_title>
-              <.dialog_description>
-                Make changes to your profile here click save when you're done
-              </.dialog_description>
-            </.dialog_header>
-              <div class_name="grid gap-4 py-4">
-                <div class_name="grid grid-cols_4 items-center gap-4">
-                  <.label for="name" class-name="text-right">
-                    name
-                  </.label>
-                  <input id="name" value="pedro duarte" class-name="col-span-3" />
-                </div>
-                <div class="grid grid-cols-4 items_center gap-4">
-                  <.label for="username" class="text-right">
-                    username
-                  </.label>
-                  <input id="username" value="@peduarte" class="col-span-3" />
-                </div>
-              </div>
-              <.dialog_footer>
-                <.button type="submit">save changes</.button>
-              </.dialog_footer>
-              </.dialog_content>
-        </.dialog>
+      <.dialog id="pro-dialog" open={true}>
+        <.dialog_trigger>Click me</.dialog_trigger>
+        <.dialog_content class="sm:max-w-[425px]">
+          <.dialog_header>
+            <.dialog_title>Edit profile</.dialog_title>
+            <.dialog_description>
+              Make changes to your profile here click save when you're done
+            </.dialog_description>
+          </.dialog_header>
+          <div class_name="grid gap-4 py-4">
+            <div class_name="grid grid-cols_4 items-center gap-4">
+              <.label for="name" class-name="text-right">
+                name
+              </.label>
+              <input id="name" value="pedro duarte" class-name="col-span-3" />
+            </div>
+            <div class="grid grid-cols-4 items_center gap-4">
+              <.label for="username" class="text-right">
+                username
+              </.label>
+              <input id="username" value="@peduarte" class="col-span-3" />
+            </div>
+          </div>
+          <.dialog_footer>
+            <.button type="submit">save changes</.button>
+          </.dialog_footer>
+        </.dialog_content>
+      </.dialog>
   """
+
   attr :id, :string, required: true
-  attr :show, :boolean, default: false
-  attr :on_cancel, JS, default: %JS{}
+  attr :open, :boolean, default: false
   attr :class, :string, default: nil
+  attr :"close-on-outside-click", :boolean, default: true
+
+  attr :"on-open", :any,
+    default: nil,
+    doc: "Handler for dialog open event. Support both server event handler and JS command struct"
+
+  attr :"on-close", :any,
+    default: nil,
+    doc: "Handler for dialog closed event. Support both server event handler and JS command struct"
+
   slot :inner_block, required: true
 
   def dialog(assigns) do
+    event_map =
+      %{}
+      |> add_event_mapping(assigns, "opened", :"on-open")
+      |> add_event_mapping(assigns, "closed", :"on-close")
+
+    assigns =
+      assigns
+      |> assign(:event_map, json(event_map))
+      |> assign(initial_state: if(assigns.open, do: "open", else: "closed"))
+      |> assign(
+        options:
+          json(%{
+            closeOnOutsideClick: assigns[:"close-on-outside-click"],
+            animations: get_animation_config()
+          })
+      )
+
     ~H"""
     <div
       id={@id}
-      phx-mounted={@show && JS.exec("phx-show-modal", to: "##{@id}")}
-      phx-show-modal={show_modal(@id)}
-      phx-hide-modal={@on_cancel |> hide_modal(@id)}
-      class="relative z-50 hidden group/dialog"
+      class="relative z-50 group/dialog"
+      data-component="dialog"
+      data-options={@options}
+      data-state={@initial_state}
+      data-event-mappings={@event_map}
+      phx-hook="SaladUI"
+      data-part="root"
     >
-      <div
-        id={"#{@id}-bg"}
-        class="fixed inset-0 bg-black/80  group-data-[state=open]/dialog:animate-in group-data-[state=closed]/dialog:animate-out group-data-[state=closed]/dialog:fade-out-0 group-data-[state=open]/dialog:fade-in-0"
-        aria-hidden="true"
-      />
-      <div
-        class="fixed inset-0 flex items-center justify-center overflow-y-auto"
-        role="dialog"
-        aria-modal="true"
-        tabindex="0"
-      >
-        <.focus_wrap
-          id={"#{@id}-wrap"}
-          phx-window-keydown={JS.exec("phx-hide-modal", to: "##{@id}")}
-          phx-key="escape"
-          phx-click-away={JS.exec("phx-hide-modal", to: "##{@id}")}
-          class="w-full sm:max-w-[425px]"
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            tabindex="0"
-            class={
-              classes([
-                "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 group-data-[state=open]/dialog:animate-in group-data-[state=closed]/dialog:animate-out group-data-[state=closed]/dialog:fade-out-0 group-data-[state=open]/dialog:fade-in-0 group-data-[state=closed]/dialog:zoom-out-95 group-data-[state=open]/dialog:zoom-in-95 group-data-[state=closed]/dialog:slide-out-to-left-1/2 group-data-[state=closed]/dialog:slide-out-to-top-[48%] group-data-[state=open]/dialog:slide-in-from-left-1/2 group-data-[state=open]/dialog:slide-in-from-top-[48%] sm:rounded-lg",
-                @class
-              ])
-            }
-          >
-            {render_slot(@inner_block)}
+      {render_slot(@inner_block)}
+    </div>
+    """
+  end
 
-            <button
-              type="button"
-              class="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none group-data-[state=open]/dialog:bg-accent group-data-[state=open]/dialog:text-muted-foreground"
-              phx-click={JS.exec("phx-hide-modal", to: "##{@id}")}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-5 h-5"
-              >
-                <path d="M18 6 6 18"></path>
-                <path d="m6 6 12 12"></path>
-              </svg>
-              <span class="sr-only">Close</span>
-            </button>
-          </div>
-        </.focus_wrap>
+  attr :class, :string, default: nil
+  attr :as_tag, :any, default: "div"
+  slot :inner_block, required: true
+  attr :rest, :global
+
+  def dialog_trigger(assigns) do
+    ~H"""
+    <.dynamic
+      data-part="trigger"
+      data-action="open"
+      tag={@as_tag}
+      class={classes(["", @class])}
+      {@rest}
+    >
+      {render_slot(@inner_block)}
+    </.dynamic>
+    """
+  end
+
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+
+  def dialog_content(assigns) do
+    ~H"""
+    <div data-part="content" tabindex="0" hidden>
+      <div
+        data-part="overlay"
+        class="fixed inset-0 bg-black/80  data-[state=open]/dialog:animate-in data-[state=closed]/dialog:animate-out data-[state=closed]/dialog:fade-out-0 data-[state=open]/dialog:fade-in-0"
+      />
+
+      <div
+        data-part="content-panel"
+        class={
+          classes([
+            "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
+            @class
+          ])
+        }
+      >
+        {render_slot(@inner_block)}
+
+        <button
+          type="button"
+          data-part="close-trigger"
+          data-action="close"
+          class="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]/dialog:bg-accent data-[state=open]/dialog:text-muted-foreground"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5"
+          >
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+          <span class="sr-only">Close</span>
+        </button>
       </div>
     </div>
     """
@@ -152,19 +197,12 @@ defmodule SaladUI.Dialog do
     """
   end
 
-  def show_modal(js \\ %JS{}, id) when is_binary(id) do
-    js
-    |> JS.set_attribute({"data-state", "open"}, to: "##{id}")
-    |> JS.show(to: "##{id}", transition: {"_", "_", "_"}, time: 130)
-    |> JS.add_class("overflow-hidden", to: "body")
-    |> JS.focus_first(to: "##{id}-content")
-  end
-
-  def hide_modal(js \\ %JS{}, id) do
-    js
-    |> JS.set_attribute({"data-state", "closed"}, to: "##{id}")
-    |> JS.hide(to: "##{id}", transition: {"_", "_", "_"}, time: 130)
-    |> JS.remove_class("overflow-hidden", to: "body")
-    |> JS.pop_focus()
+  defp get_animation_config do
+    %{
+      "open_to_closed" => %{
+        duration: 130,
+        target_part: "content"
+      }
+    }
   end
 end

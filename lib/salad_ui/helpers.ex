@@ -28,6 +28,20 @@ defmodule SaladUI.Helpers do
     assign(assigns, value: value)
   end
 
+  # Helper function to add event mappings
+  def add_event_mapping(map \\ %{}, assigns, event, key) do
+    if assigns[key] do
+      Map.put(map, event, assigns[key])
+    else
+      map
+    end
+  end
+
+  # Helper to encode data to JSON
+  def json(data) do
+    Phoenix.json_library().encode!(data)
+  end
+
   # normalize_integer
   def normalize_integer(value) when is_integer(value), do: value
 
