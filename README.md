@@ -21,7 +21,9 @@
 <a href="https://github.com/bluzky/salad_ui/commits/main"><img src="https://img.shields.io/github/last-commit/bluzky/salad_ui.svg" alt="Last Updated"></a>
 </div>
 
-## [Demo storybook](https://salad-storybook.fly.dev/)
+## 🚧 V1 is under development, for V0 source code, checkout branch v0
+
+## [Demo storybook v0](https://salad-storybook.fly.dev/)
 
 <a href='https://ko-fi.com/F1F1CEZ91' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi2.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
