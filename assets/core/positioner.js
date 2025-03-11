@@ -1,4 +1,4 @@
-// saladui/core/positioner.js - with scroll event fix
+// saladui/core/positioner.js - with always passing scroll events
 
 /**
  * Enhanced Positioning utility for SaladUI components
@@ -288,7 +288,6 @@ class PositionerInstance {
       trapFocus: false,
       usePortal: true,
       portalContainer: document.body,
-      passScrollEvents: true, // New option to control scroll event behavior
       focusableSelector:
         'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
       onEscape: null,
@@ -305,16 +304,16 @@ class PositionerInstance {
     this.isInPortal = false;
     this.originalParent = null;
     this.originalStyles = null;
-    this.animationFrameId = null; // Add this line for animation frame tracking
+    this.animationFrameId = null;
 
     this.eventHandlers = {
       scroll: this.handleScroll.bind(this),
       resize: this.handleResize.bind(this),
       keydown: this.handleKeyDown.bind(this),
       outsideClick: this.handleOutsideClick.bind(this),
-      wheel: this.handleWheel.bind(this), // New handler for wheel events
-      touchstart: this.handleTouchStart.bind(this), // New handler for touch events
-      touchmove: this.handleTouchMove.bind(this), // New handler for touch events
+      wheel: this.handleWheel.bind(this),
+      touchstart: this.handleTouchStart.bind(this),
+      touchmove: this.handleTouchMove.bind(this),
     };
 
     this.resizeObserver = null;
@@ -350,10 +349,8 @@ class PositionerInstance {
       this.element.style.position = "absolute";
       this.element.style.zIndex = "9999";
 
-      // Allow scroll events to pass through if enabled
-      if (this.options.passScrollEvents) {
-        this.setupScrollPassthrough();
-      }
+      // Always setup scroll passthrough
+      this.setupScrollPassthrough();
 
       this.isInPortal = true;
     }
@@ -423,18 +420,13 @@ class PositionerInstance {
    */
   handleWheel(event) {
     // Let the wheel event pass through to the element underneath
-    if (this.options.passScrollEvents) {
-      // Prevent default only if we're handling it ourselves
-      event.stopPropagation();
-    }
+    event.stopPropagation();
   }
 
   /**
    * Store touch start position for handling touch events
    */
   handleTouchStart(event) {
-    if (!this.options.passScrollEvents) return;
-
     // Store initial touch position for touchmove handling
     if (event.touches.length === 1) {
       this.touchStartY = event.touches[0].clientY;
@@ -445,7 +437,7 @@ class PositionerInstance {
    * Handle touch move events to allow scrolling underneath
    */
   handleTouchMove(event) {
-    if (!this.options.passScrollEvents || !this.touchStartY) return;
+    if (!this.touchStartY) return;
 
     // Determine scroll direction
     const touchY = event.touches[0].clientY;
@@ -508,8 +500,8 @@ class PositionerInstance {
 
     this.isActive = false;
 
-    // Clean up scroll passthrough if it was set up
-    if (this.options.passScrollEvents && this.isInPortal) {
+    // Always clean up scroll passthrough if it was in portal
+    if (this.isInPortal) {
       this.cleanupScrollPassthrough();
     }
 
@@ -588,22 +580,7 @@ class PositionerInstance {
    * @param {Object} options - New positioning options
    */
   updateOptions(options = {}) {
-    // Check if passScrollEvents option is changing
-    const scrollPassthroughChanged =
-      this.options.passScrollEvents !== options.passScrollEvents &&
-      options.passScrollEvents !== undefined;
-
     this.options = { ...this.options, ...options };
-
-    // Update scroll passthrough if the option changed and we're in portal
-    if (scrollPassthroughChanged && this.isInPortal) {
-      if (this.options.passScrollEvents) {
-        this.setupScrollPassthrough();
-      } else {
-        this.cleanupScrollPassthrough();
-      }
-    }
-
     this.update();
     return this;
   }
@@ -763,13 +740,38 @@ class PositionerInstance {
   deactivateFocusTrap() {
     this.focusTrapActive = false;
 
-    // Return focus to previously focused element
+    // Return focus to previously focused element only if it's in the viewport
     if (this.previouslyFocused && this.previouslyFocused.focus) {
       setTimeout(() => {
-        this.previouslyFocused.focus();
+        // Check if the element is in the viewport
+        if (this.isElementInViewport(this.previouslyFocused)) {
+          this.previouslyFocused.focus();
+        }
         this.previouslyFocused = null;
       }, 0);
     }
+  }
+
+  /**
+   * Check if an element is in the viewport
+   * @param {HTMLElement} element - The element to check
+   * @returns {boolean} - Whether the element is in the viewport
+   */
+  isElementInViewport(element) {
+    if (!element || !document.body.contains(element)) {
+      return false;
+    }
+
+    const rect = element.getBoundingClientRect();
+
+    // Check if element is within viewport
+    return (
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <=
+        (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
   }
 
   handleKeyDown(event) {
