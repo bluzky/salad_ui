@@ -36,9 +36,9 @@ defmodule SaladUI.Select do
   attr :value, :any, default: nil, doc: "The value of the select"
   attr :"default-value", :any, default: nil, doc: "The default value of the select"
   attr :multiple, :boolean, default: false, doc: "Allow multiple selection"
-  attr :on_value_changed, :any, default: nil, doc: "Handler for value changed event"
-  attr :on_open, :any, default: nil, doc: "Handler for select open event"
-  attr :on_close, :any, default: nil, doc: "Handler for select closed event"
+  attr :"on-value-changed", :any, default: nil, doc: "Handler for value changed event"
+  attr :"on-open", :any, default: nil, doc: "Handler for select open event"
+  attr :"on-close", :any, default: nil, doc: "Handler for select closed event"
 
   attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
@@ -58,9 +58,9 @@ defmodule SaladUI.Select do
     # Collect event mappings
     event_map =
       %{}
-      |> add_event_mapping(assigns, "value-changed", :on_value_changed)
-      |> add_event_mapping(assigns, "opened", :on_open)
-      |> add_event_mapping(assigns, "closed", :on_close)
+      |> add_event_mapping(assigns, "value-changed", :"on-value-changed")
+      |> add_event_mapping(assigns, "opened", :"on-open")
+      |> add_event_mapping(assigns, "closed", :"on-close")
 
     assigns =
       assigns

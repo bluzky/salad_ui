@@ -1,7 +1,7 @@
 // saladui/index.js
-import Component from './core';
-import { registry } from './factory';
-import { SaladUIHook } from './hook';
+import Component from "./core/component";
+import { registry } from "./core/factory";
+import { SaladUIHook } from "./core/hook";
 
 function register(type, ComponentClass) {
   registry.register(type, ComponentClass);
@@ -10,7 +10,7 @@ function register(type, ComponentClass) {
 const SaladUI = {
   Component,
   register,
-  SaladUIHook
+  SaladUIHook,
 };
 
 export default SaladUI;

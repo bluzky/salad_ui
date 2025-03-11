@@ -1,5 +1,5 @@
 // saladui/components/radio_group.js
-import Component from "../core";
+import Component from "../core/component";
 import SaladUI from "../index";
 
 class RadioGroupComponent extends Component {

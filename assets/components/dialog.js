@@ -1,5 +1,5 @@
 // saladui/components/dialog.js - Refactored version
-import Component from "../core";
+import Component from "../core/component";
 import SaladUI from "../index";
 
 class DialogComponent extends Component {

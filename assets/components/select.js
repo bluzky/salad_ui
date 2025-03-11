@@ -1,5 +1,5 @@
 // saladui/components/select.js
-import Component from "../core";
+import Component from "../core/component";
 import SaladUI from "../index";
 
 class SelectComponent extends Component {

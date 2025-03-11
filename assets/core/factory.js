@@ -1,4 +1,4 @@
-// saladui/factory.js
+// saladui/core/factory.js
 class ComponentRegistry {
   constructor() {
     this.registry = new Map();

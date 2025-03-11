@@ -1,5 +1,5 @@
-// saladui/hook.js
-import { registry } from './factory';
+// saladui/core/hook.js
+import { registry } from "./factory";
 
 const SaladUIHook = {
   mounted() {
@@ -9,10 +9,12 @@ const SaladUIHook = {
 
   initComponent() {
     const el = this.el;
-    const componentType = el.getAttribute('data-component');
+    const componentType = el.getAttribute("data-component");
 
     if (!componentType) {
-      console.error("SaladUI: Component element is missing data-component attribute");
+      console.error(
+        "SaladUI: Component element is missing data-component attribute",
+      );
       return;
     }
 
@@ -41,7 +43,7 @@ const SaladUIHook = {
 
   destroyed() {
     this.component = null;
-  }
+  },
 };
 
 export { SaladUIHook };
