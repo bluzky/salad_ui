@@ -1,4 +1,4 @@
-// saladui/core/positioner.js
+// saladui/core/positioner.js - with scroll event fix
 
 /**
  * Enhanced Positioning utility for SaladUI components
@@ -288,6 +288,7 @@ class PositionerInstance {
       trapFocus: false,
       usePortal: true,
       portalContainer: document.body,
+      passScrollEvents: true, // New option to control scroll event behavior
       focusableSelector:
         'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
       onEscape: null,
@@ -311,6 +312,9 @@ class PositionerInstance {
       resize: this.handleResize.bind(this),
       keydown: this.handleKeyDown.bind(this),
       outsideClick: this.handleOutsideClick.bind(this),
+      wheel: this.handleWheel.bind(this), // New handler for wheel events
+      touchstart: this.handleTouchStart.bind(this), // New handler for touch events
+      touchmove: this.handleTouchMove.bind(this), // New handler for touch events
     };
 
     this.resizeObserver = null;
@@ -336,6 +340,7 @@ class PositionerInstance {
         zIndex: this.element.style.zIndex,
         margin: this.element.style.margin,
         transform: this.element.style.transform,
+        pointerEvents: this.element.style.pointerEvents,
       };
 
       // Move to portal container (usually body)
@@ -345,7 +350,130 @@ class PositionerInstance {
       this.element.style.position = "absolute";
       this.element.style.zIndex = "9999";
 
+      // Allow scroll events to pass through if enabled
+      if (this.options.passScrollEvents) {
+        this.setupScrollPassthrough();
+      }
+
       this.isInPortal = true;
+    }
+  }
+
+  /**
+   * Setup scroll event passthrough for the portal element
+   */
+  setupScrollPassthrough() {
+    // Apply pointer-events: none to the portal element to allow scroll events to pass through
+    this.element.style.pointerEvents = "none";
+
+    // Set pointer-events: auto on interactive elements inside the portal
+    const interactiveElements = this.element.querySelectorAll(
+      this.options.focusableSelector + ", [data-interactive]",
+    );
+
+    interactiveElements.forEach((el) => {
+      el.style.pointerEvents = "auto";
+    });
+
+    // Add wheel and touch event listeners to handle scroll passthrough
+    this.element.addEventListener("wheel", this.eventHandlers.wheel, {
+      passive: false,
+    });
+    this.element.addEventListener("touchstart", this.eventHandlers.touchstart, {
+      passive: false,
+    });
+    this.element.addEventListener("touchmove", this.eventHandlers.touchmove, {
+      passive: false,
+    });
+  }
+
+  /**
+   * Clean up scroll event passthrough setup
+   */
+  cleanupScrollPassthrough() {
+    if (!this.element) return;
+
+    // Remove wheel and touch event listeners
+    this.element.removeEventListener("wheel", this.eventHandlers.wheel);
+    this.element.removeEventListener(
+      "touchstart",
+      this.eventHandlers.touchstart,
+    );
+    this.element.removeEventListener("touchmove", this.eventHandlers.touchmove);
+
+    // Reset pointer-events styles
+    if (this.originalStyles && this.originalStyles.pointerEvents) {
+      this.element.style.pointerEvents = this.originalStyles.pointerEvents;
+    } else {
+      this.element.style.pointerEvents = "";
+    }
+
+    // Reset pointer-events on interactive elements
+    const interactiveElements = this.element.querySelectorAll(
+      this.options.focusableSelector + ", [data-interactive]",
+    );
+
+    interactiveElements.forEach((el) => {
+      el.style.pointerEvents = "";
+    });
+  }
+
+  /**
+   * Handle wheel events on the portal element
+   */
+  handleWheel(event) {
+    // Let the wheel event pass through to the element underneath
+    if (this.options.passScrollEvents) {
+      // Prevent default only if we're handling it ourselves
+      event.stopPropagation();
+    }
+  }
+
+  /**
+   * Store touch start position for handling touch events
+   */
+  handleTouchStart(event) {
+    if (!this.options.passScrollEvents) return;
+
+    // Store initial touch position for touchmove handling
+    if (event.touches.length === 1) {
+      this.touchStartY = event.touches[0].clientY;
+    }
+  }
+
+  /**
+   * Handle touch move events to allow scrolling underneath
+   */
+  handleTouchMove(event) {
+    if (!this.options.passScrollEvents || !this.touchStartY) return;
+
+    // Determine scroll direction
+    const touchY = event.touches[0].clientY;
+    const deltaY = this.touchStartY - touchY;
+    this.touchStartY = touchY;
+
+    // Find the element that should receive the scroll
+    const elementsFromPoint = document.elementsFromPoint(
+      event.touches[0].clientX,
+      event.touches[0].clientY,
+    );
+
+    // Find first scrollable parent that is not our portal element
+    const scrollableElement = elementsFromPoint.find((el) => {
+      if (el === this.element || this.element.contains(el)) return false;
+
+      const style = window.getComputedStyle(el);
+      return (
+        style.overflowY === "auto" ||
+        style.overflowY === "scroll" ||
+        el === document.documentElement
+      );
+    });
+
+    if (scrollableElement) {
+      // Allow the event to propagate to scrollable element
+      scrollableElement.scrollTop += deltaY;
+      event.preventDefault();
     }
   }
 
@@ -380,6 +508,11 @@ class PositionerInstance {
 
     this.isActive = false;
 
+    // Clean up scroll passthrough if it was set up
+    if (this.options.passScrollEvents && this.isInPortal) {
+      this.cleanupScrollPassthrough();
+    }
+
     this.restoreElement();
     this.detachEventListeners();
 
@@ -407,6 +540,8 @@ class PositionerInstance {
           this.element.style.zIndex = this.originalStyles.zIndex;
           this.element.style.margin = this.originalStyles.margin;
           this.element.style.transform = this.originalStyles.transform || "";
+          this.element.style.pointerEvents =
+            this.originalStyles.pointerEvents || "";
         } else {
           // Fallback if originalStyles wasn't set for some reason
           this.element.style.position = "";
@@ -415,6 +550,7 @@ class PositionerInstance {
           this.element.style.zIndex = "";
           this.element.style.margin = "";
           this.element.style.transform = "";
+          this.element.style.pointerEvents = "";
         }
 
         this.isInPortal = false;
@@ -452,7 +588,22 @@ class PositionerInstance {
    * @param {Object} options - New positioning options
    */
   updateOptions(options = {}) {
+    // Check if passScrollEvents option is changing
+    const scrollPassthroughChanged =
+      this.options.passScrollEvents !== options.passScrollEvents &&
+      options.passScrollEvents !== undefined;
+
     this.options = { ...this.options, ...options };
+
+    // Update scroll passthrough if the option changed and we're in portal
+    if (scrollPassthroughChanged && this.isInPortal) {
+      if (this.options.passScrollEvents) {
+        this.setupScrollPassthrough();
+      } else {
+        this.cleanupScrollPassthrough();
+      }
+    }
+
     this.update();
     return this;
   }
@@ -472,15 +623,14 @@ class PositionerInstance {
     this.element = null;
     this.reference = null;
     this.originalParent = null;
-    this.originalStyles = null; // Add this line to clean up original styles
+    this.originalStyles = null;
     this.options = null;
     this.eventHandlers = null;
     this.resizeObserver = null;
+    this.touchStartY = null;
   }
 
-  /**
-   * Calculate and apply position to the element
-   */
+  // The rest of the class methods remain unchanged
   calculateAndApplyPosition() {
     const position = Positioner.position(
       this.element,
@@ -507,9 +657,6 @@ class PositionerInstance {
     return position;
   }
 
-  /**
-   * Attach event listeners for scroll and resize events
-   */
   attachEventListeners() {
     // Get all scrollable parents of the reference element
     this.scrollableParents = Positioner.findScrollableParents(this.reference);
@@ -545,9 +692,6 @@ class PositionerInstance {
     }
   }
 
-  /**
-   * Detach event listeners
-   */
   detachEventListeners() {
     if (this.scrollableParents) {
       this.scrollableParents.forEach((parent) => {
@@ -579,9 +723,6 @@ class PositionerInstance {
     }
   }
 
-  /**
-   * Handle scroll events with requestAnimationFrame
-   */
   handleScroll() {
     if (this.animationFrameId === null) {
       this.animationFrameId = requestAnimationFrame(() => {
@@ -591,9 +732,6 @@ class PositionerInstance {
     }
   }
 
-  /**
-   * Handle window resize events with requestAnimationFrame
-   */
   handleResize() {
     if (this.animationFrameId === null) {
       this.animationFrameId = requestAnimationFrame(() => {
@@ -603,9 +741,6 @@ class PositionerInstance {
     }
   }
 
-  /**
-   * Activate focus trap within the element
-   */
   activateFocusTrap() {
     this.previouslyFocused = document.activeElement;
     this.focusTrapActive = true;
@@ -625,9 +760,6 @@ class PositionerInstance {
     }, 50);
   }
 
-  /**
-   * Deactivate focus trap and restore previous focus
-   */
   deactivateFocusTrap() {
     this.focusTrapActive = false;
 
@@ -640,9 +772,6 @@ class PositionerInstance {
     }
   }
 
-  /**
-   * Handle keydown events for focus trapping
-   */
   handleKeyDown(event) {
     // Handle Tab key to trap focus
     if (event.key === "Tab") {
@@ -672,10 +801,6 @@ class PositionerInstance {
     }
   }
 
-  /**
-   * Handle outside click events
-   * @param {Event} event - The click or touch event
-   */
   handleOutsideClick(event) {
     // Skip if not active
     if (!this.isActive) return;
@@ -690,9 +815,6 @@ class PositionerInstance {
     }
   }
 
-  /**
-   * Get all focusable elements within the positioned element
-   */
   getFocusableElements() {
     return Array.from(
       this.element.querySelectorAll(this.options.focusableSelector),

@@ -143,6 +143,7 @@ defmodule SaladUI.Popover do
       data-side-offset={@side_offset}
       data-align-offset={@align_offset}
       class="absolute z-50"
+      hidden
     >
       <div
         data-part="content"
@@ -165,7 +166,7 @@ defmodule SaladUI.Popover do
   defp get_animation_config do
     %{
       "open_to_closed" => %{
-        duration: 140,
+        duration: 130,
         target_part: "content"
       }
     }
