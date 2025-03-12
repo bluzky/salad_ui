@@ -1,14 +1,44 @@
 defmodule SaladUI.Badge do
-  @moduledoc false
+  @moduledoc """
+  Implementation of badge component for displaying short labels, statuses, or counts.
+
+  Badges are small UI elements typically used to highlight status, categories, or counts
+  in a compact format. They are designed to be visually distinct and draw attention to
+  important information.
+
+  ## Examples:
+
+      <.badge>New</.badge>
+      <.badge variant="secondary">Beta</.badge>
+      <.badge variant="destructive">Error</.badge>
+      <.badge variant="outline">Version 1.0</.badge>
+
+      <div class="flex gap-2">
+        <.badge>Default</.badge>
+        <.badge variant="secondary">Secondary</.badge>
+        <.badge variant="destructive">Destructive</.badge>
+        <.badge variant="outline">Outline</.badge>
+      </div>
+  """
   use SaladUI, :component
 
   @doc """
-  Renders a badge component
+  Renders a badge component.
+
+  ## Options
+
+  * `:class` - Additional CSS classes to apply to the badge.
+  * `:variant` - The visual style of the badge. Available variants:
+    * `"default"` - Primary color with white text (default)
+    * `"secondary"` - Secondary color with contrasting text
+    * `"destructive"` - Typically red, for warning or error states
+    * `"outline"` - Bordered style with no background
 
   ## Examples
 
       <.badge>Badge</.badge>
-      <.badge variant="destructive">Badge</.badge>
+      <.badge variant="destructive">Warning</.badge>
+      <.badge variant="outline" class="text-sm">Custom</.badge>
   """
   attr :class, :string, default: nil
 
