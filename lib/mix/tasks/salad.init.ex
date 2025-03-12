@@ -28,28 +28,29 @@ defmodule Mix.Tasks.Salad.Init do
   end
 
   defp execute_init(opts \\ []) do
-    component_path = prompt_component_path()
+    {app_name, app_path} = prompt_application()
+    component_path = prompt_component_path(app_name, app_path)
     color_scheme = prompt_color_scheme()
-    init(component_path, color_scheme, opts)
+
+    init(app_name, app_path, component_path, color_scheme, opts)
   end
 
-  defp init(component_path, color_scheme, opts) do
+  defp init(app_name, app_path, component_path, color_scheme, opts) do
     env = Atom.to_string(Mix.env())
-    app_name = Mix.Project.config()[:app] |> Atom.to_string() |> String.downcase()
     assets_path = build_assets_path(env)
-    application_file_path = Path.join(File.cwd!(), "lib/#{app_name}/application.ex")
+    application_file_path = Path.join([File.cwd!(), app_path, "lib/#{app_name}/application.ex"])
 
     File.mkdir_p!(component_path)
 
-    with :ok <- write_config(component_path),
+    with :ok <- write_config(component_path, app_name),
          :ok <- init_tw_merge_cache(application_file_path),
-         :ok <- patch_css(color_scheme, assets_path),
-         :ok <- patch_js(assets_path),
-         :ok <- copy_tailwind_colors(assets_path),
-         :ok <- patch_tailwind_config(opts),
+         :ok <- patch_css(color_scheme, assets_path, app_path),
+         :ok <- patch_js(assets_path, app_path),
+         :ok <- copy_tailwind_colors(assets_path, app_path),
+         :ok <- patch_tailwind_config(opts, app_path),
          :ok <- maybe_write_helpers_module(component_path, app_name, opts),
          :ok <- maybe_write_component_module(component_path, app_name, opts),
-         :ok <- install_tailwind_animate(opts) do
+         :ok <- install_tailwind_animate(opts, app_path) do
       if opts[:as_lib] do
         Mix.shell().info("Done. Now you can use any component by `import SaladUI.<ComponentName>` in your project.")
       else
@@ -60,8 +61,39 @@ defmodule Mix.Tasks.Salad.Init do
     end
   end
 
-  defp prompt_component_path do
-    default_path = build_default_component_path()
+  defp prompt_application do
+    if Mix.Project.umbrella?() do
+      project_apps = build_project_apps()
+
+      prompt = """
+      Enter the umbrella app to integrate SaladUI: (1)
+      #{Enum.map(project_apps, fn {i, a} -> "#{i}- #{a.name}\n" end)}
+      """
+
+      response =
+        prompt
+        |> Mix.shell().prompt()
+        |> String.trim()
+        |> case do
+          "" -> "1"
+          response -> response
+        end
+
+      case Map.fetch(project_apps, response) do
+        {:ok, %{name: name, path: path}} ->
+          {name, path}
+
+        :error ->
+          Mix.shell().error("Invalid application option #{response}")
+          prompt_application()
+      end
+    else
+      {:ok, {parse_app_name(Mix.Project.config()[:app]), ""}}
+    end
+  end
+
+  defp prompt_component_path(app_name, app_path) do
+    default_path = build_default_component_path(app_name, app_path)
 
     "Enter the path to the components folder (#{default_path}):"
     |> Mix.shell().prompt()
@@ -91,18 +123,34 @@ defmodule Mix.Tasks.Salad.Init do
     end
   end
 
-  defp write_config(component_path) do
-    write_dev_config(component_path)
+  defp build_project_apps do
+    Mix.Project.apps_paths()
+    |> Enum.with_index(1)
+    |> Map.new(fn {{name, path}, i} -> {Integer.to_string(i), %{name: parse_app_name(name), path: path}} end)
   end
 
-  defp write_dev_config(component_path) do
+  defp parse_app_name(app_name), do: app_name |> Atom.to_string() |> String.downcase()
+
+  defp write_config(component_path, app_name) do
+    write_dev_config(component_path, app_name)
+  end
+
+  defp write_dev_config(component_path, app_name) do
+    component_module_prefix =
+      app_name
+      |> Macro.camelize()
+      |> Kernel.<>("Web.Components")
+
     Mix.shell().info("Writing components path to dev.exs")
     dev_config_path = Path.join(File.cwd!(), "config/dev.exs")
 
     components_config = [
       salad_ui: %{
         description: "Path to install SaladUI components",
-        values: [components_path: "Path.join(File.cwd!(), \"#{component_path}\")"]
+        values: [
+          components_path: "Path.join(File.cwd!(), \"#{component_path}\")",
+          component_module_prefix: "\"#{component_module_prefix}\""
+        ]
       }
     ]
 
@@ -135,8 +183,8 @@ defmodule Mix.Tasks.Salad.Init do
     end
   end
 
-  defp patch_css(color_scheme, assets_path) do
-    app_css_path = Path.join(File.cwd!(), "assets/css/app.css")
+  defp patch_css(color_scheme, assets_path, app_path) do
+    app_css_path = Path.join([File.cwd!(), app_path, "assets/css/app.css"])
     css_color_scheme_path = Path.join([assets_path, "colors", "#{color_scheme}.css"])
 
     if File.exists?(app_css_path) do
@@ -148,8 +196,8 @@ defmodule Mix.Tasks.Salad.Init do
     end
   end
 
-  defp patch_js(assets_path) do
-    app_js_path = Path.join(File.cwd!(), "assets/js/app.js")
+  defp patch_js(assets_path, app_path) do
+    app_js_path = Path.join([File.cwd!(), app_path, "assets/js/app.js"])
     js_file_path = Path.join(assets_path, "server-events.js")
 
     if File.exists?(app_js_path) do
@@ -161,10 +209,10 @@ defmodule Mix.Tasks.Salad.Init do
     end
   end
 
-  defp copy_tailwind_colors(assets_path) do
+  defp copy_tailwind_colors(assets_path, app_path) do
     Mix.shell().info("Copying tailwind.colors.json to assets folder")
     source_path = Path.join(assets_path, "tailwind.colors.json")
-    target_path = Path.join(File.cwd!(), "assets/tailwind.colors.json")
+    target_path = Path.join([File.cwd!(), app_path, "assets/tailwind.colors.json"])
 
     unless File.exists?(target_path) do
       File.cp!(source_path, target_path)
@@ -173,9 +221,9 @@ defmodule Mix.Tasks.Salad.Init do
     :ok
   end
 
-  defp patch_tailwind_config(opts) do
+  defp patch_tailwind_config(opts, app_path) do
     Mix.shell().info("Patching tailwind.config.js")
-    tailwind_config_path = Path.join(File.cwd!(), "assets/tailwind.config.js")
+    tailwind_config_path = Path.join([File.cwd!(), app_path, "assets/tailwind.config.js"])
 
     if File.exists?(tailwind_config_path) do
       Patcher.patch_tailwind_config(tailwind_config_path, opts)
@@ -217,12 +265,14 @@ defmodule Mix.Tasks.Salad.Init do
     File.write!(target_path, source_code)
   end
 
-  defp install_tailwind_animate(opts) do
+  defp install_tailwind_animate(opts, app_path) do
     tag = Keyword.get(opts, :tailwind_animate_version, @default_tailwind_animate_version)
     Mix.shell().info("Downloading tailwindcss-animate.js v#{tag}")
 
     url = "https://raw.githubusercontent.com/jamiebuilds/tailwindcss-animate/refs/tags/v#{tag}/index.js"
-    output_path = Keyword.get(opts, :output_path, Path.join(File.cwd!(), "assets/vendor/tailwindcss-animate.js"))
+
+    output_path =
+      Keyword.get(opts, :output_path, Path.join([File.cwd!(), app_path, "assets/vendor/tailwindcss-animate.js"]))
 
     :inets.start()
     :ssl.start()
@@ -257,8 +307,10 @@ defmodule Mix.Tasks.Salad.Init do
     |> Path.expand()
   end
 
-  defp build_default_component_path do
-    app_name = Mix.Project.config()[:app] |> Atom.to_string() |> String.downcase()
-    String.replace(@default_components_path, "%APP_NAME%", app_name)
+  defp build_default_component_path(app_name, app_path) do
+    Path.join([
+      app_path,
+      String.replace(@default_components_path, "%APP_NAME%", app_name)
+    ])
   end
 end
