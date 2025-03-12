@@ -123,49 +123,45 @@ It's also important to note that you must format your code with `mix format` bef
 
 ## List of components
 
-- ✅ Accordion
-- ✅ Alert
-- ✅ Alert Dialog
-- ✅ Avatar
-- ✅ Badge
-- ✅ Breadcrumb
-- ✅ Button
-- ✅ Card
-- [ ] Carousel
-- ✅ Chart
-- ✅ Checkbox
-- ✅ Collapsible
-- [ ] Combobox
-- [ ] Command
-- [ ] Context Menu
-- ✅ Dialog
-- [ ] Drawer
-- ✅ Dropdown Menu
-- ✅ Form
-- ✅ Hover Card
-- ✅ Icon
-- ✅ Input
-- [ ] Input OTP
-- ✅ Label
-- ✅ Menu
-- ✅ Pagination
-- ✅ Popover
-- ✅ Progress
-- ✅ Radio Group
-- ✅ Scroll Area
-- ✅ Select
-- ✅ Separator
-- ✅ Sheet
-- ✅ Sidebar
-- ✅ Skeleton
-- ✅ Slider
-- ✅ Switch
-- ✅ Table
-- ✅ Tabs
-- ✅ Textarea
-- ✅ Toggle
-- ✅ Toggle Group
-- ✅ Tooltip
+| Component      | v0   | v1   |
+|----------------|------|------|
+| Accordion      | ✅    |      |
+| Alert          | ✅    | ✅     |
+| Alert Dialog   | ✅    |      |
+| Avatar         | ✅    | ✅     |
+| Badge          | ✅    | ✅     |
+| Breadcrumb     | ✅    | ✅     |
+| Button         | ✅    | ✅     |
+| Card           | ✅    | ✅     |
+| Carousel       | ❌    |      |
+| Checkbox       | ✅    |      |
+| Collapsible    | ✅    |      |
+| Combobox       | ❌    |      |
+| Command        | ❌    |      |
+| Context Menu   | ❌    |      |
+| Dialog         | ✅    | ✅     |
+| Drawer         | ❌    |      |
+| Dropdown Menu  | ✅    |      |
+| Form           | ✅    |      |
+| Hover Card     | ✅    | ✅      |
+| Input          | ✅    |      |
+| Input OTP      | ❌    |      |
+| Label          | ✅    |      |
+| Pagination     | ✅    |      |
+| Popover        | ✅    | ✅     |
+| Progress       | ✅    |      |
+| Radio Group    | ✅    | ✅     |
+| Scroll Area    | ✅    |      |
+| Select         | ✅    | ✅     |
+| Separator      | ✅    |      |
+| Sheet          | ✅    |      |
+| Skeleton       | ✅    | ✅     |
+| Slider         | ✅    |      |
+| Switch         | ✅    |      |
+| Table          | ✅    |      |
+| Tabs           | ✅    | ✅     |
+| Textarea       | ✅    |      |
+| Tooltip        | ✅    |      |
 
 ## 🌟 Contributors
 
