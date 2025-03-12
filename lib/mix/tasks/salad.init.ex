@@ -88,7 +88,7 @@ defmodule Mix.Tasks.Salad.Init do
           prompt_application()
       end
     else
-      {:ok, {parse_app_name(Mix.Project.config()[:app]), ""}}
+      {parse_app_name(Mix.Project.config()[:app]), ""}
     end
   end
 
