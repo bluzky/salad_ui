@@ -1,26 +1,30 @@
 defmodule SaladUI.Card do
   @moduledoc """
-  Implement of card components from https://ui.shadcn.com/docs/components/card
+  Card components for containing content and actions.
+
+  Cards provide a flexible container for displaying content with support for headers,
+  footers, and various content layouts. They organize information and actions consistently.
   """
   use SaladUI, :component
 
   @doc """
-  Card component
+  Renders a card container.
 
   ## Examples:
 
-        <.card>
-          <.card_header>
-            <.card_title>Card title</.card_title>
-            <.card_description>Card subtitle</.card_description>
-          </.card_header>
-          <.card_content>
-            Card text
-          </.card_content>
-          <.card_footer>
-            <.button>Button</.button>
-          </.card_footer>
-        </.card>
+      <.card>
+        <.card_header>
+          <.card_title>Account Settings</.card_title>
+          <.card_description>Manage your account settings.</.card_description>
+        </.card_header>
+        <.card_content>
+          <p>Your account details and preferences.</p>
+        </.card_content>
+        <.card_footer>
+          <.button variant="outline">Cancel</.button>
+          <.button>Save</.button>
+        </.card_footer>
+      </.card>
   """
 
   attr :class, :string, default: nil
@@ -35,6 +39,9 @@ defmodule SaladUI.Card do
     """
   end
 
+  @doc """
+  Renders a card header section for title and description.
+  """
   attr :class, :string, default: nil
   slot :inner_block, required: true
   attr :rest, :global
@@ -47,6 +54,9 @@ defmodule SaladUI.Card do
     """
   end
 
+  @doc """
+  Renders a card title within the header section.
+  """
   attr :class, :string, default: nil
   slot :inner_block, required: true
   attr :rest, :global
@@ -59,6 +69,9 @@ defmodule SaladUI.Card do
     """
   end
 
+  @doc """
+  Renders a card description within the header section.
+  """
   attr :class, :string, default: nil
   slot :inner_block, required: true
   attr :rest, :global
@@ -71,6 +84,9 @@ defmodule SaladUI.Card do
     """
   end
 
+  @doc """
+  Renders the main content area of the card.
+  """
   attr :class, :string, default: nil
   slot :inner_block, required: true
   attr :rest, :global
@@ -83,6 +99,9 @@ defmodule SaladUI.Card do
     """
   end
 
+  @doc """
+  Renders a footer section for the card, typically containing actions.
+  """
   attr :class, :string, default: nil
   slot :inner_block, required: true
   attr :rest, :global
