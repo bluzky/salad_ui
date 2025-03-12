@@ -1,4 +1,4 @@
-// saladui/core/positioner.js
+// saladui/core/positioner.js - Updated to use fixed positioning
 /**
  * Core Positioning utility for SaladUI components
  * Handles pure positioning calculations without side effects
@@ -89,10 +89,10 @@ class Positioner {
    * @param {number} y - Y coordinate
    */
   static applyPosition(element, x, y) {
-    element.style.position = "absolute";
-    element.style.transform = `translate(${x}px, ${y}px)`;
-    element.style.top = "0";
-    element.style.left = "0";
+    element.style.position = "fixed";
+    // element.style.transform = `translate(${x}px, ${y}px)`;
+    element.style.top = y + "px";
+    element.style.left = x + "px";
     element.style.margin = "0"; // Reset margins to avoid positioning issues
   }
 
@@ -160,6 +160,12 @@ class Positioner {
         }
         break;
     }
+
+    console.log("elementRect", {
+      top: referenceRect.top,
+      left: referenceRect.left,
+    });
+    console.log("referenceRect", { x: referenceRect.x, y: referenceRect.y });
 
     return { x, y };
   }

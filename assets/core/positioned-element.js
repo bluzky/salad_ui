@@ -1,4 +1,4 @@
-// saladui/core/positioned-element.js
+// saladui/core/positioned-element.js - Updated for fixed positioning
 /**
  * PositionedElement - Main positioning class that integrates all positioning utilities
  */
@@ -181,20 +181,9 @@ class PositionedElement {
       this.options,
     );
 
-    // Apply positioning
-    if (Portal.isInPortal(this.element)) {
-      // Account for scroll position if in portal
-      const scrollX = window.scrollX || window.pageXOffset;
-      const scrollY = window.scrollY || window.pageYOffset;
-
-      Positioner.applyPosition(
-        this.element,
-        position.x + scrollX,
-        position.y + scrollY,
-      );
-    } else {
-      Positioner.applyPosition(this.element, position.x, position.y);
-    }
+    // Apply positioning - with fixed positioning, we no longer need to
+    // adjust for scroll position since fixed is relative to the viewport
+    Positioner.applyPosition(this.element, position.x, position.y);
 
     // Update placement attribute
     this.element.setAttribute("data-placement", position.placement);
