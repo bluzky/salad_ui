@@ -134,7 +134,7 @@ It's also important to note that you must format your code with `mix format` bef
 | Button         | ✅    | ✅     |
 | Card           | ✅    | ✅     |
 | Carousel       | ❌    |      |
-| Checkbox       | ✅    |      |
+| Checkbox       | ✅    | ✅     |
 | Collapsible    | ✅    | ✅    |
 | Combobox       | ❌    |      |
 | Command        | ❌    |      |
@@ -142,25 +142,25 @@ It's also important to note that you must format your code with `mix format` bef
 | Dialog         | ✅    | ✅     |
 | Drawer         | ❌    |      |
 | Dropdown Menu  | ✅    |      |
-| Form           | ✅    |      |
+| Form           | ✅    | ✅     |
 | Hover Card     | ✅    | ✅      |
-| Input          | ✅    |      |
+| Input          | ✅    | ✅     |
 | Input OTP      | ❌    |      |
-| Label          | ✅    |      |
-| Pagination     | ✅    |      |
+| Label          | ✅    | ✅      |
+| Pagination     | ✅    | ✅     |
 | Popover        | ✅    | ✅     |
 | Progress       | ✅    |      |
 | Radio Group    | ✅    | ✅     |
-| Scroll Area    | ✅    |      |
+| Scroll Area    | ✅    | ✅    |
 | Select         | ✅    | ✅     |
-| Separator      | ✅    |      |
+| Separator      | ✅    | ✅     |
 | Sheet          | ✅    |      |
 | Skeleton       | ✅    | ✅     |
 | Slider         | ✅    |      |
 | Switch         | ✅    |      |
-| Table          | ✅    |      |
+| Table          | ✅    | ✅    |
 | Tabs           | ✅    | ✅     |
-| Textarea       | ✅    |      |
+| Textarea       | ✅    | ✅     |
 | Tooltip        | ✅    |      |
 
 ## 🌟 Contributors
