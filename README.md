@@ -153,14 +153,14 @@ It's also important to note that you must format your code with `mix format` bef
 | Radio Group    | ✅    | ✅     |
 | Scroll Area    | ✅    |      |
 | Select         | ✅    | ✅     |
-| Separator      | ✅    |      |
+| Separator      | ✅    | ✅     |
 | Sheet          | ✅    |      |
 | Skeleton       | ✅    | ✅     |
 | Slider         | ✅    |      |
 | Switch         | ✅    |      |
 | Table          | ✅    | ✅    |
 | Tabs           | ✅    | ✅     |
-| Textarea       | ✅    |      |
+| Textarea       | ✅    | ✅     |
 | Tooltip        | ✅    |      |
 
 ## 🌟 Contributors
