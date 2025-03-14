@@ -65,13 +65,6 @@ defmodule SaladUI.Select do
     assigns =
       assigns
       |> assign(:event_map, json(event_map))
-      |> assign(:builder, %{
-        id: assigns.id,
-        name: assigns.name,
-        value: assigns.value,
-        label: assigns.label,
-        placeholder: assigns.placeholder
-      })
       |> assign(
         :options,
         json(%{
@@ -93,7 +86,7 @@ defmodule SaladUI.Select do
       phx-hook="SaladUI"
       {@rest}
     >
-      {render_slot(@inner_block, @builder)}
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -155,8 +148,6 @@ defmodule SaladUI.Select do
     """
   end
 
-  attr :builder, :map, required: true, doc: "The builder of the select component"
-
   attr :class, :string, default: nil
   attr :side, :string, values: ~w(top bottom), default: "bottom"
   slot :inner_block, required: true
@@ -171,13 +162,10 @@ defmodule SaladUI.Select do
       end
 
     assigns =
-      assigns
-      |> assign(:position_class, position_class)
-      |> assign(:id, assigns.builder.id <> "-content")
+      assign(assigns, :position_class, position_class)
 
     ~H"""
     <div
-      id={@id}
       data-part="content"
       data-side={@side}
       hidden
@@ -222,7 +210,6 @@ defmodule SaladUI.Select do
     """
   end
 
-  attr :builder, :map, required: false, doc: "The builder of the select component"
   attr :value, :string, required: true
   attr :disabled, :boolean, default: false
   attr :class, :string, default: nil

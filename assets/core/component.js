@@ -310,10 +310,7 @@ class Component {
     this.previousState = prevState;
 
     // Start animation
-    this.performAnimation(targetElement, animOptions);
-
-    // Set up completion handler
-    this.completeAnimation(targetElement, animOptions, nextState, params);
+    this.performAnimation(targetElement, animOptions, nextState, params);
 
     // Update UI
     this.updateUI();
@@ -321,9 +318,8 @@ class Component {
 
   // Animation helper methods
   prepareAnimation(animConfig) {
-    const {
-      start_class,
-      end_class,
+    let {
+      animation,
       duration = 200,
       timing = null,
       target_part = null,
@@ -338,67 +334,46 @@ class Component {
       }
     }
 
+    // split animation classes
+    animation = (animation || ["", "", ""]).map((item) => item.split(/\s+/));
+
     return {
       targetElement,
       animOptions: {
-        start_class,
-        end_class,
+        animation,
         duration,
         timing,
       },
     };
   }
 
-  performAnimation(targetElement, animOptions) {
-    const { start_class, end_class, timing, duration } = animOptions;
+  performAnimation(targetElement, animOptions, nextState, params) {
+    const { transition, duration } = animOptions;
 
-    // Add start class
-    if (start_class) {
-      targetElement.classList.add(start_class);
-    }
+    let [transitionRun, transitionStart, transitionEnd] = transition || [
+      [],
+      [],
+      [],
+    ];
 
-    // Store original transition
-    let oldTransition = null;
+    this.addOrRemoveClasses(
+      targetElement,
+      transitionStart,
+      [].concat(transitionRun).concat(transitionEnd),
+    );
+    window.requestAnimationFrame(() => {
+      this.addOrRemoveClasses(targetElement, transitionRun, []);
+      window.requestAnimationFrame(() =>
+        this.addOrRemoveClasses(targetElement, transitionEnd, transitionStart),
+      );
+    });
 
-    if (timing) {
-      oldTransition = targetElement.style.transition;
-      targetElement.style.transition = `all ${duration}ms ${timing}`;
-
-      // Force reflow to ensure transition starts
-      void targetElement.offsetWidth;
-    }
-
-    // Store transition info for cleanup
-    targetElement._transitionInfo = { oldTransition };
-
-    // Add end class
-    if (end_class) {
-      targetElement.classList.add(end_class);
-    }
-  }
-
-  completeAnimation(targetElement, animOptions, nextState, params) {
-    const { start_class, end_class, duration } = animOptions;
-    const oldTransition = targetElement._transitionInfo?.oldTransition;
-
-    // Setup the timeout to clean up after animation
     setTimeout(() => {
-      // Remove animation classes
-      if (start_class) {
-        targetElement.classList.remove(start_class);
-      }
-      if (end_class) {
-        targetElement.classList.remove(end_class);
-      }
-
-      // Restore original transition if it was changed
-      if (oldTransition !== null) {
-        targetElement.style.transition = oldTransition;
-      }
-
-      // Clean up stored transition info
-      delete targetElement._transitionInfo;
-
+      this.addOrRemoveClasses(
+        targetElement,
+        transitionEnd,
+        [].concat(transitionRun).concat(transitionStart),
+      );
       // Call enter handler with animated flag
       this.executeStateHandlers(nextState, "enter", {
         ...params,
@@ -407,6 +382,15 @@ class Component {
 
       this.updatePartsVisibility();
     }, duration);
+  }
+
+  addOrRemoveClasses(targetElement, addClasses = [], removeClasses = []) {
+    if (addClasses.length > 0) {
+      targetElement.classList.add(...addClasses);
+    }
+    if (removeClasses.length > 0) {
+      targetElement.classList.remove(...removeClasses);
+    }
   }
 
   evaluateCondition(condition, params) {
