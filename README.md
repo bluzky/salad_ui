@@ -134,7 +134,7 @@ It's also important to note that you must format your code with `mix format` bef
 | Button         | ✅    | ✅     |
 | Card           | ✅    | ✅     |
 | Carousel       | ❌    |      |
-| Checkbox       | ✅    |      |
+| Checkbox       | ✅    | ✅     |
 | Collapsible    | ✅    | ✅    |
 | Combobox       | ❌    |      |
 | Command        | ❌    |      |
@@ -151,7 +151,7 @@ It's also important to note that you must format your code with `mix format` bef
 | Popover        | ✅    | ✅     |
 | Progress       | ✅    |      |
 | Radio Group    | ✅    | ✅     |
-| Scroll Area    | ✅    |      |
+| Scroll Area    | ✅    | ✅    |
 | Select         | ✅    | ✅     |
 | Separator      | ✅    | ✅     |
 | Sheet          | ✅    |      |

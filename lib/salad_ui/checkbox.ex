@@ -1,12 +1,36 @@
 defmodule SaladUI.Checkbox do
-  @moduledoc false
+  @moduledoc """
+  Implementation of checkbox component from https://ui.shadcn.com/docs/components/checkbox
+
+  ## Examples:
+
+      <.checkbox name="terms" id="terms" />
+
+      <div class="flex items-center space-x-2">
+        <.checkbox id="terms" name="terms" />
+        <.label for="terms">Accept terms and conditions</.label>
+      </div>
+
+      <.checkbox id="remember_me" name="remember_me" label="Remember me" />
+
+      <.form for={@form} as={:user} phx-change="validate">
+        <.checkbox field={@form[:accept_terms]} label="I accept the terms and conditions" />
+      </.form>
+  """
   use SaladUI, :component
 
   @doc """
-  Implement checkbox input component
+  Renders a checkbox input with SaladUI styling.
 
-  ## Examples:
-      <.checkbox class="!border-destructive" name="agree" value={true} />
+  ## Options
+
+  * `:id` - The id to apply to the checkbox
+  * `:name` - The name to apply to the input field
+  * `:value` - The current value of the checkbox
+  * `:default-value` - The default value of the checkbox, either `true`, `false`, "true", "false"
+  * `:disabled` - Whether the checkbox is disabled
+  * `:field` - A Phoenix form field
+  * `:class` - Additional classes to add to the checkbox
   """
   attr :name, :any, default: nil
   attr :value, :any, default: nil
