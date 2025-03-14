@@ -135,7 +135,7 @@ It's also important to note that you must format your code with `mix format` bef
 | Card           | ✅    | ✅     |
 | Carousel       | ❌    |      |
 | Checkbox       | ✅    |      |
-| Collapsible    | ✅    |      |
+| Collapsible    | ✅    | ✅    |
 | Combobox       | ❌    |      |
 | Command        | ❌    |      |
 | Context Menu   | ❌    |      |
