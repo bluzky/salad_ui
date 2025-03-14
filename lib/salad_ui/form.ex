@@ -1,44 +1,56 @@
 defmodule SaladUI.Form do
-  @moduledoc false
+  @moduledoc """
+  Form-related components that help build accessible forms.
+
+  SaladUI doesn't define its own form component, but instead provides a set of
+  form-related components to enhance the native Phoenix LiveView form.
+
+  ## Examples:
+
+      <.form
+        class="space-y-6"
+        for={@form}
+        id="project-form"
+        phx-target={@myself}
+        phx-change="validate"
+        phx-submit="save"
+      >
+        <.form_item>
+          <.form_label>What is your project's name?</.form_label>
+          <.form_control>
+            <.input field={@form[:name]} type="text" phx-debounce="500" />
+          </.form_control>
+          <.form_description>
+            This is your public display name.
+          </.form_description>
+          <.form_message field={@form[:name]} />
+        </.form_item>
+
+        <div class="w-full flex flex-row-reverse">
+          <.button
+            class="btn btn-secondary btn-md"
+            icon="inbox_arrow_down"
+            phx-disable-with="Saving..."
+          >
+            Save project
+          </.button>
+        </div>
+      </.form>
+  """
   use SaladUI, :component
 
   @doc """
-  Implement of form component. SaladUI doesn't define its own form, but it provides a set of form-related components to help you build your own form.
+  Form item component that acts as a container for a form field.
 
-  Reuse `.form` from live view Component, so we don't have to duplicate it
+  ## Examples:
 
-  # Examples:
-
-      <div>
-        <.form
-          class="space-y-6"
-          for={@form}
-          id="project-form"
-          phx-target={@myself}
-          phx-change="validate"
-          phx-submit="save"
-        >
-          <.form_item>
-          <.form_label>What is your project's name?</.form_label>
-          <.form_control>
-              <Input.input field={@form[:name]} type="text" phx-debounce="500" />
-            </.form_control>
-            <.form_description>
-                This is your public display name.
-          </.form_description>
-          <.form_message field={@form[:name]} />
-          </.form_item>
-          <div class="w-full flex flex-row-reverse">
-            <.button
-              class="btn btn-secondary btn-md"
-              icon="inbox_arrow_down"
-              phx-disable-with="Saving..."
-            >
-              Save project
-              </.button>
-          </div>
-            </.form>
-      </div>
+      <.form_item>
+        <.form_label>Email</.form_label>
+        <.form_control>
+          <.input field={@form[:email]} type="email" />
+        </.form_control>
+        <.form_message field={@form[:email]} />
+      </.form_item>
   """
   attr :class, :string, default: nil
   slot :inner_block, required: true
@@ -52,6 +64,16 @@ defmodule SaladUI.Form do
     """
   end
 
+  @doc """
+  Form label component that renders a label for a form field.
+
+  Shows validation errors through text color when a field has errors.
+
+  ## Examples:
+
+      <.form_label>Email</.form_label>
+      <.form_label field={@form[:email]}>Email</.form_label>
+  """
   attr :class, :string, default: nil
   attr :error, :boolean, default: false
 
@@ -62,12 +84,12 @@ defmodule SaladUI.Form do
   slot :inner_block, required: true
   attr :rest, :global
 
-  def form_label(%{field: field} = assigns) do
+  def form_label(%{field: field} = assigns) when not is_nil(field) do
     assigns =
-      if field && not Enum.empty?(field.errors) do
-        assign(assigns, error: true)
-      else
+      if Enum.empty?(field.errors) do
         assigns
+      else
+        assign(assigns, error: true)
       end
 
     ~H"""
@@ -85,9 +107,34 @@ defmodule SaladUI.Form do
     """
   end
 
-  # attr :class, :string, default: nil
+  def form_label(assigns) do
+    ~H"""
+    <SaladUI.Label.label
+      class={
+        classes([
+          @error && "text-destructive",
+          @class
+        ])
+      }
+      {@rest}
+    >
+      {render_slot(@inner_block)}
+    </SaladUI.Label.label>
+    """
+  end
+
+  @doc """
+  Form control component that wraps input elements.
+
+  This is a simple pass-through component that renders its inner block.
+
+  ## Examples:
+
+      <.form_control>
+        <.input field={@form[:email]} type="email" />
+      </.form_control>
+  """
   slot :inner_block, required: true
-  # attr :rest, :global
 
   def form_control(assigns) do
     ~H"""
@@ -95,6 +142,15 @@ defmodule SaladUI.Form do
     """
   end
 
+  @doc """
+  Form description component that provides additional context for a form field.
+
+  ## Examples:
+
+      <.form_description>
+        We'll only use your email for account-related purposes.
+      </.form_description>
+  """
   attr :class, :string, default: nil
   slot :inner_block, required: true
   attr :rest, :global
@@ -107,6 +163,19 @@ defmodule SaladUI.Form do
     """
   end
 
+  @doc """
+  Form message component that displays validation errors for a form field.
+
+  ## Examples:
+
+      <.form_message field={@form[:email]} />
+
+      <.form_message>
+        Please enter a valid email address.
+      </.form_message>
+
+      <.form_message errors={["Email is required", "Must be a valid email"]} />
+  """
   attr :field, Phoenix.HTML.FormField,
     default: nil,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"

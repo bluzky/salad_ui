@@ -142,12 +142,12 @@ It's also important to note that you must format your code with `mix format` bef
 | Dialog         | ✅    | ✅     |
 | Drawer         | ❌    |      |
 | Dropdown Menu  | ✅    |      |
-| Form           | ✅    |      |
+| Form           | ✅    | ✅     |
 | Hover Card     | ✅    | ✅      |
 | Input          | ✅    |      |
 | Input OTP      | ❌    |      |
-| Label          | ✅    |      |
-| Pagination     | ✅    |      |
+| Label          | ✅    | ✅      |
+| Pagination     | ✅    | ✅     |
 | Popover        | ✅    | ✅     |
 | Progress       | ✅    |      |
 | Radio Group    | ✅    | ✅     |
@@ -158,7 +158,7 @@ It's also important to note that you must format your code with `mix format` bef
 | Skeleton       | ✅    | ✅     |
 | Slider         | ✅    |      |
 | Switch         | ✅    |      |
-| Table          | ✅    |      |
+| Table          | ✅    | ✅    |
 | Tabs           | ✅    | ✅     |
 | Textarea       | ✅    |      |
 | Tooltip        | ✅    |      |

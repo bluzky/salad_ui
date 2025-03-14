@@ -1,35 +1,36 @@
 defmodule SaladUI.Pagination do
-  @moduledoc false
+  @moduledoc """
+  Implementation of pagination component for navigation between pages of content.
+
+  ## Examples:
+
+      <.pagination>
+        <.pagination_content>
+          <.pagination_item>
+            <.pagination_previous href="#" />
+          </.pagination_item>
+          <.pagination_item>
+            <.pagination_link href="#" is_active={@page == 1}>1</.pagination_link>
+          </.pagination_item>
+          <.pagination_item>
+            <.pagination_link href="#" is_active={@page == 2}>2</.pagination_link>
+          </.pagination_item>
+          <.pagination_item>
+            <.pagination_link href="#" is_active={@page == 3}>3</.pagination_link>
+          </.pagination_item>
+          <.pagination_item>
+            <.pagination_ellipsis />
+          </.pagination_item>
+          <.pagination_item>
+            <.pagination_next href="#" />
+          </.pagination_item>
+        </.pagination_content>
+      </.pagination>
+  """
   use SaladUI, :component
 
   @doc """
-  Renders a pagination.
-
-  ## Examples
-
-        <.pagination>
-          <.pagination_content>
-            <.pagination_item>
-              <.pagination_previous href="#" />
-            </.pagination_item>
-            <.pagination_item>
-              <.pagination_link href="">1</.pagination_link>
-            </.pagination_item>
-            <.pagination_item>
-              <.pagination_link href="" is-active="true">2</.pagination_link>
-            </.pagination_item>
-            <.pagination_item>
-              <.pagination_link href="">3</.pagination_link>
-            </.pagination_item>
-            <.pagination_item>
-              <.pagination_ellipsis />
-            </.pagination_item>
-            <.pagination_item>
-              <.pagination_next href="#" />
-            </.pagination_item>
-          </.pagination_content>
-        </.pagination>
-
+  Renders a pagination component.
   """
   attr :class, :string, default: nil
   attr :rest, :global
@@ -38,7 +39,7 @@ defmodule SaladUI.Pagination do
   def pagination(assigns) do
     ~H"""
     <nav
-      arial-label="pagination"
+      aria-label="pagination"
       role="pagination"
       class={
         classes([
@@ -47,7 +48,6 @@ defmodule SaladUI.Pagination do
         ])
       }
       {@rest}
-      }
     >
       {render_slot(@inner_block)}
     </nav>
@@ -55,7 +55,7 @@ defmodule SaladUI.Pagination do
   end
 
   @doc """
-  Render pagination content
+  Renders pagination content wrapper.
   """
   attr :class, :string, default: nil
   attr :rest, :global
@@ -71,7 +71,6 @@ defmodule SaladUI.Pagination do
         ])
       }
       {@rest}
-      }
     >
       {render_slot(@inner_block)}
     </ul>
@@ -79,7 +78,7 @@ defmodule SaladUI.Pagination do
   end
 
   @doc """
-  Render pagination item
+  Renders a pagination item container.
   """
   attr :class, :string, default: nil
   attr :rest, :global
@@ -102,10 +101,15 @@ defmodule SaladUI.Pagination do
   end
 
   @doc """
-  Render pagination link
+  Renders a pagination link.
+
+  ## Options
+
+  * `:is_active` - Whether this link represents the current page
+  * `:size` - Link size variant (default, sm, lg, icon)
   """
   attr :"is-active", :boolean, default: false
-  attr :size, :string, default: "icon"
+  attr :size, :string, default: "icon", values: ~w(default sm lg icon)
   attr :class, :string, default: nil
   attr :rest, :global
   slot :inner_block, required: true
@@ -139,7 +143,7 @@ defmodule SaladUI.Pagination do
   end
 
   @doc """
-  Render next button
+  Renders a next page button.
   """
   attr :class, :string, default: nil
   attr :rest, :global
@@ -168,7 +172,7 @@ defmodule SaladUI.Pagination do
   end
 
   @doc """
-  Render previous button
+  Renders a previous page button.
   """
   attr :class, :string, default: nil
   attr :rest, :global
@@ -197,7 +201,7 @@ defmodule SaladUI.Pagination do
   end
 
   @doc """
-  Render ellipsis
+  Renders an ellipsis for page ranges.
   """
   attr :class, :string, default: nil
   attr :rest, :global
@@ -219,7 +223,7 @@ defmodule SaladUI.Pagination do
         viewBox="0 0 24 24"
         stroke-width="2"
         stroke="currentColor"
-        class="size-6 w--4 h-4"
+        class="size-6 w-4 h-4"
       >
         <path
           stroke-linecap="round"
