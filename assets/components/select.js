@@ -186,6 +186,8 @@ class SelectComponent extends Component {
   }
 
   onOpenEnter() {
+    this.updateUI();
+    this.updatePartsVisibility();
     this.focusSelectedOrFirstItem();
     this.pushEvent("opened");
   }
