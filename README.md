@@ -144,7 +144,7 @@ It's also important to note that you must format your code with `mix format` bef
 | Dropdown Menu  | ✅    |      |
 | Form           | ✅    | ✅     |
 | Hover Card     | ✅    | ✅      |
-| Input          | ✅    |      |
+| Input          | ✅    | ✅     |
 | Input OTP      | ❌    |      |
 | Label          | ✅    | ✅      |
 | Pagination     | ✅    | ✅     |
