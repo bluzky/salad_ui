@@ -1,61 +1,63 @@
 defmodule SaladUI.Table do
   @moduledoc """
-  Implement of table components from https://ui.shadcn.com/docs/components/table
+  Implementation of table components from https://ui.shadcn.com/docs/components/table
+  with proper ARIA attributes for accessibility.
+
+  ## Examples:
+
+      <.table aria-label="Invoices">
+         <.table_caption>A list of your recent invoices.</.table_caption>
+         <.table_header>
+           <.table_row>
+             <.table_head class="w-[100px]">Invoice</.table_head>
+             <.table_head>Status</.table_head>
+             <.table_head>Method</.table_head>
+             <.table_head class="text-right">Amount</.table_head>
+           </.table_row>
+         </.table_header>
+         <.table_body>
+           <.table_row :for={invoice <- @invoices}>
+             <.table_cell class="font-medium"><%= invoice.number %></.table_cell>
+             <.table_cell><%= invoice.status %></.table_cell>
+             <.table_cell><%= invoice.method %></.table_cell>
+             <.table_cell class="text-right"><%= invoice.amount %></.table_cell>
+           </.table_row>
+         </.table_body>
+      </.table>
   """
   use SaladUI, :component
 
   @doc """
-  Table component
+  Renders a data table.
 
-  ## Examples:
+  ## Attributes
 
-    <.table>
-       <.table_caption>A list of your recent invoices.</.table_caption>
-       <.table_header>
-         <.table_row>
-           <.table_head class="w-[100px]">id</.table_head>
-           <.table_head>Title</.table_head>
-           <.table_head>Status</.table_head>
-           <.table_head class="text-right">action</.table_head>
-         </.table_row>
-       </.table_header>
-       <.table_body>
-         <.table_row :for={{id, entry} <- @streams.content_entries} id={id}>
-           <.table_cell class="font-medium"><%= id %></.table_cell>
-           <.table_cell><%= entry.title %></.table_cell>
-           <.table_cell><%= entry.project_id %></.table_cell>
-           <.table_cell class="text-right">
-             <.link
-               navigate={scoped_path(assigns, "/content/\#{@content_type.key}/\#{entry.id}")}
-               class="btn-action"
-             >
-               <Heroicons.pencil_square class="w-4 h-4" /> Edit
-             </.link>
-
-             <.link
-               phx-click={JS.push("delete", value: %{id: entry.id})}
-               data-confirm="Are you sure?"
-               class="btn-action"
-             >
-               <Heroicons.x_mark class="w-4 h-4 text-error" /> Delete
-             </.link>
-           </.table_cell>
-         </.table_row>
-       </.table_body>
-      </.table>
+  * `:class` - Additional CSS classes for the table
+  * `:aria-label` - Accessible name for the table when no caption is present
+  * `:aria-describedby` - ID of an element that describes the table
   """
   attr :class, :string, default: nil
+  attr :"aria-label", :string, default: nil
+  attr :"aria-describedby", :string, default: nil
   attr :rest, :global
   slot :inner_block, required: true
 
   def table(assigns) do
     ~H"""
-    <table class={classes(["w-full caption-bottom text-sm", @class])} {@rest}>
+    <table
+      class={classes(["w-full caption-bottom text-sm", @class])}
+      aria-label={@aria_label}
+      aria-describedby={@aria_describedby}
+      {@rest}
+    >
       {render_slot(@inner_block)}
     </table>
     """
   end
 
+  @doc """
+  Renders the table header container.
+  """
   attr :class, :string, default: nil
   attr :rest, :global
   slot :inner_block, required: true
@@ -68,7 +70,16 @@ defmodule SaladUI.Table do
     """
   end
 
+  @doc """
+  Renders a table row.
+
+  ## Attributes
+
+  * `:class` - Additional CSS classes
+  * `:aria-rowindex` - Numeric index of the row
+  """
   attr :class, :string, default: nil
+  attr :"aria-rowindex", :integer, default: nil
   attr :rest, :global
   slot :inner_block, required: true
 
@@ -81,6 +92,7 @@ defmodule SaladUI.Table do
           @class
         ])
       }
+      aria-rowindex={@aria_rowindex}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -88,7 +100,18 @@ defmodule SaladUI.Table do
     """
   end
 
+  @doc """
+  Renders a table column header.
+
+  ## Attributes
+
+  * `:class` - Additional CSS classes
+  * `:scope` - Scope of the header cell (default: "col")
+  * `:aria-sort` - Sort direction for screen readers (ascending, descending, or none)
+  """
   attr :class, :string, default: nil
+  attr :scope, :string, default: "col"
+  attr :"aria-sort", :string, default: nil
   attr :rest, :global
   slot :inner_block, required: true
 
@@ -101,6 +124,8 @@ defmodule SaladUI.Table do
           @class
         ])
       }
+      scope={@scope}
+      aria-sort={@aria_sort}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -108,6 +133,9 @@ defmodule SaladUI.Table do
     """
   end
 
+  @doc """
+  Renders the table body.
+  """
   attr :class, :string, default: nil
   attr :rest, :global
   slot :inner_block, required: true
@@ -120,6 +148,13 @@ defmodule SaladUI.Table do
     """
   end
 
+  @doc """
+  Renders a table data cell.
+
+  ## Attributes
+
+  * `:class` - Additional CSS classes
+  """
   attr :class, :string, default: nil
   attr :rest, :global
   slot :inner_block, required: true
@@ -133,7 +168,7 @@ defmodule SaladUI.Table do
   end
 
   @doc """
-  Render table footer
+  Renders a table footer.
   """
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(disabled form name value)
@@ -141,7 +176,7 @@ defmodule SaladUI.Table do
 
   def table_footer(assigns) do
     ~H"""
-    <div
+    <tfoot
       class={
         classes([
           "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
@@ -151,10 +186,15 @@ defmodule SaladUI.Table do
       {@rest}
     >
       {render_slot(@inner_block)}
-    </div>
+    </tfoot>
     """
   end
 
+  @doc """
+  Renders a table caption.
+
+  A caption provides an accessible name for the table.
+  """
   attr :class, :string, default: nil
   attr :rest, :global
   slot :inner_block, required: true
