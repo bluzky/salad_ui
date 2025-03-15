@@ -1,28 +1,72 @@
 defmodule SaladUI.Breadcrumb do
-  @moduledoc false
+  @moduledoc """
+  Implementation of breadcrumb component from https://ui.shadcn.com/docs/components/breadcrumb
+
+  Breadcrumbs help users navigate through the application by showing the current location
+  and providing links to previous levels in the hierarchy.
+
+  ## Features
+
+  * Semantic HTML structure with proper ARIA attributes for accessibility
+  * Visual separators between navigation items
+  * Current page indication with proper styling
+  * Optional ellipsis for collapsed paths
+  * Responsive design capabilities
+
+  ## Examples
+
+      <.breadcrumb>
+        <.breadcrumb_list>
+          <.breadcrumb_item>
+            <.breadcrumb_link href="/">Home</.breadcrumb_link>
+          </.breadcrumb_item>
+          <.breadcrumb_separator />
+          <.breadcrumb_item>
+            <.breadcrumb_link href="/components">Components</.breadcrumb_link>
+          </.breadcrumb_item>
+          <.breadcrumb_separator />
+          <.breadcrumb_item>
+            <.breadcrumb_page>Breadcrumb</.breadcrumb_page>
+          </.breadcrumb_item>
+        </.breadcrumb_list>
+      </.breadcrumb>
+
+  For responsive breadcrumbs that collapse on mobile:
+
+      <.breadcrumb>
+        <.breadcrumb_list>
+          <.breadcrumb_item>
+            <.breadcrumb_link href="/">Home</.breadcrumb_link>
+          </.breadcrumb_item>
+          <.breadcrumb_separator />
+
+          <!-- Show on desktop only -->
+          <div class="hidden md:flex md:items-center">
+            <.breadcrumb_item>
+              <.breadcrumb_link href="/components">Components</.breadcrumb_link>
+            </.breadcrumb_item>
+            <.breadcrumb_separator />
+          </div>
+
+          <!-- Show on mobile only -->
+          <div class="md:hidden">
+            <.breadcrumb_ellipsis />
+            <.breadcrumb_separator />
+          </div>
+
+          <.breadcrumb_item>
+            <.breadcrumb_page>Breadcrumb</.breadcrumb_page>
+          </.breadcrumb_item>
+        </.breadcrumb_list>
+      </.breadcrumb>
+  """
   use SaladUI, :component
 
   @doc """
   Renders a breadcrumb.
+  ## Attributes
 
-  ## Examples
-
-        <.breadcrumb>
-          <.breadcrumb_list>
-            <.breadcrumb_item>
-              <.breadcrumb_link href="/">Home</.breadcrumb_link>
-            </.breadcrumb_item>
-            <.breadcrumb_separator />
-            <.breadcrumb_item>
-              <.breadcrumb_link href="">Components</.breadcrumb_link>
-            </.breadcrumb_item>
-            <.breadcrumb_separator />
-            <.breadcrumb_item>
-              <.breadcrumb_page>Breadcrumb</.breadcrumb_page>
-            </.breadcrumb_item>
-          </.breadcrumb_list>
-        </.breadcrumb>
-
+  * `:class` - Additional CSS classes to apply to the breadcrumb container
   """
   attr :class, :string, default: nil
   attr :rest, :global
@@ -47,7 +91,13 @@ defmodule SaladUI.Breadcrumb do
   end
 
   @doc """
-  Render breadcrumb list
+  Renders breadcrumb list.
+
+  Wraps the breadcrumb items in an ordered list to represent the hierarchical structure.
+
+  ## Attributes
+
+  * `:class` - Additional CSS classes to apply to the list
   """
   attr :class, :string, default: nil
   attr :rest, :global
@@ -71,7 +121,13 @@ defmodule SaladUI.Breadcrumb do
   end
 
   @doc """
-  Render breadcrumb item
+  Renders a breadcrumb item.
+
+  Individual item in the breadcrumb path that can contain a link or the current page.
+
+  ## Attributes
+
+  * `:class` - Additional CSS classes to apply to the item
   """
   attr :class, :string, default: nil
   attr :rest, :global
@@ -94,7 +150,14 @@ defmodule SaladUI.Breadcrumb do
   end
 
   @doc """
-  Render breadcrumb link
+  Renders a breadcrumb link.
+
+  Used for all breadcrumb items except the current page.
+
+  ## Attributes
+
+  * `:class` - Additional CSS classes to apply to the link
+  * Standard HTML link attributes (href, target, etc.) are supported
   """
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(download href hreflang ping referrerpolicy rel target type)
@@ -117,7 +180,14 @@ defmodule SaladUI.Breadcrumb do
   end
 
   @doc """
-  Render breadcrumb page number
+  Renders the current page breadcrumb item.
+
+  Used for the final item in the breadcrumb path, representing the current page.
+  The current page is not a link but styled differently to indicate the current location.
+
+  ## Attributes
+
+  * `:class` - Additional CSS classes to apply to the current page element
   """
   attr :class, :string, default: nil
   attr :rest, :global
@@ -126,8 +196,6 @@ defmodule SaladUI.Breadcrumb do
   def breadcrumb_page(assigns) do
     ~H"""
     <span
-      aria-disabled="true"
-      aria-current="page"
       role="link"
       class={
         classes([
@@ -143,7 +211,14 @@ defmodule SaladUI.Breadcrumb do
   end
 
   @doc """
-  Render a separator
+  Renders a separator between breadcrumb items.
+
+  Visual indicator that separates items in the breadcrumb path.
+  By default, shows a chevron right icon.
+
+  ## Attributes
+
+  * `:class` - Additional CSS classes to apply to the separator
   """
   attr :class, :string, default: nil
   attr :rest, :global
@@ -152,7 +227,6 @@ defmodule SaladUI.Breadcrumb do
     ~H"""
     <li
       role="presentation"
-      aria-hidden="true"
       class={
         classes([
           "[&>svg]:size-3.5",
@@ -176,7 +250,14 @@ defmodule SaladUI.Breadcrumb do
   end
 
   @doc """
-  Render ellipsis
+  Renders an ellipsis indicator for collapsed breadcrumb items.
+
+  Used in responsive designs to indicate that some breadcrumb items are hidden.
+  Typically used for middle items in a long breadcrumb path on mobile views.
+
+  ## Attributes
+
+  * `:class` - Additional CSS classes to apply to the ellipsis
   """
   attr :class, :string, default: nil
   attr :rest, :global
@@ -198,7 +279,7 @@ defmodule SaladUI.Breadcrumb do
         viewBox="0 0 24 24"
         stroke-width="2"
         stroke="currentColor"
-        class="size-6 w--4 h-4"
+        class="w-4 h-4"
       >
         <path
           stroke-linecap="round"

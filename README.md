@@ -21,7 +21,9 @@
 <a href="https://github.com/bluzky/salad_ui/commits/main"><img src="https://img.shields.io/github/last-commit/bluzky/salad_ui.svg" alt="Last Updated"></a>
 </div>
 
-## [Demo storybook](https://salad-storybook.fly.dev/)
+## 🚧 V1 is under development, for V0 source code, checkout branch v0
+
+## [Demo storybook v0](https://salad-storybook.fly.dev/)
 
 <a href='https://ko-fi.com/F1F1CEZ91' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi2.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
@@ -121,49 +123,45 @@ It's also important to note that you must format your code with `mix format` bef
 
 ## List of components
 
-- ✅ Accordion
-- ✅ Alert
-- ✅ Alert Dialog
-- ✅ Avatar
-- ✅ Badge
-- ✅ Breadcrumb
-- ✅ Button
-- ✅ Card
-- [ ] Carousel
-- ✅ Chart
-- ✅ Checkbox
-- ✅ Collapsible
-- [ ] Combobox
-- [ ] Command
-- [ ] Context Menu
-- ✅ Dialog
-- [ ] Drawer
-- ✅ Dropdown Menu
-- ✅ Form
-- ✅ Hover Card
-- ✅ Icon
-- ✅ Input
-- [ ] Input OTP
-- ✅ Label
-- ✅ Menu
-- ✅ Pagination
-- ✅ Popover
-- ✅ Progress
-- ✅ Radio Group
-- ✅ Scroll Area
-- ✅ Select
-- ✅ Separator
-- ✅ Sheet
-- ✅ Sidebar
-- ✅ Skeleton
-- ✅ Slider
-- ✅ Switch
-- ✅ Table
-- ✅ Tabs
-- ✅ Textarea
-- ✅ Toggle
-- ✅ Toggle Group
-- ✅ Tooltip
+| Component      | v0   | v1   |
+|----------------|------|------|
+| Accordion      | ✅    |      |
+| Alert          | ✅    | ✅     |
+| Alert Dialog   | ✅    |      |
+| Avatar         | ✅    | ✅     |
+| Badge          | ✅    | ✅     |
+| Breadcrumb     | ✅    | ✅     |
+| Button         | ✅    | ✅     |
+| Card           | ✅    | ✅     |
+| Carousel       | ❌    |      |
+| Checkbox       | ✅    | ✅     |
+| Collapsible    | ✅    | ✅    |
+| Combobox       | ❌    |      |
+| Command        | ❌    |      |
+| Context Menu   | ❌    |      |
+| Dialog         | ✅    | ✅     |
+| Drawer         | ❌    |      |
+| Dropdown Menu  | ✅    |      |
+| Form           | ✅    | ✅     |
+| Hover Card     | ✅    | ✅      |
+| Input          | ✅    | ✅     |
+| Input OTP      | ❌    |      |
+| Label          | ✅    | ✅      |
+| Pagination     | ✅    | ✅     |
+| Popover        | ✅    | ✅     |
+| Progress       | ✅    |      |
+| Radio Group    | ✅    | ✅     |
+| Scroll Area    | ✅    | ✅    |
+| Select         | ✅    | ✅     |
+| Separator      | ✅    | ✅     |
+| Sheet          | ✅    |      |
+| Skeleton       | ✅    | ✅     |
+| Slider         | ✅    |      |
+| Switch         | ✅    |      |
+| Table          | ✅    | ✅    |
+| Tabs           | ✅    | ✅     |
+| Textarea       | ✅    | ✅     |
+| Tooltip        | ✅    |      |
 
 ## 🌟 Contributors
 

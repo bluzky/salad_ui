@@ -1,14 +1,21 @@
 defmodule SaladUI.Separator do
-  @moduledoc false
+  @moduledoc """
+  Implementation of a separator component for dividing content.
+
+  ## Examples:
+
+      <.separator orientation="horizontal" />
+      <.separator orientation="vertical" class="h-6" />
+  """
   use SaladUI, :component
 
   @doc """
-  Renders a separator
+  Renders a separator.
 
-  ## Examples
+  ## Options
 
-     <.separator orientation="horizontal" />
-
+  * `:orientation` - The orientation of the separator (`horizontal` or `vertical`). Defaults to `horizontal`.
+  * `:class` - Additional CSS classes
   """
   attr :orientation, :string, values: ~w(vertical horizontal), default: "horizontal"
   attr :class, :string, default: nil
@@ -17,6 +24,8 @@ defmodule SaladUI.Separator do
   def separator(assigns) do
     ~H"""
     <div
+      role="separator"
+      aria-orientation={@orientation}
       class={
         classes([
           "shrink-0 bg-border",

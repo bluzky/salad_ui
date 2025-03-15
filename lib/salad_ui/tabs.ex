@@ -4,22 +4,22 @@ defmodule SaladUI.Tabs do
 
   ## Example:
 
-      <.tabs default="account" id="settings" :let={builder} class="w-[400px]">
-        <.tabs_list class="grid w-full grid-cols-2">
-          <.tabs_trigger builder={builder} value="account">account</.tabs_trigger>
-          <.tabs_trigger builder={builder} value="password">password</.tabs_trigger>
+      <.tabs id="settings" default="account" on_tab_changed={JS.push("tab_changed")}>
+        <.tabs_list>
+          <.tabs_trigger value="account">Account</.tabs_trigger>
+          <.tabs_trigger value="password">Password</.tabs_trigger>
         </.tabs_list>
         <.tabs_content value="account">
           <.card>
             <.card_content class="p-6">
-              Account
+              Account settings go here
             </.card_content>
           </.card>
         </.tabs_content>
         <.tabs_content value="password">
           <.card>
             <.card_content class="p-6">
-              Password
+              Password settings go here
             </.card_content>
           </.card>
         </.tabs_content>
@@ -27,29 +27,58 @@ defmodule SaladUI.Tabs do
   """
   use SaladUI, :component
 
-  attr :id, :string, required: true, doc: "id for root tabs tag"
-  attr :default, :string, default: nil, doc: "default tab value"
+  @doc """
+  Primary tabs component that serves as a container for tab triggers and content.
+  """
+  attr :id, :string, required: true, doc: "Unique identifier for the tabs component"
+  attr :default, :string, default: nil, doc: "Default selected tab value"
   attr :class, :string, default: nil
-  slot :inner_block, required: true
+  attr :"on-tab-changed", :any, default: nil, doc: "Handler for tab change events"
   attr :rest, :global
+  slot :inner_block, required: true
 
   def tabs(assigns) do
-    assigns = assign(assigns, :builder, %{default: assigns.default, id: assigns.id})
+    # Collect event mappings
+    event_map =
+      add_event_mapping(%{}, assigns, "tab-changed", :"on-tab-changed")
+
+    assigns =
+      assigns
+      |> assign(:event_map, json(event_map))
+      |> assign(
+        :options,
+        json(%{
+          defaultValue: assigns.default
+        })
+      )
 
     ~H"""
-    <div class={@class} id={@id} {@rest} phx-mounted={show_tab(@id, @default)}>
-      {render_slot(@inner_block, @builder)}
+    <div
+      id={@id}
+      class={classes(["", @class])}
+      data-component="tabs"
+      data-state="idle"
+      data-options={@options}
+      data-event-mappings={@event_map}
+      phx-hook="SaladUI"
+      {@rest}
+    >
+      {render_slot(@inner_block)}
     </div>
     """
   end
 
+  @doc """
+  Container for tab triggers that provides proper styling and ARIA attributes.
+  """
   attr :class, :string, default: nil
-  slot :inner_block, required: true
   attr :rest, :global
+  slot :inner_block, required: true
 
   def tabs_list(assigns) do
     ~H"""
     <div
+      data-part="list"
       class={
         classes([
           "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
@@ -63,61 +92,62 @@ defmodule SaladUI.Tabs do
     """
   end
 
-  attr :builder, :map, required: true, doc: "builder instance of tabs"
-  attr :value, :string, required: true, doc: "target value of tab content"
+  @doc """
+  Individual tab button that activates its corresponding content panel.
+  """
+  attr :value, :string, required: true, doc: "Unique value that identifies this tab"
   attr :class, :string, default: nil
-  slot :inner_block, required: true
+  attr :disabled, :boolean, default: false
   attr :rest, :global
+  slot :inner_block, required: true
 
   def tabs_trigger(assigns) do
     ~H"""
     <button
+      type="button"
+      data-part="trigger"
+      data-value={@value}
+      data-state="inactive"
+      data-disabled={to_string(@disabled)}
       class={
         classes([
-          "tabs-trigger",
           "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
           @class
         ])
       }
-      data-target={@value}
+      disabled={@disabled}
       {@rest}
-      phx-click={show_tab(@builder.id, @value)}
     >
       {render_slot(@inner_block)}
     </button>
     """
   end
 
-  attr :value, :string, required: true, doc: "unique for tab content"
+  @doc """
+  Content panel that corresponds to a tab trigger.
+  """
+  attr :value, :string, required: true, doc: "Value that matches a tab trigger"
   attr :class, :string, default: nil
-  slot :inner_block, required: true
   attr :rest, :global
+  slot :inner_block, required: true
 
   def tabs_content(assigns) do
     ~H"""
     <div
+      data-part="content"
+      data-value={@value}
+      data-state="inactive"
+      hidden
       class={
         classes([
-          "tabs-content",
           "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
           @class
         ])
       }
-      value={@value}
       {@rest}
     >
       {render_slot(@inner_block)}
     </div>
     """
-  end
-
-  # Set selected tab to active
-  # show appropriate tab content
-  defp show_tab(root, value) do
-    %JS{}
-    |> JS.set_attribute({"data-state", ""}, to: "##{root} .tabs-trigger[data-state=active]")
-    |> JS.set_attribute({"data-state", "active"}, to: "##{root} .tabs-trigger[data-target=#{value}]")
-    |> JS.hide(to: "##{root} .tabs-content:not([value=#{value}])")
-    |> JS.show(to: "##{root} .tabs-content[value=#{value}]")
   end
 end
