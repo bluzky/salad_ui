@@ -29,7 +29,7 @@ defmodule SaladUI.Textarea do
   attr :value, :any
   attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
   attr :class, :any, default: nil
-  attr :rest, :global, include: ~w(disabled)
+  attr :rest, :global, include: ~w(disabled form)
 
   def textarea(assigns) do
     assigns = prepare_assign(assigns)
