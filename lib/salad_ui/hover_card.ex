@@ -114,7 +114,7 @@ defmodule SaladUI.HoverCard do
   attr :class, :string, default: nil
   attr :side, :string, values: ~w(top right bottom left), default: "top"
   attr :align, :string, values: ~w(start center end), default: "center"
-  attr :"side-offset", :integer, default: 4, doc: "Distance from the trigger in pixels"
+  attr :"side-offset", :integer, default: 8, doc: "Distance from the trigger in pixels"
   attr :"align-offset", :integer, default: 0, doc: "Offset along the alignment axis"
   attr :rest, :global
   slot :inner_block, required: true

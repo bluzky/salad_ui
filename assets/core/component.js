@@ -22,6 +22,15 @@
  *         ArrowDown: "open",          // Maps key to transition
  *         Enter: this.someFunction    // Maps key to function
  *       },
+ *       mouseMap: {                   // Mouse event mappings
+ *         trigger: {                  // Part name (matching data-part attribute)
+ *           mouseenter: "open",       // Maps mouse event to transition
+ *           click: this.handleClick           // Maps mouse event to transition
+ *         },
+ *         content: {                  // Another part
+ *           mouseleave: "close"       // Maps mouse event to transition
+ *         }
+ *       },
  *       transitions: {                // Possible transitions from this state
  *         open: "open",               // Event name → target state
  *       },
@@ -41,6 +50,7 @@
  * 3. Transitions: Define valid state changes and their triggers
  * 4. KeyMap: Map keyboard events to transitions or functions
  * 5. Hidden: Control part visibility in each state
+ * 6. MouseMap: Map mouse events to transitions or functions. **Note:** Mouse events are delegated to closest parent with a data-part attribute.
  *
  * ## State Handler Types
  *
@@ -121,8 +131,8 @@ class Component {
     this.updateUI();
     this.updatePartsVisibility();
 
-    // Track active mouse event listeners for cleanup
-    this.activeMouseListeners = [];
+    // Create a map to store event handlers for cleanup
+    this.mouseEventHandlers = new Map();
   }
 
   parseOptions() {
@@ -185,16 +195,7 @@ class Component {
     const action = stateConfig.keyMap[key];
 
     if (action) {
-      if (typeof action === "function") {
-        action.call(this, event);
-      } else if (typeof action === "string") {
-        if (action.indexOf("on") === 0 && typeof this[action] === "function") {
-          this[action](event);
-        } else {
-          this.transition(action, { originalEvent: event });
-        }
-      }
-
+      this.executeHandler(action, event);
       if (this.config.preventDefaultKeys.includes(key)) {
         event.preventDefault();
       }
@@ -253,7 +254,7 @@ class Component {
       this.mouseEventHandlers.clear();
     }
 
-    this.activeMouseListeners = [];
+    this.mouseEventHandlers.clear();
   }
 
   /**
@@ -311,6 +312,28 @@ class Component {
 
       // Move up to parent element
       targetElement = targetElement.parentElement;
+    }
+  }
+
+  /**
+   * Execute a handler from the mouseMap
+   * @param {Function|string} handler - The handler function or transition name
+   * @param {Event} event - The original event object
+   * @param {HTMLElement} targetElement - The element that matched
+   */
+  executeHandler(handler, event, targetElement) {
+    if (typeof handler === "function") {
+      handler.call(this, event);
+    } else if (typeof handler === "string") {
+      if (typeof this[handler] === "function") {
+        this[handler](event);
+      } else {
+        // If it's not a method name, treat as transition
+        this.transition(handler, {
+          originalEvent: event,
+          target: targetElement,
+        });
+      }
     }
   }
 
@@ -481,13 +504,12 @@ class Component {
         transitionEnd,
         [].concat(transitionRun).concat(transitionStart),
       );
+      this.updatePartsVisibility();
       // Call enter handler with animated flag
       this.executeStateHandlers(nextState, "enter", {
         ...params,
         animated: true,
       });
-
-      this.updatePartsVisibility();
     }, duration);
   }
 
