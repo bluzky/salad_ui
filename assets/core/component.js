@@ -22,6 +22,15 @@
  *         ArrowDown: "open",          // Maps key to transition
  *         Enter: this.someFunction    // Maps key to function
  *       },
+ *       mouseMap: {                   // Mouse event mappings
+ *         trigger: {                  // Part name (matching data-part attribute)
+ *           mouseenter: "open",       // Maps mouse event to transition
+ *           click: this.handleClick           // Maps mouse event to transition
+ *         },
+ *         content: {                  // Another part
+ *           mouseleave: "close"       // Maps mouse event to transition
+ *         }
+ *       },
  *       transitions: {                // Possible transitions from this state
  *         open: "open",               // Event name → target state
  *       },
@@ -41,6 +50,7 @@
  * 3. Transitions: Define valid state changes and their triggers
  * 4. KeyMap: Map keyboard events to transitions or functions
  * 5. Hidden: Control part visibility in each state
+ * 6. MouseMap: Map mouse events to transitions or functions. **Note:** Mouse events are delegated to closest parent with a data-part attribute.
  *
  * ## State Handler Types
  *
@@ -120,6 +130,9 @@ class Component {
     this.allParts = Array.from(this.el.querySelectorAll("[data-part]"));
     this.updateUI();
     this.updatePartsVisibility();
+
+    // Create a map to store event handlers for cleanup
+    this.mouseEventHandlers = new Map();
   }
 
   parseOptions() {
@@ -163,6 +176,8 @@ class Component {
   setupEvents() {
     this.el.addEventListener("keydown", this.handleKeyDown.bind(this));
     this.el.addEventListener("click", this.handleActionClick.bind(this));
+    // Setup mouse event listeners based on the mouseMap
+    this.setupMouseEventHandlers();
     this.setupComponentEvents();
   }
 
@@ -180,16 +195,7 @@ class Component {
     const action = stateConfig.keyMap[key];
 
     if (action) {
-      if (typeof action === "function") {
-        action.call(this, event);
-      } else if (typeof action === "string") {
-        if (action.indexOf("on") === 0 && typeof this[action] === "function") {
-          this[action](event);
-        } else {
-          this.transition(action, { originalEvent: event });
-        }
-      }
-
+      this.executeHandler(action, event);
       if (this.config.preventDefaultKeys.includes(key)) {
         event.preventDefault();
       }
@@ -205,6 +211,130 @@ class Component {
       originalEvent: event,
       target: actionElement,
     });
+  }
+
+  // During component initialization
+  setupMouseEventHandlers() {
+    // Collect all unique event types from all states
+    const eventTypes = new Set();
+
+    // Loop through all states
+    Object.values(this.stateMachine).forEach((stateConfig) => {
+      if (!stateConfig.mouseMap) return;
+
+      // Loop through all elements in this state's mouseMap
+      Object.values(stateConfig.mouseMap).forEach((elementEvents) => {
+        // Add each event type to our set of unique events
+        Object.keys(elementEvents).forEach((eventType) => {
+          eventTypes.add(eventType);
+        });
+      });
+    });
+
+    // Set up a single delegated listener for each unique event type
+    eventTypes.forEach((eventType) => {
+      const boundHandler = this.handleMouseEvent.bind(this, eventType);
+
+      // Store the bound handler for cleanup
+      this.mouseEventHandlers.set(eventType, boundHandler);
+
+      // Add the event listener
+      this.el.addEventListener(eventType, boundHandler, true);
+    });
+  }
+
+  /**
+   * Remove all active mouse event listeners
+   */
+  removeMouseEventListeners() {
+    if (this.mouseEventHandlers) {
+      this.mouseEventHandlers.forEach((handler, eventType) => {
+        this.el.removeEventListener(eventType, handler, true);
+      });
+      this.mouseEventHandlers.clear();
+    }
+
+    this.mouseEventHandlers.clear();
+  }
+
+  /**
+   * Handle mouse events according to the current state's mouseMap. It looks for the closest parents with a data-part attribute and checks if it's in the mouseMap. If it is, it executes the handler and stops looking. So if you have nested elements which listen to the same event, only the closest one will be triggered.
+   * For example:
+   * ```
+   * <div data-part="parent">
+   *   <button data-part="child">Click me</button>
+   * </div>
+   * ```
+   * and the mouseMap is:
+   * ```
+   * parent: {
+   *   click: "parentClickHandler"
+   * },
+   * child: {
+   *   click: "childClickHandler"
+   * }
+   * ```
+   * If you click the button, only the `childClickHandler` is executed.
+   *
+   * @param {string} eventType - The type of mouse event
+   * @param {Event} event - The event object
+   */
+  handleMouseEvent(eventType, event) {
+    const stateConfig = this.stateMachine[this.state];
+    if (!stateConfig?.mouseMap) return;
+
+    // Get the keys from the mouseMap to know what element names we're looking for
+    const validElementNames = Object.keys(stateConfig.mouseMap);
+    if (validElementNames.length === 0) return;
+
+    // Start with the event target and navigate up
+    let targetElement = event.target;
+
+    // Navigate up the DOM to find a matching element
+    while (targetElement && targetElement !== this.el) {
+      // Check if this element has a data-part attribute
+      if (targetElement.hasAttribute("data-part")) {
+        const partName = targetElement.getAttribute("data-part");
+
+        // Check if this part name is in our mouseMap
+        if (
+          validElementNames.includes(partName) &&
+          stateConfig.mouseMap[partName]?.[eventType]
+        ) {
+          this.executeHandler(
+            stateConfig.mouseMap[partName][eventType],
+            event,
+            targetElement,
+          );
+          return;
+        }
+      }
+
+      // Move up to parent element
+      targetElement = targetElement.parentElement;
+    }
+  }
+
+  /**
+   * Execute a handler from the mouseMap
+   * @param {Function|string} handler - The handler function or transition name
+   * @param {Event} event - The original event object
+   * @param {HTMLElement} targetElement - The element that matched
+   */
+  executeHandler(handler, event, targetElement) {
+    if (typeof handler === "function") {
+      handler.call(this, event);
+    } else if (typeof handler === "string") {
+      if (typeof this[handler] === "function") {
+        this[handler](event);
+      } else {
+        // If it's not a method name, treat as transition
+        this.transition(handler, {
+          originalEvent: event,
+          target: targetElement,
+        });
+      }
+    }
   }
 
   // Transition to a new state
@@ -374,13 +504,12 @@ class Component {
         transitionEnd,
         [].concat(transitionRun).concat(transitionStart),
       );
+      this.updatePartsVisibility();
       // Call enter handler with animated flag
       this.executeStateHandlers(nextState, "enter", {
         ...params,
         animated: true,
       });
-
-      this.updatePartsVisibility();
     }, duration);
   }
 
@@ -475,6 +604,7 @@ class Component {
     // Remove event listeners
     this.el.removeEventListener("keydown", this.handleKeyDown);
     this.el.removeEventListener("click", this.handleActionClick);
+    this.removeMouseEventListeners();
     this.ariaManager = null;
 
     // No registry reference to remove

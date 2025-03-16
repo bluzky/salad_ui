@@ -23,8 +23,11 @@ class Positioner {
     } = options;
 
     // Get element and reference rects for positioning
-    const elementRect = element.getBoundingClientRect();
     const referenceRect = reference.getBoundingClientRect();
+    const elementRect = {
+      width: element.offsetWidth,
+      height: element.offsetHeight,
+    };
 
     // Find container bounds
     let containerRect;
@@ -160,12 +163,6 @@ class Positioner {
         }
         break;
     }
-
-    console.log("elementRect", {
-      top: referenceRect.top,
-      left: referenceRect.left,
-    });
-    console.log("referenceRect", { x: referenceRect.x, y: referenceRect.y });
 
     return { x, y };
   }
