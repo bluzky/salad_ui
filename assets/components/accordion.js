@@ -85,6 +85,7 @@ class AccordionComponent extends Component {
       const itemValue = item.dataset.value;
       const trigger = item.querySelector("[data-part='trigger']");
       const content = item.querySelector("[data-part='content']");
+      const isDisabled = item.dataset.disabled === "true" || this.disabled;
 
       if (trigger && !trigger.id) {
         trigger.id = `${this.el.id}-trigger-${itemValue}`;
@@ -93,6 +94,9 @@ class AccordionComponent extends Component {
       if (content && !content.id) {
         content.id = `${this.el.id}-content-${itemValue}`;
       }
+
+      // Remove tabindex from item since we focus only on the trigger
+      item.setAttribute("tabindex", "-1");
     });
   }
 
@@ -157,6 +161,7 @@ class AccordionComponent extends Component {
     this.items.forEach((item) => {
       const isOpen = this.isItemSelected(item.dataset.value);
       const state = isOpen ? "open" : "closed";
+      const isDisabled = item.dataset.disabled === "true" || this.disabled;
 
       // Update item state
       item.dataset.state = state;
@@ -165,6 +170,16 @@ class AccordionComponent extends Component {
       const trigger = item.querySelector("[data-part='trigger']");
       if (trigger) {
         trigger.dataset.state = state;
+        trigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+
+        // Remove disabled triggers from tab sequence
+        if (isDisabled) {
+          trigger.setAttribute("tabindex", "-1");
+          trigger.setAttribute("aria-disabled", "true");
+        } else {
+          trigger.setAttribute("tabindex", "0");
+          trigger.removeAttribute("aria-disabled");
+        }
       }
 
       // Update content state and visibility
