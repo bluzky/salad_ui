@@ -37,6 +37,7 @@ const SaladUIHook = {
   updated() {
     if (this.component) {
       this.component.parseOptions();
+      this.component.updatePartsVisibility();
       this.component.updateUI();
     }
   },
