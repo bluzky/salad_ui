@@ -125,7 +125,7 @@ It's also important to note that you must format your code with `mix format` bef
 
 | Component      | v0   | v1   |
 |----------------|------|------|
-| Accordion      | ✅    |      |
+| Accordion      | ✅    | ✅    |
 | Alert          | ✅    | ✅     |
 | Alert Dialog   | ✅    |      |
 | Avatar         | ✅    | ✅     |
