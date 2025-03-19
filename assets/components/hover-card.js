@@ -20,48 +20,49 @@ class HoverCardComponent extends Component {
     this.closeTimer = null;
   }
 
-  getStateMachine() {
+  getComponentConfig() {
     return {
-      closed: {
-        enter: "onClosedEnter",
-        keyMap: {},
-        transitions: {
-          open: "open",
+      stateMachine: {
+        closed: {
+          enter: "onClosedEnter",
+          keyMap: {},
+          transitions: {
+            open: "open",
+          },
         },
-        hidden: {
-          content: true,
+        open: {
+          enter: "onOpenEnter",
+          exit: "onOpenExit",
+          keyMap: {},
+          transitions: {
+            close: "closed",
+          },
         },
       },
-      open: {
-        enter: "onOpenEnter",
-        exit: "onOpenExit",
-        keyMap: {},
-        transitions: {
-          close: "closed",
+      visibilityConfig: {
+        closed: {
+          content: true,
         },
-        hidden: {
+        open: {
           content: false,
         },
       },
-    };
-  }
-
-  getAriaConfig() {
-    return {
-      trigger: {
-        all: {
-          haspopup: "dialog",
+      ariaConfig: {
+        trigger: {
+          all: {
+            haspopup: "dialog",
+          },
+          open: {
+            expanded: "true",
+          },
+          closed: {
+            expanded: "false",
+          },
         },
-        open: {
-          expanded: "true",
-        },
-        closed: {
-          expanded: "false",
-        },
-      },
-      content: {
-        all: {
-          role: "dialog",
+        content: {
+          all: {
+            role: "dialog",
+          },
         },
       },
     };
