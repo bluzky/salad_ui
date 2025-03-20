@@ -4,6 +4,7 @@
  * Provides state management, event handling, and ARIA support
  */
 import StateMachine from "./state-machine";
+import { animateTransition } from "./animation-utils";
 
 class Component {
   constructor(el, hookContext) {
@@ -12,8 +13,6 @@ class Component {
 
     this.config = {
       preventDefaultKeys: [],
-      focusableSelector:
-        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
     };
 
     this.initialState = "idle";
@@ -95,27 +94,35 @@ class Component {
 
   initStateMachine(stateMachineConfig, initialState) {
     this.stateMachine = new StateMachine(stateMachineConfig, initialState, {
-      onStateChanged: (prevState, nextState, params) => {
-        // Check if we should animate
-        if (this.shouldAnimateTransition(prevState, nextState, params)) {
-          // Return promise for animation
-          console.log(Date.now(), "Animating transition");
-          // Animation completed, do final UI updates
-          this.updateUI({ ...params, animationCompleted: true });
+      onStateChanged: this.onStateChanged.bind(this),
+    });
+  }
 
-          return this.animateTransition(prevState, nextState).then(() => {
-            console.log(Date.now(), "Animation completed");
+  onStateChanged(prevState, nextState, params) {
+    // Update UI immediately
+    this.updateUI({ ...params, animationCompleted: false });
 
-            this.updatePartsVisibility(nextState);
-          });
-        } else {
-          // No animation, update UI immediately
-          this.updatePartsVisibility(nextState);
+    // Check if we should animate
+    const transitionName = `${prevState}_to_${nextState}`;
+    const animConfig = this.options.animations?.[transitionName];
 
-          this.updateUI(params);
-          return null; // No promise
-        }
-      },
+    if (!animConfig) {
+      // No animation, update visibility immediately
+      this.updatePartsVisibility(nextState);
+      return null; // No promise
+    }
+
+    console.log(Date.now(), "Animating transition");
+
+    // Get target element for animation
+    const targetElement = animConfig.target_part
+      ? this.getPart(animConfig.target_part)
+      : this.el;
+
+    // Animate with the config
+    return animateTransition(animConfig, targetElement).then(() => {
+      console.log(Date.now(), "Animation completed");
+      this.updatePartsVisibility(nextState);
     });
   }
 
@@ -298,126 +305,6 @@ class Component {
   }
 
   /**
-   * Determine if a transition should be animated
-   * Override in child classes to provide custom animation detection
-   *
-   * @param {string} fromState - Starting state
-   * @param {string} toState - Target state
-   * @param {Object} params - Transition parameters
-   * @returns {boolean} Whether the transition should be animated
-   */
-  shouldAnimateTransition(fromState, toState, params = {}) {
-    // Check if transition has animation config
-    const transitionName = `${fromState}_to_${toState}`;
-    const hasTransitionAnim = this.options.animations?.[transitionName];
-
-    // By default, animate if animation config exists
-    return !!hasTransitionAnim;
-  }
-
-  /**
-   * Animation handler for state transitions
-   * Override in child classes to provide custom animation behavior
-   *
-   * @param {string} fromState - Starting state
-   * @param {string} toState - Target state
-   * @param {Object} params - Transition parameters
-   * @returns {Promise} A Promise that resolves when animation completes
-   */
-  animateTransition(fromState, toState) {
-    // Get animation configuration
-    const transitionName = `${fromState}_to_${toState}`;
-    const animConfig = this.options.animations?.[transitionName];
-
-    if (!animConfig) {
-      return Promise.resolve(); // Return resolved promise if no animation
-    }
-
-    const { animation, duration = 200, target_part = null } = animConfig;
-
-    // Get target element for animation
-    const targetElement = target_part ? this.getPart(target_part) : this.el;
-    if (!targetElement) {
-      return Promise.resolve(); // Return resolved promise if no target
-    }
-
-    // Process animation classes
-    const animationClasses = (animation || ["", "", ""]).map((item) =>
-      typeof item === "string" ? item.split(/\s+/) : [],
-    );
-
-    // Execute animation with promise
-    return this.executeAnimation(targetElement, {
-      animation: animationClasses,
-      duration,
-    });
-  }
-
-  /**
-   * Execute animation sequence on target element
-   * @param {HTMLElement} targetElement - Element to animate
-   * @param {Object} animOptions - Animation options
-   * @returns {Promise} Promise that resolves when animation completes
-   */
-  executeAnimation(targetElement, animOptions) {
-    console.log("Animating", targetElement, animOptions);
-    return new Promise((resolve) => {
-      const { animation, duration } = animOptions;
-      let [transitionRun, transitionStart, transitionEnd] = animation || [
-        [],
-        [],
-        [],
-      ];
-
-      // First animation frame: apply start classes
-      this.addOrRemoveClasses(
-        targetElement,
-        transitionStart,
-        [].concat(transitionRun).concat(transitionEnd),
-      );
-
-      // Next frame: apply running classes
-      window.requestAnimationFrame(() => {
-        this.addOrRemoveClasses(targetElement, transitionRun, []);
-
-        // Next frame: apply end classes
-        window.requestAnimationFrame(() =>
-          this.addOrRemoveClasses(
-            targetElement,
-            transitionEnd,
-            transitionStart,
-          ),
-        );
-      });
-
-      // After duration, clean up classes and resolve promise
-      setTimeout(() => {
-        this.addOrRemoveClasses(
-          targetElement,
-          [],
-          []
-            .concat(transitionRun)
-            .concat(transitionStart)
-            .concat(transitionEnd),
-        );
-
-        resolve();
-      }, duration);
-    });
-  }
-
-  addOrRemoveClasses(targetElement, addClasses = [], removeClasses = []) {
-    if (!targetElement) return;
-
-    if (addClasses.length > 0) {
-      targetElement.classList.add(...addClasses.filter(Boolean));
-    }
-    if (removeClasses.length > 0) {
-      targetElement.classList.remove(...removeClasses.filter(Boolean));
-    }
-  }
-
-  /**
    * Update UI to reflect current state
    * @param {Object} params - Optional parameters from state transition
    */
@@ -469,10 +356,6 @@ class Component {
       part.id = `${this.el.id}-${partName}`;
     }
     return part.id;
-  }
-
-  getFocusableElements() {
-    return Array.from(this.el.querySelectorAll(this.config.focusableSelector));
   }
 
   // Push event to server (for frameworks like Phoenix LiveView)

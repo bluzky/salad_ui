@@ -127,9 +127,7 @@ class DialogComponent extends Component {
   onOpenEnter() {
     // Initialize focus trap if not already created
     if (!this.focusTrap) {
-      this.focusTrap = new FocusTrap(this.contentPanel, {
-        focusableSelector: this.config.focusableSelector,
-      });
+      this.focusTrap = new FocusTrap(this.contentPanel);
     }
 
     // Activate focus trap
