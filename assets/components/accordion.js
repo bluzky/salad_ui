@@ -37,42 +37,48 @@ class AccordionComponent extends Component {
     return Array.isArray(value) ? value : [value];
   }
 
-  getStateMachine() {
+  getComponentConfig() {
     return {
-      idle: {
-        keyMap: {
-          ArrowUp: () => this.navigateItem(-1),
-          ArrowDown: () => this.navigateItem(1),
-          Home: () => this.navigateItem("first"),
-          End: () => this.navigateItem("last"),
+      stateMachine: {
+        idle: {
+          enter: () => {},
+          exit: () => {},
+          transitions: {},
         },
       },
-    };
-  }
-
-  getAriaConfig() {
-    return {
-      trigger: {
-        all: {
-          controls: (el) => {
-            const item = el.closest("[data-part='item']");
-            const content = item?.querySelector("[data-part='content']");
-            return content?.id || "";
+      events: {
+        idle: {
+          keyMap: {
+            ArrowUp: () => this.navigateItem(-1),
+            ArrowDown: () => this.navigateItem(1),
+            Home: () => this.navigateItem("first"),
+            End: () => this.navigateItem("last"),
           },
         },
-        open: {
-          expanded: "true",
-        },
-        closed: {
-          expanded: "false",
-        },
       },
-      content: {
-        all: {
-          labelledby: (el) => {
-            const item = el.closest("[data-part='item']");
-            const trigger = item?.querySelector("[data-part='trigger']");
-            return trigger?.id || "";
+      ariaConfig: {
+        trigger: {
+          all: {
+            controls: (el) => {
+              const item = el.closest("[data-part='item']");
+              const content = item?.querySelector("[data-part='content']");
+              return content?.id || "";
+            },
+          },
+          open: {
+            expanded: "true",
+          },
+          closed: {
+            expanded: "false",
+          },
+        },
+        content: {
+          all: {
+            labelledby: (el) => {
+              const item = el.closest("[data-part='item']");
+              const trigger = item?.querySelector("[data-part='trigger']");
+              return trigger?.id || "";
+            },
           },
         },
       },
@@ -190,6 +196,8 @@ class AccordionComponent extends Component {
       }
     });
   }
+
+  // Navigation method used by keyMap handlers
 
   navigateItem(direction) {
     const enabledItems = this.items.filter(
