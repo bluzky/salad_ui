@@ -27,7 +27,10 @@ class Component {
     this.initConfig();
     this.initStateMachine(this.componentConfig.stateMachine, this.initialState);
     this.ariaManager = new AriaManager(this, this.ariaConfig);
-    this.allParts = Array.from(this.el.querySelectorAll("[data-part]"));
+    // ignore item's part
+    this.allParts = Array.from(this.el.querySelectorAll("[data-part]")).filter(
+      (element) => !element.dataset.part.startsWith("item-"),
+    );
     this.updateUI();
     this.updatePartsVisibility();
 
@@ -99,9 +102,6 @@ class Component {
   }
 
   onStateChanged(prevState, nextState, params) {
-    // Update UI immediately
-    this.updateUI({ ...params, animationCompleted: false });
-
     // Check if we should animate
     const transitionName = `${prevState}_to_${nextState}`;
     const animConfig = this.options.animations?.[transitionName];
@@ -440,7 +440,12 @@ class AriaManager {
       if (!parts || parts.length === 0) return;
 
       // Apply attributes to all matching elements
-      parts.forEach((part) => {
+      parts.forEach((part, index) => {
+        // Set ID if not already defined
+        if (!part.id) {
+          part.id = `${this.component.el.id}-${partName}${parts.length > 1 ? `-${index}` : ""}`;
+        }
+
         this.applyGlobalAriaAttributes(part, states);
         this.applyStateSpecificAriaAttributes(part, states, currentState);
       });
