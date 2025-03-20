@@ -1,7 +1,19 @@
-// saladui/components/tooltip.js
 import Component from "../core/component";
 import SaladUI from "../index";
 import PositionedElement from "../core/positioned-element";
+
+// Define constants at the module level outside the class
+const DEFAULT_POSITION_CONFIG = {
+  placement: "top",
+  alignment: "center",
+  sideOffset: 8,
+  alignOffset: 0,
+};
+
+const DEFAULT_TIMING_CONFIG = {
+  openDelay: 150,
+  closeDelay: 100,
+};
 
 class TooltipComponent extends Component {
   constructor(el, hookContext) {
@@ -12,107 +24,92 @@ class TooltipComponent extends Component {
       this.getPart("trigger") || this.el.querySelector(":first-child");
     this.content = this.getPart("content");
 
-    // Set default config
-    this.config.openDelay = this.options.openDelay || 150;
-    this.config.closeDelay = this.options.closeDelay || 100;
+    // Set config from options with fallbacks to defaults
+    this.config.openDelay =
+      this.options.openDelay || DEFAULT_TIMING_CONFIG.openDelay;
+    this.config.closeDelay =
+      this.options.closeDelay || DEFAULT_TIMING_CONFIG.closeDelay;
 
     // Track timer IDs for delayed open/close
     this.openTimer = null;
     this.closeTimer = null;
   }
 
-  getStateMachine() {
+  getComponentConfig() {
     return {
-      closed: {
-        enter: "onClosedEnter",
-        keyMap: {},
-        mouseMap: {
-          trigger: {
-            mouseenter: "handleTriggerMouseEnter",
-            focus: "handleTriggerFocus",
+      stateMachine: {
+        closed: {
+          enter: "onClosedEnter",
+          transitions: {
+            open: "open",
           },
         },
-        transitions: {
-          open: "open",
-        },
-        hidden: {
-          content: true,
+        open: {
+          enter: "onOpenEnter",
+          exit: "onOpenExit",
+          transitions: {
+            close: "closed",
+          },
         },
       },
-      open: {
-        enter: "onOpenEnter",
-        exit: "onOpenExit",
-        keyMap: {},
-        mouseMap: {
-          trigger: {
-            mouseleave: "handleTriggerMouseLeave",
-            blur: "handleTriggerBlur",
-          },
-          content: {
-            mouseenter: "handleContentMouseEnter",
-            mouseleave: "handleContentMouseLeave",
+      events: {
+        closed: {
+          mouseMap: {
+            trigger: {
+              mouseenter: "delayOpen",
+              focus: "delayOpen",
+            },
           },
         },
-        transitions: {
-          close: "closed",
+        open: {
+          mouseMap: {
+            trigger: {
+              mouseleave: "delayClose",
+              blur: "delayClose",
+            },
+            content: {
+              mouseenter: "clearTimers",
+              mouseleave: "delayClose",
+            },
+          },
         },
-        hidden: {
+      },
+      visibilityConfig: {
+        closed: {
+          content: true,
+        },
+        open: {
           content: false,
         },
       },
-    };
-  }
-
-  getAriaConfig() {
-    return {
-      trigger: {
-        all: {
-          describedby: () => this.getPartId("content"),
+      ariaConfig: {
+        trigger: {
+          all: {
+            describedby: () => this.getPartId("content"),
+          },
         },
-      },
-      content: {
-        all: {
-          role: "tooltip",
+        content: {
+          all: {
+            role: "tooltip",
+          },
         },
       },
     };
   }
 
-  // Event handlers
-  handleTriggerMouseEnter() {
+  // Generic methods for delayed state transitions
+  delayOpen() {
     this.clearTimers();
     this.openTimer = setTimeout(() => {
       this.transition("open");
     }, this.config.openDelay);
   }
 
-  handleTriggerMouseLeave() {
+  delayClose() {
     this.clearTimers();
     this.closeTimer = setTimeout(() => {
       this.transition("close");
     }, this.config.closeDelay);
-  }
-
-  handleContentMouseEnter() {
-    this.clearTimers();
-  }
-
-  handleContentMouseLeave() {
-    this.clearTimers();
-    this.closeTimer = setTimeout(() => {
-      this.transition("close");
-    }, this.config.closeDelay);
-  }
-
-  handleTriggerFocus() {
-    this.clearTimers();
-    // For focus, we show immediately without delay for better accessibility
-    this.transition("open");
-  }
-
-  handleTriggerBlur() {
-    this.clearTimers();
-    this.transition("close");
   }
 
   clearTimers() {
@@ -133,28 +130,31 @@ class TooltipComponent extends Component {
 
     if (!this.trigger || !this.content) return;
 
-    // Get positioning configuration
-    const placement = this.content.getAttribute("data-side") || "top";
-    const alignment = this.content.getAttribute("data-align") || "center";
-    const sideOffset = parseInt(
-      this.content.getAttribute("data-side-offset") || "8",
-      10,
-    );
-    const alignOffset = parseInt(
-      this.content.getAttribute("data-align-offset") || "0",
-      10,
-    );
-
-    // Create positioned element
-    this.positionedElement = new PositionedElement(this.content, this.trigger, {
-      placement,
-      alignment,
-      sideOffset,
-      alignOffset,
+    // Get positioning configuration from content attributes with fallbacks to defaults
+    const positionConfig = {
+      placement:
+        this.content.getAttribute("data-side") ||
+        DEFAULT_POSITION_CONFIG.placement,
+      alignment:
+        this.content.getAttribute("data-align") ||
+        DEFAULT_POSITION_CONFIG.alignment,
+      sideOffset:
+        parseInt(this.content.getAttribute("data-side-offset"), 10) ||
+        DEFAULT_POSITION_CONFIG.sideOffset,
+      alignOffset:
+        parseInt(this.content.getAttribute("data-align-offset"), 10) ||
+        DEFAULT_POSITION_CONFIG.alignOffset,
       flip: true,
       usePortal: false,
       trapFocus: false,
-    });
+    };
+
+    // Create positioned element
+    this.positionedElement = new PositionedElement(
+      this.content,
+      this.trigger,
+      positionConfig,
+    );
   }
 
   // State machine handlers
@@ -186,6 +186,12 @@ class TooltipComponent extends Component {
 
   beforeDestroy() {
     this.clearTimers();
+
+    // Clean up the positioned element if it exists
+    if (this.positionedElement) {
+      this.positionedElement.destroy();
+      this.positionedElement = null;
+    }
   }
 }
 
