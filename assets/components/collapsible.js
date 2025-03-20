@@ -4,68 +4,73 @@ import SaladUI from "../index";
 
 class CollapsibleComponent extends Component {
   constructor(el, hookContext) {
-    super(el, hookContext);
+    super(el, { hookContext });
 
     // Initialize core properties
     this.trigger = this.getPart("trigger");
     this.content = this.getPart("content");
-    this.isOpen = this.options.open || false;
 
     // Set keyboard navigation defaults
     this.config.preventDefaultKeys = ["Enter", " "];
   }
 
-  getStateMachine() {
+  getComponentConfig() {
     return {
-      closed: {
-        enter: "onClosedEnter",
-        keyMap: {
-          Enter: "toggle",
-          " ": "toggle",
+      stateMachine: {
+        closed: {
+          enter: "onClosedEnter",
+          transitions: {
+            toggle: "open",
+            open: "open",
+          },
         },
-        transitions: {
-          toggle: "open",
-          open: "open",
-        },
-        hidden: {
-          content: true,
+        open: {
+          enter: "onOpenEnter",
+          transitions: {
+            toggle: "closed",
+            close: "closed",
+          },
         },
       },
-      open: {
-        enter: "onOpenEnter",
-        keyMap: {
-          Enter: "toggle",
-          " ": "toggle",
+      events: {
+        closed: {
+          keyMap: {
+            Enter: "toggle",
+            " ": "toggle",
+          },
         },
-        transitions: {
-          toggle: "closed",
-          close: "closed",
+        open: {
+          keyMap: {
+            Enter: "toggle",
+            " ": "toggle",
+          },
         },
-        hidden: {
+      },
+      visibilityConfig: {
+        closed: {
+          content: true,
+        },
+        open: {
           content: false,
         },
       },
-    };
-  }
-
-  getAriaConfig() {
-    return {
-      trigger: {
-        all: {
-          controls: () => this.getPartId("content"),
-          expanded: "false",
+      ariaConfig: {
+        trigger: {
+          all: {
+            controls: () => this.getPartId("content"),
+          },
+          open: {
+            expanded: "true",
+          },
+          closed: {
+            expanded: "false",
+          },
         },
-        open: {
-          expanded: "true",
-        },
-        closed: {
-          expanded: "false",
-        },
-      },
-      content: {
-        all: {
-          labelledby: () => this.getPartId("trigger"),
-          role: "region",
+        content: {
+          all: {
+            labelledby: () => this.getPartId("trigger"),
+            role: "region",
+          },
         },
       },
     };
@@ -73,12 +78,10 @@ class CollapsibleComponent extends Component {
 
   // State handlers
   onOpenEnter() {
-    this.isOpen = true;
     this.pushEvent("opened");
   }
 
   onClosedEnter() {
-    this.isOpen = false;
     this.pushEvent("closed");
   }
 }
