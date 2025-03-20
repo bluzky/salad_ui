@@ -171,13 +171,6 @@ class HoverCardComponent extends Component {
     // Activate positioned element
     if (this.positionedElement) {
       this.positionedElement.activate();
-
-      // Update position after animation completes
-      setTimeout(() => {
-        if (this.positionedElement) {
-          this.positionedElement.update();
-        }
-      }, 150);
     }
 
     // Notify the server of the state change

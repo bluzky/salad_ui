@@ -114,7 +114,6 @@ class PopoverComponent extends Component {
 
     // Activate the positioned element
     if (this.positionedElement) {
-      this.updatePartsVisibility();
       this.positionedElement.activate();
     }
 

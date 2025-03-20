@@ -99,12 +99,12 @@ class Component {
         // Check if we should animate
         if (this.shouldAnimateTransition(prevState, nextState, params)) {
           // Return promise for animation
-          console.log(new Date(), "Animating transition");
+          console.log(Date.now(), "Animating transition");
           // Animation completed, do final UI updates
           this.updateUI({ ...params, animationCompleted: true });
 
           return this.animateTransition(prevState, nextState).then(() => {
-            console.log(new Date(), "Animation completed");
+            console.log(Date.now(), "Animation completed");
 
             this.updatePartsVisibility(nextState);
           });
@@ -447,14 +447,14 @@ class Component {
       partElements.forEach((element) => {
         if (element) {
           element.hidden = hidden;
-          console.log("Setting hidden", partName, hidden);
+          console.log("Setting hidden", partName, hidden, Date.now());
         }
       });
     });
   }
 
   getPart(name) {
-    return this.el.querySelector(`[data-part="${name}"]`);
+    return this.allParts.find((part) => part.dataset.part === name);
   }
 
   getAllParts(name) {
