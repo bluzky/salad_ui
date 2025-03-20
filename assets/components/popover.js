@@ -5,7 +5,7 @@ import PositionedElement from "../core/positioned-element";
 
 class PopoverComponent extends Component {
   constructor(el, hookContext) {
-    super(el, hookContext);
+    super(el, { hookContext });
 
     // Initialize core properties
     this.trigger = this.getPart("trigger");

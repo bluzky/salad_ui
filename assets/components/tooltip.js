@@ -17,7 +17,7 @@ const DEFAULT_TIMING_CONFIG = {
 
 class TooltipComponent extends Component {
   constructor(el, hookContext) {
-    super(el, hookContext);
+    super(el, { hookContext });
 
     // Initialize core properties
     this.trigger =

@@ -4,10 +4,12 @@
  * Provides state management, event handling, and ARIA support
  */
 import StateMachine from "./state-machine";
-import { animateTransition } from "./animation-utils";
+import { animateTransition } from "./utils";
 
 class Component {
-  constructor(el, hookContext) {
+  constructor(el, options) {
+    const { hookContext, initialState = "idle", ignoreItems = true } = options;
+
     this.el = el;
     this.hook = hookContext;
 
@@ -15,7 +17,7 @@ class Component {
       preventDefaultKeys: [],
     };
 
-    this.initialState = "idle";
+    this.initialState = initialState;
     this.eventConfig = {};
     this.componentConfig = {};
     this.visibilityConfig = {};
@@ -27,10 +29,15 @@ class Component {
     this.initConfig();
     this.initStateMachine(this.componentConfig.stateMachine, this.initialState);
     this.ariaManager = new AriaManager(this, this.ariaConfig);
+
     // ignore item's part
-    this.allParts = Array.from(this.el.querySelectorAll("[data-part]")).filter(
-      (element) => !element.dataset.part.startsWith("item-"),
-    );
+    this.allParts = Array.from(this.el.querySelectorAll("[data-part]"));
+    if (ignoreItems) {
+      this.allParts = this.allParts.filter(
+        (element) => !element.dataset.part.startsWith("item"),
+      );
+    }
+
     this.updateUI();
     this.updatePartsVisibility();
 
@@ -42,7 +49,8 @@ class Component {
     try {
       const optionsString = this.el.getAttribute("data-options");
       this.options = optionsString ? JSON.parse(optionsString) : {};
-      this.initialState = this.el.getAttribute("data-state") || "idle";
+      this.initialState =
+        this.el.getAttribute("data-state") || this.initialState;
     } catch (error) {
       console.error("SaladUI: Error parsing component options:", error);
       this.options = {};
@@ -105,6 +113,7 @@ class Component {
     // Check if we should animate
     const transitionName = `${prevState}_to_${nextState}`;
     const animConfig = this.options.animations?.[transitionName];
+    this.updateUI();
 
     if (!animConfig) {
       // No animation, update visibility immediately

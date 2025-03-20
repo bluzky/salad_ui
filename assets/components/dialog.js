@@ -6,7 +6,7 @@ import ClickOutsideMonitor from "../core/click-outside";
 
 class DialogComponent extends Component {
   constructor(el, hookContext) {
-    super(el, hookContext);
+    super(el, { hookContext });
 
     // Initialize properties
     this.root = this.el;
