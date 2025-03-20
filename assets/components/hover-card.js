@@ -3,6 +3,19 @@ import Component from "../core/component";
 import SaladUI from "../index";
 import PositionedElement from "../core/positioned-element";
 
+// Define constants at the module level outside the class
+const DEFAULT_POSITION_CONFIG = {
+  placement: "top",
+  alignment: "center",
+  sideOffset: 8,
+  alignOffset: 0,
+};
+
+const DEFAULT_TIMING_CONFIG = {
+  openDelay: 300,
+  closeDelay: 200,
+};
+
 class HoverCardComponent extends Component {
   constructor(el, hookContext) {
     super(el, hookContext);
@@ -11,9 +24,11 @@ class HoverCardComponent extends Component {
     this.trigger = this.getPart("trigger");
     this.content = this.getPart("content");
 
-    // Set default config
-    this.config.openDelay = this.options.openDelay || 300;
-    this.config.closeDelay = this.options.closeDelay || 200;
+    // Set config from options with fallbacks to defaults
+    this.config.openDelay =
+      this.options.openDelay || DEFAULT_TIMING_CONFIG.openDelay;
+    this.config.closeDelay =
+      this.options.closeDelay || DEFAULT_TIMING_CONFIG.closeDelay;
 
     // Track timer IDs for delayed open/close
     this.openTimer = null;
@@ -25,7 +40,6 @@ class HoverCardComponent extends Component {
       stateMachine: {
         closed: {
           enter: "onClosedEnter",
-          keyMap: {},
           transitions: {
             open: "open",
           },
@@ -33,9 +47,30 @@ class HoverCardComponent extends Component {
         open: {
           enter: "onOpenEnter",
           exit: "onOpenExit",
-          keyMap: {},
           transitions: {
             close: "closed",
+          },
+        },
+      },
+      events: {
+        closed: {
+          mouseMap: {
+            trigger: {
+              mouseenter: "delayOpen",
+              focus: "delayOpen",
+            },
+          },
+        },
+        open: {
+          mouseMap: {
+            trigger: {
+              mouseleave: "delayClose",
+              blur: "delayClose",
+            },
+            content: {
+              mouseenter: "clearTimers",
+              mouseleave: "delayClose",
+            },
           },
         },
       },
@@ -68,105 +103,19 @@ class HoverCardComponent extends Component {
     };
   }
 
-  setupComponentEvents() {
-    super.setupComponentEvents();
-
-    if (this.trigger) {
-      // Mouse events
-      this.trigger.addEventListener(
-        "mouseenter",
-        this.handleTriggerMouseEnter.bind(this),
-      );
-      this.trigger.addEventListener(
-        "mouseleave",
-        this.handleTriggerMouseLeave.bind(this),
-      );
-
-      // Focus events - for accessibility
-      this.trigger.addEventListener(
-        "focus",
-        this.handleTriggerFocus.bind(this),
-      );
-      this.trigger.addEventListener("blur", this.handleTriggerBlur.bind(this));
-    }
-
-    if (this.content) {
-      // Prevent closing when hovering content
-      this.content.addEventListener(
-        "mouseenter",
-        this.handleContentMouseEnter.bind(this),
-      );
-      this.content.addEventListener(
-        "mouseleave",
-        this.handleContentMouseLeave.bind(this),
-      );
-    }
-  }
-
-  // Initialize the positioned element
-  initializePositionedElement() {
-    if (this.positionedElement) return;
-
-    if (!this.trigger || !this.content) return;
-
-    // Get positioning configuration
-    const placement = this.content.getAttribute("data-side") || "top";
-    const alignment = this.content.getAttribute("data-align") || "center";
-    const sideOffset = parseInt(
-      this.content.getAttribute("data-side-offset") || "4",
-      10,
-    );
-    const alignOffset = parseInt(
-      this.content.getAttribute("data-align-offset") || "0",
-      10,
-    );
-
-    // Create positioned element
-    this.positionedElement = new PositionedElement(this.content, this.trigger, {
-      placement,
-      alignment,
-      sideOffset,
-      alignOffset,
-      flip: true,
-      usePortal: false, // Don't use portal to keep DOM structure
-      trapFocus: false,
-    });
-  }
-
-  // Event handlers
-  handleTriggerMouseEnter() {
+  // Generic methods for delayed state transitions
+  delayOpen() {
     this.clearTimers();
     this.openTimer = setTimeout(() => {
       this.transition("open");
     }, this.config.openDelay);
   }
 
-  handleTriggerMouseLeave() {
+  delayClose() {
     this.clearTimers();
     this.closeTimer = setTimeout(() => {
       this.transition("close");
     }, this.config.closeDelay);
-  }
-
-  handleContentMouseEnter() {
-    this.clearTimers();
-  }
-
-  handleContentMouseLeave() {
-    this.clearTimers();
-    this.closeTimer = setTimeout(() => {
-      this.transition("close");
-    }, this.config.closeDelay);
-  }
-
-  handleTriggerFocus() {
-    this.clearTimers();
-    this.transition("open");
-  }
-
-  handleTriggerBlur() {
-    this.clearTimers();
-    this.transition("close");
   }
 
   clearTimers() {
@@ -179,6 +128,39 @@ class HoverCardComponent extends Component {
       clearTimeout(this.closeTimer);
       this.closeTimer = null;
     }
+  }
+
+  // Initialize the positioned element
+  initializePositionedElement() {
+    if (this.positionedElement) return;
+
+    if (!this.trigger || !this.content) return;
+
+    // Get positioning configuration from content attributes with fallbacks to defaults
+    const positionConfig = {
+      placement:
+        this.content.getAttribute("data-side") ||
+        DEFAULT_POSITION_CONFIG.placement,
+      alignment:
+        this.content.getAttribute("data-align") ||
+        DEFAULT_POSITION_CONFIG.alignment,
+      sideOffset:
+        parseInt(this.content.getAttribute("data-side-offset"), 10) ||
+        DEFAULT_POSITION_CONFIG.sideOffset,
+      alignOffset:
+        parseInt(this.content.getAttribute("data-align-offset"), 10) ||
+        DEFAULT_POSITION_CONFIG.alignOffset,
+      flip: true,
+      usePortal: false, // Don't use portal to keep DOM structure
+      trapFocus: false,
+    };
+
+    // Create positioned element
+    this.positionedElement = new PositionedElement(
+      this.content,
+      this.trigger,
+      positionConfig,
+    );
   }
 
   // State machine handlers

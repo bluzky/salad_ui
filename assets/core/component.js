@@ -73,6 +73,10 @@ class Component {
           transitions: {},
         },
       };
+    } else {
+      this.componentConfig.stateMachine = this.bindStateHandlers(
+        this.componentConfig.stateMachine,
+      );
     }
 
     this.eventConfig = this.componentConfig.events || {};
@@ -80,8 +84,16 @@ class Component {
     this.ariaConfig = this.componentConfig.ariaConfig || {};
   }
 
+  /**
+   * Get component configuration
+   * Override in subclasses to provide component-specific configuration
+   * @returns {Object} Configuration object with stateMachine, events, and ariaConfig
+   */
+  getComponentConfig() {
+    throw new Error("getComponentConfig() must be implemented in subclass");
+  }
+
   initStateMachine(stateMachineConfig, initialState) {
-    // Create and configure the state machine
     this.stateMachine = new StateMachine(stateMachineConfig, initialState, {
       onStateChanged: (prevState, nextState, params) => {
         // Handle state change
@@ -106,12 +118,33 @@ class Component {
   }
 
   /**
-   * Get component configuration
-   * Override in subclasses to provide component-specific configuration
-   * @returns {Object} Configuration object with stateMachine, events, and ariaConfig
+   * Process the state machine configuration to automatically bind string method references
+   * to instance methods for enter and exit handlers
+   *
+   * @param {Object} config - The original state machine configuration
+   * @returns {Object} - The processed configuration with bound enter/exit methods
    */
-  getComponentConfig() {
-    throw new Error("getComponentConfig() must be implemented in subclass");
+  bindStateHandlers(stateMachineConfig) {
+    // Process each state
+    Object.keys(stateMachineConfig).forEach((stateName) => {
+      const stateConfig = stateMachineConfig[stateName];
+
+      ["enter", "exit"].forEach((handlerName) => {
+        // Process handler if it's a string
+        if (typeof stateConfig[handlerName] === "string") {
+          const methodName = stateConfig[handlerName];
+          if (typeof this[methodName] === "function") {
+            stateConfig[handlerName] = this[methodName].bind(this);
+          } else {
+            console.warn(
+              `Method ${methodName} not found for ${handlerName} handler in state ${stateName}`,
+            );
+          }
+        }
+      });
+    });
+
+    return stateMachineConfig;
   }
 
   setupEvents() {
@@ -119,6 +152,7 @@ class Component {
     this.el.addEventListener("click", this.handleActionClick.bind(this));
     // Setup mouse event listeners
     this.setupMouseEventHandlers();
+    this.setupComponentEvents();
   }
 
   /**
@@ -155,6 +189,10 @@ class Component {
     });
   }
 
+  setupComponentEvents() {
+    // Override in component subclasses
+  }
+
   /**
    * Set up event listeners for mouse events defined in config
    */
@@ -167,8 +205,10 @@ class Component {
       if (!stateEvents.mouseMap) return;
 
       // Collect all event types
-      Object.keys(stateEvents.mouseMap).forEach((eventType) => {
-        eventTypes.add(eventType);
+      Object.keys(stateEvents.mouseMap).forEach((partName) => {
+        Object.keys(stateEvents.mouseMap[partName]).forEach((eventType) => {
+          eventTypes.add(eventType);
+        });
       });
     });
 
@@ -201,8 +241,14 @@ class Component {
    */
   handleMouseEvent(eventType, event) {
     const currentState = this.stateMachine.state;
-    const mouseMap = this.eventConfig?.currentState?.mouseMap;
-    if (!mouseMap) return;
+    if (
+      !this.eventConfig ||
+      !this.eventConfig[currentState] ||
+      !this.eventConfig[currentState].mouseMap
+    ) {
+      return;
+    }
+    const mouseMap = this.eventConfig[currentState].mouseMap;
 
     // Get the keys from the mouseMap to know what element names we're looking for
     const validElementNames = Object.keys(mouseMap);
