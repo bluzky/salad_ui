@@ -32,8 +32,8 @@ class Component {
     this.updateUI();
     this.updatePartsVisibility();
 
-    // Create a map to store event handlers for cleanup
-    this.mouseEventHandlers = new Map();
+    // Map to store event handlers for each part element
+    this.partsEventHandlers = new Map();
   }
 
   parseOptions() {
@@ -96,20 +96,22 @@ class Component {
   initStateMachine(stateMachineConfig, initialState) {
     this.stateMachine = new StateMachine(stateMachineConfig, initialState, {
       onStateChanged: (prevState, nextState, params) => {
-        // Handle state change
-        this.updatePartsVisibility(nextState);
-
         // Check if we should animate
         if (this.shouldAnimateTransition(prevState, nextState, params)) {
           // Return promise for animation
-          return this.animateTransition(prevState, nextState, params).then(
-            () => {
-              // Animation completed, do final UI updates
-              this.updateUI({ ...params, animationCompleted: true });
-            },
-          );
+          console.log(new Date(), "Animating transition");
+          // Animation completed, do final UI updates
+          this.updateUI({ ...params, animationCompleted: true });
+
+          return this.animateTransition(prevState, nextState).then(() => {
+            console.log(new Date(), "Animation completed");
+
+            this.updatePartsVisibility(nextState);
+          });
         } else {
           // No animation, update UI immediately
+          this.updatePartsVisibility(nextState);
+
           this.updateUI(params);
           return null; // No promise
         }
@@ -150,8 +152,10 @@ class Component {
   setupEvents() {
     this.el.addEventListener("keydown", this.handleKeyDown.bind(this));
     this.el.addEventListener("click", this.handleActionClick.bind(this));
-    // Setup mouse event listeners
+
+    // Setup mouse event handlers once for all states
     this.setupMouseEventHandlers();
+
     this.setupComponentEvents();
   }
 
@@ -194,33 +198,55 @@ class Component {
   }
 
   /**
-   * Set up event listeners for mouse events defined in config
+   * Set up event listeners for mouse events based on the current state
    */
   setupMouseEventHandlers() {
-    // Collect all event types from all states
-    const eventTypes = new Set();
+    // Process all states for their mouse events
+    Object.keys(this.eventConfig).forEach((stateName) => {
+      const stateEvents = this.eventConfig[stateName];
+      if (!stateEvents || !stateEvents.mouseMap) return;
 
-    // Loop through all states in the events config
-    Object.values(this.eventConfig).forEach((stateEvents) => {
-      if (!stateEvents.mouseMap) return;
+      const mouseMap = stateEvents.mouseMap;
 
-      // Collect all event types
-      Object.keys(stateEvents.mouseMap).forEach((partName) => {
-        Object.keys(stateEvents.mouseMap[partName]).forEach((eventType) => {
-          eventTypes.add(eventType);
+      // For each part in the mouseMap
+      Object.keys(mouseMap).forEach((partName) => {
+        // Get all elements with this part name
+        const partElements = this.getAllParts(partName);
+
+        if (!partElements.length) return;
+
+        // For each event type on this part
+        Object.keys(mouseMap[partName]).forEach((eventType) => {
+          const handlerAction = mouseMap[partName][eventType];
+
+          // Create a bound handler that will check the current state before executing
+          const boundHandler = (event) => {
+            // Only execute the handler if we're in the correct state
+            const currentState = this.stateMachine.state;
+            if (currentState === stateName) {
+              this.executeHandler(handlerAction, event);
+            }
+          };
+
+          // For each element with this part
+          partElements.forEach((element) => {
+            // Add event listener directly to the part element
+            element.addEventListener(eventType, boundHandler);
+
+            // Store the handler reference for removal later
+            if (!this.partsEventHandlers.has(element)) {
+              this.partsEventHandlers.set(element, new Map());
+            }
+
+            const elementHandlers = this.partsEventHandlers.get(element);
+            if (!elementHandlers.has(eventType)) {
+              elementHandlers.set(eventType, []);
+            }
+
+            elementHandlers.get(eventType).push(boundHandler);
+          });
         });
       });
-    });
-
-    // Set up a single delegated listener for each unique event type
-    eventTypes.forEach((eventType) => {
-      const boundHandler = this.handleMouseEvent.bind(this, eventType);
-
-      // Store the bound handler for cleanup
-      this.mouseEventHandlers.set(eventType, boundHandler);
-
-      // Add the event listener
-      this.el.addEventListener(eventType, boundHandler, true);
     });
   }
 
@@ -228,57 +254,20 @@ class Component {
    * Remove all active mouse event listeners
    */
   removeMouseEventListeners() {
-    if (this.mouseEventHandlers) {
-      this.mouseEventHandlers.forEach((handler, eventType) => {
-        this.el.removeEventListener(eventType, handler, true);
+    if (this.partsEventHandlers) {
+      // For each element that has event handlers
+      this.partsEventHandlers.forEach((eventHandlers, element) => {
+        // For each event type on this element
+        eventHandlers.forEach((handlers, eventType) => {
+          // Remove all handlers for this event type
+          handlers.forEach((handler) => {
+            element.removeEventListener(eventType, handler);
+          });
+        });
       });
-      this.mouseEventHandlers.clear();
-    }
-  }
 
-  /**
-   * Handle mouse events according to the current state's mouseMap
-   */
-  handleMouseEvent(eventType, event) {
-    const currentState = this.stateMachine.state;
-    if (
-      !this.eventConfig ||
-      !this.eventConfig[currentState] ||
-      !this.eventConfig[currentState].mouseMap
-    ) {
-      return;
-    }
-    const mouseMap = this.eventConfig[currentState].mouseMap;
-
-    // Get the keys from the mouseMap to know what element names we're looking for
-    const validElementNames = Object.keys(mouseMap);
-    if (validElementNames.length === 0) return;
-
-    // Start with the event target and navigate up
-    let targetElement = event.target;
-
-    // Navigate up the DOM to find a matching element
-    while (targetElement && targetElement !== this.el) {
-      // Check if this element has a data-part attribute
-      if (targetElement.hasAttribute("data-part")) {
-        const partName = targetElement.getAttribute("data-part");
-
-        // Check if this part name is in our mouseMap
-        if (
-          validElementNames.includes(partName) &&
-          mouseMap[partName]?.[eventType]
-        ) {
-          this.executeHandler(
-            mouseMap[partName][eventType],
-            event,
-            targetElement,
-          );
-          return;
-        }
-      }
-
-      // Move up to parent element
-      targetElement = targetElement.parentElement;
+      // Clear the map for future use
+      this.partsEventHandlers.clear();
     }
   }
 
@@ -335,7 +324,7 @@ class Component {
    * @param {Object} params - Transition parameters
    * @returns {Promise} A Promise that resolves when animation completes
    */
-  animateTransition(fromState, toState, params = {}) {
+  animateTransition(fromState, toState) {
     // Get animation configuration
     const transitionName = `${fromState}_to_${toState}`;
     const animConfig = this.options.animations?.[transitionName];
@@ -371,6 +360,7 @@ class Component {
    * @returns {Promise} Promise that resolves when animation completes
    */
   executeAnimation(targetElement, animOptions) {
+    console.log("Animating", targetElement, animOptions);
     return new Promise((resolve) => {
       const { animation, duration } = animOptions;
       let [transitionRun, transitionStart, transitionEnd] = animation || [
@@ -432,6 +422,7 @@ class Component {
    * @param {Object} params - Optional parameters from state transition
    */
   updateUI(params = {}) {
+    console.log("Updating UI", this.stateMachine.state);
     const currentState = this.stateMachine.state;
 
     // Update data-state attributes on all parts and root element
@@ -445,8 +436,9 @@ class Component {
   /**
    * Update part visibility based on current state configuration
    */
-  updatePartsVisibility(state) {
-    const currentState = state || this.stateMachine.state;
+  updatePartsVisibility() {
+    console.log("Updating visibility");
+    const currentState = this.stateMachine.state;
     const stateVisibility = this.visibilityConfig[currentState];
     if (!stateVisibility) return;
 
@@ -455,6 +447,7 @@ class Component {
       partElements.forEach((element) => {
         if (element) {
           element.hidden = hidden;
+          console.log("Setting hidden", partName, hidden);
         }
       });
     });
