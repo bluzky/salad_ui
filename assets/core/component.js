@@ -20,7 +20,7 @@ class Component {
     this.initialState = initialState;
     this.eventConfig = {};
     this.componentConfig = {};
-    this.visibilityConfig = {};
+    this.hiddenConfig = {};
     this.ariaConfig = {};
 
     // Initialize component
@@ -90,7 +90,7 @@ class Component {
     }
 
     this.eventConfig = this.componentConfig.events || {};
-    this.visibilityConfig = this.componentConfig.visibilityConfig || {};
+    this.hiddenConfig = this.componentConfig.hiddenConfig || {};
     this.ariaConfig = this.componentConfig.ariaConfig || {};
   }
 
@@ -335,7 +335,7 @@ class Component {
   updatePartsVisibility() {
     console.log("Updating visibility");
     const currentState = this.stateMachine.state;
-    const stateVisibility = this.visibilityConfig[currentState];
+    const stateVisibility = this.hiddenConfig[currentState];
     if (!stateVisibility) return;
 
     Object.entries(stateVisibility).forEach(([partName, hidden]) => {
