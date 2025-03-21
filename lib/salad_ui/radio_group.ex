@@ -97,6 +97,7 @@ defmodule SaladUI.RadioGroup do
         value={@value}
         disabled={@disabled}
         class="sr-only"
+        tabindex="-1"
       />
       <span class="hidden group-data-[state=checked]/item:flex items-center justify-center">
         <svg
