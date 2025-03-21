@@ -83,6 +83,7 @@ defmodule SaladUI.Accordion do
       data-state="idle"
       data-options={@options}
       data-event-mappings={@event_map}
+      data-part="root"
       phx-hook="SaladUI"
       {@rest}
     >
@@ -137,7 +138,7 @@ defmodule SaladUI.Accordion do
     ~H"""
     <button
       type="button"
-      data-part="trigger"
+      data-part="item-trigger"
       class={
         classes([
           "flex w-full justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180",
@@ -182,7 +183,7 @@ defmodule SaladUI.Accordion do
   def accordion_content(assigns) do
     ~H"""
     <div
-      data-part="content"
+      data-part="item-content"
       data-state="closed"
       class={
         classes([

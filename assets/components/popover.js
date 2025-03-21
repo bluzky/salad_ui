@@ -1,11 +1,11 @@
-// saladui/components/popover.js (Refactored)
+// saladui/components/popover.js
 import Component from "../core/component";
 import SaladUI from "../index";
 import PositionedElement from "../core/positioned-element";
 
 class PopoverComponent extends Component {
   constructor(el, hookContext) {
-    super(el, hookContext);
+    super(el, { hookContext });
 
     // Initialize core properties
     this.trigger = this.getPart("trigger");
@@ -18,51 +18,58 @@ class PopoverComponent extends Component {
     this.config.preventDefaultKeys = ["Escape"];
   }
 
-  getStateMachine() {
+  getComponentConfig() {
     return {
-      closed: {
-        enter: "onClosedEnter",
-        keyMap: {},
-        transitions: {
-          open: "open",
-          toggle: "open",
+      stateMachine: {
+        closed: {
+          enter: "onClosedEnter",
+          transitions: {
+            open: "open",
+            toggle: "open",
+          },
         },
-        hidden: {
-          positioner: true, // Hide the positioner in closed state
+        open: {
+          enter: "onOpenEnter",
+          transitions: {
+            close: "closed",
+            toggle: "closed",
+          },
         },
       },
-      open: {
-        enter: "onOpenEnter",
-        keyMap: {
-          Escape: "close",
+      events: {
+        closed: {
+          keyMap: {},
         },
-        transitions: {
-          close: "closed",
-          toggle: "closed",
+        open: {
+          keyMap: {
+            Escape: "close",
+          },
         },
-        hidden: {
+      },
+      hiddenConfig: {
+        closed: {
+          positioner: true, // Hide the positioner in closed state
+        },
+        open: {
           positioner: false, // Show the positioner in open state
         },
       },
-    };
-  }
-
-  getAriaConfig() {
-    return {
-      trigger: {
-        all: {
-          haspopup: "dialog",
+      ariaConfig: {
+        trigger: {
+          all: {
+            haspopup: "dialog",
+          },
+          open: {
+            expanded: "true",
+          },
+          closed: {
+            expanded: "false",
+          },
         },
-        open: {
-          expanded: "true",
-        },
-        closed: {
-          expanded: "false",
-        },
-      },
-      content: {
-        all: {
-          role: "dialog",
+        content: {
+          all: {
+            role: "dialog",
+          },
         },
       },
     };
@@ -93,7 +100,7 @@ class PopoverComponent extends Component {
           alignOffset,
           flip: true,
           usePortal: true,
-          portalContainer: document.querySelector(this.options.portalcontainer),
+          portalContainer: document.querySelector(this.options.portalContainer),
           trapFocus: true,
           onOutsideClick: () => this.transition("close"),
         },
@@ -107,7 +114,6 @@ class PopoverComponent extends Component {
 
     // Activate the positioned element
     if (this.positionedElement) {
-      this.updatePartsVisibility();
       this.positionedElement.activate();
     }
 

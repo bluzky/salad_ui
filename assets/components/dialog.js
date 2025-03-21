@@ -1,4 +1,4 @@
-// saladui/components/dialog.js (Refactored)
+// saladui/components/dialog.js
 import Component from "../core/component";
 import SaladUI from "../index";
 import FocusTrap from "../core/focus-trap";
@@ -6,7 +6,7 @@ import ClickOutsideMonitor from "../core/click-outside";
 
 class DialogComponent extends Component {
   constructor(el, hookContext) {
-    super(el, hookContext);
+    super(el, { hookContext });
 
     // Initialize properties
     this.root = this.el;
@@ -15,58 +15,64 @@ class DialogComponent extends Component {
     this.config.preventDefaultKeys = ["Escape"];
   }
 
-  // Override the getStateMachine method
-  getStateMachine() {
+  getComponentConfig() {
     return {
-      closed: {
-        enter: "onClosedEnter",
-        exit: "onClosedExit",
-        keyMap: {},
-        transitions: {
-          open: "open",
+      stateMachine: {
+        closed: {
+          enter: "onClosedEnter",
+          exit: "onClosedExit",
+          transitions: {
+            open: "open",
+          },
         },
-        hidden: {
-          content: true,
+        open: {
+          enter: "onOpenEnter",
+          transitions: {
+            close: "closed",
+          },
         },
       },
-      open: {
-        enter: "onOpenEnter",
-        keyMap: {
-          Escape: "close",
+      events: {
+        closed: {
+          keyMap: {},
         },
-        transitions: {
-          close: "closed",
+        open: {
+          keyMap: {
+            Escape: "close",
+          },
         },
-        hidden: {
+      },
+      hiddenConfig: {
+        closed: {
+          content: true,
+        },
+        open: {
           content: false,
         },
       },
-    };
-  }
-
-  getAriaConfig() {
-    return {
-      content: {
-        all: {
-          role: "dialog",
+      ariaConfig: {
+        content: {
+          all: {
+            role: "dialog",
+          },
+          open: {
+            hidden: "false",
+            modal: "true",
+          },
+          closed: {
+            hidden: "true",
+          },
         },
-        open: {
-          hidden: "false",
-          modal: "true",
+        "content-panel": {
+          open: {
+            labelledby: () => this.getPartId("title"),
+            describedby: () => this.getPartId("description"),
+          },
         },
-        closed: {
-          hidden: "true",
-        },
-      },
-      "content-panel": {
-        open: {
-          labelledby: () => this.getPartId("title"),
-          describedby: () => this.getPartId("description"),
-        },
-      },
-      "close-trigger": {
-        all: {
-          label: "Close dialog",
+        "close-trigger": {
+          all: {
+            label: "Close dialog",
+          },
         },
       },
     };
@@ -121,9 +127,7 @@ class DialogComponent extends Component {
   onOpenEnter() {
     // Initialize focus trap if not already created
     if (!this.focusTrap) {
-      this.focusTrap = new FocusTrap(this.contentPanel, {
-        focusableSelector: this.config.focusableSelector,
-      });
+      this.focusTrap = new FocusTrap(this.contentPanel);
     }
 
     // Activate focus trap
@@ -134,12 +138,7 @@ class DialogComponent extends Component {
       this.clickOutsideMonitor.start();
     }
 
-    // Setup escape key handling
-    this.contentPanel.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        this.transition("close");
-      }
-    });
+    // Setup escape key handling - now handled by the component's keyMap
 
     // Notify the server of the state change
     this.pushEvent("opened");

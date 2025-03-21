@@ -1,16 +1,16 @@
 // saladui/components/tabs.js
 import Component from "../core/component";
 import SaladUI from "../index";
+import Collection from "../core/collection";
 
 class TabsComponent extends Component {
   constructor(el, hookContext) {
-    super(el, hookContext);
+    super(el, { hookContext });
 
     // Initialize core properties
     this.list = this.getPart("list");
-    this.triggers = this.el.querySelectorAll("[data-part='trigger']");
-    this.contents = this.el.querySelectorAll("[data-part='content']");
-    this.selectedValue = this.options.defaultValue || null;
+    this.triggers = this.getAllParts("trigger");
+    this.contents = this.getAllParts("content");
 
     // Set keyboard navigation defaults
     this.config.preventDefaultKeys = [
@@ -19,184 +19,154 @@ class TabsComponent extends Component {
       "Home",
       "End",
       "Enter",
-      "Space",
+      " ",
     ];
 
-    // Setup IDs and initialize the active tab
-    this.setupTriggerEvents();
-    this.setupContentIds();
+    // Initialize tabs
+    this.initialize();
+  }
 
-    // Activate default tab if provided, otherwise select first tab
-    if (!this.selectedValue && this.triggers.length > 0) {
-      this.selectedValue = this.triggers[0].getAttribute("data-value");
+  initialize() {
+    // Initialize collection manager for tabs
+    this.collection = new Collection({
+      type: "single",
+      defaultValue: this.options.defaultValue,
+      value: this.options.value,
+      getItemValue: (item) => item.getAttribute("data-value"),
+      isItemDisabled: (item) => item.getAttribute("data-disabled") === "true",
+    });
+
+    // Register triggers with collection manager
+    this.triggers.forEach((trigger) => this.collection.add(trigger));
+
+    // Setup accessibility attributes
+    this.setupAriaAttributes();
+
+    // Select first tab if none selected
+    if (!this.collection.getValue() && this.triggers.length > 0) {
+      const firstTrigger = this.collection.getItem("first");
+      if (firstTrigger) this.collection.select(firstTrigger);
     }
 
+    // Initial UI update
     this.updateActiveTab();
   }
 
-  getStateMachine() {
+  getComponentConfig() {
     return {
-      idle: {
-        keyMap: {
-          ArrowLeft: () => this.navigateTab(-1),
-          ArrowRight: () => this.navigateTab(1),
-          Home: () => this.navigateTab("first"),
-          End: () => this.navigateTab("last"),
+      stateMachine: {
+        idle: {
+          transitions: { select: "idle" },
         },
-        transitions: {
-          select: "idle",
+      },
+      events: {
+        idle: {
+          keyMap: {
+            ArrowLeft: () => this.navigateTab("prev"),
+            ArrowRight: () => this.navigateTab("next"),
+            Home: () => this.navigateTab("first"),
+            End: () => this.navigateTab("last"),
+          },
+          mouseMap: {
+            trigger: { click: (event) => this.handleTriggerClick(event) },
+          },
+        },
+      },
+      ariaConfig: {
+        list: {
+          all: { role: "tablist" },
+        },
+        trigger: {
+          all: {
+            role: "tab",
+            controls: (el) =>
+              `${this.el.id}-content-${el.getAttribute("data-value")}`,
+          },
+        },
+        content: {
+          all: {
+            role: "tabpanel",
+            tabindex: "0",
+          },
         },
       },
     };
   }
 
-  getAriaConfig() {
-    return {
-      list: {
-        all: {
-          role: "tablist",
-        },
-      },
-      trigger: {
-        all: {
-          role: "tab",
-          controls: (el) =>
-            `${this.el.id}-content-${el.getAttribute("data-value")}`,
-        },
-        active: {
-          selected: "true",
-        },
-        inactive: {
-          selected: "false",
-        },
-      },
-      content: {
-        all: {
-          role: "tabpanel",
-          labelledby: (el) =>
-            `${this.el.id}-trigger-${el.getAttribute("data-value")}`,
-        },
-        active: {
-          hidden: "false",
-        },
-        inactive: {
-          hidden: "true",
-        },
-      },
-    };
-  }
-
-  setupTriggerEvents() {
+  setupAriaAttributes() {
+    // Set IDs and ARIA attributes for triggers
     this.triggers.forEach((trigger) => {
-      // Set ID for ARIA relationships
       const value = trigger.getAttribute("data-value");
-      if (!trigger.id) {
-        trigger.id = `${this.el.id}-trigger-${value}`;
-      }
-
-      // Add click event
-      trigger.addEventListener("click", (e) => {
-        e.preventDefault();
-        this.selectTab(value);
-      });
-
-      // Add keyboard event for activation
-      trigger.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          this.selectTab(value);
-        }
-      });
+      if (!trigger.id) trigger.id = `${this.el.id}-trigger-${value}`;
     });
-  }
 
-  setupContentIds() {
+    // Set IDs and ARIA attributes for content panels
     this.contents.forEach((content) => {
       const value = content.getAttribute("data-value");
-      if (!content.id) {
-        content.id = `${this.el.id}-content-${value}`;
-      }
+      if (!content.id) content.id = `${this.el.id}-content-${value}`;
+      content.setAttribute("aria-labelledby", `${this.el.id}-trigger-${value}`);
     });
+  }
+
+  handleTriggerClick(event) {
+    const trigger = event.currentTarget;
+    if (trigger.getAttribute("data-disabled") === "true") return;
+
+    this.selectTab(trigger.getAttribute("data-value"));
   }
 
   selectTab(value) {
-    if (this.selectedValue === value) return;
+    // Find the trigger item
+    const triggerItem = this.collection.getItemByValue(value);
+    if (!triggerItem || this.collection.isValueSelected(value)) return;
 
-    const prevValue = this.selectedValue;
-    this.selectedValue = value;
+    // Select the tab
+    this.collection.select(triggerItem);
+    this.updateActiveTab();
 
-    this.updateActiveTab(true); // Pass true to focus the trigger
+    // Focus the selected trigger
+    triggerItem.instance.focus();
 
     // Emit event
-    this.pushEvent("tab-changed", {
-      value,
-      previousValue: prevValue,
-    });
+    this.pushEvent("tab-changed", { value, previousValue });
   }
 
-  updateActiveTab(shouldFocus = false) {
-    if (!this.selectedValue) return;
-
-    let selectedTrigger = null;
+  updateActiveTab() {
+    const selectedValue = this.collection.getValue();
 
     // Update triggers
     this.triggers.forEach((trigger) => {
       const value = trigger.getAttribute("data-value");
-      const isActive = value === this.selectedValue;
-      trigger.setAttribute("data-state", isActive ? "active" : "inactive");
+      const isActive = value === selectedValue;
 
-      // Store the selected trigger for focus
-      if (isActive) {
-        selectedTrigger = trigger;
-      }
+      trigger.setAttribute("data-state", isActive ? "active" : "inactive");
+      trigger.setAttribute("aria-selected", isActive.toString());
+      trigger.tabIndex = isActive ? 0 : -1;
     });
 
     // Update content panels
     this.contents.forEach((content) => {
       const value = content.getAttribute("data-value");
-      const isActive = value === this.selectedValue;
+      const isActive = value === selectedValue;
+
       content.setAttribute("data-state", isActive ? "active" : "inactive");
       content.hidden = !isActive;
     });
-
-    // Focus the selected trigger if needed
-    if (shouldFocus && selectedTrigger) {
-      selectedTrigger.focus();
-    }
   }
 
-  // Single method for all tab navigation that skips disabled tabs
   navigateTab(direction) {
-    // Get only enabled triggers
-    const enabledTriggers = Array.from(this.triggers).filter(
-      (trigger) =>
-        trigger.getAttribute("data-disabled") !== "true" && !trigger.disabled,
+    const currentItem = this.collection.getItemByValue(
+      this.collection.getValue(),
     );
 
-    // If no enabled triggers, do nothing
-    if (enabledTriggers.length === 0) return;
+    const nextItem = this.collection.getItem(direction, currentItem);
+    if (nextItem) this.selectTab(nextItem.value);
+  }
 
-    const currentIndex = enabledTriggers.findIndex(
-      (trigger) => trigger.getAttribute("data-value") === this.selectedValue,
-    );
-
-    let newIndex;
-
-    if (direction === "first") {
-      // First enabled tab
-      newIndex = 0;
-    } else if (direction === "last") {
-      // Last enabled tab
-      newIndex = enabledTriggers.length - 1;
-    } else {
-      // Navigate with proper wrapping among enabled tabs
-      newIndex =
-        (currentIndex + direction + enabledTriggers.length) %
-        enabledTriggers.length;
-    }
-
-    const newValue = enabledTriggers[newIndex].getAttribute("data-value");
-    this.selectTab(newValue);
+  // Cleanup
+  destroy() {
+    this.collection = null;
+    super.destroy();
   }
 }
 

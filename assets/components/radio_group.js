@@ -1,14 +1,14 @@
 // saladui/components/radio_group.js
 import Component from "../core/component";
 import SaladUI from "../index";
+import Collection from "../core/collection";
 
 class RadioGroupComponent extends Component {
   constructor(el, hookContext) {
-    super(el, hookContext);
+    super(el, { hookContext, ignoreItems: false });
 
     // Initialize properties
-    this.radioItems = this.el.querySelectorAll("[data-part='item']");
-    this.selectedValue = this.options.initialValue || null;
+    this.items = this.getAllParts("item");
 
     // Set keyboard navigation defaults
     this.config.preventDefaultKeys = [
@@ -18,190 +18,198 @@ class RadioGroupComponent extends Component {
       "ArrowDown",
       "Home",
       "End",
-      "Enter",
-      " ",
     ];
 
-    // Setup events and initialize
-    this.setupItemEvents();
-    this.updateSelectedRadio();
+    // Initialize collection manager for radio items
+    this.initializeCollection();
   }
 
-  getStateMachine() {
+  getComponentConfig() {
     return {
-      idle: {
-        keyMap: {
-          ArrowLeft: () => this.navigateRadio(-1),
-          ArrowRight: () => this.navigateRadio(1),
-          ArrowUp: () => this.navigateRadio(-1),
-          ArrowDown: () => this.navigateRadio(1),
-          Home: () => this.navigateRadio("first"),
-          End: () => this.navigateRadio("last"),
-          " ": () => this.selectFocusedRadio(),
-          Enter: () => this.selectFocusedRadio(),
+      stateMachine: {
+        idle: {
+          enter: "onIdleEnter",
+          transitions: {
+            valueChanged: "idle",
+          },
         },
-        transitions: {
-          select: "idle",
+      },
+      events: {
+        idle: {
+          keyMap: {
+            ArrowLeft: () => this.navigateItem("prev"),
+            ArrowRight: () => this.navigateItem("next"),
+            ArrowUp: () => this.navigateItem("prev"),
+            ArrowDown: () => this.navigateItem("next"),
+            Home: () => this.navigateItem("first"),
+            End: () => this.navigateItem("last"),
+          },
+          mouseMap: {
+            item: {
+              click: "handleItemClick",
+            },
+          },
+        },
+      },
+      ariaConfig: {
+        root: {
+          all: {
+            role: "radiogroup",
+          },
+        },
+        item: {
+          all: {
+            role: "radio",
+          },
         },
       },
     };
   }
 
-  getAriaConfig() {
-    return {
-      root: {
-        all: {
-          role: "radiogroup",
-        },
-      },
-      item: {
-        all: {
-          role: "radio",
-        },
-        checked: {
-          checked: "true",
-        },
-        unchecked: {
-          checked: "false",
-        },
-      },
-    };
-  }
+  initializeCollection() {
+    this.collection = new Collection({
+      type: "single",
+      defaultValue: this.options.initialValue,
+      getItemValue: (item) => item.getAttribute("data-value"),
+      isItemDisabled: (item) => item.getAttribute("data-disabled") === "true",
+    });
 
-  setupComponentEvents() {
-    super.setupComponentEvents();
+    // Register items with the collection
+    this.items.forEach((item) => {
+      this.collection.add(item);
 
-    // Focus management for the entire group
-    this.el.addEventListener("focus", () => {
-      if (
-        !this.el.contains(document.activeElement) ||
-        document.activeElement === this.el
-      ) {
-        const selectedRadio = this.getSelectedRadio();
-        if (selectedRadio) {
-          selectedRadio.focus();
-        } else {
-          const firstRadio = this.getEnabledRadios()[0];
-          if (firstRadio) firstRadio.focus();
-        }
+      // Set initial ID if not present
+      if (!item.id) {
+        const value = item.getAttribute("data-value");
+        item.id = `${this.el.id}-item-${value}`;
       }
     });
+
+    // Initialize UI state
+    this.updateItemStates();
   }
 
-  setupItemEvents() {
-    this.radioItems.forEach((item) => {
-      // Handle click events directly on the wrapper
-      item.addEventListener("click", (e) => {
-        e.preventDefault();
-        // Don't trigger if clicking on a disabled item
-        if (item.dataset.disabled === "true") {
-          return;
-        }
-        this.selectRadio(item.dataset.value);
+  handleItemClick(event) {
+    const item = event.currentTarget;
+    if (item.getAttribute("data-disabled") === "true") return;
+
+    this.selectItem(item);
+  }
+
+  selectItem(item) {
+    const value = item.getAttribute("data-value");
+    const previousValue = this.collection.getValue();
+
+    // Get the collection item
+    const collectionItem = this.collection.getItemByInstance(item);
+
+    // Only proceed if we have a valid item and it's not already selected
+    if (collectionItem && value !== previousValue) {
+      // Transition the state machine to apply any state-specific behavior
+      this.transition("valueChanged", { value, previousValue });
+
+      this.collection.select(collectionItem);
+      this.updateItemStates();
+
+      // Emit value changed event
+      this.pushEvent("value-changed", {
+        value,
+        previousValue,
       });
-    });
+    }
   }
 
-  selectRadio(value) {
-    if (this.selectedValue === value) return;
+  updateItemStates() {
+    const selectedValue = this.collection.getValue();
 
-    const prevValue = this.selectedValue;
-    this.selectedValue = value;
+    // Loop over collection items instead of DOM elements directly
+    this.collection.items.forEach((collectionItem) => {
+      const item = collectionItem.instance;
+      const value = collectionItem.value;
+      const isSelected = value === selectedValue;
+      const isDisabled = item.getAttribute("data-disabled") === "true";
 
-    this.updateSelectedRadio();
+      // Update visual state
+      item.setAttribute("data-state", isSelected ? "checked" : "unchecked");
 
-    // Emit change event
-    this.pushEvent("value-changed", {
-      value,
-      previousValue: prevValue,
-    });
-  }
+      // Update ARIA attributes
+      item.setAttribute("aria-checked", isSelected.toString());
 
-  updateSelectedRadio() {
-    this.radioItems.forEach((item) => {
+      // Update tabindex for keyboard navigation
+      item.setAttribute("tabindex", isSelected ? "0" : "-1");
+
+      // Update native radio input if present
       const input = item.querySelector('input[type="radio"]');
-      const itemValue = item.getAttribute("data-value");
-      const isSelected = itemValue === this.selectedValue;
-
-      // Update the native input (for form submission)
       if (input) {
         input.checked = isSelected;
+        input.disabled = isDisabled;
 
         // Ensure name attribute is set for form submission
-        if (this.options.name && !input.name) {
+        if (!input.name && this.options.name) {
           input.name = this.options.name;
         }
       }
-
-      // Update the item state
-      item.setAttribute("data-state", isSelected ? "checked" : "unchecked");
-
-      // Update tabindex - only selected item should be focusable
-      item.setAttribute("tabindex", isSelected ? "0" : "-1");
     });
+  }
 
-    // If no item is selected yet, make the first enabled one focusable
-    if (!this.selectedValue) {
-      const firstEnabled = this.getEnabledRadios()[0];
-      if (firstEnabled) {
-        firstEnabled.setAttribute("tabindex", "0");
+  navigateItem(direction) {
+    const currentValue = this.collection.getValue();
+    const currentItem = this.collection.getItemByValue(currentValue);
+
+    // Get next item based on direction
+    const nextItem = this.collection.getItem(direction, currentItem);
+    if (!nextItem) return;
+
+    // Focus the item
+    if (typeof nextItem.instance.focus === "function") {
+      nextItem.instance.focus();
+    } else if (nextItem.instance) {
+      // Focus the item element directly
+      nextItem.instance.focus();
+    }
+
+    // Automatically select the focused item
+    this.selectItem(nextItem.instance);
+  }
+
+  onIdleEnter() {
+    // If no item is selected, make first enabled item focusable
+    if (!this.collection.getValue()) {
+      const firstItem = this.collection.getItem("first");
+      if (firstItem && firstItem.instance) {
+        firstItem.instance.setAttribute("tabindex", "0");
       }
     }
   }
 
-  navigateRadio(direction) {
-    const enabledRadios = this.getEnabledRadios();
-    if (enabledRadios.length === 0) return;
+  // Handle focus management for the entire group
+  setupComponentEvents() {
+    super.setupComponentEvents();
 
-    const currentIndex = this.getFocusedRadioIndex(enabledRadios);
-    let newIndex;
-
-    if (direction === "first") {
-      newIndex = 0;
-    } else if (direction === "last") {
-      newIndex = enabledRadios.length - 1;
-    } else {
-      newIndex =
-        (currentIndex + direction + enabledRadios.length) %
-        enabledRadios.length;
-    }
-
-    const targetRadio = enabledRadios[newIndex];
-    this.focusRadio(targetRadio);
-  }
-
-  selectFocusedRadio() {
-    const focusedRadio = document.activeElement;
-    if (this.radioItems && this.el.contains(focusedRadio)) {
-      const value = focusedRadio.getAttribute("data-value");
-      if (value) {
-        this.selectRadio(value);
+    this.el.addEventListener("focus", (e) => {
+      // Only handle focus if the group itself was focused (not a child)
+      if (e.target === this.el) {
+        const selectedValue = this.collection.getValue();
+        if (selectedValue) {
+          // Focus the selected item
+          const selectedItem = this.collection.getItemByValue(selectedValue);
+          if (selectedItem && selectedItem.instance) {
+            selectedItem.instance.focus();
+          }
+        } else {
+          // Focus the first enabled item if none is selected
+          const firstItem = this.collection.getItem("first");
+          if (firstItem && firstItem.instance) {
+            firstItem.instance.focus();
+          }
+        }
       }
-    }
-  }
-
-  // Helper methods
-  getEnabledRadios() {
-    return Array.from(this.radioItems).filter((item) => {
-      return item.dataset.disabled != "true";
     });
   }
 
-  getFocusedRadioIndex(radios) {
-    const focusedElement = document.activeElement;
-    return radios.indexOf(focusedElement);
-  }
-
-  getSelectedRadio() {
-    return Array.from(this.radioItems).find((item) => {
-      return item.dataset.state == "checked";
-    });
-  }
-
-  focusRadio(radio) {
-    if (radio) {
-      radio.focus();
-    }
+  // Clean up when the component is destroyed
+  beforeDestroy() {
+    this.collection = null;
   }
 }
 

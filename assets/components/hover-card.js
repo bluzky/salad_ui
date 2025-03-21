@@ -3,169 +3,119 @@ import Component from "../core/component";
 import SaladUI from "../index";
 import PositionedElement from "../core/positioned-element";
 
+// Define constants at the module level outside the class
+const DEFAULT_POSITION_CONFIG = {
+  placement: "top",
+  alignment: "center",
+  sideOffset: 8,
+  alignOffset: 0,
+};
+
+const DEFAULT_TIMING_CONFIG = {
+  openDelay: 300,
+  closeDelay: 200,
+};
+
 class HoverCardComponent extends Component {
   constructor(el, hookContext) {
-    super(el, hookContext);
+    super(el, { hookContext });
 
     // Initialize core properties
     this.trigger = this.getPart("trigger");
     this.content = this.getPart("content");
 
-    // Set default config
-    this.config.openDelay = this.options.openDelay || 300;
-    this.config.closeDelay = this.options.closeDelay || 200;
+    // Set config from options with fallbacks to defaults
+    this.config.openDelay =
+      this.options.openDelay || DEFAULT_TIMING_CONFIG.openDelay;
+    this.config.closeDelay =
+      this.options.closeDelay || DEFAULT_TIMING_CONFIG.closeDelay;
 
     // Track timer IDs for delayed open/close
     this.openTimer = null;
     this.closeTimer = null;
   }
 
-  getStateMachine() {
+  getComponentConfig() {
     return {
-      closed: {
-        enter: "onClosedEnter",
-        keyMap: {},
-        transitions: {
-          open: "open",
+      stateMachine: {
+        closed: {
+          enter: "onClosedEnter",
+          transitions: {
+            open: "open",
+          },
         },
-        hidden: {
-          content: true,
+        open: {
+          enter: "onOpenEnter",
+          exit: "onOpenExit",
+          transitions: {
+            close: "closed",
+          },
         },
       },
-      open: {
-        enter: "onOpenEnter",
-        exit: "onOpenExit",
-        keyMap: {},
-        transitions: {
-          close: "closed",
+      events: {
+        closed: {
+          mouseMap: {
+            trigger: {
+              mouseenter: "delayOpen",
+              focus: "delayOpen",
+            },
+          },
         },
-        hidden: {
+        open: {
+          mouseMap: {
+            trigger: {
+              mouseleave: "delayClose",
+              blur: "delayClose",
+            },
+            content: {
+              mouseenter: "clearTimers",
+              mouseleave: "delayClose",
+            },
+          },
+        },
+      },
+      hiddenConfig: {
+        closed: {
+          content: true,
+        },
+        open: {
           content: false,
         },
       },
-    };
-  }
-
-  getAriaConfig() {
-    return {
-      trigger: {
-        all: {
-          haspopup: "dialog",
+      ariaConfig: {
+        trigger: {
+          all: {
+            haspopup: "dialog",
+          },
+          open: {
+            expanded: "true",
+          },
+          closed: {
+            expanded: "false",
+          },
         },
-        open: {
-          expanded: "true",
-        },
-        closed: {
-          expanded: "false",
-        },
-      },
-      content: {
-        all: {
-          role: "dialog",
+        content: {
+          all: {
+            role: "dialog",
+          },
         },
       },
     };
   }
 
-  setupComponentEvents() {
-    super.setupComponentEvents();
-
-    if (this.trigger) {
-      // Mouse events
-      this.trigger.addEventListener(
-        "mouseenter",
-        this.handleTriggerMouseEnter.bind(this),
-      );
-      this.trigger.addEventListener(
-        "mouseleave",
-        this.handleTriggerMouseLeave.bind(this),
-      );
-
-      // Focus events - for accessibility
-      this.trigger.addEventListener(
-        "focus",
-        this.handleTriggerFocus.bind(this),
-      );
-      this.trigger.addEventListener("blur", this.handleTriggerBlur.bind(this));
-    }
-
-    if (this.content) {
-      // Prevent closing when hovering content
-      this.content.addEventListener(
-        "mouseenter",
-        this.handleContentMouseEnter.bind(this),
-      );
-      this.content.addEventListener(
-        "mouseleave",
-        this.handleContentMouseLeave.bind(this),
-      );
-    }
-  }
-
-  // Initialize the positioned element
-  initializePositionedElement() {
-    if (this.positionedElement) return;
-
-    if (!this.trigger || !this.content) return;
-
-    // Get positioning configuration
-    const placement = this.content.getAttribute("data-side") || "top";
-    const alignment = this.content.getAttribute("data-align") || "center";
-    const sideOffset = parseInt(
-      this.content.getAttribute("data-side-offset") || "4",
-      10,
-    );
-    const alignOffset = parseInt(
-      this.content.getAttribute("data-align-offset") || "0",
-      10,
-    );
-
-    // Create positioned element
-    this.positionedElement = new PositionedElement(this.content, this.trigger, {
-      placement,
-      alignment,
-      sideOffset,
-      alignOffset,
-      flip: true,
-      usePortal: false, // Don't use portal to keep DOM structure
-      trapFocus: false,
-    });
-  }
-
-  // Event handlers
-  handleTriggerMouseEnter() {
+  // Generic methods for delayed state transitions
+  delayOpen() {
     this.clearTimers();
     this.openTimer = setTimeout(() => {
       this.transition("open");
     }, this.config.openDelay);
   }
 
-  handleTriggerMouseLeave() {
+  delayClose() {
     this.clearTimers();
     this.closeTimer = setTimeout(() => {
       this.transition("close");
     }, this.config.closeDelay);
-  }
-
-  handleContentMouseEnter() {
-    this.clearTimers();
-  }
-
-  handleContentMouseLeave() {
-    this.clearTimers();
-    this.closeTimer = setTimeout(() => {
-      this.transition("close");
-    }, this.config.closeDelay);
-  }
-
-  handleTriggerFocus() {
-    this.clearTimers();
-    this.transition("open");
-  }
-
-  handleTriggerBlur() {
-    this.clearTimers();
-    this.transition("close");
   }
 
   clearTimers() {
@@ -180,6 +130,39 @@ class HoverCardComponent extends Component {
     }
   }
 
+  // Initialize the positioned element
+  initializePositionedElement() {
+    if (this.positionedElement) return;
+
+    if (!this.trigger || !this.content) return;
+
+    // Get positioning configuration from content attributes with fallbacks to defaults
+    const positionConfig = {
+      placement:
+        this.content.getAttribute("data-side") ||
+        DEFAULT_POSITION_CONFIG.placement,
+      alignment:
+        this.content.getAttribute("data-align") ||
+        DEFAULT_POSITION_CONFIG.alignment,
+      sideOffset:
+        parseInt(this.content.getAttribute("data-side-offset"), 10) ||
+        DEFAULT_POSITION_CONFIG.sideOffset,
+      alignOffset:
+        parseInt(this.content.getAttribute("data-align-offset"), 10) ||
+        DEFAULT_POSITION_CONFIG.alignOffset,
+      flip: true,
+      usePortal: false, // Don't use portal to keep DOM structure
+      trapFocus: false,
+    };
+
+    // Create positioned element
+    this.positionedElement = new PositionedElement(
+      this.content,
+      this.trigger,
+      positionConfig,
+    );
+  }
+
   // State machine handlers
   onOpenEnter() {
     // Initialize positioned element if needed
@@ -188,13 +171,6 @@ class HoverCardComponent extends Component {
     // Activate positioned element
     if (this.positionedElement) {
       this.positionedElement.activate();
-
-      // Update position after animation completes
-      setTimeout(() => {
-        if (this.positionedElement) {
-          this.positionedElement.update();
-        }
-      }, 150);
     }
 
     // Notify the server of the state change

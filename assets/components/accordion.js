@@ -1,20 +1,145 @@
 // saladui/components/accordion.js
 import Component from "../core/component";
+import Collection from "../core/collection";
 import SaladUI from "../index";
 
+/**
+ * AccordionItem class to manage individual accordion items
+ * Handles state transitions and events for a single accordion item
+ */
+class AccordionItem extends Component {
+  constructor(itemElement, parentComponent, options) {
+    const { initialState = "closed" } = options || {};
+    super(itemElement, { initialState, ignoreItems: false });
+    this.parent = parentComponent;
+    this.value = itemElement.dataset.value;
+    this.disabled = itemElement.dataset.disabled === "true";
+
+    this.trigger = itemElement.querySelector("[data-part='item-trigger']");
+    this.content = itemElement.querySelector("[data-part='item-content']");
+    this.initialize();
+    this.setupEvents();
+  }
+
+  getComponentConfig() {
+    return {
+      stateMachine: {
+        closed: {
+          transitions: {
+            open: "open",
+          },
+        },
+        open: {
+          transitions: {
+            close: "closed",
+          },
+        },
+      },
+      events: {
+        closed: {
+          mouseMap: {
+            "item-trigger": {
+              click: "handleTriggerActivation",
+            },
+          },
+          keyMap: {
+            Enter: "handleTriggerActivation",
+            " ": "handleTriggerActivation",
+          },
+        },
+        open: {
+          mouseMap: {
+            "item-trigger": {
+              click: "handleTriggerActivation",
+            },
+          },
+          keyMap: {
+            Enter: "handleTriggerActivation",
+            " ": "handleTriggerActivation",
+          },
+        },
+      },
+      hiddenConfig: {
+        closed: {
+          "item-content": true,
+        },
+        open: {
+          "item-content": false,
+        },
+      },
+      ariaConfig: {
+        "item-trigger": {
+          all: {
+            controls: () => this.content?.id,
+          },
+          open: {
+            expanded: "true",
+          },
+          closed: {
+            expanded: "false",
+          },
+        },
+        "item-content": {
+          all: {
+            labelledby: () => this.trigger?.id,
+          },
+        },
+      },
+    };
+  }
+
+  initialize() {
+    if (this.disabled) {
+      this.trigger.setAttribute("tabindex", "-1");
+    } else {
+      this.trigger.setAttribute("tabindex", "0");
+    }
+  }
+
+  handleEvent(eventType) {
+    switch (eventType) {
+      case "select":
+        return this.transition("open");
+      case "unselect":
+        return this.transition("close");
+      case "focus":
+        if (this.trigger && !this.disabled) {
+          this.trigger.focus();
+        }
+        return true;
+      case "blur":
+        return true;
+    }
+  }
+
+  handleTriggerActivation(event) {
+    event.preventDefault();
+    if (!this.disabled && !this.parent.disabled) {
+      this.parent.toggleItem(this);
+    }
+  }
+}
+
+/**
+ * AccordionComponent class for SaladUI framework
+ * Manages a collection of accordion items with state transitions
+ */
 class AccordionComponent extends Component {
   constructor(el, hookContext) {
-    super(el, hookContext);
+    super(el, { hookContext });
 
     // Initialize properties
     this.type = this.options.type || "single";
     this.disabled = this.options.disabled || false;
-    this.items = Array.from(this.el.querySelectorAll("[data-part='item']"));
 
-    // Parse initial value(s)
-    this.value = this.parseValue(
-      this.options.value || this.options.defaultValue,
-    );
+    // Initialize collection manager
+    this.collection = new Collection({
+      type: this.type,
+      defaultValue: this.options.defaultValue,
+      value: this.options.value,
+      getItemValue: (item) => item.value,
+      isItemDisabled: (item) => item.disabled || this.disabled,
+    });
 
     // Set keyboard navigation defaults
     this.config.preventDefaultKeys = [
@@ -26,204 +151,86 @@ class AccordionComponent extends Component {
       " ",
     ];
 
-    // Set up IDs and initial states
-    this.setupIds();
-    this.updateItemStates();
+    // Initialize accordion items
+    this.initializeItems();
   }
 
-  // Parse value to ensure it's always an array
-  parseValue(value) {
-    if (!value) return [];
-    return Array.isArray(value) ? value : [value];
-  }
-
-  getStateMachine() {
+  getComponentConfig() {
     return {
-      idle: {
-        keyMap: {
-          ArrowUp: () => this.navigateItem(-1),
-          ArrowDown: () => this.navigateItem(1),
-          Home: () => this.navigateItem("first"),
-          End: () => this.navigateItem("last"),
+      stateMachine: {
+        idle: {
+          enter: () => {},
+          exit: () => {},
+          transitions: {},
         },
       },
-    };
-  }
-
-  getAriaConfig() {
-    return {
-      trigger: {
-        all: {
-          controls: (el) => {
-            const item = el.closest("[data-part='item']");
-            const content = item?.querySelector("[data-part='content']");
-            return content?.id || "";
-          },
-        },
-        open: {
-          expanded: "true",
-        },
-        closed: {
-          expanded: "false",
-        },
-      },
-      content: {
-        all: {
-          labelledby: (el) => {
-            const item = el.closest("[data-part='item']");
-            const trigger = item?.querySelector("[data-part='trigger']");
-            return trigger?.id || "";
+      events: {
+        idle: {
+          keyMap: {
+            ArrowUp: () => this.navigateItem("prev"),
+            ArrowDown: () => this.navigateItem("next"),
+            Home: () => this.navigateItem("first"),
+            End: () => this.navigateItem("last"),
           },
         },
       },
     };
   }
 
-  // Set up unique IDs for ARIA relationships
-  setupIds() {
-    this.items.forEach((item) => {
-      const itemValue = item.dataset.value;
-      const trigger = item.querySelector("[data-part='trigger']");
-      const content = item.querySelector("[data-part='content']");
-      const isDisabled = item.dataset.disabled === "true" || this.disabled;
+  initializeItems() {
+    const itemElements = Array.from(
+      this.el.querySelectorAll("[data-part='item']"),
+    );
 
-      if (trigger && !trigger.id) {
-        trigger.id = `${this.el.id}-trigger-${itemValue}`;
-      }
+    this.items = itemElements.map((element) => {
+      // Initialize AccordionItem without hook context
+      const itemValue = element.dataset.value;
+      element.id = `${this.el.id}-item-${itemValue}`;
 
-      if (content && !content.id) {
-        content.id = `${this.el.id}-content-${itemValue}`;
-      }
-
-      // Remove tabindex from item since we focus only on the trigger
-      item.setAttribute("tabindex", "-1");
-    });
-  }
-
-  setupComponentEvents() {
-    super.setupComponentEvents();
-
-    // Set up event handlers for each accordion item
-    this.items.forEach((item) => {
-      const trigger = item.querySelector("[data-part='trigger']");
-      if (!trigger) return;
-
-      // Add click handler
-      trigger.addEventListener("click", (e) => {
-        e.preventDefault();
-        if (item.dataset.disabled !== "true" && !this.disabled) {
-          this.toggleItem(item);
-        }
+      // Check if this item is initially open
+      const isOpen = this.collection.getValue(true).includes(itemValue);
+      const item = new AccordionItem(element, this, {
+        initialState: isOpen ? "open" : "closed",
       });
-
-      // Add keyboard handler for Enter and Space
-      trigger.addEventListener("keydown", (e) => {
-        if (
-          (e.key === "Enter" || e.key === " ") &&
-          item.dataset.disabled !== "true" &&
-          !this.disabled
-        ) {
-          e.preventDefault();
-          this.toggleItem(item);
-        }
-      });
+      this.collection.add(item);
+      return item;
     });
   }
 
   toggleItem(item) {
-    const itemValue = item.dataset.value;
-    const isSelected = this.isItemSelected(itemValue);
+    const collectionItem = this.collection.getItemByInstance(item);
+    if (!collectionItem) return;
 
-    if (this.type === "single") {
-      // Single mode: toggle between selected value or empty
-      this.value = isSelected ? [] : [itemValue];
-    } else {
-      // Multiple mode: toggle this value in the array
-      if (isSelected) {
-        this.value = this.value.filter((v) => v !== itemValue);
-      } else {
-        this.value.push(itemValue);
-      }
-    }
+    // Toggle item selection
+    this.collection.select(collectionItem);
 
-    // Update states and emit event
-    this.updateItemStates();
-
-    const emitValue = this.type === "single" ? this.value[0] || "" : this.value;
-    this.pushEvent("value-changed", { value: emitValue });
-  }
-
-  isItemSelected(itemValue) {
-    return this.value.includes(itemValue);
-  }
-
-  updateItemStates() {
-    this.items.forEach((item) => {
-      const isOpen = this.isItemSelected(item.dataset.value);
-      const state = isOpen ? "open" : "closed";
-      const isDisabled = item.dataset.disabled === "true" || this.disabled;
-
-      // Update item state
-      item.dataset.state = state;
-
-      // Update trigger state
-      const trigger = item.querySelector("[data-part='trigger']");
-      if (trigger) {
-        trigger.dataset.state = state;
-        trigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
-
-        // Remove disabled triggers from tab sequence
-        if (isDisabled) {
-          trigger.setAttribute("tabindex", "-1");
-          trigger.setAttribute("aria-disabled", "true");
-        } else {
-          trigger.setAttribute("tabindex", "0");
-          trigger.removeAttribute("aria-disabled");
-        }
-      }
-
-      // Update content state and visibility
-      const content = item.querySelector("[data-part='content']");
-      if (content) {
-        content.dataset.state = state;
-        content.hidden = !isOpen;
-      }
-    });
+    // Emit event with current value
+    const value = this.collection.getValue();
+    this.pushEvent("value-changed", { value });
   }
 
   navigateItem(direction) {
-    const enabledItems = this.items.filter(
-      (item) => item.dataset.disabled !== "true",
-    );
-    if (enabledItems.length === 0) return;
-
-    // Find currently focused item
     const currentFocus = document.activeElement;
-    const currentItem = currentFocus?.closest("[data-part='item']");
-    let currentIndex = enabledItems.indexOf(currentItem);
+    const currentItemElement = currentFocus?.closest("[data-part='item']");
+    let currentItem = null;
 
-    // Calculate target index
-    let targetIndex;
-    if (direction === "first") {
-      targetIndex = 0;
-    } else if (direction === "last") {
-      targetIndex = enabledItems.length - 1;
-    } else {
-      // Handle wrap-around navigation
-      if (currentIndex === -1) {
-        targetIndex = direction > 0 ? 0 : enabledItems.length - 1;
-      } else {
-        targetIndex =
-          (currentIndex + direction + enabledItems.length) %
-          enabledItems.length;
-      }
+    if (currentItemElement) {
+      currentItem = this.items.find((item) => item.el === currentItemElement);
     }
 
-    // Focus the target trigger
-    const targetItem = enabledItems[targetIndex];
-    const targetTrigger = targetItem.querySelector("[data-part='trigger']");
-    if (targetTrigger) {
-      targetTrigger.focus();
+    let referenceCollectionItem = null;
+    if (currentItem) {
+      referenceCollectionItem = this.collection.getItemByInstance(currentItem);
+    }
+
+    // Get the target item using collection manager's navigation methods
+    const targetItem = this.collection.getItem(
+      direction,
+      referenceCollectionItem,
+    );
+
+    if (targetItem) {
+      this.collection.focus(targetItem);
     }
   }
 }

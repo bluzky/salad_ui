@@ -1,500 +1,477 @@
 // saladui/components/select.js
 import Component from "../core/component";
 import SaladUI from "../index";
+import Collection from "../core/collection";
+import PositionedElement from "../core/positioned-element";
 
-class SelectComponent extends Component {
-  constructor(el, hookContext) {
-    super(el, hookContext);
-    this.initializeProperties();
-    this.setupConfiguration();
-    this.updateSelectedItem();
+/**
+ * SelectItem class to manage individual select options
+ * Handles state transitions and events for a single select item
+ */
+class SelectItem extends Component {
+  constructor(itemElement, parentComponent, options) {
+    const { initialState = "normal" } = options || {};
+    super(itemElement, { initialState, ignoreItems: false });
+
+    this.parent = parentComponent;
+    this.value = itemElement.dataset.value;
+    this.disabled = itemElement.dataset.disabled === "true";
+    this.label = itemElement.textContent.trim();
+
+    this.setupEvents();
   }
 
-  initializeProperties() {
-    this.content = this.getPart("content");
-    this.trigger = this.getPart("trigger");
-    this.valueDisplay = this.getPart("value");
-    this.items = this.el.querySelectorAll("[data-part='item']");
-    this.multiSelect = this.options.multiple;
-    this.selectedValues = [];
-  }
-
-  setupConfiguration() {
-    this.config.preventDefaultKeys = [
-      "Escape",
-      "ArrowUp",
-      "ArrowDown",
-      "Enter",
-      "Space",
-    ];
-  }
-
-  getStateMachine() {
+  getComponentConfig() {
     return {
-      closed: {
-        enter: "onClosedEnter",
-        exit: "onClosedExit",
-        keyMap: {
-          ArrowDown: "open",
-          Enter: "open",
-          " ": "open",
+      stateMachine: {
+        unchecked: {
+          transitions: {
+            check: "checked",
+          },
         },
-        transitions: {
-          open: "open",
-        },
-        hidden: {
-          content: true,
+        checked: {
+          transitions: {
+            uncheck: "unchecked",
+          },
         },
       },
-      open: {
-        enter: "onOpenEnter",
-        exit: "onOpenExit",
-        keyMap: {
-          Escape: "close",
-          ArrowUp: this.navigateUp,
-          ArrowDown: this.navigateDown,
+      events: {
+        unchecked: {
+          mouseMap: {
+            item: {
+              click: "handleActivation",
+              mouseenter: "handleMouseEnter",
+              mouseleave: "handleMouseLeave",
+            },
+          },
+          keyMap: {
+            Enter: "handleActivation",
+            " ": "handleActivation",
+          },
         },
-        transitions: {
-          close: "closed",
-          select: "closed",
+        checked: {
+          mouseMap: {
+            item: {
+              click: "handleActivation",
+              mouseenter: "handleMouseEnter",
+              mouseleave: "handleMouseLeave",
+            },
+          },
+          keyMap: {
+            Enter: "handleActivation",
+            " ": "handleActivation",
+          },
         },
-        hidden: {
+      },
+      hiddenConfig: {
+        checked: {
+          "item-indicator": false,
+        },
+        unchecked: {
+          "item-indicator": true,
+        },
+      },
+      ariaConfig: {
+        item: {
+          all: {
+            role: "option",
+          },
+          checked: {
+            selected: "true",
+          },
+          unchecked: {
+            selected: "false",
+          },
+        },
+      },
+    };
+  }
+
+  handleEvent(eventType) {
+    switch (eventType) {
+      case "select":
+        return this.transition("check");
+      case "unselect":
+        return this.transition("uncheck");
+      case "focus":
+        if (!this.disabled) {
+          // Just mark as highlighted without direct focus
+          this.el.focus();
+        }
+        return true;
+      case "blur":
+        return true;
+    }
+  }
+
+  handleActivation(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!this.disabled) {
+      this.parent.selectValue(this.value);
+    }
+  }
+
+  handleMouseEnter() {
+    if (!this.disabled) {
+      this.parent.handleItemFocus(this);
+    }
+  }
+}
+
+/**
+ * SelectComponent class for SaladUI framework
+ * Manages a collection of select items with state transitions
+ */
+class SelectComponent extends Component {
+  constructor(el, hookContext) {
+    super(el, { hookContext });
+
+    // Initialize core properties
+    this.trigger = this.getPart("trigger");
+    this.valueDisplay = this.getPart("value");
+    this.content = this.getPart("content");
+    this.disabled = this.el.dataset.disabled === "true";
+
+    // Get configuration from options
+    this.multiple = this.options.multiple || false;
+    this.usePortal = this.options.hasOwnProperty("usePortal")
+      ? this.options.usePortal
+      : false;
+    this.portalContainer = this.options.portalContainer || null;
+
+    // Initialize collection manager
+    this.collection = new Collection({
+      type: this.multiple ? "multiple" : "single",
+      defaultValue: this.options.defaultValue,
+      value: this.options.value,
+      getItemValue: (item) => item.value,
+      isItemDisabled: (item) => item.disabled || this.disabled,
+    });
+
+    // Set keyboard navigation defaults
+    this.config.preventDefaultKeys = [
+      "ArrowUp",
+      "ArrowDown",
+      "Home",
+      "End",
+      "Enter",
+      " ",
+      "Escape",
+    ];
+
+    // Initialize select items
+    this.initializeItems();
+    this.initializePlaceholder();
+  }
+
+  getComponentConfig() {
+    return {
+      stateMachine: {
+        closed: {
+          enter: "onClosedEnter",
+          exit: "onClosedExit",
+          transitions: {
+            open: "open",
+            toggle: "open",
+          },
+        },
+        open: {
+          enter: "onOpenEnter",
+          exit: "onOpenExit",
+          transitions: {
+            close: "closed",
+            toggle: "closed",
+            select: "closed",
+          },
+        },
+      },
+      events: {
+        closed: {
+          keyEventTarget: "content",
+          keyMap: {
+            ArrowDown: "open",
+            ArrowUp: "open",
+            Enter: "open",
+            " ": "open",
+          },
+          mouseMap: {
+            trigger: {
+              click: "toggle",
+            },
+          },
+        },
+        open: {
+          keyEventTarget: "content",
+          keyMap: {
+            Escape: "close",
+            ArrowUp: () => this.navigateItem("prev"),
+            ArrowDown: () => this.navigateItem("next"),
+            Home: () => this.navigateItem("first"),
+            End: () => this.navigateItem("last"),
+          },
+        },
+      },
+      hiddenConfig: {
+        closed: {
+          content: true,
+        },
+        open: {
           content: false,
         },
       },
-    };
-  }
-
-  getAriaConfig() {
-    return {
-      trigger: {
-        all: {
-          haspopup: "listbox",
+      ariaConfig: {
+        trigger: {
+          all: {
+            haspopup: "listbox",
+          },
+          open: {
+            expanded: "true",
+          },
+          closed: {
+            expanded: "false",
+          },
         },
-        open: {
-          expanded: "true",
-        },
-        closed: {
-          expanded: "false",
-        },
-      },
-      content: {
-        all: {
-          role: "listbox",
-        },
-        open: {
-          hidden: "false",
-        },
-        closed: {
-          hidden: "true",
-        },
-      },
-      item: {
-        all: {
-          role: "option",
+        content: {
+          all: {
+            role: "listbox",
+          },
         },
       },
     };
   }
 
-  setupComponentEvents() {
-    super.setupComponentEvents();
-    document.addEventListener("click", this.handleClickOutside.bind(this));
-    this.setupTriggerEvents();
-    this.setupItemEvents();
-  }
+  initializeItems() {
+    const itemElements = Array.from(
+      this.el.querySelectorAll("[data-part='item']"),
+    );
 
-  setupTriggerEvents() {
-    if (!this.trigger) return;
+    itemElements.map((element) => {
+      // Create a SelectItem instance for each item
+      const value = element.dataset.value;
 
-    this.trigger.addEventListener("click", (e) => {
-      e.preventDefault();
-      this.transition(this.state === "closed" ? "open" : "close");
+      // Check if this item is initially selected
+      const isSelected = this.collection.isValueSelected(value);
+      const initialState = isSelected ? "checked" : "unchecked";
+
+      const item = new SelectItem(element, this, { initialState });
+      this.collection.add(item);
     });
+
+    // Update value display based on initial selection
+    this.updateValueDisplay();
   }
 
-  setupItemEvents() {
-    this.items.forEach((item) => {
-      if (item.getAttribute("data-disabled") === "true") return;
+  initializePlaceholder() {
+    if (!this.valueDisplay) return;
 
-      item.addEventListener("click", (e) => this.handleItemClick(e, item));
-      item.addEventListener("keydown", (e) => this.handleItemKeyDown(e, item));
-    });
-  }
+    const placeholder =
+      this.valueDisplay.getAttribute("data-placeholder") || "Select an option";
 
-  handleItemClick(e, item) {
-    e.stopPropagation();
-
-    const value = item.getAttribute("data-value");
-    const label = item.textContent.trim();
-
-    if (this.multiSelect) {
-      this.toggleItemSelection(item, value, label);
-    } else {
-      this.setSelectedValue(value, label);
-    }
-    this.transition("select");
-  }
-
-  handleItemKeyDown(e, item) {
-    if (e.key !== "Enter" && e.key !== " ") return;
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    const value = item.getAttribute("data-value");
-    const label = item.textContent.trim();
-
-    if (this.multiSelect) {
-      this.toggleItemSelection(item, value, label);
-    } else {
-      this.setSelectedValue(value, label);
-    }
-    this.transition("select");
-  }
-
-  toggleItemSelection(item, value, label) {
-    const isSelected = item.getAttribute("data-selected") === "true";
-
-    if (isSelected) {
-      this.removeFromSelection(value, label);
-    } else {
-      this.addToSelection(value, label);
+    // If no selection, display the placeholder
+    if (this.collection.getValue(true).length === 0) {
+      this.valueDisplay.setAttribute("data-content", placeholder);
     }
   }
 
-  beforeDestroy() {
-    document.removeEventListener("click", this.handleClickOutside);
-  }
+  initializePositionedElement() {
+    if (this.content && this.trigger && !this.positionedElement) {
+      // Extract position config from content attributes
+      const side = this.content.getAttribute("data-side") || "bottom";
 
-  handleClickOutside(event) {
-    //Close the dropdown if the click was outside the component
-    // or clicked on the root element itself
-    if (
-      this.state === "open" &&
-      (!this.el.contains(event.target) || this.el === event.target)
-    ) {
-      this.transition("close");
+      // Get portal container if specified
+      let portalContainer = null;
+      if (this.portalContainer) {
+        portalContainer = document.querySelector(this.portalContainer);
+      }
+
+      // Create positioned element with modular architecture
+      this.positionedElement = new PositionedElement(this.content, this.el, {
+        placement: side,
+        alignment: "start",
+        sideOffset: 4,
+        flip: true,
+        usePortal: this.usePortal,
+        portalContainer: portalContainer || document.body,
+        trapFocus: false,
+        onOutsideClick: () => this.transition("close"),
+      });
     }
   }
 
   // State machine handlers
   onClosedEnter() {
-    this.unhighlightAllItems();
-    this.focusTrigger();
+    // Update hidden input(s)
+    this.syncHiddenInputs();
     this.pushEvent("closed");
   }
 
   onOpenEnter() {
-    this.updateUI();
-    this.updatePartsVisibility();
-    this.focusSelectedOrFirstItem();
+    // Initialize positioned element
+    this.initializePositionedElement();
+
+    // Activate positioned element
+    if (this.positionedElement) {
+      this.positionedElement.activate();
+    }
+
+    // Highlight first selected item or first item
+    this.highlightFirstSelectedOrFirstItem();
+
     this.pushEvent("opened");
   }
 
-  focusTrigger() {
-    if (this.trigger) {
-      this.trigger.focus();
+  onOpenExit() {
+    // Deactivate positioned element
+    if (this.positionedElement) {
+      this.positionedElement.deactivate();
+    }
+  }
+
+  // Item management
+  selectValue(value) {
+    const collectionItem = this.collection.getItemByValue(value);
+    if (!collectionItem) return;
+
+    // Toggle item selection
+    this.collection.select(collectionItem);
+
+    // Update value display
+    this.updateValueDisplay();
+
+    // Close dropdown if single select
+    if (!this.multiple) {
+      this.transition("select");
+    }
+
+    // Emit event with current value
+    const selectedValue = this.collection.getValue();
+    this.pushEvent("value-changed", { value: selectedValue });
+  }
+
+  handleItemFocus(item) {
+    const collectionItem = this.collection.getItemByInstance(item);
+    if (!collectionItem) return;
+
+    this.collection.focus(collectionItem);
+  }
+
+  updateValueDisplay() {
+    if (!this.valueDisplay) return;
+
+    const selectedValues = this.collection.getValue(true);
+    const placeholder =
+      this.valueDisplay.getAttribute("data-placeholder") || "Select an option";
+
+    if (selectedValues.length === 0) {
+      // No selection, show placeholder
+      this.valueDisplay.setAttribute("data-content", placeholder);
+    } else if (this.multiple) {
+      // Multiple selection
+      if (selectedValues.length === 1) {
+        // Get the label from the selected item
+        const selectedItem = this.collection.getItemByValue(selectedValues[0]);
+        this.valueDisplay.setAttribute(
+          "data-content",
+          selectedItem.instance.label,
+        );
+      } else {
+        // Show count for multiple selections
+        this.valueDisplay.setAttribute(
+          "data-content",
+          `${selectedValues.length} items selected`,
+        );
+      }
+    } else {
+      // Single selection - get label from the selected item
+      const selectedItem = this.collection.getItemByValue(selectedValues[0]);
+      this.valueDisplay.setAttribute(
+        "data-content",
+        selectedItem.instance.label,
+      );
     }
   }
 
   // Navigation methods
-  navigateUp() {
-    const focusableItems = this.getFocusableItems();
-    const currentIndex = this.getCurrentFocusedIndex(focusableItems);
+  navigateItem(direction) {
+    // Check if we have an active highlighted item
+    let currentItem = this.collection.focusedItem;
 
-    this.unhighlightAllItems();
+    // If not, use the first selected item or null
+    if (!currentItem) {
+      currentItem =
+        this.collection.getValue(true).length > 0
+          ? this.collection.getItemByValue(this.collection.getValue(true)[0])
+          : null;
+    }
 
-    const targetIndex =
-      currentIndex > 0 ? currentIndex - 1 : focusableItems.length - 1;
+    // Get target item using collection's navigation methods
+    const targetItem = this.collection.getItem(direction, currentItem);
 
-    this.highlightAndFocusItem(focusableItems[targetIndex]);
-  }
-
-  navigateDown() {
-    const focusableItems = this.getFocusableItems();
-    const currentIndex = this.getCurrentFocusedIndex(focusableItems);
-
-    this.unhighlightAllItems();
-
-    const targetIndex =
-      currentIndex < focusableItems.length - 1 ? currentIndex + 1 : 0;
-
-    this.highlightAndFocusItem(focusableItems[targetIndex]);
-  }
-
-  highlightAndFocusItem(item) {
-    if (item) {
-      this.highlightItem(item);
-      item.focus();
+    if (targetItem) {
+      this.collection.focus(targetItem);
     }
   }
 
-  // Selection management
-  updateSelectedItem() {
-    if (this.multiSelect) {
-      this.initializeMultiSelect();
-    } else {
-      this.initializeSingleSelect();
-    }
-  }
+  highlightFirstSelectedOrFirstItem() {
+    // Try to highlight the first selected item
+    const selectedValue = this.collection.getValue();
 
-  initializeMultiSelect() {
-    const initialValues = this.parseInitialValues();
-
-    if (initialValues.length > 0) {
-      this.selectedValues = initialValues;
-
-      const selectedItems = this.getItemsByValues(initialValues);
-      const selectedLabels = selectedItems.map((item) =>
-        item.textContent.trim(),
-      );
-
-      this.setMultiSelectedValues(initialValues, selectedLabels, false);
-    }
-  }
-
-  parseInitialValues() {
-    const { initialValue } = this.options;
-    if (!initialValue) return [];
-
-    if (Array.isArray(initialValue)) {
-      return initialValue;
-    }
-
-    if (typeof initialValue === "string") {
-      try {
-        return JSON.parse(initialValue);
-      } catch (e) {
-        return initialValue.split(",").map((v) => v.trim());
-      }
-    }
-
-    return [];
-  }
-
-  getItemsByValues(values) {
-    return Array.from(this.items).filter((item) =>
-      values.includes(item.getAttribute("data-value")),
-    );
-  }
-
-  initializeSingleSelect() {
-    const initialValue = this.options.initialValue;
-    if (!initialValue) return;
-
-    const selectedItem = Array.from(this.items).find(
-      (item) => item.getAttribute("data-value") === initialValue,
-    );
-
+    const selectedItem =
+      this.collection.getItemByValue(selectedValue) ||
+      this.collection.getItem("first");
     if (selectedItem) {
-      const value = selectedItem.getAttribute("data-value");
-      const label = selectedItem.textContent.trim();
-      this.setSelectedValue(value, label, false);
+      this.collection.focus(selectedItem);
     }
   }
 
-  setSelectedValue(value, label, triggerEvents = true) {
-    this.updateValueDisplay(label || value);
-    this.updateItemsSelection(value);
-    this.updateHiddenInput(value);
+  // Form integration
+  syncHiddenInputs() {
+    // Get the selected values
+    const values = this.collection.getValue(true);
+    const name = this.options.name || "";
 
-    if (triggerEvents) {
-      this.triggerChangeEvents(value);
-    }
-  }
+    // Remove existing hidden inputs
+    const existingInputs = this.el.querySelectorAll("input[type='hidden']");
+    existingInputs.forEach((input) => input.remove());
 
-  updateValueDisplay(text) {
-    if (this.valueDisplay) {
-      this.valueDisplay.setAttribute("data-content", text);
-    }
-  }
+    // Create new hidden inputs
+    if (this.multiple) {
+      // Multiple select - create multiple inputs with array notation
+      const inputName = name ? `${name}[]` : "";
 
-  updateItemsSelection(selectedValue) {
-    this.items.forEach((item) => {
-      const itemValue = item.getAttribute("data-value");
-      const isSelected = itemValue === selectedValue;
-
-      item.setAttribute("data-selected", isSelected);
-    });
-  }
-
-  updateHiddenInput(value) {
-    let hiddenInput = this.el.querySelector('input[type="hidden"]');
-
-    if (!hiddenInput) {
-      hiddenInput = this.createHiddenInput();
-    }
-
-    hiddenInput.value = value;
-  }
-
-  createHiddenInput() {
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = this.options.name || "";
-    this.el.appendChild(input);
-    return input;
-  }
-
-  triggerChangeEvents(value) {
-    const form = this.el.closest("form");
-
-    if (form) {
-      const hiddenInput = this.el.querySelector('input[type="hidden"]');
-      if (hiddenInput) {
-        const event = new Event("input", { bubbles: true });
-        hiddenInput.dispatchEvent(event);
-      }
-    }
-
-    this.pushEvent("value-changed", { value });
-  }
-
-  // Multi-select methods
-  addToSelection(value, label) {
-    if (this.selectedValues.includes(value)) return;
-
-    this.selectedValues.push(value);
-    this.updateMultiSelection();
-  }
-
-  removeFromSelection(value, label) {
-    const index = this.selectedValues.indexOf(value);
-
-    if (index === -1) return;
-
-    this.selectedValues.splice(index, 1);
-    this.updateMultiSelection();
-  }
-
-  updateMultiSelection() {
-    const selectedItems = this.getItemsByValues(this.selectedValues);
-    const selectedLabels = selectedItems.map((item) => item.textContent.trim());
-
-    this.setMultiSelectedValues(this.selectedValues, selectedLabels);
-  }
-
-  setMultiSelectedValues(values, labels, triggerEvents = true) {
-    this.updateMultiValueDisplay(values, labels);
-    this.updateMultiItemsSelection(values);
-    this.updateHiddenInputs(values);
-
-    if (triggerEvents) {
-      this.triggerMultiChangeEvents(values);
-    }
-  }
-
-  updateMultiValueDisplay(values, labels) {
-    if (!this.valueDisplay) return;
-
-    let displayText;
-
-    if (values.length === 0) {
-      displayText =
-        this.valueDisplay.getAttribute("data-placeholder") || "Select options";
-    } else if (values.length === 1) {
-      displayText = labels[0];
-    } else {
-      displayText = `${values.length} items selected`;
-    }
-
-    this.valueDisplay.setAttribute("data-content", displayText);
-  }
-
-  updateMultiItemsSelection(selectedValues) {
-    this.items.forEach((item) => {
-      const itemValue = item.getAttribute("data-value");
-      const isSelected = selectedValues.includes(itemValue);
-
-      item.setAttribute("data-selected", isSelected);
-    });
-  }
-
-  updateHiddenInputs(values) {
-    this.removeExistingHiddenInputs();
-
-    if (this.multiSelect) {
-      this.createMultipleHiddenInputs(values);
+      values.forEach((value) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = inputName;
+        input.value = value;
+        this.el.appendChild(input);
+      });
     } else if (values.length > 0) {
-      this.updateHiddenInput(values[0]);
-    }
-  }
-
-  removeExistingHiddenInputs() {
-    const existingInputs = this.el.querySelectorAll('input[type="hidden"]');
-    existingInputs.forEach((input) => {
-      if (input.name.endsWith("[]")) {
-        input.remove();
-      }
-    });
-  }
-
-  createMultipleHiddenInputs(values) {
-    const inputName = `${this.options.name || ""}[]`;
-
-    values.forEach((value) => {
+      // Single select - create one input
       const input = document.createElement("input");
       input.type = "hidden";
-      input.name = inputName;
-      input.value = value;
+      input.name = name;
+      input.value = values[0];
       this.el.appendChild(input);
-    });
+    }
   }
 
-  triggerMultiChangeEvents(values) {
-    const form = this.el.closest("form");
+  // Cleanup
+  beforeDestroy() {
+    if (this.positionedElement) {
+      this.positionedElement.destroy();
+      this.positionedElement = null;
+    }
 
-    if (form) {
-      const inputs = this.el.querySelectorAll('input[type="hidden"]');
-      if (inputs.length > 0) {
-        const event = new Event("input", { bubbles: true });
-        inputs[0].dispatchEvent(event);
+    // Clean up item instances
+    this.collection.each((item) => {
+      if (typeof item.destroy === "function") {
+        item.destroy();
       }
-    }
-
-    this.pushEvent("value-changed", { value: values });
-  }
-
-  // Helper methods
-  highlightItem(item) {
-    if (item) {
-      item.setAttribute("data-highlighted", true);
-    }
-  }
-
-  unhighlightAllItems() {
-    this.items.forEach((item) => {
-      item.setAttribute("data-highlighted", false);
     });
-  }
 
-  getFocusableItems() {
-    return Array.from(this.items).filter(
-      (item) => item.getAttribute("data-disabled") !== "true",
-    );
-  }
-
-  getCurrentFocusedIndex(focusableItems) {
-    const activeElement = document.activeElement;
-    return focusableItems.indexOf(activeElement);
-  }
-
-  focusSelectedOrFirstItem() {
-    const selectedItem = this.el.querySelector(
-      "[data-part='item'][data-selected='true']",
-    );
-
-    if (selectedItem) {
-      this.highlightItem(selectedItem);
-      selectedItem.focus();
-    } else {
-      const focusableItems = this.getFocusableItems();
-      if (focusableItems.length > 0) {
-        this.highlightItem(focusableItems[0]);
-        focusableItems[0].focus();
-      }
-    }
+    this.collection = null;
   }
 }
 

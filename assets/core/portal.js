@@ -103,9 +103,8 @@ class Portal {
    * Makes the portal element transparent to pointer events except for interactive elements
    *
    * @param {HTMLElement} element - Portal element to set up scroll passthrough for
-   * @param {string} focusableSelector - Selector for focusable/interactive elements
    */
-  static setupScrollPassthrough(element, focusableSelector) {
+  static setupScrollPassthrough(element) {
     if (!element) return;
 
     // Get original data from registry to ensure styles are properly tracked
@@ -117,14 +116,6 @@ class Portal {
     // Make the portal element transparent to pointer events
     element.style.pointerEvents = "none";
 
-    // Make interactive elements respond to pointer events
-    //   const interactiveElements = element.querySelectorAll(
-    //     focusableSelector + ", [data-interactive]",
-    //   );
-
-    //   interactiveElements.forEach((el) => {
-    //     el.style.pointerEvents = "auto";
-    //   });
     Portal.updateScrollableContainer(element, "auto");
   }
 
