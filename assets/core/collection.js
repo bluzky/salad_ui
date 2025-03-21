@@ -1,9 +1,9 @@
 // saladui/core/collection-manager.js
 /**
- * CollectionManager utility for SaladUI components
+ * Collection utility for SaladUI components
  * Manages collections of items with focus, highlight, and selection states
  */
-class CollectionManager {
+class Collection {
   /**
    * Create a collection manager
    *
@@ -357,6 +357,16 @@ class CollectionManager {
       }
     });
   }
+
+  /**
+   * Check if a value is selected
+   *
+   * @param {*} value - Value to check
+   * @returns {boolean} Whether the value is selected
+   */
+  isValueSelected(value) {
+    return this.values.includes(value);
+  }
 }
 
-export default CollectionManager;
+export default Collection;

@@ -1,6 +1,6 @@
 // saladui/components/accordion.js
 import Component from "../core/component";
-import CollectionManager from "../core/collection-manager";
+import Collection from "../core/collection";
 import SaladUI from "../index";
 
 /**
@@ -133,7 +133,7 @@ class AccordionComponent extends Component {
     this.disabled = this.options.disabled || false;
 
     // Initialize collection manager
-    this.collectionManager = new CollectionManager({
+    this.collection = new Collection({
       type: this.type,
       defaultValue: this.options.defaultValue,
       value: this.options.value,
@@ -188,24 +188,24 @@ class AccordionComponent extends Component {
       element.id = `${this.el.id}-item-${itemValue}`;
 
       // Check if this item is initially open
-      const isOpen = this.collectionManager.getValue(true).includes(itemValue);
+      const isOpen = this.collection.getValue(true).includes(itemValue);
       const item = new AccordionItem(element, this, {
         initialState: isOpen ? "open" : "closed",
       });
-      this.collectionManager.add(item, item.value);
+      this.collection.add(item, item.value);
       return item;
     });
   }
 
   toggleItem(item) {
-    const collectionItem = this.collectionManager.getItemByInstance(item);
+    const collectionItem = this.collection.getItemByInstance(item);
     if (!collectionItem) return;
 
     // Toggle item selection
-    this.collectionManager.select(collectionItem);
+    this.collection.select(collectionItem);
 
     // Emit event with current value
-    const value = this.collectionManager.getValue();
+    const value = this.collection.getValue();
     this.pushEvent("value-changed", { value });
   }
 
@@ -220,18 +220,17 @@ class AccordionComponent extends Component {
 
     let referenceCollectionItem = null;
     if (currentItem) {
-      referenceCollectionItem =
-        this.collectionManager.getItemByInstance(currentItem);
+      referenceCollectionItem = this.collection.getItemByInstance(currentItem);
     }
 
     // Get the target item using collection manager's navigation methods
-    const targetItem = this.collectionManager.getItem(
+    const targetItem = this.collection.getItem(
       direction,
       referenceCollectionItem,
     );
 
     if (targetItem) {
-      this.collectionManager.focus(targetItem);
+      this.collection.focus(targetItem);
     }
   }
 }
