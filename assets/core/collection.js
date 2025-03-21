@@ -26,7 +26,6 @@ class Collection {
 
     // Initialize collection
     this.items = [];
-    this.highlightedItem = null;
     this.focusedItem = null;
 
     // Initialize values
@@ -51,7 +50,6 @@ class Collection {
       : this.options.defaultValue
         ? [this.options.defaultValue]
         : [];
-    this.highlightedItem = null;
     this.focusedItem = null;
   }
 
@@ -102,16 +100,14 @@ class Collection {
    * @param {*} value - Item value
    * @returns {Object} The collection item wrapper
    */
-  add(item, value) {
-    const itemValue =
-      value !== undefined ? value : this.options.getItemValue(item);
+  add(item) {
+    const itemValue = this.options.getItemValue(item);
 
     const isSelected = this.values.includes(itemValue);
 
     const collectionItem = {
       instance: item,
       value: itemValue,
-      highlighted: false,
       focused: false,
       selected: isSelected,
     };
@@ -138,11 +134,6 @@ class Collection {
     if (index >= 0) {
       const [removedItem] = this.items.splice(index, 1);
 
-      // Update highlight/focus if needed
-      if (this.highlightedItem === removedItem) {
-        this.highlightedItem = null;
-      }
-
       if (this.focusedItem === removedItem) {
         this.focusedItem = null;
       }
@@ -161,9 +152,7 @@ class Collection {
    */
   clear() {
     this.items = [];
-    this.highlightedItem = null;
     this.focusedItem = null;
-    // Maintain values for when new items are added
   }
 
   /**
@@ -232,34 +221,6 @@ class Collection {
       default:
         return null;
     }
-  }
-
-  /**
-   * Highlight an item
-   *
-   * @param {Object} item - Item to highlight
-   * @returns {boolean} Whether the operation was successful
-   */
-  highlight(item) {
-    if (!item || this.options.isItemDisabled(item.instance)) return false;
-
-    // Clear previous highlight
-    if (this.highlightedItem) {
-      this.highlightedItem.highlighted = false;
-      if (typeof this.highlightedItem.instance.handleEvent === "function") {
-        this.highlightedItem.instance.handleEvent("unhighlight");
-      }
-    }
-
-    // Set new highlight
-    this.highlightedItem = item;
-    item.highlighted = true;
-
-    if (typeof item.instance.handleEvent === "function") {
-      return item.instance.handleEvent("highlight") !== false;
-    }
-
-    return true;
   }
 
   /**
@@ -366,6 +327,10 @@ class Collection {
    */
   isValueSelected(value) {
     return this.values.includes(value);
+  }
+
+  each(callback) {
+    this.items.forEach((item) => callback(item.instance));
   }
 }
 

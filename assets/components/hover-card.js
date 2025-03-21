@@ -74,7 +74,7 @@ class HoverCardComponent extends Component {
           },
         },
       },
-      visibilityConfig: {
+      hiddenConfig: {
         closed: {
           content: true,
         },

@@ -38,6 +38,7 @@ class PositionedElement {
 
       // Event handlers
       onOutsideClick: null,
+      scrollPassThrough: false,
 
       ...options,
     };
@@ -103,9 +104,19 @@ class PositionedElement {
     this.scrollManager.start(this.reference, this.element);
 
     // Add wheel and touch event handlers if in portal
-    if (Portal.isInPortal(this.element)) {
+    if (Portal.isInPortal(this.element) && this.options.scrollPassThrough) {
       this.setupScrollPassthrough();
     }
+
+    // set reference width and height ass css variable
+    this.element.style.setProperty(
+      "--salad-reference-width",
+      this.reference.offsetWidth + "px",
+    );
+    this.element.style.setProperty(
+      "--salad-reference-height",
+      this.reference.offsetHeight + "px",
+    );
 
     this.active = true;
     return this;
@@ -129,7 +140,7 @@ class PositionedElement {
     this.scrollManager.stop();
 
     // Clean up scroll passthrough if in portal
-    if (Portal.isInPortal(this.element)) {
+    if (Portal.isInPortal(this.element) && this.options.scrollPassThrough) {
       this.cleanupScrollPassthrough();
     }
 

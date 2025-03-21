@@ -36,6 +36,8 @@ defmodule SaladUI.Select do
   attr :value, :any, default: nil, doc: "The value of the select"
   attr :"default-value", :any, default: nil, doc: "The default value of the select"
   attr :multiple, :boolean, default: false, doc: "Allow multiple selection"
+  attr :"use-portal", :boolean, default: true, doc: "Whether to render the content in a portal"
+  attr :"portal-container", :string, default: nil, doc: "CSS selector for the portal container"
   attr :"on-value-changed", :any, default: nil, doc: "Handler for value changed event"
   attr :"on-open", :any, default: nil, doc: "Handler for select open event"
   attr :"on-close", :any, default: nil, doc: "Handler for select closed event"
@@ -68,9 +70,12 @@ defmodule SaladUI.Select do
       |> assign(
         :options,
         json(%{
-          initialValue: assigns.value,
+          defaultValue: assigns[:"default-value"],
+          value: assigns.value,
           name: assigns.name,
           multiple: assigns.multiple,
+          usePortal: assigns[:"use-portal"],
+          portalContainer: assigns[:"portal-container"],
           animations: get_animation_config()
         })
       )
@@ -79,6 +84,7 @@ defmodule SaladUI.Select do
     <div
       id={@id}
       class={classes(["relative inline-flex", @class])}
+      data-part="root"
       data-component="select"
       data-state="closed"
       data-options={@options}
@@ -168,6 +174,7 @@ defmodule SaladUI.Select do
     <div
       data-part="content"
       data-side={@side}
+      style="min-width: var(--salad-reference-width)"
       hidden
       class={
         classes([
@@ -221,22 +228,18 @@ defmodule SaladUI.Select do
     <div
       data-part="item"
       data-value={@value}
-      data-disabled={to_string(@disabled)}
+      data-disabled={@disabled}
       class={
         classes([
-          "group/item",
-          "relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none",
-          @disabled && "pointer-events-none opacity-50",
+          "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           @class
         ])
       }
-      tabindex={if @disabled, do: "-1", else: "0"}
+      tabindex={@disabled && "-1" || "0"}
       {@rest}
     >
-      <div class="absolute top-0 left-0 w-full h-full group-hover/item:bg-accent rounded group-data-[highlighted=true]/item:bg-accent">
-      </div>
       <span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-        <span aria-hidden="true" class="hidden group-data-[selected=true]/item:block">
+        <span data-part="item-indicator" hidden>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -247,13 +250,14 @@ defmodule SaladUI.Select do
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
-            class="lucide lucide-check h-4 w-4"
+            class="h-4 w-4"
           >
             <path d="M20 6 9 17l-5-5"></path>
           </svg>
         </span>
       </span>
-      <span class="z-0 data-[selected=true]:font-medium">{render_slot(@inner_block)}</span>
+
+      <span data-part="item-text">{render_slot(@inner_block)}</span>
     </div>
     """
   end

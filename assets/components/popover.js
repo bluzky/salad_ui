@@ -46,7 +46,7 @@ class PopoverComponent extends Component {
           },
         },
       },
-      visibilityConfig: {
+      hiddenConfig: {
         closed: {
           positioner: true, // Hide the positioner in closed state
         },

@@ -74,7 +74,7 @@ class TooltipComponent extends Component {
           },
         },
       },
-      visibilityConfig: {
+      hiddenConfig: {
         closed: {
           content: true,
         },

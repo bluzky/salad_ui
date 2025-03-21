@@ -46,7 +46,7 @@ class CollapsibleComponent extends Component {
           },
         },
       },
-      visibilityConfig: {
+      hiddenConfig: {
         closed: {
           content: true,
         },

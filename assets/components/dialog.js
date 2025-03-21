@@ -42,7 +42,7 @@ class DialogComponent extends Component {
           },
         },
       },
-      visibilityConfig: {
+      hiddenConfig: {
         closed: {
           content: true,
         },

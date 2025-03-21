@@ -59,7 +59,7 @@ class AccordionItem extends Component {
           },
         },
       },
-      visibilityConfig: {
+      hiddenConfig: {
         closed: {
           "item-content": true,
         },
@@ -192,7 +192,7 @@ class AccordionComponent extends Component {
       const item = new AccordionItem(element, this, {
         initialState: isOpen ? "open" : "closed",
       });
-      this.collection.add(item, item.value);
+      this.collection.add(item);
       return item;
     });
   }
