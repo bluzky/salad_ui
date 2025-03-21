@@ -83,6 +83,7 @@ defmodule SaladUI.Accordion do
       data-state="idle"
       data-options={@options}
       data-event-mappings={@event_map}
+      data-part="root"
       phx-hook="SaladUI"
       {@rest}
     >

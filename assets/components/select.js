@@ -97,11 +97,9 @@ class SelectItem extends Component {
         if (!this.disabled) {
           // Just mark as highlighted without direct focus
           this.el.focus();
-          this.el.setAttribute("data-highlighted", "true");
         }
         return true;
       case "blur":
-        this.el.setAttribute("data-highlighted", "false");
         return true;
     }
   }
@@ -110,7 +108,7 @@ class SelectItem extends Component {
     event.preventDefault();
     event.stopPropagation();
     if (!this.disabled) {
-      this.parent.selectItem(this);
+      this.parent.selectValue(this.value);
     }
   }
 
@@ -190,7 +188,7 @@ class SelectComponent extends Component {
       },
       events: {
         closed: {
-          keyEventTarget: this.content,
+          keyEventTarget: "content",
           keyMap: {
             ArrowDown: "open",
             ArrowUp: "open",
@@ -204,6 +202,7 @@ class SelectComponent extends Component {
           },
         },
         open: {
+          keyEventTarget: "content",
           keyMap: {
             Escape: "close",
             ArrowUp: () => this.navigateItem("prev"),
@@ -330,12 +329,9 @@ class SelectComponent extends Component {
   }
 
   // Item management
-  selectItem(item) {
-    const collectionItem = this.collection.getItemByInstance(item);
+  selectValue(value) {
+    const collectionItem = this.collection.getItemByValue(value);
     if (!collectionItem) return;
-
-    // Get previous value for event
-    const previousValue = this.collection.getValue();
 
     // Toggle item selection
     this.collection.select(collectionItem);
@@ -349,8 +345,8 @@ class SelectComponent extends Component {
     }
 
     // Emit event with current value
-    const value = this.collection.getValue();
-    this.pushEvent("value-changed", { value, previousValue });
+    const selectedValue = this.collection.getValue();
+    this.pushEvent("value-changed", { value: selectedValue });
   }
 
   handleItemFocus(item) {

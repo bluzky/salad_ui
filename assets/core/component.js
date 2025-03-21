@@ -31,7 +31,9 @@ class Component {
     this.ariaManager = new AriaManager(this, this.ariaConfig);
 
     // ignore item's part
-    this.allParts = Array.from(this.el.querySelectorAll("[data-part]"));
+    this.allParts = Array.from(this.el.querySelectorAll("[data-part]")).concat([
+      this.el,
+    ]);
     if (ignoreItems) {
       this.allParts = this.allParts.filter(
         (element) => !element.dataset.part.startsWith("item"),
@@ -42,7 +44,8 @@ class Component {
     this.updatePartsVisibility();
 
     // Map to store event handlers for each part element
-    this.partsEventHandlers = new Map();
+    this.partMouseEventHandlers = new Map();
+    this.keyEventHandlers = new Map();
   }
 
   parseOptions() {
@@ -166,32 +169,12 @@ class Component {
   }
 
   setupEvents() {
-    this.el.addEventListener("keydown", this.handleKeyDown.bind(this));
     this.el.addEventListener("click", this.handleActionClick.bind(this));
 
-    // Setup mouse event handlers once for all states
+    this.setupKeyEventHandlers();
     this.setupMouseEventHandlers();
 
     this.setupComponentEvents();
-  }
-
-  /**
-   * Handle keydown events according to current state's keyMap
-   */
-  handleKeyDown(event) {
-    const currentState = this.stateMachine.state;
-    const stateEvents = this.eventConfig[currentState];
-    if (!stateEvents || !stateEvents.keyMap) return;
-
-    const key = event.key;
-    const action = stateEvents.keyMap[key];
-
-    if (action) {
-      this.executeHandler(action, event);
-      if (this.config.preventDefaultKeys.includes(key)) {
-        event.preventDefault();
-      }
-    }
   }
 
   /**
@@ -211,6 +194,39 @@ class Component {
 
   setupComponentEvents() {
     // Override in component subclasses
+  }
+
+  /**
+   * Set up event listeners for mouse events based on the current state
+   */
+  setupKeyEventHandlers() {
+    Object.keys(this.eventConfig).forEach((stateName) => {
+      const stateEvents = this.eventConfig[stateName];
+      if (!stateEvents || !stateEvents.keyMap) return;
+
+      const keyMap = stateEvents.keyMap;
+
+      // Create a bound handler that will check the current state before executing
+      const boundHandler = (event) => {
+        if (this.stateMachine.state === stateName) {
+          const key = event.key;
+          const action = stateEvents.keyMap[key];
+
+          if (action) {
+            this.executeHandler(action, event);
+            if (this.config.preventDefaultKeys.includes(key)) {
+              event.preventDefault();
+            }
+          }
+        }
+      };
+
+      // Get the target element for key events, if not specified, use the root element
+      const element = this.getPart(stateEvents.keyEventTarget) || this.el;
+
+      element.addEventListener("keydown", boundHandler);
+      this.keyEventHandlers.set(element, boundHandler);
+    });
   }
 
   /**
@@ -250,11 +266,11 @@ class Component {
             element.addEventListener(eventType, boundHandler);
 
             // Store the handler reference for removal later
-            if (!this.partsEventHandlers.has(element)) {
-              this.partsEventHandlers.set(element, new Map());
+            if (!this.partMouseEventHandlers.has(element)) {
+              this.partMouseEventHandlers.set(element, new Map());
             }
 
-            const elementHandlers = this.partsEventHandlers.get(element);
+            const elementHandlers = this.partMouseEventHandlers.get(element);
             if (!elementHandlers.has(eventType)) {
               elementHandlers.set(eventType, []);
             }
@@ -266,13 +282,25 @@ class Component {
     });
   }
 
+  removeKeyEventHandlers() {
+    if (this.keyEventHandlers) {
+      // For each element that has event handlers
+      this.keyEventHandlers.forEach((handler, element) => {
+        element.removeEventListener("keydown", handler);
+      });
+
+      // Clear the map for future use
+      this.keyEventHandlers.clear();
+    }
+  }
+
   /**
    * Remove all active mouse event listeners
    */
   removeMouseEventListeners() {
-    if (this.partsEventHandlers) {
+    if (this.partMouseEventHandlers) {
       // For each element that has event handlers
-      this.partsEventHandlers.forEach((eventHandlers, element) => {
+      this.partMouseEventHandlers.forEach((eventHandlers, element) => {
         // For each event type on this element
         eventHandlers.forEach((handlers, eventType) => {
           // Remove all handlers for this event type
@@ -283,7 +311,7 @@ class Component {
       });
 
       // Clear the map for future use
-      this.partsEventHandlers.clear();
+      this.partMouseEventHandlers.clear();
     }
   }
 
@@ -404,8 +432,8 @@ class Component {
     this.beforeDestroy();
 
     // Remove event listeners
-    this.el.removeEventListener("keydown", this.handleKeyDown);
     this.el.removeEventListener("click", this.handleActionClick);
+    this.removeKeyEventHandlers();
     this.removeMouseEventListeners();
     this.ariaManager = null;
 

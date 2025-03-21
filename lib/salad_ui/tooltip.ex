@@ -73,6 +73,7 @@ defmodule SaladUI.Tooltip do
       data-state="closed"
       data-event-mappings={@event_map}
       data-options={@options}
+      data-part="root"
       phx-hook="SaladUI"
       {@rest}
     >

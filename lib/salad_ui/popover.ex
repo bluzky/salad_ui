@@ -66,6 +66,7 @@ defmodule SaladUI.Popover do
       data-state={@initial_state}
       data-event-mappings={@event_map}
       data-options={@options}
+      data-part="root"
       phx-hook="SaladUI"
       {@rest}
     >

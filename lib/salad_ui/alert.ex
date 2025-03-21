@@ -68,6 +68,7 @@ defmodule SaladUI.Alert do
     ~H"""
     <div
       role="alert"
+      data-part="root"
       class={
         classes([
           "relative w-full rounded-lg border p-4 [&>span~*]:pl-7 [&>span+div]:translate-y-[-3px] [&>span]:absolute [&>span]:left-4 [&>span]:top-4",
