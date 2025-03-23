@@ -110,6 +110,7 @@ defmodule SaladUI.Form do
   def form_label(assigns) do
     ~H"""
     <SaladUI.Label.label
+      for={field && field.id}
       class={
         classes([
           @error && "text-destructive",
