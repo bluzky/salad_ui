@@ -38,3 +38,20 @@ input[type="range"]::-moz-range-thumb {
   appearance: none;
   @apply w-5 h-5 bg-background border-2 border-primary rounded-full;
 }
+
+/* progress */
+@keyframes indeterminate-progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-indeterminate-progress {
+  animation: indeterminate-progress 1.5s infinite linear;
+  background: linear-gradient(to right, transparent, currentColor, transparent);
+  background-size: 200% 100%;
+  width: 100%;
+}
