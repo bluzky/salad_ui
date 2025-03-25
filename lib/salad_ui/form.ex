@@ -94,6 +94,7 @@ defmodule SaladUI.Form do
 
     ~H"""
     <SaladUI.Label.label
+      for={@field.id}
       class={
         classes([
           @error && "text-destructive",
