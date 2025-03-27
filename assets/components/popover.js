@@ -75,9 +75,12 @@ class PopoverComponent extends Component {
     };
   }
 
+  /**
+   * Initializes the positioned element if the positioner and trigger exist and the positioned element is not already created.
+   * Extracts placement configuration from DOM attributes and creates a new PositionedElement instance.
+   */
   initializePositionedElement() {
     if (this.positioner && this.trigger && !this.positionedElement) {
-      // Extract position config attributes from DOM
       const placement = this.positioner.getAttribute("data-side") || "bottom";
       const alignment = this.positioner.getAttribute("data-align") || "center";
       const sideOffset = parseInt(
@@ -89,7 +92,6 @@ class PopoverComponent extends Component {
         10,
       );
 
-      // Create the positioned element with our modular architecture
       this.positionedElement = new PositionedElement(
         this.positioner,
         this.trigger,
@@ -109,31 +111,19 @@ class PopoverComponent extends Component {
   }
 
   onOpenEnter(params = {}) {
-    // Initialize the positioned element
     this.initializePositionedElement();
-
-    // Activate the positioned element
-    if (this.positionedElement) {
-      this.positionedElement.activate();
-    }
-
+    this.positionedElement?.activate();
     this.pushEvent("opened");
   }
 
   onClosedEnter() {
-    if (this.positionedElement) {
-      this.positionedElement.deactivate();
-    }
-
+    this.positionedElement?.deactivate();
     this.pushEvent("closed");
   }
 
   beforeDestroy() {
-    // Clean up the positioned element
-    if (this.positionedElement) {
-      this.positionedElement.destroy();
-      this.positionedElement = null;
-    }
+    this.positionedElement?.destroy();
+    this.positionedElement = null;
   }
 }
 

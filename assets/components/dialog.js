@@ -146,16 +146,12 @@ class DialogComponent extends Component {
 
   beforeDestroy() {
     // Clean up focus trap
-    if (this.focusTrap) {
-      this.focusTrap.destroy();
-      this.focusTrap = null;
-    }
+    this.focusTrap?.destroy();
+    this.focusTrap = null;
 
     // Clean up click outside monitor
-    if (this.clickOutsideMonitor) {
-      this.clickOutsideMonitor.destroy();
-      this.clickOutsideMonitor = null;
-    }
+    this.clickOutsideMonitor?.destroy();
+    this.clickOutsideMonitor = null;
   }
 }
 
