@@ -46,8 +46,8 @@ defmodule SaladUI.Table do
     ~H"""
     <table
       class={classes(["w-full caption-bottom text-sm", @class])}
-      aria-label={@aria_label}
-      aria-describedby={@aria_describedby}
+      aria-label={assigns[:"aria-label"]}
+      aria-describedby={assigns[:"aria-describedby"]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -92,7 +92,7 @@ defmodule SaladUI.Table do
           @class
         ])
       }
-      aria-rowindex={@aria_rowindex}
+      aria-rowindex={assigns[:"aria-rowindex"]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -125,7 +125,7 @@ defmodule SaladUI.Table do
         ])
       }
       scope={@scope}
-      aria-sort={@aria_sort}
+      aria-sort={assigns[:"aria-sort"]}
       {@rest}
     >
       {render_slot(@inner_block)}
