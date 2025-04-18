@@ -36,9 +36,9 @@ class Component {
     ]);
 
     if (ignoreItems) {
-      this.allParts = this.allParts.filter((element) => {
-        return !element.dataset?.part?.startsWith("item");
-      });
+      this.allParts = this.allParts.filter(
+        (element) => !element.dataset?.part?.startsWith("item"),
+      );
     }
 
     this.updateUI();
