@@ -34,10 +34,11 @@ class Component {
     this.allParts = Array.from(this.el.querySelectorAll("[data-part]")).concat([
       this.el,
     ]);
+
     if (ignoreItems) {
-      this.allParts = this.allParts.filter(
-        (element) => !element.dataset.part.startsWith("item"),
-      );
+      this.allParts = this.allParts.filter((element) => {
+        return !element.dataset?.part?.startsWith("item");
+      });
     }
 
     this.updateUI();
