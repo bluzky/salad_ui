@@ -106,7 +106,11 @@ defmodule SaladUI.Command do
 
   def command_group(assigns) do
     ~H"""
-    <div role="presentation" class="overflow-hidden p-1 text-foreground">
+    <div
+      role="presentation"
+      data-part="command-group"
+      class="overflow-hidden p-1 text-foreground data-[visible=false]:hidden"
+    >
       <div class="px-2 py-1.5 text-xs font-medium text-muted-foreground">
         {@heading}
       </div>
@@ -118,7 +122,6 @@ defmodule SaladUI.Command do
   end
 
   attr :disabled, :boolean, default: false
-  attr :value, :string, required: true
   attr :selected, :boolean, default: false
   attr :rest, :global
   slot :inner_block, required: true
@@ -129,7 +132,7 @@ defmodule SaladUI.Command do
       tabindex="-1"
       role="option"
       data-part="command-item"
-      class="relative flex cursor-default w-full gap-2 select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none disabled:pointer-events-none hover:bg-accent/75 data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
+      class="relative flex cursor-default w-full gap-2 select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none disabled:pointer-events-none hover:bg-accent/75 data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground data-[visible=false]:hidden disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
       data-disabled={@disabled}
       data-selected={@selected}
       aria-selected={@selected}

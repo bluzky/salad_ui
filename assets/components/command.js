@@ -14,11 +14,12 @@ class CommandComponent extends Component {
     this.input = this.getPart("command-input");
     this.list = this.getPart("command-list");
     this.empty = this.getPart("command-empty");
-    this.visibleItems = this.getAllParts("command-item").filter(
-      (el) => el.getAttribute("disabled") === null,
-    );
-
+    this.groups = this.getAllParts("command-group");
+    this.items = this.getAllParts("command-item");
     this.currentItemIdx = -1;
+
+    this.input.addEventListener("input", this.handleSearch);
+    this.handleSearch();
 
     this.config.preventDefaultKeys = ["Escape", "ArrowDown", "ArrowUp"];
   }
@@ -44,22 +45,21 @@ class CommandComponent extends Component {
   }
 
   focusItem(index) {
-    if (this.visibleItems.length === 0) return;
-    if (index < 0) index = this.visibleItems.length - 1;
-    if (index >= this.visibleItems.length) index = 0;
+    if (this.selectableItems.length === 0) return;
+    if (index < 0) index = this.selectableItems.length - 1;
+    if (index >= this.selectableItems.length) index = 0;
 
     this.currentItemIdx = index;
 
-    for (let i = 0; i < this.visibleItems.length; i++) {
-      const item = this.visibleItems[i];
-      if (i === index) {
-        item.setAttribute("data-selected", "true");
-        item.setAttribute("aria-selected", "true");
-      } else {
-        item.removeAttribute("data-selected");
-        item.removeAttribute("aria-selected");
-      }
+    for (let item of this.items) {
+      item.setAttribute("data-selected", "false");
+      item.setAttribute("aria-selected", "false");
     }
+
+    const selectedItem = this.selectableItems[index];
+
+    selectedItem.setAttribute("data-selected", "true");
+    selectedItem.setAttribute("aria-selected", "true");
   }
   focusNextItem() {
     this.focusItem(this.currentItemIdx + 1);
@@ -72,8 +72,52 @@ class CommandComponent extends Component {
   }
   selectItem() {
     if (this.currentItemIdx === -1) return;
-    const item = this.visibleItems[this.currentItemIdx];
+    const item = this.selectableItems[this.currentItemIdx];
     item.click();
+  }
+
+  handleSearch = () => {
+    const query = this.input.value.toLowerCase();
+
+    this.currentItemIdx = -1;
+
+    for (const item of this.items) {
+      item.setAttribute("data-selected", "false");
+    }
+
+    for (let item of this.items) {
+      const text = item.textContent.toLowerCase().trim();
+      if (text.includes(query.toLowerCase())) {
+        item.setAttribute("data-visible", "true");
+      } else {
+        item.setAttribute("data-visible", "false");
+      }
+    }
+
+    this.updateGroupsVisibility();
+    this.updateSelectableItems();
+  };
+
+  // Hide groups if all their options are hidden
+  updateGroupsVisibility() {
+    for (const group of this.groups) {
+      const options = group.querySelectorAll("[data-visible='true']");
+      if (options.length === 0) {
+        group.setAttribute("data-visible", "false");
+      } else {
+        group.setAttribute("data-visible", "true");
+      }
+    }
+  }
+
+  updateSelectableItems() {
+    this.visibleItems = this.items.filter(
+      (el) => el.getAttribute("data-visible") === "true",
+    );
+
+    this.selectableItems = this.visibleItems.filter(
+      (el) => el.getAttribute("disabled") === null,
+    );
   }
 }
 
