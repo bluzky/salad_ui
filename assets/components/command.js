@@ -1,4 +1,3 @@
-// salad_ui/assets/components/command.js
 import Component from "../core/component";
 import SaladUI from "..";
 
@@ -95,6 +94,16 @@ class CommandComponent extends Component {
     this.updateGroupsVisibility();
     this.updateSelectableItems();
     this.focusItem(0);
+
+    const isSomeItemVisible = this.items.some(
+      (item) => item.getAttribute("data-visible") === "true",
+    );
+
+    if (isSomeItemVisible) {
+      this.empty.setAttribute("data-visible", "false");
+    } else {
+      this.empty.setAttribute("data-visible", "true");
+    }
   };
 
   // Hide groups if all their options are hidden

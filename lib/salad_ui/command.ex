@@ -95,7 +95,11 @@ defmodule SaladUI.Command do
 
   def command_empty(assigns) do
     ~H"""
-    <div class="py-6 text-center text-sm">
+    <div
+      data-visible="false"
+      data-part="command-empty"
+      class={classes(["py-6 text-center text-sm data-[visible=false]:hidden", @class])}
+    >
       {render_slot(@inner_block)}
     </div>
     """
