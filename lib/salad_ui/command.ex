@@ -1,10 +1,58 @@
 defmodule SaladUI.Command do
-  @moduledoc false
+  @moduledoc """
+  Command palette components for SaladUI.
+
+  Provides a set of components to build a command palette or searchable menu, similar to those found in modern applications.
+
+  ## Example
+
+      <.command id="command" class="rounded-lg border shadow-md md:min-w-[450px] w-full lg:max-w-[600px]">
+        <.command_input placeholder="Type a command or search..." />
+        <.command_empty>
+          <span>No results found</span>
+        </.command_empty>
+        <.command_list>
+          <.command_group heading="Suggestions">
+            <.command_item phx-value-name="calendar" phx-click="select_command">
+              <.calendar class="w-4 h-4"/>
+              <span>Calendar</span>
+            </.command_item>
+            ...
+          </.command_group>
+          <.command_group heading="Settings">
+            <.command_item phx-value-name="profile" phx-click="select_command">
+              <.user class="w-4 h-4"/>
+              <span>Profile</span>
+              <.command_shortcut>⌘P</.command_shortcut>
+            </.command_item>
+            ...
+          </.command_group>
+        </.command_list>
+      </.command>
+  """
   use SaladUI, :component
 
   import SaladUI.Dialog
   import SaladUI.Icon
 
+  @doc """
+  Renders the root command palette container.
+
+  ## Attributes
+
+    * `:id` (required) - The unique id for the command palette.
+    * `:class` - Additional classes to apply.
+
+  ## Slots
+
+    * `:inner_block` (required) - The content of the command palette.
+
+  ## Example
+
+      <.command id="my-command">
+        ...
+      </.command>
+  """
   attr :id, :string, required: true
   attr :class, :any, default: ""
   slot :inner_block, required: true
@@ -28,6 +76,24 @@ defmodule SaladUI.Command do
     """
   end
 
+  @doc """
+  Renders a command palette inside a dialog.
+
+  ## Attributes
+
+    * `:id` (required) - The unique id for the command palette.
+    * `:open` - Whether the dialog is open.
+
+  ## Slots
+
+    * `:inner_block` (required) - The content of the command palette.
+
+  ## Example
+
+      <.command_dialog id="my-command" open={@show_command}>
+        ...
+      </.command_dialog>
+  """
   attr :id, :string, required: true
   attr :open, :boolean, default: false
   slot :inner_block, required: true
@@ -48,6 +114,18 @@ defmodule SaladUI.Command do
     """
   end
 
+  @doc """
+  Renders the input field for searching/filtering commands.
+
+  ## Attributes
+
+    * `:class` - Additional classes to apply.
+    * All global attributes are passed to the `<input>` element.
+
+  ## Example
+
+      <.command_input placeholder="Type a command..." />
+  """
   attr :class, :any, default: ""
   attr :rest, :global, default: %{}
 
@@ -74,6 +152,25 @@ defmodule SaladUI.Command do
     """
   end
 
+  @doc """
+  Renders the list container for command items and groups.
+
+  ## Attributes
+
+    * `:class` - Additional classes to apply.
+
+  ## Slots
+
+    * `:inner_block` (required) - The content of the command list (groups/items).
+
+  ## Example
+
+      <.command_list>
+        <.command_group heading="Actions">
+          <.command_item>...</.command_item>
+        </.command_group>
+      </.command_list>
+  """
   attr :class, :any, default: ""
   slot :inner_block, required: true
 
@@ -90,6 +187,23 @@ defmodule SaladUI.Command do
     """
   end
 
+  @doc """
+  Renders a message when no command results are found.
+
+  ## Attributes
+
+    * `:class` - Additional classes to apply.
+
+  ## Slots
+
+    * `:inner_block` (required) - The content to display when empty.
+
+  ## Example
+
+      <.command_empty>
+        <span>No results found</span>
+      </.command_empty>
+  """
   attr :class, :any, default: ""
   slot :inner_block, required: true
 
@@ -105,6 +219,23 @@ defmodule SaladUI.Command do
     """
   end
 
+  @doc """
+  Renders a group of command items with a heading.
+
+  ## Attributes
+
+    * `:heading` (required) - The group heading.
+
+  ## Slots
+
+    * `:inner_block` (required) - The command items in the group.
+
+  ## Example
+
+      <.command_group heading="Settings">
+        <.command_item>Profile</.command_item>
+      </.command_group>
+  """
   attr :heading, :string, required: true
   slot :inner_block, required: true
 
@@ -125,6 +256,26 @@ defmodule SaladUI.Command do
     """
   end
 
+  @doc """
+  Renders a single command item (button).
+
+  ## Attributes
+
+    * `:disabled` - Whether the item is disabled.
+    * `:selected` - Whether the item is selected.
+    * All global attributes are passed to the `<button>` element.
+
+  ## Slots
+
+    * `:inner_block` (required) - The content of the command item.
+
+  ## Example
+
+      <.command_item phx-click="select_command">
+        <.icon name="calendar" />
+        <span>Calendar</span>
+      </.command_item>
+  """
   attr :disabled, :boolean, default: false
   attr :selected, :boolean, default: false
   attr :rest, :global
@@ -148,6 +299,21 @@ defmodule SaladUI.Command do
     """
   end
 
+  @doc """
+  Renders a keyboard shortcut hint for a command item.
+
+  ## Attributes
+
+    * `:class` - Additional classes to apply.
+
+  ## Slots
+
+    * `:inner_block` (required) - The shortcut text.
+
+  ## Example
+
+      <.command_shortcut>⌘P</.command_shortcut>
+  """
   attr :class, :any, default: ""
   slot :inner_block, required: true
 
