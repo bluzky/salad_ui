@@ -63,6 +63,7 @@ defmodule SaladUI.Command do
       id={@id}
       tabindex="-1"
       data-component="command"
+      data-part="root"
       phx-hook="SaladUI"
       class={
         classes([
@@ -103,10 +104,7 @@ defmodule SaladUI.Command do
     <.dialog id={@id <> "_dialog"} open={@open}>
       <.dialog_trigger>Click me</.dialog_trigger>
       <.dialog_content class="overflow-hidden p-0">
-        <.command
-          id={@id}
-          class="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5"
-        >
+        <.command id={@id} class="[&_[data-part='command-input']]:h-12">
           {render_slot(@inner_block)}
         </.command>
       </.dialog_content>
@@ -287,7 +285,7 @@ defmodule SaladUI.Command do
       tabindex="-1"
       role="option"
       data-part="command-item"
-      class="relative flex cursor-default w-full gap-2 select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none disabled:pointer-events-none hover:bg-accent/75 data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground data-[visible=false]:hidden disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
+      class="[&_svg]:h-4 [&_svg]:w-4 relative flex cursor-default w-full gap-2 select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none disabled:pointer-events-none hover:bg-accent/75 data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground data-[visible=false]:hidden disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
       data-disabled={@disabled}
       data-selected={@selected}
       aria-selected={@selected}
