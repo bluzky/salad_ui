@@ -3,7 +3,7 @@
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["../../../config/*.*exs", "**/*.ex"],
+  content: ["../../../config/*.*exs", "../lib/**/*.ex"],
   theme: {
     extend: {
       colors: require("./tailwind.colors.json"),
