@@ -34,10 +34,9 @@ class Component {
     this.allParts = Array.from(this.el.querySelectorAll("[data-part]")).concat([
       this.el,
     ]);
-
     if (ignoreItems) {
       this.allParts = this.allParts.filter(
-        (element) => !element.dataset?.part?.startsWith("item"),
+        (element) => !element.dataset.part.startsWith("item"),
       );
     }
 
