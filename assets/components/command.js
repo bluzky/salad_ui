@@ -91,23 +91,14 @@ class CommandComponent extends Component {
       item.setAttribute("data-visible", visible ? "true" : "false");
     });
 
-    this.updateGroupsVisibility();
-    this.updateSelectableItems();
-    this.focusItem(0);
-
-    const isSomeItemVisible = this.items.some(
-      (item) => item.getAttribute("data-visible") === "true",
+    this.visibleItems = this.items.filter(
+      (el) => el.getAttribute("data-visible") === "true",
     );
 
-    if (isSomeItemVisible) {
-      this.empty.setAttribute("data-visible", "false");
-    } else {
-      this.empty.setAttribute("data-visible", "true");
-    }
-  };
+    this.selectableItems = this.visibleItems.filter(
+      (el) => !el.hasAttribute("disabled"),
+    );
 
-  // Hide groups if all their options are hidden
-  updateGroupsVisibility() {
     this.groups.forEach((group) => {
       const visibleOptions = group.querySelectorAll("[data-visible='true']");
       group.setAttribute(
@@ -115,16 +106,20 @@ class CommandComponent extends Component {
         visibleOptions.length > 0 ? "true" : "false",
       );
     });
-  }
 
-  // Update the list of selectable (visible & enabled) items
-  updateSelectableItems() {
-    this.visibleItems = this.items.filter(
-      (el) => el.getAttribute("data-visible") === "true",
-    );
-    this.selectableItems = this.visibleItems.filter(
-      (el) => !el.hasAttribute("disabled"),
-    );
+    this.focusItem(0);
+
+    const noItems = this.visibleItems.length === 0;
+
+    if (noItems) {
+      this.empty.setAttribute("data-visible", "true");
+    } else {
+      this.empty.setAttribute("data-visible", "false");
+    }
+  };
+
+  beforeDestroy() {
+    this.input.removeEventListener("input", this.handleSearch);
   }
 }
 
