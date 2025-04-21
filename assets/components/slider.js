@@ -33,7 +33,9 @@ class SliderComponent extends Component {
     const dataValue = this.el.dataset.value;
     const defaultValue = this.options.defaultValue;
     this.value = parseFloat(
-      dataValue || (defaultValue !== undefined ? defaultValue : this.min),
+      dataValue !== undefined && dataValue !== null
+        ? dataValue
+        : (defaultValue !== undefined ? defaultValue : this.min),
     );
 
     // Clamp value to min/max
