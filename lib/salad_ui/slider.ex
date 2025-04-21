@@ -1,79 +1,119 @@
 defmodule SaladUI.Slider do
-  @moduledoc false
+  @moduledoc """
+  Implementation of slider component for selecting values within a range.
+
+  Sliders provide users with a visual representation of a value within a range,
+  and allow them to adjust it by dragging a thumb or pressing arrow keys.
+
+  ## Examples:
+
+      <.slider id="volume-slider" min={0} max={100} value={50} on-value-changed={JS.push("volume_changed")} />
+
+      <.slider id="price-range" min={10} max={1000} step={10} value={500} class="w-[300px]" />
+  """
   use SaladUI, :component
 
   @doc """
-  Render Slider range input
+  Renders a slider component.
 
-  ## Example
+  ## Options
 
-
-      <.slider class="w-[60%]" id="slider-single-default-slider" max={50} min={10} step={5} value={20}/>
-
+  * `:id` - Required unique identifier for the slider.
+  * `:min` - Minimum value (defaults to 0).
+  * `:max` - Maximum value (defaults to 100).
+  * `:step` - Step size for value changes (defaults to 1).
+  * `:value` - Current value of the slider (defaults to min).
+  * `:default-value` - Default value if value is not provided.
+  * `:disabled` - Whether the slider is disabled (defaults to false).
+  * `:on-value-changed` - Handler for value changed event.
+  * `:class` - Additional CSS classes.
   """
-  attr :id, :string, required: true
+  attr :id, :string, required: true, doc: "Unique identifier for the slider"
+  attr :name, :any, default: nil, doc: "Name of the slider for form submission"
+  attr :min, :integer, default: 0, doc: "Minimum value"
+  attr :max, :integer, default: 100, doc: "Maximum value"
+  attr :step, :integer, default: 1, doc: "Step size for value changes"
+  attr :value, :integer, default: nil, doc: "Current value of the slider"
+  attr :"default-value", :integer, default: nil, doc: "Default value if value is not provided"
+  attr :disabled, :boolean, default: false, doc: "Whether the slider is disabled"
+  attr :"on-value-changed", :any, default: nil, doc: "Handler for value changed event"
+  attr :field, Phoenix.HTML.FormField, doc: "A form field struct retrieved from the form, for example: @form[:volume]"
   attr :class, :string, default: nil
-  attr :name, :string, default: nil
-  attr :value, :integer, default: 0, doc: ""
-  attr :"default-value", :integer
-  attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
-
-  attr :min, :integer, default: 0
-  attr :max, :integer, default: 100
-  attr :step, :integer, default: 1
   attr :rest, :global
 
   def slider(assigns) do
-    assigns =
-      prepare_assign(assigns)
+    assigns = prepare_assign(assigns)
+
+    # Set value from default-value or min if value is not provided
+    value =
+      cond do
+        not is_nil(assigns.value) -> assigns.value
+        not is_nil(assigns[:"default-value"]) -> assigns[:"default-value"]
+        true -> assigns.min
+      end
+
+    # Ensure value is within bounds and snapped to step
+    value =
+      value
+      |> max(assigns.min)
+      |> min(assigns.max)
+      |> snap_to_step(assigns.step)
+
+    # Collect event mappings
+    event_map =
+      add_event_mapping(%{}, assigns, "value-changed", :"on-value-changed")
+
+    # Create options object
+    options = %{
+      min: assigns.min,
+      max: assigns.max,
+      step: assigns.step,
+      defaultValue: assigns[:"default-value"],
+      disabled: assigns.disabled
+    }
 
     assigns =
       assigns
-      |> Map.put(:value, normalize_integer(assigns[:value] || 0))
-      |> Map.put(:min, normalize_integer(assigns[:min] || 0))
-      |> Map.put(:max, normalize_integer(assigns[:max]))
-      |> Map.put(:step, normalize_integer(assigns[:step]))
+      |> assign(:value, value)
+      |> assign(:event_map, json(event_map))
+      |> assign(:options, json(options))
 
     ~H"""
     <div
-      class={classes(["relative w-full", @class])}
-      style={"--#{@id}-val: #{(@value - @min)/(@max - @min) * 100}"}
+      id={@id}
+      class={classes(["relative", @class])}
+      data-component="slider"
+      data-state="idle"
+      data-value={@value}
+      data-options={@options}
+      data-event-mappings={@event_map}
+      tabindex={if @disabled, do: "-1", else: "0"}
+      phx-hook="SaladUI"
+      data-part="root"
+      phx-no-format
+      {@rest}
     >
-      <span class={["relative flex w-full touch-none select-none items-center"]}>
-        <span
-          data-orientation="horizontal"
-          class="relative h-2 w-full grow overflow-hidden rounded-full bg-secondary"
-        >
-          <span
-            data-orientation="horizontal"
-            class="absolute h-full bg-primary"
-            style={"left: 0%; right: calc(100% - var(--#{@id}-val)*1%)"}
-          >
-          </span>
-        </span>
-        <span style={"transform: translateX(-50%); position: absolute; left: calc(var(--#{@id}-val)*1%);"}>
-          <span
-            role="slider"
-            aria-valuemin={@min}
-            aria-valuemax={@max}
-            aria-orientation="horizontal"
-            data-orientation="horizontal"
-            tabindex="0"
-            class="block h-5 w-5 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-          >
-          </span>
-        </span>
-      </span>
-      <input
-        type="range"
-        class="absolute top-0 -left-2 z-1 w-full appearance-none cursor-pointer opacity-0"
-        phx-update="ignore"
-        style="width: calc(100% + 20px)"
-        oninput={"this.parentNode.style='--#{@id}-val:' + (this.value - #{@min})/#{@max - @min}*100; return true;"}
-        {%{min: @min, max: @max, value: @value, step: @step, id: @id, name: @name}}
-        {@rest}
-      />
+      <div
+        class="relative flex w-full touch-none select-none items-center"
+        data-part="root"
+      >
+        <div data-part="track" class="relative h-2 w-full grow overflow-hidden rounded-full bg-secondary">
+          <div data-part="range" class="absolute h-full bg-primary" />
+        </div>
+        <div
+          disabled={@disabled}
+          data-part="thumb"
+          class="block h-5 w-5 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 absolute"
+        />
+      </div>
+      <input type="hidden" name={@name} value={@value} />
     </div>
     """
+  end
+
+  # Snap a value to the nearest step
+  defp snap_to_step(value, step) do
+    step_count = round(value / step)
+    step * step_count
   end
 end
