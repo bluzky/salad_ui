@@ -156,7 +156,7 @@ It's also important to note that you must format your code with `mix format` bef
 | Separator      | ✅    | ✅     |
 | Sheet          | ✅    |      |
 | Skeleton       | ✅    | ✅     |
-| Slider         | ✅    |      |
+| Slider         | ✅    | ✅     |
 | Switch         | ✅    |      |
 | Table          | ✅    | ✅    |
 | Tabs           | ✅    | ✅     |
