@@ -286,7 +286,6 @@ defmodule SaladUI.Command do
       role="option"
       data-part="command-item"
       class="[&_svg]:h-4 [&_svg]:w-4 relative flex cursor-default w-full gap-2 select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none disabled:pointer-events-none hover:bg-accent/75 data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground data-[visible=false]:hidden disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
-      data-disabled={@disabled}
       data-selected={@selected}
       aria-selected={@selected}
       disabled={@disabled}
