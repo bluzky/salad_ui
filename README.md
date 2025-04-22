@@ -137,7 +137,7 @@ It's also important to note that you must format your code with `mix format` bef
 | Checkbox       | ✅    | ✅     |
 | Collapsible    | ✅    | ✅    |
 | Combobox       | ❌    |      |
-| Command        | ❌    |      |
+| Command        | ❌    | ✅ [@ilyabayel](https://github.com/ilyabayel)     |
 | Context Menu   | ❌    |      |
 | Dialog         | ✅    | ✅     |
 | Drawer         | ❌    |      |
@@ -154,7 +154,7 @@ It's also important to note that you must format your code with `mix format` bef
 | Scroll Area    | ✅    | ✅    |
 | Select         | ✅    | ✅     |
 | Separator      | ✅    | ✅     |
-| Sheet          | ✅    |      |
+| Sheet          | ✅    | ✅     |
 | Skeleton       | ✅    | ✅     |
 | Slider         | ✅    | ✅     |
 | Switch         | ✅    | ✅   |
