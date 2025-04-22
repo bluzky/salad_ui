@@ -1,14 +1,17 @@
 defmodule SaladUI.Sheet do
   @moduledoc """
-  Implement Sheet componet https://ui.shadcn.com/docs/components/sheet
+  Implementation of Sheet component for SaladUI framework.
 
-  ## Example:
+  Sheets are like dialogs that appear from the edge of the screen. They can be configured
+  to slide in from different sides of the viewport.
 
-      <.sheet show>
-        <.sheet_trigger target="test">
-          <.button variant="outline">open</.button>
+  ## Examples:
+
+      <.sheet id="user-sheet">
+        <.sheet_trigger>
+          <.button variant="outline">Open Sheet</.button>
         </.sheet_trigger>
-        <.sheet_content id="test" side="bottom">
+        <.sheet_content side="right">
           <.sheet_header>
             <.sheet_title>Edit profile</.sheet_title>
             <.sheet_description>
@@ -17,239 +20,257 @@ defmodule SaladUI.Sheet do
           </.sheet_header>
           <div class="grid gap-4 py-4">
             <div class="grid grid-cols-4 items-center gap-4">
-              <.label for="name" class="text-right">
-                Name
-              </.label>
-              <Input.input id="name" name="name" value="pedro duarte" class="col-span-3" />
-            </div>
-            <div class="grid grid-cols-4 items-center gap-4">
-              <.label for="username" class="text-right">
-                Username
-              </.label>
-              <Input.input id="username" name="username" value="@peduarte" class="col-span-3" />
+              <.label for="name" class="text-right">Name</.label>
+              <.input id="name" value="John Doe" class="col-span-3" />
             </div>
           </div>
           <.sheet_footer>
-            <.sheet_close target="test">
-              <.button type="submit" phx-click="save">save changes</.button>
-            </.sheet_close>
+            <.button type="submit">Save changes</.button>
           </.sheet_footer>
         </.sheet_content>
       </.sheet>
   """
   use SaladUI, :component
 
-  attr :class, :string, default: "inline-block"
+  @doc """
+  The main sheet component that manages state and positioning.
+
+  ## Options
+
+  * `:id` - Required unique identifier for the sheet.
+  * `:open` - Whether the sheet is initially open. Defaults to `false`.
+  * `:on-open` - Handler for sheet open event.
+  * `:on-close` - Handler for sheet close event.
+  * `:class` - Additional CSS classes.
+  """
+  attr :id, :string, required: true, doc: "Unique identifier for the sheet"
+  attr :open, :boolean, default: false, doc: "Whether the sheet is initially open"
+  attr :class, :string, default: nil
+  attr :"close-on-outside-click", :boolean, default: true
+
+  attr :"on-open", :any, default: nil, doc: "Handler for sheet open event"
+  attr :"on-close", :any, default: nil, doc: "Handler for sheet close event"
+  attr :rest, :global
   slot :inner_block, required: true
 
   def sheet(assigns) do
+    # Collect event mappings
+    event_map =
+      %{}
+      |> add_event_mapping(assigns, "opened", :"on-open")
+      |> add_event_mapping(assigns, "closed", :"on-close")
+
+    assigns =
+      assigns
+      |> assign(:event_map, json(event_map))
+      |> assign(:initial_state, if(assigns.open, do: "open", else: "closed"))
+      |> assign(
+        :options,
+        json(%{
+          animations: get_animation_config(),
+          closeOnOutsideClick: assigns[:"close-on-outside-click"]
+        })
+      )
+
     ~H"""
-    <div class={classes([@class])}>
+    <div
+      id={@id}
+      class={classes(["relative inline-block", @class])}
+      data-component="dialog"
+      data-state={@initial_state}
+      data-event-mappings={@event_map}
+      data-options={@options}
+      data-part="root"
+      phx-hook="SaladUI"
+      {@rest}
+    >
       {render_slot(@inner_block)}
     </div>
     """
   end
 
-  attr :class, :string, default: "inner-block"
-  attr :target, :string, required: true, doc: "The id of the sheet to open"
+  @doc """
+  The trigger element that opens the sheet.
+  """
+  attr :class, :string, default: nil
+  attr :rest, :global
   slot :inner_block, required: true
 
   def sheet_trigger(assigns) do
     ~H"""
-    <div class={classes([@class])} phx-click={JS.exec("phx-show-sheet", to: "#" <> @target)}>
+    <div data-part="trigger" data-action="open" class={classes(["", @class])} {@rest}>
       {render_slot(@inner_block)}
     </div>
     """
   end
 
-  attr :class, :string, default: nil
+  @doc """
+  The sheet content that appears when triggered.
 
-  defp sheet_overlay(assigns) do
-    ~H"""
-    <div
-      class={
-        classes([
-          "sheet-overlay fixed hidden inset-0 z-50 bg-black/80",
-          @class
-        ])
-      }
-      aria-hidden="true"
-    >
-    </div>
-    """
-  end
+  ## Options
 
-  attr :id, :string, default: nil, doc: "The id of the sheet, this is the target of sheet_trigger"
+  * `:side` - The side from which the sheet appears (top, right, bottom, left). Defaults to `"right"`.
+  * `:class` - Additional CSS classes to customize dimensions and appearance.
+  """
   attr :class, :string, default: nil
-  attr :side, :string, default: "right", values: ~w(left right top bottom), doc: "The side of the sheet"
+  attr :side, :string, values: ~w(top right bottom left), default: "right", doc: "The side from which the sheet appears"
   attr :rest, :global
   slot :inner_block, required: true
-  slot :custom_close_btn, required: false
 
   def sheet_content(assigns) do
-    variant_class =
-      case assigns.side do
-        "left" -> "inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm"
-        "right" -> "inset-y-0 right-0 h-full w-3/4  border-l sm:max-w-sm"
-        "top" -> "inset-x-0 top-0 border-b"
-        "bottom" -> "inset-x-0 bottom-0 border-t"
-      end
-
-    assigns = assign(assigns, :variant_class, variant_class)
+    assigns = assign(assigns, :variant_class, sheet_variants(assigns))
 
     ~H"""
-    <div
-      class="sheet-content relative z-50"
-      id={@id}
-      phx-show-sheet={@id && show_sheet(@id, @side)}
-      phx-hide-sheet={@id && hide_sheet(@id, @side)}
-      {@rest}
-    >
-      <.sheet_overlay />
-      <.focus_wrap
-        id={"sheet-#{@id}"}
-        phx-window-keydown={@id && JS.exec("phx-hide-sheet", to: "#" <> @id)}
-        phx-key="escape"
-        phx-click-away={@id && JS.exec("phx-hide-sheet", to: "#" <> @id)}
-        role="sheet"
+    <div data-part="content" tabindex="0" hidden>
+      <div
+        data-part="overlay"
+        class="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+      />
+
+      <div
+        data-part="content-panel"
+        data-side={@side}
         class={
           classes([
-            "sheet-content-wrap hidden fixed z-50 bg-background shadow-lg transition",
+            "fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
+            "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
             @variant_class,
             @class
           ])
         }
+        {@rest}
       >
-        <div class={classes(["relative h-full"])}>
-          <div class={classes(["p-6 overflow-y-auto h-full", @class])}>
-            {render_slot(@inner_block)}
-          </div>
-
-          <%= if close_btn = render_slot(@custom_close_btn) do %>
-            {close_btn}
-          <% else %>
-            <button
-              type="button"
-              class="ring-offset-background absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:ring-ring focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none"
-              phx-click={hide_sheet(@id, @side)}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-6 no-collapse h-4 w-4"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-              </svg>
-
-              <span class="sr-only">Close</span>
-            </button>
-          <% end %>
+        <div class="h-full flex flex-col">
+          {render_slot(@inner_block)}
         </div>
-      </.focus_wrap>
+
+        <button
+          type="button"
+          data-part="close-trigger"
+          data-action="close"
+          class="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5"
+          >
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+          <span class="sr-only">Close</span>
+        </button>
+      </div>
     </div>
     """
   end
 
+  @doc """
+  Renders a sheet header section for title and description.
+  """
   attr :class, :string, default: nil
+  attr :rest, :global
   slot :inner_block, required: true
 
   def sheet_header(assigns) do
     ~H"""
-    <div class={classes(["flex flex-col space-y-2 text-center sm:text-left", @class])}>
+    <div class={classes(["flex flex-col space-y-1.5 text-center sm:text-left", @class])} {@rest}>
       {render_slot(@inner_block)}
     </div>
     """
   end
 
+  @doc """
+  Renders a sheet title within the header section.
+  """
   attr :class, :string, default: nil
+  attr :rest, :global
   slot :inner_block, required: true
 
   def sheet_title(assigns) do
     ~H"""
-    <h3 class={classes(["text-lg font-semibold text-foreground", @class])}>
+    <h3 class={classes(["flex flex-col space-y-2 text-center sm:text-left", @class])} {@rest}>
       {render_slot(@inner_block)}
     </h3>
     """
   end
 
+  @doc """
+  Renders a sheet description within the header section.
+  """
   attr :class, :string, default: nil
+  attr :rest, :global
   slot :inner_block, required: true
 
   def sheet_description(assigns) do
     ~H"""
-    <p class={classes(["text-sm text-muted-foreground", @class])}>
+    <p class={classes(["text-sm text-muted-foreground", @class])} {@rest}>
       {render_slot(@inner_block)}
     </p>
     """
   end
 
+  @doc """
+  Renders a footer section for the sheet, typically containing actions.
+  """
   attr :class, :string, default: nil
+  attr :rest, :global
   slot :inner_block, required: true
 
   def sheet_footer(assigns) do
     ~H"""
-    <div class={classes(["flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", @class])}>
+    <div
+      class={classes(["flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", @class])}
+      {@rest}
+    >
       {render_slot(@inner_block)}
     </div>
     """
   end
 
+  @doc """
+  The close button for the sheet.
+  """
   attr :class, :string, default: nil
-  attr :target, :string, required: true, doc: "The id of the sheet tag to close"
+  attr :rest, :global
   slot :inner_block, required: true
 
   def sheet_close(assigns) do
     ~H"""
-    <div class={classes(["", @class])} phx-click={JS.exec("phx-hide-sheet", to: "#" <> @target)}>
+    <div data-part="close-trigger" data-action="close" class={classes(["", @class])} {@rest}>
       {render_slot(@inner_block)}
     </div>
     """
   end
 
-  defp show_sheet(js \\ %JS{}, id, side) when is_binary(id) do
-    transition =
-      case side do
-        "left" -> {"transition ease-in-out", "-translate-x-full", "translate-x-0"}
-        "right" -> {"transition ease-in-out", "translate-x-full", "translate-x-0"}
-        "top" -> {"transition ease-in-out", "-translate-y-full", "translate-y-0"}
-        "bottom" -> {"transition ease-in-out", "translate-y-full", "translate-y-0"}
-      end
-
-    js
-    |> JS.show(
-      to: "##{id} .sheet-overlay",
-      transition: {"transition ease-in-out", "opacity-0", "opacity-100"},
-      time: 600
-    )
-    |> JS.show(
-      to: "##{id} .sheet-content-wrap",
-      transition: transition,
-      time: 600
-    )
-    |> JS.add_class("overflow-hidden", to: "body")
-    |> JS.focus_first(to: "##{id} .sheet-content-wrap")
+  defp get_animation_config do
+    %{
+      "open_to_closed" => %{
+        duration: 130,
+        target_part: "content"
+      }
+    }
   end
 
-  defp hide_sheet(js \\ %JS{}, id, side) do
-    transition =
-      case side do
-        "left" -> {"transition ease-in-out", "translate-x-0", "-translate-x-full"}
-        "right" -> {"transition ease-in-out", "translate-x-0", "translate-x-full"}
-        "top" -> {"transition ease-in-out", "translate-y-0", "-translate-y-full"}
-        "bottom" -> {"transition ease-in-out", "translate-y-0", "translate-y-full"}
-      end
+  @variants %{
+    side: %{
+      "top" => "inset-x-0 top-0 border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
+      "bottom" =>
+        "inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
+      "left" =>
+        "inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm",
+      "right" =>
+        "inset-y-0 right-0 h-full w-3/4  border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm"
+    }
+  }
 
-    js
-    |> JS.hide(
-      to: "##{id} .sheet-overlay",
-      transition: {"transition ease-in-out", "opacity-100", "opacity-0"},
-      time: 400
-    )
-    |> JS.hide(to: "##{id} .sheet-content-wrap", transition: transition, time: 400)
-    |> JS.remove_class("overflow-hidden", to: "body")
-    |> JS.pop_focus()
+  defp sheet_variants(props) do
+    variants =
+      Map.take(props, ~w(side)a)
+
+    Enum.map_join(variants, " ", fn {key, value} -> @variants[key][value] end)
   end
 end
