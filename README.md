@@ -127,7 +127,7 @@ It's also important to note that you must format your code with `mix format` bef
 |----------------|------|------|
 | Accordion      | ✅    | ✅    |
 | Alert          | ✅    | ✅     |
-| Alert Dialog   | ✅    |      |
+| Alert Dialog   | ✅    | ✅    |
 | Avatar         | ✅    | ✅     |
 | Badge          | ✅    | ✅     |
 | Breadcrumb     | ✅    | ✅     |
