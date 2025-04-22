@@ -7,17 +7,17 @@ import SaladUI from "..";
  */
 class CommandComponent extends Component {
   constructor(el, hookContext) {
-    super(el, { hookContext });
+    super(el, { hookContext, ignoreItems: false });
 
     // Set default field state
     this.currentItemIdx = 0;
 
     // Core elements
-    this.input = this.getPart("command-input");
-    this.list = this.getPart("command-list");
-    this.empty = this.getPart("command-empty");
-    this.groups = this.getAllParts("command-group");
-    this.items = this.getAllParts("command-item");
+    this.input = this.getPart("input");
+    this.list = this.getPart("list");
+    this.empty = this.getPart("empty");
+    this.groups = this.getAllParts("group");
+    this.items = this.getAllParts("item");
 
     // Bind event handlers
     this.input.addEventListener("input", this.handleSearch);
