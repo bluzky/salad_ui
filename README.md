@@ -149,7 +149,7 @@ It's also important to note that you must format your code with `mix format` bef
 | Label          | ✅    | ✅      |
 | Pagination     | ✅    | ✅     |
 | Popover        | ✅    | ✅     |
-| Progress       | ✅    |      |
+| Progress       | ✅    | ✅    |
 | Radio Group    | ✅    | ✅     |
 | Scroll Area    | ✅    | ✅    |
 | Select         | ✅    | ✅     |
@@ -157,7 +157,7 @@ It's also important to note that you must format your code with `mix format` bef
 | Sheet          | ✅    |      |
 | Skeleton       | ✅    | ✅     |
 | Slider         | ✅    | ✅     |
-| Switch         | ✅    |      |
+| Switch         | ✅    | ✅   |
 | Table          | ✅    | ✅    |
 | Tabs           | ✅    | ✅     |
 | Textarea       | ✅    | ✅     |
