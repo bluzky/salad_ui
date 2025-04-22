@@ -25,6 +25,7 @@ class Component {
 
     // Initialize component
     this.parseOptions();
+    this.disabled = !!this.options.disabled;
     this.initEventMappings();
     this.initConfig();
     this.initStateMachine(this.componentConfig.stateMachine, this.initialState);
