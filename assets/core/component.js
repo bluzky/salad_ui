@@ -62,6 +62,9 @@ class Component {
   }
 
   initEventMappings() {
+    this.onClientCommand = this.onClientCommand.bind(this);
+    this.el.addEventListener("salad_ui:command", this.onClientCommand);
+
     try {
       const mappingsString = this.el.getAttribute("data-event-mappings");
       this.eventMappings = mappingsString ? JSON.parse(mappingsString) : {};
@@ -111,6 +114,15 @@ class Component {
     this.stateMachine = new StateMachine(stateMachineConfig, initialState, {
       onStateChanged: this.onStateChanged.bind(this),
     });
+  }
+
+  // Handle client commands
+  onClientCommand(event) {
+    console.log(event);
+    const { command, params } = event.detail;
+    if (command) {
+      this.handleCommand(command, params);
+    }
   }
 
   onStateChanged(prevState, nextState, params) {
@@ -433,6 +445,7 @@ class Component {
     this.beforeDestroy();
 
     // Remove event listeners
+    this.el.removeEventListener("salad_ui:command", this.onClientCommand);
     this.el.removeEventListener("click", this.handleActionClick);
     this.removeKeyEventHandlers();
     this.removeMouseEventListeners();

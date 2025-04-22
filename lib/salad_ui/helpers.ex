@@ -42,6 +42,19 @@ defmodule SaladUI.Helpers do
     Phoenix.json_library().encode!(data)
   end
 
+  def dispatch_command(command_name, opts) do
+    details = %{
+      command: command_name,
+      params: opts[:details]
+    }
+
+    Phoenix.LiveView.JS.dispatch(
+      %Phoenix.LiveView.JS{},
+      "salad_ui:command",
+      Keyword.put(opts, :details, details)
+    )
+  end
+
   # normalize_integer
   def normalize_integer(value) when is_integer(value), do: value
 

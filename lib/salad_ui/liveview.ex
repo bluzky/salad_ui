@@ -15,6 +15,22 @@ defmodule SaladUI.LiveView do
   end
 end
 
+defmodule SaladUI.LiveView.JS do
+  @moduledoc false
+  def dispatch_command(js \\ %Phoenix.LiveView.JS{}, command_name, opts \\ []) do
+    details = %{
+      command: command_name,
+      params: opts[:detail]
+    }
+
+    Phoenix.LiveView.JS.dispatch(
+      js,
+      "salad_ui:command",
+      opts |> Keyword.put(:detail, details) |> IO.inspect(label: "dispatch_command")
+    )
+  end
+end
+
 defimpl Jason.Encoder, for: Phoenix.LiveView.JS do
   def encode(value, opts) do
     Jason.Encode.list(value.ops, opts)
