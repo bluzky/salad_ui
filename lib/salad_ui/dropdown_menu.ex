@@ -83,8 +83,7 @@ defmodule SaladUI.DropdownMenu do
     ~H"""
     <div
       class={[
-        "z-50 animate-in peer-data-[state=closed]:fade-out-0 peer-data-[state=open]:fade-in-0 peer-data-[state=closed]:zoom-out-95 peer-data-[state=open]:zoom-in-95 peer-data-[side=bottom]:slide-in-from-top-2 peer-data-[side=left]:slide-in-from-right-2 peer-data-[side=right]:slide-in-from-left-2 peer-data-[side=top]:slide-in-from-bottom-2",
-        "absolute peer-data-[state=closed]:hidden",
+        "z-50 min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 ",
         @variant_class,
         @class
       ]}
@@ -97,26 +96,72 @@ defmodule SaladUI.DropdownMenu do
     """
   end
 
-  @doc """
-  Render
-  """
-  attr(:class, :string, default: nil)
-  attr(:rest, :global)
-  slot(:inner_block, required: true)
+  attr :class, :string, default: nil
+  attr :disabled, :boolean, default: false
+  slot :inner_block, required: true
+  attr :rest, :global
 
-  def dropdown_menu_shortcut(assigns) do
+  def dropdown_menu_item(assigns) do
     ~H"""
-    <span
+    <div
       class={
         classes([
-          "ml-auto text-xs tracking-widest opacity-60",
+          "hover:bg-accent",
+          "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           @class
         ])
       }
+      {%{"data-disabled" => @disabled}}
       {@rest}
     >
       {render_slot(@inner_block)}
+    </div>
+    """
+  end
+
+  attr :class, :string, default: nil
+  attr :inset, :boolean, default: false
+  slot :inner_block, required: true
+  attr :rest, :global
+
+  def dropdown_menu_label(assigns) do
+    ~H"""
+    <div class={classes(["px-2 py-1.5 text-sm font-semibold", @inset && "pl-8", @class])} {@rest}>
+      {render_slot(@inner_block)}
+    </div>
+    """
+  end
+
+  attr :class, :string, default: nil
+  slot :inner_block
+
+  def dropdown_menu_separator(assigns) do
+    ~H"""
+    <div role="separator" class={classes(["-mx-1 my-1 h-px bg-muted", @class])}>
+      {render_slot(@inner_block)}
+    </div>
+    """
+  end
+
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global
+
+  def dropdown_menu_shortcut(assigns) do
+    ~H"""
+    <span class={classes(["ml-auto text-xs tracking-widest opacity-60", @class])} {@rest}>
+      {render_slot(@inner_block)}
     </span>
+    """
+  end
+
+  attr :class, :string, default: nil
+  slot :inner_block, required: true
+  attr :rest, :global
+
+  def dropdown_menu_group(assigns) do
+    ~H"""
+    <div class={classes([@class])} role="group" {@rest}>{render_slot(@inner_block)}</div>
     """
   end
 
