@@ -110,13 +110,7 @@ defmodule SaladUI.DropdownMenu do
 
   def dropdown_menu_trigger(assigns) do
     ~H"""
-    <.dynamic
-      tag={@as_tag}
-      data-part="trigger"
-      data-action="toggle"
-      class={classes(["", @class])}
-      {@rest}
-    >
+    <.dynamic tag={@as_tag} data-part="trigger" class={classes(["", @class])} {@rest}>
       {render_slot(@inner_block)}
     </.dynamic>
     """

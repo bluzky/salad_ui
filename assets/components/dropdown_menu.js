@@ -4,6 +4,115 @@ import SaladUI from "../index";
 import PositionedElement from "../core/positioned-element";
 import Collection from "../core/collection";
 
+/**
+ * DropdownMenuItem class to manage individual dropdown menu items
+ * Handles state transitions and events for a single menu item
+ */
+class DropdownMenuItem extends Component {
+  constructor(itemElement, parentComponent, options) {
+    const { initialState = "normal" } = options || {};
+    super(itemElement, { initialState, ignoreItems: false });
+
+    this.parent = parentComponent;
+    this.value = itemElement.textContent.trim();
+    this.disabled = itemElement.getAttribute("data-disabled") === "true";
+
+    this.setupEvents();
+  }
+
+  getComponentConfig() {
+    return {
+      stateMachine: {
+        normal: {
+          transitions: {
+            focus: "focused",
+          },
+        },
+        focused: {
+          transitions: {
+            blur: "normal",
+          },
+        },
+      },
+      events: {
+        normal: {
+          mouseMap: {
+            item: {
+              click: "handleActivation",
+              mouseenter: "handleMouseEnter",
+            },
+          },
+        },
+        focused: {
+          mouseMap: {
+            item: {
+              click: "handleActivation",
+              mouseleave: "handleMouseLeave",
+            },
+          },
+        },
+      },
+      ariaConfig: {
+        item: {
+          all: {
+            role: "menuitem",
+          },
+          focused: {
+            selected: "true",
+          },
+          normal: {
+            selected: "false",
+          },
+        },
+      },
+    };
+  }
+
+  handleEvent(eventType) {
+    switch (eventType) {
+      case "focus":
+        if (!this.disabled) {
+          this.transition("focus");
+          this.el.focus();
+        }
+        return true;
+      case "blur":
+        this.transition("blur");
+        return true;
+      case "select":
+        if (!this.disabled) {
+          this.handleActivation();
+        }
+        return true;
+    }
+  }
+
+  handleActivation(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    if (!this.disabled) {
+      this.parent.selectItem(this);
+    }
+  }
+
+  handleMouseEnter() {
+    if (!this.disabled) {
+      this.parent.handleItemFocus(this);
+    }
+  }
+
+  handleMouseLeave() {
+    // Optionally handle mouse leave event
+  }
+}
+
+/**
+ * DropdownMenuComponent class for SaladUI framework
+ * Manages a dropdown menu with support for keyboard navigation and accessibility
+ */
 class DropdownMenuComponent extends Component {
   constructor(el, hookContext) {
     super(el, { hookContext });
@@ -15,10 +124,10 @@ class DropdownMenuComponent extends Component {
       ? this.positioner.querySelector("[data-part='content']")
       : null;
 
-    this.items = Array.from(this.el.querySelectorAll("[data-part='item']"));
-
-    // Initialize collection for keyboard navigation
-    this.initializeCollection();
+    this.itemElements = Array.from(
+      this.el.querySelectorAll("[data-part='item']"),
+    );
+    this.menuItems = [];
 
     // Set keyboard navigation defaults
     this.config.preventDefaultKeys = [
@@ -30,6 +139,9 @@ class DropdownMenuComponent extends Component {
       "Enter",
       " ",
     ];
+
+    // Initialize items and collection
+    this.initializeItems();
   }
 
   getComponentConfig() {
@@ -47,6 +159,7 @@ class DropdownMenuComponent extends Component {
           transitions: {
             close: "closed",
             toggle: "closed",
+            select: "closed",
           },
         },
       },
@@ -56,6 +169,11 @@ class DropdownMenuComponent extends Component {
             ArrowDown: "open",
             " ": "open",
             Enter: "open",
+          },
+          mouseMap: {
+            trigger: {
+              click: "toggle",
+            },
           },
         },
         open: {
@@ -97,62 +215,59 @@ class DropdownMenuComponent extends Component {
             role: "menu",
           },
         },
-        item: {
-          all: {
-            role: "menuitem",
-            tabindex: (el) =>
-              el.getAttribute("data-disabled") === "true" ? "-1" : "0",
-          },
-        },
-        group: {
-          all: {
-            role: "group",
-          },
-        },
       },
     };
   }
 
-  initializeCollection() {
+  initializeItems() {
+    // Create DropdownMenuItem instances for each item
+    this.menuItems = this.itemElements.map((element) => {
+      return new DropdownMenuItem(element, this, {
+        initialState: "normal",
+      });
+    });
+
+    // Initialize collection manager for navigation
     this.collection = new Collection({
       type: "single",
-      getItemValue: (item) => item.textContent.trim(),
-      isItemDisabled: (item) => item.getAttribute("data-disabled") === "true",
+      getItemValue: (item) => item.value,
+      isItemDisabled: (item) => item.disabled,
     });
 
     // Register items with the collection
-    this.items.forEach((item) => {
+    this.menuItems.forEach((item) => {
       this.collection.add(item);
-
-      // Set IDs on items if not present
-      if (!item.id) {
-        const index = this.items.indexOf(item);
-        item.id = `${this.el.id}-item-${index}`;
-      }
-
-      // Setup click handlers for items
-      item.addEventListener("click", (e) => this.handleItemClick(e));
     });
+
+    // Make sure content has an ID for ARIA attributes
+    if (this.content && !this.content.id) {
+      this.content.id = `${this.el.id}-content`;
+    }
   }
 
-  handleItemClick(event) {
-    const item = event.currentTarget;
-    if (item.getAttribute("data-disabled") === "true") return;
+  selectItem(item) {
+    // Handle item selection
+    const collectionItem = this.collection.getItemByInstance(item);
+    if (!collectionItem) return;
 
-    this.activateSelectedItem(item);
-    this.transition("close");
+    // Close the dropdown
+    this.transition("select");
+
+    // Notify of selection
+    this.pushEvent("item-selected", { value: item.value });
   }
 
-  activateSelectedItem(item) {
-    // This is where you would handle the action for the selected item
-    // For now we just focus the item
-    item.focus();
+  handleItemFocus(item) {
+    const collectionItem = this.collection.getItemByInstance(item);
+    if (!collectionItem) return;
+
+    this.collection.focus(collectionItem);
   }
 
   activateItem(event) {
     // Find the currently focused item and activate it
     if (this.collection.focusedItem) {
-      this.activateSelectedItem(this.collection.focusedItem.instance);
+      this.collection.focusedItem.instance.handleEvent("select");
       event.preventDefault();
     }
   }
@@ -170,12 +285,8 @@ class DropdownMenuComponent extends Component {
         10,
       );
 
-      // Make sure content has an ID for ARIA attributes
-      if (this.content && !this.content.id) {
-        this.content.id = `${this.el.id}-content`;
-      }
-
-      // Get portal container if specified
+      // Get portal options
+      const usePortal = this.options.usePortal === true;
       let portalContainer = null;
       if (this.options.portalContainer) {
         portalContainer = document.querySelector(this.options.portalContainer);
@@ -190,7 +301,7 @@ class DropdownMenuComponent extends Component {
           sideOffset,
           alignOffset,
           flip: true,
-          usePortal: this.options.usePortal,
+          usePortal,
           portalContainer: portalContainer || document.body,
           trapFocus: false,
           onOutsideClick: () => this.transition("close"),
@@ -215,7 +326,7 @@ class DropdownMenuComponent extends Component {
     this.initializePositionedElement();
     this.positionedElement?.activate();
 
-    // Focus the first item when opened
+    // Focus the first enabled item when opened
     const firstItem = this.collection.getItem("first");
     if (firstItem) {
       this.collection.focus(firstItem);
@@ -230,8 +341,23 @@ class DropdownMenuComponent extends Component {
   }
 
   beforeDestroy() {
-    this.positionedElement?.destroy();
-    this.positionedElement = null;
+    // Clean up the positioned element
+    if (this.positionedElement) {
+      this.positionedElement.destroy();
+      this.positionedElement = null;
+    }
+
+    // Clean up menu items
+    if (this.menuItems) {
+      this.menuItems.forEach((item) => {
+        if (typeof item.destroy === "function") {
+          item.destroy();
+        }
+      });
+      this.menuItems = null;
+    }
+
+    // Clean up collection
     this.collection = null;
   }
 }
