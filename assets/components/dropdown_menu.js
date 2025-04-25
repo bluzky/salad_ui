@@ -5,17 +5,18 @@ import PositionedElement from "../core/positioned-element";
 import Collection from "../core/collection";
 
 /**
- * DropdownMenuItem class to manage individual dropdown menu items
- * Handles state transitions and events for a single menu item
+ * Base class for dropdown menu items that provides common functionality
  */
-class DropdownMenuItem extends Component {
+class DropdownMenuItemBase extends Component {
   constructor(itemElement, parentComponent, options) {
     const { initialState = "normal" } = options || {};
     super(itemElement, { initialState, ignoreItems: false });
 
     this.parent = parentComponent;
-    this.value = itemElement.textContent.trim();
+    this.value =
+      itemElement.getAttribute("data-value") || itemElement.textContent.trim();
     this.disabled = itemElement.getAttribute("data-disabled") === "true";
+    this.variant = itemElement.getAttribute("data-variant") || "default";
 
     this.setupEvents();
   }
@@ -50,12 +51,17 @@ class DropdownMenuItem extends Component {
               mouseleave: "handleMouseLeave",
             },
           },
+          keyMap: {
+            " ": "handleActivation",
+            Enter: "handleActivation",
+          },
         },
       },
       ariaConfig: {
         item: {
           all: {
-            role: "menuitem",
+            role: this.getAriaRole(),
+            disabled: () => (this.disabled ? "true" : null),
           },
           focused: {
             selected: "true",
@@ -66,6 +72,10 @@ class DropdownMenuItem extends Component {
         },
       },
     };
+  }
+
+  getAriaRole() {
+    return "menuitem";
   }
 
   handleEvent(eventType) {
@@ -93,9 +103,9 @@ class DropdownMenuItem extends Component {
       event.stopPropagation();
     }
 
-    if (!this.disabled) {
-      this.parent.selectItem(this);
-    }
+    if (this.disabled) return;
+
+    // Implementation to be provided by subclasses
   }
 
   handleMouseEnter() {
@@ -106,6 +116,94 @@ class DropdownMenuItem extends Component {
 
   handleMouseLeave() {
     // Optionally handle mouse leave event
+  }
+}
+
+/**
+ * Regular dropdown menu item implementation
+ */
+class DropdownMenuItem extends DropdownMenuItemBase {
+  constructor(itemElement, parentComponent, options) {
+    super(itemElement, parentComponent, options);
+  }
+
+  handleActivation(event) {
+    super.handleActivation(event);
+    if (this.disabled) return;
+
+    this.parent.selectItem(this);
+  }
+}
+
+/**
+ * Checkbox item implementation that can toggle between checked states
+ */
+class DropdownMenuCheckboxItem extends DropdownMenuItemBase {
+  constructor(itemElement, parentComponent, options) {
+    super(itemElement, parentComponent, options);
+    this.checked = itemElement.getAttribute("data-checked") === "true";
+  }
+
+  getAriaRole() {
+    return "menuitemcheckbox";
+  }
+
+  getComponentConfig() {
+    const config = super.getComponentConfig();
+
+    // Add checked state to ARIA attributes
+    config.ariaConfig.item.all.checked = () => this.checked.toString();
+
+    return config;
+  }
+
+  handleEvent(eventType) {
+    const result = super.handleEvent(eventType);
+
+    switch (eventType) {
+      case "check":
+        if (!this.disabled) {
+          this.checked = true;
+          this.updateIndicator();
+        }
+        return true;
+      case "uncheck":
+        if (!this.disabled) {
+          this.checked = false;
+          this.updateIndicator();
+        }
+        return true;
+    }
+
+    return result;
+  }
+
+  handleActivation(event) {
+    super.handleActivation(event);
+    if (this.disabled) return;
+
+    // Toggle checked state
+    this.checked = !this.checked;
+    this.updateIndicator();
+
+    // Notify parent
+    this.parent.handleItemCheckedChange(this, this.checked);
+  }
+
+  updateIndicator() {
+    const indicator = this.el.querySelector("[data-part='item-indicator']");
+    if (indicator) {
+      indicator.setAttribute(
+        "data-state",
+        this.checked ? "checked" : "unchecked",
+      );
+
+      // Update hidden state on SVG icon
+      const icon = indicator.querySelector("svg");
+      if (icon) {
+        icon.hidden = !this.checked;
+      }
+    }
   }
 }
 
@@ -124,9 +222,6 @@ class DropdownMenuComponent extends Component {
       ? this.positioner.querySelector("[data-part='content']")
       : null;
 
-    this.itemElements = Array.from(
-      this.el.querySelectorAll("[data-part='item']"),
-    );
     this.menuItems = [];
 
     // Set keyboard navigation defaults
@@ -134,6 +229,8 @@ class DropdownMenuComponent extends Component {
       "Escape",
       "ArrowDown",
       "ArrowUp",
+      "ArrowLeft",
+      "ArrowRight",
       "Home",
       "End",
       "Enter",
@@ -142,6 +239,7 @@ class DropdownMenuComponent extends Component {
 
     // Initialize items and collection
     this.initializeItems();
+    this.initializeCollection();
   }
 
   getComponentConfig() {
@@ -183,8 +281,6 @@ class DropdownMenuComponent extends Component {
             ArrowUp: () => this.navigateItem("prev"),
             Home: () => this.navigateItem("first"),
             End: () => this.navigateItem("last"),
-            " ": (e) => this.activateItem(e),
-            Enter: (e) => this.activateItem(e),
           },
         },
       },
@@ -220,13 +316,36 @@ class DropdownMenuComponent extends Component {
   }
 
   initializeItems() {
-    // Create DropdownMenuItem instances for each item
-    this.menuItems = this.itemElements.map((element) => {
-      return new DropdownMenuItem(element, this, {
-        initialState: "normal",
-      });
+    // Get all items in the correct DOM order
+    const allItemElements = Array.from(
+      this.content.querySelectorAll(
+        "[data-part='item'], [data-part='checkbox-item']",
+      ),
+    );
+
+    // Create appropriate item components while preserving original order
+    this.menuItems = allItemElements.map((element) => {
+      const itemType = element.getAttribute("data-part");
+
+      switch (itemType) {
+        case "checkbox-item":
+          return new DropdownMenuCheckboxItem(element, this, {
+            initialState: "normal",
+          });
+        default: // Regular item
+          return new DropdownMenuItem(element, this, {
+            initialState: "normal",
+          });
+      }
     });
 
+    // Make sure content has an ID for ARIA attributes
+    if (this.content && !this.content.id) {
+      this.content.id = `${this.el.id}-content`;
+    }
+  }
+
+  initializeCollection() {
     // Initialize collection manager for navigation
     this.collection = new Collection({
       type: "single",
@@ -238,23 +357,31 @@ class DropdownMenuComponent extends Component {
     this.menuItems.forEach((item) => {
       this.collection.add(item);
     });
-
-    // Make sure content has an ID for ARIA attributes
-    if (this.content && !this.content.id) {
-      this.content.id = `${this.el.id}-content`;
-    }
   }
 
   selectItem(item) {
     // Handle item selection
-    const collectionItem = this.collection.getItemByInstance(item);
-    if (!collectionItem) return;
+    if (item.disabled) return;
 
     // Close the dropdown
     this.transition("select");
 
-    // Notify of selection
-    this.pushEvent("item-selected", { value: item.value });
+    // Push event for selected item
+    if (item instanceof DropdownMenuItem) {
+      // Only regular items should trigger on-select
+      this.pushEvent("item-selected", {
+        value: item.value,
+        variant: item.variant,
+      });
+    }
+  }
+
+  handleItemCheckedChange(item, checked) {
+    // Handle checkbox item changes
+    this.pushEvent("checked-changed", {
+      value: item.value,
+      checked,
+    });
   }
 
   handleItemFocus(item) {
@@ -262,14 +389,6 @@ class DropdownMenuComponent extends Component {
     if (!collectionItem) return;
 
     this.collection.focus(collectionItem);
-  }
-
-  activateItem(event) {
-    // Find the currently focused item and activate it
-    if (this.collection.focusedItem) {
-      this.collection.focusedItem.instance.handleEvent("select");
-      event.preventDefault();
-    }
   }
 
   initializePositionedElement() {
