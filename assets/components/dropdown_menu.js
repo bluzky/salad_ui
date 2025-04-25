@@ -9,14 +9,20 @@ import Collection from "../core/collection";
  */
 class DropdownMenuItemBase extends Component {
   constructor(itemElement, parentComponent, options) {
-    const { initialState = "normal" } = options || {};
-    super(itemElement, { initialState, ignoreItems: false });
+    super(itemElement, {
+      ...options,
+      initialState: "idle",
+      ignoreItems: false,
+    });
 
     this.parent = parentComponent;
+    // share the same hook context with the parent
+    this.hook = this.parent.hook;
     this.value =
-      itemElement.getAttribute("data-value") || itemElement.textContent.trim();
-    this.disabled = itemElement.getAttribute("data-disabled") === "true";
-    this.variant = itemElement.getAttribute("data-variant") || "default";
+      itemElement.value ||
+      itemElement.getAttribute("data-value") ||
+      itemElement.textContent.trim();
+    this.disabled = itemElement.getAttribute("data-disabled") !== null;
 
     this.setupEvents();
   }
@@ -24,31 +30,14 @@ class DropdownMenuItemBase extends Component {
   getComponentConfig() {
     return {
       stateMachine: {
-        normal: {
-          transitions: {
-            focus: "focused",
-          },
-        },
-        focused: {
-          transitions: {
-            blur: "normal",
-          },
-        },
+        idle: {},
       },
       events: {
-        normal: {
+        idle: {
           mouseMap: {
             item: {
               click: "handleActivation",
               mouseenter: "handleMouseEnter",
-            },
-          },
-        },
-        focused: {
-          mouseMap: {
-            item: {
-              click: "handleActivation",
-              mouseleave: "handleMouseLeave",
             },
           },
           keyMap: {
@@ -60,22 +49,12 @@ class DropdownMenuItemBase extends Component {
       ariaConfig: {
         item: {
           all: {
-            role: this.getAriaRole(),
+            role: "menuitem",
             disabled: () => (this.disabled ? "true" : null),
-          },
-          focused: {
-            selected: "true",
-          },
-          normal: {
-            selected: "false",
           },
         },
       },
     };
-  }
-
-  getAriaRole() {
-    return "menuitem";
   }
 
   handleEvent(eventType) {
@@ -89,11 +68,6 @@ class DropdownMenuItemBase extends Component {
       case "blur":
         this.transition("blur");
         return true;
-      case "select":
-        if (!this.disabled) {
-          this.handleActivation();
-        }
-        return true;
     }
   }
 
@@ -101,21 +75,25 @@ class DropdownMenuItemBase extends Component {
     if (event) {
       event.preventDefault();
       event.stopPropagation();
+      event.stopImmediatePropagation();
     }
 
     if (this.disabled) return;
+    this.pushEvent(
+      "item-selected",
+      {
+        value: this.value,
+      },
+      this.parent.el,
+    );
 
-    // Implementation to be provided by subclasses
+    this.parent.selectItem(this);
   }
 
   handleMouseEnter() {
     if (!this.disabled) {
       this.parent.handleItemFocus(this);
     }
-  }
-
-  handleMouseLeave() {
-    // Optionally handle mouse leave event
   }
 }
 
@@ -126,13 +104,6 @@ class DropdownMenuItem extends DropdownMenuItemBase {
   constructor(itemElement, parentComponent, options) {
     super(itemElement, parentComponent, options);
   }
-
-  handleActivation(event) {
-    super.handleActivation(event);
-    if (this.disabled) return;
-
-    this.parent.selectItem(this);
-  }
 }
 
 /**
@@ -141,69 +112,83 @@ class DropdownMenuItem extends DropdownMenuItemBase {
 class DropdownMenuCheckboxItem extends DropdownMenuItemBase {
   constructor(itemElement, parentComponent, options) {
     super(itemElement, parentComponent, options);
-    this.checked = itemElement.getAttribute("data-checked") === "true";
-  }
-
-  getAriaRole() {
-    return "menuitemcheckbox";
   }
 
   getComponentConfig() {
-    const config = super.getComponentConfig();
+    return {
+      stateMachine: {
+        checked: {
+          transitions: {
+            toggle: "unchecked",
+          },
+        },
+        unchecked: {
+          transitions: {
+            toggle: "checked",
+          },
+        },
+      },
+      events: {
+        checked: {
+          mouseMap: {
+            "checkbox-item": {
+              click: "handleActivation",
+              mouseleave: "handleMouseLeave",
+            },
+          },
+          keyMap: {
+            " ": "handleActivation",
+            Enter: "handleActivation",
+          },
+        },
+        unchecked: {
+          mouseMap: {
+            "checkbox-item": {
+              click: "handleActivation",
+              mouseleave: "handleMouseLeave",
+            },
+          },
+          keyMap: {
+            " ": "handleActivation",
+            Enter: "handleActivation",
+          },
+        },
+      },
+      hiddenConfig: {
+        checked: {
+          "item-indicator": false,
+        },
+        unchecked: {
+          "item-indicator": true,
+        },
+      },
 
-    // Add checked state to ARIA attributes
-    config.ariaConfig.item.all.checked = () => this.checked.toString();
-
-    return config;
-  }
-
-  handleEvent(eventType) {
-    const result = super.handleEvent(eventType);
-
-    switch (eventType) {
-      case "check":
-        if (!this.disabled) {
-          this.checked = true;
-          this.updateIndicator();
-        }
-        return true;
-      case "uncheck":
-        if (!this.disabled) {
-          this.checked = false;
-          this.updateIndicator();
-        }
-        return true;
-    }
-
-    return result;
+      ariaConfig: {
+        item: {
+          all: {
+            role: "menuitemcheckbox",
+            disabled: () => (this.disabled ? "true" : null),
+            checked: () => (this.state == "checked" ? "true" : "false"),
+          },
+        },
+      },
+    };
   }
 
   handleActivation(event) {
     super.handleActivation(event);
     if (this.disabled) return;
 
-    // Toggle checked state
-    this.checked = !this.checked;
-    this.updateIndicator();
+    this.transition("toggle");
 
-    // Notify parent
-    this.parent.handleItemCheckedChange(this, this.checked);
-  }
-
-  updateIndicator() {
-    const indicator = this.el.querySelector("[data-part='item-indicator']");
-    if (indicator) {
-      indicator.setAttribute(
-        "data-state",
-        this.checked ? "checked" : "unchecked",
-      );
-
-      // Update hidden state on SVG icon
-      const icon = indicator.querySelector("svg");
-      if (icon) {
-        icon.hidden = !this.checked;
-      }
-    }
+    this.pushEvent(
+      "checked-changed",
+      {
+        value: this.value,
+        checked: this.state == "checked",
+      },
+      this.parent.el,
+    );
   }
 }
 
@@ -257,7 +242,6 @@ class DropdownMenuComponent extends Component {
           transitions: {
             close: "closed",
             toggle: "closed",
-            select: "closed",
           },
         },
       },
@@ -270,7 +254,9 @@ class DropdownMenuComponent extends Component {
           },
           mouseMap: {
             trigger: {
-              click: "toggle",
+              click: (_e) => {
+                this.transition("open");
+              },
             },
           },
         },
@@ -360,28 +346,8 @@ class DropdownMenuComponent extends Component {
   }
 
   selectItem(item) {
-    // Handle item selection
     if (item.disabled) return;
-
-    // Close the dropdown
-    this.transition("select");
-
-    // Push event for selected item
-    if (item instanceof DropdownMenuItem) {
-      // Only regular items should trigger on-select
-      this.pushEvent("item-selected", {
-        value: item.value,
-        variant: item.variant,
-      });
-    }
-  }
-
-  handleItemCheckedChange(item, checked) {
-    // Handle checkbox item changes
-    this.pushEvent("checked-changed", {
-      value: item.value,
-      checked,
-    });
+    this.transition("close");
   }
 
   handleItemFocus(item) {
@@ -457,6 +423,7 @@ class DropdownMenuComponent extends Component {
   onClosedEnter() {
     this.positionedElement?.deactivate();
     this.pushEvent("closed");
+    this.trigger.querySelector("button").focus();
   }
 
   beforeDestroy() {
