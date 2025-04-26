@@ -1,6 +1,5 @@
 // saladui/components/dropdown_menu.js
 import Component from "../core/component";
-import PositionedElement from "../core/positioned-element";
 import Collection from "../core/collection";
 
 /**
@@ -22,7 +21,7 @@ class MenuItemBase extends Component {
       itemElement.getAttribute("data-value") ||
       itemElement.textContent.trim();
     this.disabled = itemElement.getAttribute("data-disabled") !== null;
-
+    this.config.preventDefaultKeys = [" ", "Enter"];
     this.setupEvents();
   }
 
@@ -196,9 +195,11 @@ class MenuCheckboxItem extends MenuItemBase {
  * Manages a dropdown menu with support for keyboard navigation and accessibility
  */
 class Menu extends Component {
-  constructor(el, hookContext) {
+  constructor(el, { hookContext, onItemSelect }) {
     super(el, { hookContext });
 
+    // callback for item selection
+    this.onItemSelect = onItemSelect || (() => {});
     this.menuItems = [];
 
     // Set keyboard navigation defaults
@@ -207,6 +208,7 @@ class Menu extends Component {
     // Initialize items and collection
     this.initializeItems();
     this.initializeCollection();
+    this.setupEvents();
   }
 
   getComponentConfig() {
@@ -217,7 +219,7 @@ class Menu extends Component {
         },
       },
       events: {
-        idle: {
+        _all: {
           keyMap: {
             ArrowDown: () => this.navigateItem("next"),
             ArrowUp: () => this.navigateItem("prev"),
@@ -233,7 +235,7 @@ class Menu extends Component {
   initializeItems() {
     // Get all items in the correct DOM order
     const allItemElements = Array.from(
-      this.content.querySelectorAll(
+      this.el.querySelectorAll(
         "[data-part='item'], [data-part='checkbox-item']",
       ),
     );
@@ -269,9 +271,17 @@ class Menu extends Component {
     });
   }
 
+  // Activate menu, focusthe first item
+  activate() {
+    const firstItem = this.collection.getItem("first");
+    if (firstItem) {
+      this.collection.focus(firstItem);
+    }
+  }
+
   selectItem(item) {
     if (item.disabled) return;
-    this.transition("close");
+    this.onItemSelect(item);
   }
 
   handleItemFocus(item) {

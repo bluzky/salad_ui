@@ -218,7 +218,7 @@ class Component {
 
       // Create a bound handler that will check the current state before executing
       const boundHandler = (event) => {
-        if (this.stateMachine.state === stateName) {
+        if (stateName == "_all" || this.stateMachine.state === stateName) {
           const key = event.key;
           const action = stateEvents.keyMap[key];
 
