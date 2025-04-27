@@ -37,7 +37,9 @@ class Component {
     ]);
     if (ignoreItems) {
       this.allParts = this.allParts.filter(
-        (element) => !element.dataset.part.startsWith("item"),
+        (element) =>
+          !element.dataset.part.startsWith("item") &&
+          !element.dataset.part.endsWith("-item"),
       );
     }
 
@@ -137,8 +139,6 @@ class Component {
       return null; // No promise
     }
 
-    console.log(Date.now(), "Animating transition");
-
     // Get target element for animation
     const targetElement = animConfig.target_part
       ? this.getPart(animConfig.target_part)
@@ -146,7 +146,6 @@ class Component {
 
     // Animate with the config
     return animateTransition(animConfig, targetElement).then(() => {
-      console.log(Date.now(), "Animation completed");
       this.updatePartsVisibility(nextState);
     });
   }
@@ -217,11 +216,9 @@ class Component {
       const stateEvents = this.eventConfig[stateName];
       if (!stateEvents || !stateEvents.keyMap) return;
 
-      const keyMap = stateEvents.keyMap;
-
       // Create a bound handler that will check the current state before executing
       const boundHandler = (event) => {
-        if (this.stateMachine.state === stateName) {
+        if (stateName == "_all" || this.stateMachine.state === stateName) {
           const key = event.key;
           const action = stateEvents.keyMap[key];
 
@@ -409,17 +406,18 @@ class Component {
   }
 
   // Push event to server (for frameworks like Phoenix LiveView)
-  pushEvent(clientEvent, payload = {}) {
+  pushEvent(clientEvent, payload = {}, context) {
     if (!this.hook || !this.hook.pushEventTo) return;
 
     const eventHandler = this.eventMappings[clientEvent];
+    const el = context || this.el;
 
     if (eventHandler) {
       if (typeof eventHandler === "string") {
         const fullPayload = {
           ...payload,
-          componentId: this.el.id,
-          component: this.el.getAttribute("data-component"),
+          componentId: el.id,
+          component: el.getAttribute("data-component"),
         };
 
         this.hook.pushEventTo(this.el, eventHandler, fullPayload);
