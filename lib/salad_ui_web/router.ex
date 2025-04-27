@@ -1,5 +1,6 @@
 defmodule SaladUIWeb.Router do
   use SaladUIWeb, :router
+  import PhoenixStorybook.Router
 
   pipeline :browser do
     plug(:accepts, ["html"])
@@ -14,16 +15,14 @@ defmodule SaladUIWeb.Router do
     plug(:accepts, ["json"])
   end
 
-  scope "/", SaladUIWeb do
-    pipe_through(:browser)
-
-    get("/", PageController, :home)
+  scope "/" do
+    storybook_assets()
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", SaladUIWeb do
-  #   pipe_through :api
-  # end
+  scope "/", SaladUiWeb do
+    pipe_through(:browser)
+    live_storybook("/", backend_module: SaladUIWeb.Storybook)
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:salad_ui, :dev_routes) do

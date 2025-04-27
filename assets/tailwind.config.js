@@ -13,7 +13,7 @@ module.exports = {
     "../lib/**/*.ex",
     "../storybook/**/*.*exs",
   ],
-  important: ".salad-ui-app-web",
+  important: ".salad-ui-web",
   theme: {
     extend: {
       colors: {
