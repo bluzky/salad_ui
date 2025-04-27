@@ -1,4 +1,4 @@
-defmodule SaladUi.TasksHelpers do
+defmodule SaladUI.TasksHelpers do
   @moduledoc """
   Helper functions for the SaladUI mix tasks.
   """

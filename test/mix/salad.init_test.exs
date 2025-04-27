@@ -37,7 +37,11 @@ defmodule Mix.Tasks.Salad.InitTest do
       File.write!(@application_file_path, "children = []\n")
       File.write!("assets/css/app.css", "/* Original app.css content */\n")
       File.write!("assets/js/app.js", "// Original app.js content\n")
-      File.write!("assets/tailwind.config.js", "module.exports = {\n  // Original tailwind config\n}\n")
+
+      File.write!(
+        "assets/tailwind.config.js",
+        "module.exports = {\n  // Original tailwind config\n}\n"
+      )
 
       # Mock the _build directory structure
       priv_dir = "_build/test/lib/salad_ui/priv/static/assets"
@@ -63,8 +67,12 @@ defmodule Mix.Tasks.Salad.InitTest do
       assert File.read!("assets/js/app.js") =~ "// server events"
       assert File.exists?("assets/tailwind.colors.json")
       assert File.read!("assets/tailwind.config.js") =~ "require(\"./tailwind.colors.json\")"
-      assert File.read!("lib/test_app_web/components/helpers.ex") =~ "defmodule SaladUiWeb.ComponentHelpers do"
-      assert File.read!("lib/test_app_web/components/component.ex") =~ "defmodule SaladUiWeb.Component do"
+
+      assert File.read!("lib/test_app_web/components/helpers.ex") =~
+               "defmodule SaladUIWeb.ComponentHelpers do"
+
+      assert File.read!("lib/test_app_web/components/component.ex") =~
+               "defmodule SaladUIWeb.Component do"
     end)
   end
 

@@ -1,4 +1,4 @@
-defmodule SaladUiTest do
+defmodule SaladUITest do
   use ExUnit.Case
 
   doctest SaladUI

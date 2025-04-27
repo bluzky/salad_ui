@@ -1,4 +1,4 @@
-defmodule SaladUi.PaginationTest do
+defmodule SaladUI.PaginationTest do
   use ComponentCase
 
   import SaladUI.Pagination

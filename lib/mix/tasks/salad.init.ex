@@ -9,7 +9,7 @@ defmodule Mix.Tasks.Salad.Init do
   """
   use Mix.Task
 
-  import SaladUi.TasksHelpers
+  import SaladUI.TasksHelpers
 
   alias SaladUI.Patcher
 
@@ -51,9 +51,13 @@ defmodule Mix.Tasks.Salad.Init do
          :ok <- maybe_write_component_module(component_path, app_name, opts),
          :ok <- install_tailwind_animate(opts) do
       if opts[:as_lib] do
-        Mix.shell().info("Done. Now you can use any component by `import SaladUI.<ComponentName>` in your project.")
+        Mix.shell().info(
+          "Done. Now you can use any component by `import SaladUI.<ComponentName>` in your project."
+        )
       else
-        Mix.shell().info("Done. Now you can add components by running mix salad.add <component_name>")
+        Mix.shell().info(
+          "Done. Now you can add components by running mix salad.add <component_name>"
+        )
       end
     else
       {:error, reason} -> Mix.shell().error("Error during setup: #{reason}")
@@ -212,7 +216,9 @@ defmodule Mix.Tasks.Salad.Init do
 
     target_path = Path.join(component_path, "component.ex")
     module_name = Macro.camelize(app_name)
-    source_code = EEx.eval_file(source_path, module_name: module_name, assigns: %{module_name: module_name})
+
+    source_code =
+      EEx.eval_file(source_path, module_name: module_name, assigns: %{module_name: module_name})
 
     File.write!(target_path, source_code)
   end
@@ -221,8 +227,15 @@ defmodule Mix.Tasks.Salad.Init do
     tag = Keyword.get(opts, :tailwind_animate_version, @default_tailwind_animate_version)
     Mix.shell().info("Downloading tailwindcss-animate.js v#{tag}")
 
-    url = "https://raw.githubusercontent.com/jamiebuilds/tailwindcss-animate/refs/tags/v#{tag}/index.js"
-    output_path = Keyword.get(opts, :output_path, Path.join(File.cwd!(), "assets/vendor/tailwindcss-animate.js"))
+    url =
+      "https://raw.githubusercontent.com/jamiebuilds/tailwindcss-animate/refs/tags/v#{tag}/index.js"
+
+    output_path =
+      Keyword.get(
+        opts,
+        :output_path,
+        Path.join(File.cwd!(), "assets/vendor/tailwindcss-animate.js")
+      )
 
     :inets.start()
     :ssl.start()

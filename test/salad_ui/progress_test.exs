@@ -1,4 +1,4 @@
-defmodule SaladUi.ProgressTest do
+defmodule SaladUI.ProgressTest do
   use ComponentCase
 
   import SaladUI.Progress

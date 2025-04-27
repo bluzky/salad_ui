@@ -9,7 +9,7 @@ defmodule Mix.Tasks.Salad.Add do
   """
   use Mix.Task
 
-  import SaladUi.TasksHelpers
+  import SaladUI.TasksHelpers
 
   @non_components_files ~w(patcher helper task_helpers)
 
@@ -92,7 +92,10 @@ defmodule Mix.Tasks.Salad.Add do
 
     source
     |> String.replace(~r/defmodule SaladUI\.([a-zA-Z0-9_]+)/, "defmodule #{module_name}.\\1")
-    |> String.replace(~r/use SaladUI,\s*:component/, "use #{String.trim_trailing(module_name, "s")}")
+    |> String.replace(
+      ~r/use SaladUI,\s*:component/,
+      "use #{String.trim_trailing(module_name, "s")}"
+    )
     |> String.replace(~r/import SaladUI\./, "import #{module_name}.")
     |> maybe_apply_additional_insertions(module_name, file_name)
   end
@@ -107,7 +110,11 @@ defmodule Mix.Tasks.Salad.Add do
     with :ok <- copy_chart_hook(),
          :ok <- install_chart_dependencies() do
       Mix.shell().info("\nChartHook installed successfully")
-      Mix.shell().info("Do not forget to import it into your app.js file and pass it to your live socket")
+
+      Mix.shell().info(
+        "Do not forget to import it into your app.js file and pass it to your live socket"
+      )
+
       :ok
     else
       {:error, _} = error -> error

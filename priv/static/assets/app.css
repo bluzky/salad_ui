@@ -1,0 +1,4887 @@
+/*
+! tailwindcss v3.4.3 | MIT License | https://tailwindcss.com
+*/
+
+/*
+1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
+2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
+*/
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  /* 1 */
+  border-width: 0;
+  /* 2 */
+  border-style: solid;
+  /* 2 */
+  border-color: #e5e7eb;
+  /* 2 */
+}
+
+::before,
+::after {
+  --tw-content: '';
+}
+
+/*
+1. Use a consistent sensible line-height in all browsers.
+2. Prevent adjustments of font size after orientation changes in iOS.
+3. Use a more readable tab size.
+4. Use the user's configured `sans` font-family by default.
+5. Use the user's configured `sans` font-feature-settings by default.
+6. Use the user's configured `sans` font-variation-settings by default.
+7. Disable tap highlights on iOS
+*/
+
+html,
+:host {
+  line-height: 1.5;
+  /* 1 */
+  -webkit-text-size-adjust: 100%;
+  /* 2 */
+  -moz-tab-size: 4;
+  /* 3 */
+  -o-tab-size: 4;
+     tab-size: 4;
+  /* 3 */
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  /* 4 */
+  font-feature-settings: normal;
+  /* 5 */
+  font-variation-settings: normal;
+  /* 6 */
+  -webkit-tap-highlight-color: transparent;
+  /* 7 */
+}
+
+/*
+1. Remove the margin in all browsers.
+2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.
+*/
+
+body {
+  margin: 0;
+  /* 1 */
+  line-height: inherit;
+  /* 2 */
+}
+
+/*
+1. Add the correct height in Firefox.
+2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
+3. Ensure horizontal rules are visible by default.
+*/
+
+hr {
+  height: 0;
+  /* 1 */
+  color: inherit;
+  /* 2 */
+  border-top-width: 1px;
+  /* 3 */
+}
+
+/*
+Add the correct text decoration in Chrome, Edge, and Safari.
+*/
+
+abbr:where([title]) {
+  -webkit-text-decoration: underline dotted;
+          text-decoration: underline dotted;
+}
+
+/*
+Remove the default font size and weight for headings.
+*/
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+/*
+Reset links to optimize for opt-in styling instead of opt-out.
+*/
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+/*
+Add the correct font weight in Edge and Safari.
+*/
+
+b,
+strong {
+  font-weight: bolder;
+}
+
+/*
+1. Use the user's configured `mono` font-family by default.
+2. Use the user's configured `mono` font-feature-settings by default.
+3. Use the user's configured `mono` font-variation-settings by default.
+4. Correct the odd `em` font sizing in all browsers.
+*/
+
+code,
+kbd,
+samp,
+pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  /* 1 */
+  font-feature-settings: normal;
+  /* 2 */
+  font-variation-settings: normal;
+  /* 3 */
+  font-size: 1em;
+  /* 4 */
+}
+
+/*
+Add the correct font size in all browsers.
+*/
+
+small {
+  font-size: 80%;
+}
+
+/*
+Prevent `sub` and `sup` elements from affecting the line height in all browsers.
+*/
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+/*
+1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+3. Remove gaps between table borders by default.
+*/
+
+table {
+  text-indent: 0;
+  /* 1 */
+  border-color: inherit;
+  /* 2 */
+  border-collapse: collapse;
+  /* 3 */
+}
+
+/*
+1. Change the font styles in all browsers.
+2. Remove the margin in Firefox and Safari.
+3. Remove default padding in all browsers.
+*/
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit;
+  /* 1 */
+  font-feature-settings: inherit;
+  /* 1 */
+  font-variation-settings: inherit;
+  /* 1 */
+  font-size: 100%;
+  /* 1 */
+  font-weight: inherit;
+  /* 1 */
+  line-height: inherit;
+  /* 1 */
+  letter-spacing: inherit;
+  /* 1 */
+  color: inherit;
+  /* 1 */
+  margin: 0;
+  /* 2 */
+  padding: 0;
+  /* 3 */
+}
+
+/*
+Remove the inheritance of text transform in Edge and Firefox.
+*/
+
+button,
+select {
+  text-transform: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Remove default button styles.
+*/
+
+button,
+input:where([type='button']),
+input:where([type='reset']),
+input:where([type='submit']) {
+  -webkit-appearance: button;
+  /* 1 */
+  background-color: transparent;
+  /* 2 */
+  background-image: none;
+  /* 2 */
+}
+
+/*
+Use the modern Firefox focus style for all focusable elements.
+*/
+
+:-moz-focusring {
+  outline: auto;
+}
+
+/*
+Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
+*/
+
+:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+/*
+Add the correct vertical alignment in Chrome and Firefox.
+*/
+
+progress {
+  vertical-align: baseline;
+}
+
+/*
+Correct the cursor style of increment and decrement buttons in Safari.
+*/
+
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/*
+1. Correct the odd appearance in Chrome and Safari.
+2. Correct the outline style in Safari.
+*/
+
+[type='search'] {
+  -webkit-appearance: textfield;
+  /* 1 */
+  outline-offset: -2px;
+  /* 2 */
+}
+
+/*
+Remove the inner padding in Chrome and Safari on macOS.
+*/
+
+::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Change font properties to `inherit` in Safari.
+*/
+
+::-webkit-file-upload-button {
+  -webkit-appearance: button;
+  /* 1 */
+  font: inherit;
+  /* 2 */
+}
+
+/*
+Add the correct display in Chrome and Safari.
+*/
+
+summary {
+  display: list-item;
+}
+
+/*
+Removes the default spacing and border for appropriate elements.
+*/
+
+blockquote,
+dl,
+dd,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+figure,
+p,
+pre {
+  margin: 0;
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+}
+
+legend {
+  padding: 0;
+}
+
+ol,
+ul,
+menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+Reset default styling for dialogs.
+*/
+
+dialog {
+  padding: 0;
+}
+
+/*
+Prevent resizing textareas horizontally by default.
+*/
+
+textarea {
+  resize: vertical;
+}
+
+/*
+1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
+2. Set the default placeholder color to the user's configured gray 400 color.
+*/
+
+input::-moz-placeholder, textarea::-moz-placeholder {
+  opacity: 1;
+  /* 1 */
+  color: #9ca3af;
+  /* 2 */
+}
+
+input::placeholder,
+textarea::placeholder {
+  opacity: 1;
+  /* 1 */
+  color: #9ca3af;
+  /* 2 */
+}
+
+/*
+Set the default cursor for buttons.
+*/
+
+button,
+[role="button"] {
+  cursor: pointer;
+}
+
+/*
+Make sure disabled buttons don't get the pointer cursor.
+*/
+
+:disabled {
+  cursor: default;
+}
+
+/*
+1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)
+2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
+   This can trigger a poorly considered lint error in some tools but is included by design.
+*/
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block;
+  /* 1 */
+  vertical-align: middle;
+  /* 2 */
+}
+
+/*
+Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
+*/
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Make elements with the HTML hidden attribute stay hidden by default */
+
+[hidden] {
+  display: none;
+}
+
+[type='text'],[type='email'],[type='url'],[type='password'],[type='number'],[type='date'],[type='datetime-local'],[type='month'],[type='search'],[type='tel'],[type='time'],[type='week'],[multiple],textarea,select {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  background-color: #fff;
+  border-color: #6b7280;
+  border-width: 1px;
+  border-radius: 0px;
+  padding-top: 0.5rem;
+  padding-right: 0.75rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  --tw-shadow: 0 0 #0000;
+}
+
+[type='text']:focus, [type='email']:focus, [type='url']:focus, [type='password']:focus, [type='number']:focus, [type='date']:focus, [type='datetime-local']:focus, [type='month']:focus, [type='search']:focus, [type='tel']:focus, [type='time']:focus, [type='week']:focus, [multiple]:focus, textarea:focus, select:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: #2563eb;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  border-color: #2563eb;
+}
+
+input::-moz-placeholder, textarea::-moz-placeholder {
+  color: #6b7280;
+  opacity: 1;
+}
+
+input::placeholder,textarea::placeholder {
+  color: #6b7280;
+  opacity: 1;
+}
+
+::-webkit-datetime-edit-fields-wrapper {
+  padding: 0;
+}
+
+::-webkit-date-and-time-value {
+  min-height: 1.5em;
+}
+
+::-webkit-datetime-edit,::-webkit-datetime-edit-year-field,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute-field,::-webkit-datetime-edit-second-field,::-webkit-datetime-edit-millisecond-field,::-webkit-datetime-edit-meridiem-field {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+  -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+}
+
+[multiple] {
+  background-image: initial;
+  background-position: initial;
+  background-repeat: unset;
+  background-size: initial;
+  padding-right: 0.75rem;
+  -webkit-print-color-adjust: unset;
+          print-color-adjust: unset;
+}
+
+[type='checkbox'],[type='radio'] {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  padding: 0;
+  -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+  display: inline-block;
+  vertical-align: middle;
+  background-origin: border-box;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  flex-shrink: 0;
+  height: 1rem;
+  width: 1rem;
+  color: #2563eb;
+  background-color: #fff;
+  border-color: #6b7280;
+  border-width: 1px;
+  --tw-shadow: 0 0 #0000;
+}
+
+[type='checkbox'] {
+  border-radius: 0px;
+}
+
+[type='radio'] {
+  border-radius: 100%;
+}
+
+[type='checkbox']:focus,[type='radio']:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);
+  --tw-ring-offset-width: 2px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: #2563eb;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+}
+
+[type='checkbox']:checked,[type='radio']:checked {
+  border-color: transparent;
+  background-color: currentColor;
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+[type='checkbox']:checked {
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+}
+
+[type='radio']:checked {
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
+}
+
+[type='checkbox']:checked:hover,[type='checkbox']:checked:focus,[type='radio']:checked:hover,[type='radio']:checked:focus {
+  border-color: transparent;
+  background-color: currentColor;
+}
+
+[type='checkbox']:indeterminate {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 16 16'%3e%3cpath stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 8h8'/%3e%3c/svg%3e");
+  border-color: transparent;
+  background-color: currentColor;
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+[type='checkbox']:indeterminate:hover,[type='checkbox']:indeterminate:focus {
+  border-color: transparent;
+  background-color: currentColor;
+}
+
+[type='file'] {
+  background: unset;
+  border-color: inherit;
+  border-width: 0;
+  border-radius: 0;
+  padding: 0;
+  font-size: unset;
+  line-height: inherit;
+}
+
+[type='file']:focus {
+  outline: 1px solid ButtonText;
+  outline: 1px auto -webkit-focus-ring-color;
+}
+
+*, ::before, ::after {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x:  ;
+  --tw-pan-y:  ;
+  --tw-pinch-zoom:  ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position:  ;
+  --tw-gradient-via-position:  ;
+  --tw-gradient-to-position:  ;
+  --tw-ordinal:  ;
+  --tw-slashed-zero:  ;
+  --tw-numeric-figure:  ;
+  --tw-numeric-spacing:  ;
+  --tw-numeric-fraction:  ;
+  --tw-ring-inset:  ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur:  ;
+  --tw-brightness:  ;
+  --tw-contrast:  ;
+  --tw-grayscale:  ;
+  --tw-hue-rotate:  ;
+  --tw-invert:  ;
+  --tw-saturate:  ;
+  --tw-sepia:  ;
+  --tw-drop-shadow:  ;
+  --tw-backdrop-blur:  ;
+  --tw-backdrop-brightness:  ;
+  --tw-backdrop-contrast:  ;
+  --tw-backdrop-grayscale:  ;
+  --tw-backdrop-hue-rotate:  ;
+  --tw-backdrop-invert:  ;
+  --tw-backdrop-opacity:  ;
+  --tw-backdrop-saturate:  ;
+  --tw-backdrop-sepia:  ;
+  --tw-contain-size:  ;
+  --tw-contain-layout:  ;
+  --tw-contain-paint:  ;
+  --tw-contain-style:  ;
+}
+
+::backdrop {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x:  ;
+  --tw-pan-y:  ;
+  --tw-pinch-zoom:  ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position:  ;
+  --tw-gradient-via-position:  ;
+  --tw-gradient-to-position:  ;
+  --tw-ordinal:  ;
+  --tw-slashed-zero:  ;
+  --tw-numeric-figure:  ;
+  --tw-numeric-spacing:  ;
+  --tw-numeric-fraction:  ;
+  --tw-ring-inset:  ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur:  ;
+  --tw-brightness:  ;
+  --tw-contrast:  ;
+  --tw-grayscale:  ;
+  --tw-hue-rotate:  ;
+  --tw-invert:  ;
+  --tw-saturate:  ;
+  --tw-sepia:  ;
+  --tw-drop-shadow:  ;
+  --tw-backdrop-blur:  ;
+  --tw-backdrop-brightness:  ;
+  --tw-backdrop-contrast:  ;
+  --tw-backdrop-grayscale:  ;
+  --tw-backdrop-hue-rotate:  ;
+  --tw-backdrop-invert:  ;
+  --tw-backdrop-opacity:  ;
+  --tw-backdrop-saturate:  ;
+  --tw-backdrop-sepia:  ;
+  --tw-contain-size:  ;
+  --tw-contain-layout:  ;
+  --tw-contain-paint:  ;
+  --tw-contain-style:  ;
+}
+
+.\!container {
+  width: 100% !important;
+}
+
+.container {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .\!container {
+    max-width: 640px !important;
+  }
+
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .\!container {
+    max-width: 768px !important;
+  }
+
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .\!container {
+    max-width: 1024px !important;
+  }
+
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .\!container {
+    max-width: 1280px !important;
+  }
+
+  .container {
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .\!container {
+    max-width: 1536px !important;
+  }
+
+  .container {
+    max-width: 1536px;
+  }
+}
+
+.form-input,.form-textarea,.form-select,.form-multiselect {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  background-color: #fff;
+  border-color: #6b7280;
+  border-width: 1px;
+  border-radius: 0px;
+  padding-top: 0.5rem;
+  padding-right: 0.75rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  --tw-shadow: 0 0 #0000;
+}
+
+.form-input:focus, .form-textarea:focus, .form-select:focus, .form-multiselect:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: #2563eb;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  border-color: #2563eb;
+}
+
+.form-input::-moz-placeholder, .form-textarea::-moz-placeholder {
+  color: #6b7280;
+  opacity: 1;
+}
+
+.form-input::placeholder,.form-textarea::placeholder {
+  color: #6b7280;
+  opacity: 1;
+}
+
+.form-input::-webkit-datetime-edit-fields-wrapper {
+  padding: 0;
+}
+
+.form-input::-webkit-date-and-time-value {
+  min-height: 1.5em;
+}
+
+.form-input::-webkit-datetime-edit,.form-input::-webkit-datetime-edit-year-field,.form-input::-webkit-datetime-edit-month-field,.form-input::-webkit-datetime-edit-day-field,.form-input::-webkit-datetime-edit-hour-field,.form-input::-webkit-datetime-edit-minute-field,.form-input::-webkit-datetime-edit-second-field,.form-input::-webkit-datetime-edit-millisecond-field,.form-input::-webkit-datetime-edit-meridiem-field {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.form-select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+  -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+}
+
+.form-checkbox,.form-radio {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  padding: 0;
+  -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+  display: inline-block;
+  vertical-align: middle;
+  background-origin: border-box;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  flex-shrink: 0;
+  height: 1rem;
+  width: 1rem;
+  color: #2563eb;
+  background-color: #fff;
+  border-color: #6b7280;
+  border-width: 1px;
+  --tw-shadow: 0 0 #0000;
+}
+
+.form-checkbox {
+  border-radius: 0px;
+}
+
+.form-radio {
+  border-radius: 100%;
+}
+
+.form-checkbox:focus,.form-radio:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);
+  --tw-ring-offset-width: 2px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: #2563eb;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+}
+
+.form-checkbox:checked,.form-radio:checked {
+  border-color: transparent;
+  background-color: currentColor;
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.form-checkbox:checked {
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+}
+
+.form-radio:checked {
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
+}
+
+.form-checkbox:checked:hover,.form-checkbox:checked:focus,.form-radio:checked:hover,.form-radio:checked:focus {
+  border-color: transparent;
+  background-color: currentColor;
+}
+
+.form-checkbox:indeterminate {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 16 16'%3e%3cpath stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 8h8'/%3e%3c/svg%3e");
+  border-color: transparent;
+  background-color: currentColor;
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.form-checkbox:indeterminate:hover,.form-checkbox:indeterminate:focus {
+  border-color: transparent;
+  background-color: currentColor;
+}
+
+.hero-arrow-left-solid {
+  --hero-arrow-left-solid: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" data-slot="icon">  <path fill-rule="evenodd" d="M11.03 3.97a.75.75 0 0 1 0 1.06l-6.22 6.22H21a.75.75 0 0 1 0 1.5H4.81l6.22 6.22a.75.75 0 1 1-1.06 1.06l-7.5-7.5a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"/></svg>');
+  -webkit-mask: var(--hero-arrow-left-solid);
+  mask: var(--hero-arrow-left-solid);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  background-color: currentColor;
+  vertical-align: middle;
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.hero-arrow-path {
+  --hero-arrow-path: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">  <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>');
+  -webkit-mask: var(--hero-arrow-path);
+  mask: var(--hero-arrow-path);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  background-color: currentColor;
+  vertical-align: middle;
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.hero-exclamation-circle-mini {
+  --hero-exclamation-circle-mini: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">  <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>');
+  -webkit-mask: var(--hero-exclamation-circle-mini);
+  mask: var(--hero-exclamation-circle-mini);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  background-color: currentColor;
+  vertical-align: middle;
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.hero-information-circle-mini {
+  --hero-information-circle-mini: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">  <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"/></svg>');
+  -webkit-mask: var(--hero-information-circle-mini);
+  mask: var(--hero-information-circle-mini);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  background-color: currentColor;
+  vertical-align: middle;
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.hero-magnifying-glass {
+  --hero-magnifying-glass: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">  <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>');
+  -webkit-mask: var(--hero-magnifying-glass);
+  mask: var(--hero-magnifying-glass);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  background-color: currentColor;
+  vertical-align: middle;
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.hero-x-mark {
+  --hero-x-mark: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>');
+  -webkit-mask: var(--hero-x-mark);
+  mask: var(--hero-x-mark);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  background-color: currentColor;
+  vertical-align: middle;
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.hero-x-mark-solid {
+  --hero-x-mark-solid: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" data-slot="icon">  <path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>');
+  -webkit-mask: var(--hero-x-mark-solid);
+  mask: var(--hero-x-mark-solid);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  background-color: currentColor;
+  vertical-align: middle;
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.salad-ui-app-web :is(.sr-only) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.salad-ui-app-web :is(.not-sr-only) {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+.salad-ui-app-web :is(.pointer-events-none) {
+  pointer-events: none;
+}
+
+.salad-ui-app-web :is(.pointer-events-auto) {
+  pointer-events: auto;
+}
+
+.salad-ui-app-web :is(.\!visible) {
+  visibility: visible !important;
+}
+
+.salad-ui-app-web :is(.visible) {
+  visibility: visible;
+}
+
+.salad-ui-app-web :is(.invisible) {
+  visibility: hidden;
+}
+
+.salad-ui-app-web :is(.collapse) {
+  visibility: collapse;
+}
+
+.salad-ui-app-web :is(.static) {
+  position: static;
+}
+
+.salad-ui-app-web :is(.fixed) {
+  position: fixed;
+}
+
+.salad-ui-app-web :is(.absolute) {
+  position: absolute;
+}
+
+.salad-ui-app-web :is(.\!relative) {
+  position: relative !important;
+}
+
+.salad-ui-app-web :is(.relative) {
+  position: relative;
+}
+
+.salad-ui-app-web :is(.sticky) {
+  position: sticky;
+}
+
+.salad-ui-app-web :is(.-inset-1) {
+  inset: -0.25rem;
+}
+
+.salad-ui-app-web :is(.inset-0) {
+  inset: 0px;
+}
+
+.salad-ui-app-web :is(.-inset-y-px) {
+  top: -1px;
+  bottom: -1px;
+}
+
+.salad-ui-app-web :is(.inset-x-0) {
+  left: 0px;
+  right: 0px;
+}
+
+.salad-ui-app-web :is(.inset-y-0) {
+  top: 0px;
+  bottom: 0px;
+}
+
+.salad-ui-app-web :is(.-left-4) {
+  left: -1rem;
+}
+
+.salad-ui-app-web :is(.-right-4) {
+  right: -1rem;
+}
+
+.salad-ui-app-web :is(.bottom-0) {
+  bottom: 0px;
+}
+
+.salad-ui-app-web :is(.bottom-1) {
+  bottom: 0.25rem;
+}
+
+.salad-ui-app-web :is(.bottom-full) {
+  bottom: 100%;
+}
+
+.salad-ui-app-web :is(.end-1) {
+  inset-inline-end: 0.25rem;
+}
+
+.salad-ui-app-web :is(.left-0) {
+  left: 0px;
+}
+
+.salad-ui-app-web :is(.left-1) {
+  left: 0.25rem;
+}
+
+.salad-ui-app-web :is(.left-1\/2) {
+  left: 50%;
+}
+
+.salad-ui-app-web :is(.left-2) {
+  left: 0.5rem;
+}
+
+.salad-ui-app-web :is(.left-5) {
+  left: 1.25rem;
+}
+
+.salad-ui-app-web :is(.left-\[50\%\]) {
+  left: 50%;
+}
+
+.salad-ui-app-web :is(.left-full) {
+  left: 100%;
+}
+
+.salad-ui-app-web :is(.right-0) {
+  right: 0px;
+}
+
+.salad-ui-app-web :is(.right-1) {
+  right: 0.25rem;
+}
+
+.salad-ui-app-web :is(.right-2) {
+  right: 0.5rem;
+}
+
+.salad-ui-app-web :is(.right-3) {
+  right: 0.75rem;
+}
+
+.salad-ui-app-web :is(.right-4) {
+  right: 1rem;
+}
+
+.salad-ui-app-web :is(.right-5) {
+  right: 1.25rem;
+}
+
+.salad-ui-app-web :is(.right-full) {
+  right: 100%;
+}
+
+.salad-ui-app-web :is(.start-1) {
+  inset-inline-start: 0.25rem;
+}
+
+.salad-ui-app-web :is(.top-0) {
+  top: 0px;
+}
+
+.salad-ui-app-web :is(.top-1) {
+  top: 0.25rem;
+}
+
+.salad-ui-app-web :is(.top-1\.5) {
+  top: 0.375rem;
+}
+
+.salad-ui-app-web :is(.top-1\/2) {
+  top: 50%;
+}
+
+.salad-ui-app-web :is(.top-2) {
+  top: 0.5rem;
+}
+
+.salad-ui-app-web :is(.top-3) {
+  top: 0.75rem;
+}
+
+.salad-ui-app-web :is(.top-3\.5) {
+  top: 0.875rem;
+}
+
+.salad-ui-app-web :is(.top-4) {
+  top: 1rem;
+}
+
+.salad-ui-app-web :is(.top-5) {
+  top: 1.25rem;
+}
+
+.salad-ui-app-web :is(.top-6) {
+  top: 1.5rem;
+}
+
+.salad-ui-app-web :is(.top-\[50\%\]) {
+  top: 50%;
+}
+
+.salad-ui-app-web :is(.top-full) {
+  top: 100%;
+}
+
+.salad-ui-app-web :is(.isolate) {
+  isolation: isolate;
+}
+
+.salad-ui-app-web :is(.isolation-auto) {
+  isolation: auto;
+}
+
+.salad-ui-app-web :is(.z-10) {
+  z-index: 10;
+}
+
+.salad-ui-app-web :is(.z-20) {
+  z-index: 20;
+}
+
+.salad-ui-app-web :is(.z-50) {
+  z-index: 50;
+}
+
+.salad-ui-app-web :is(.col-span-3) {
+  grid-column: span 3 / span 3;
+}
+
+.salad-ui-app-web :is(.float-start) {
+  float: inline-start;
+}
+
+.salad-ui-app-web :is(.float-end) {
+  float: inline-end;
+}
+
+.salad-ui-app-web :is(.float-right) {
+  float: right;
+}
+
+.salad-ui-app-web :is(.float-left) {
+  float: left;
+}
+
+.salad-ui-app-web :is(.float-none) {
+  float: none;
+}
+
+.salad-ui-app-web :is(.clear-start) {
+  clear: inline-start;
+}
+
+.salad-ui-app-web :is(.clear-end) {
+  clear: inline-end;
+}
+
+.salad-ui-app-web :is(.clear-left) {
+  clear: left;
+}
+
+.salad-ui-app-web :is(.clear-right) {
+  clear: right;
+}
+
+.salad-ui-app-web :is(.clear-both) {
+  clear: both;
+}
+
+.salad-ui-app-web :is(.clear-none) {
+  clear: none;
+}
+
+.salad-ui-app-web :is(.-m-3) {
+  margin: -0.75rem;
+}
+
+.salad-ui-app-web :is(.m-1) {
+  margin: 0.25rem;
+}
+
+.salad-ui-app-web :is(.-mx-1) {
+  margin-left: -0.25rem;
+  margin-right: -0.25rem;
+}
+
+.salad-ui-app-web :is(.-my-4) {
+  margin-top: -1rem;
+  margin-bottom: -1rem;
+}
+
+.salad-ui-app-web :is(.mx-2) {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.salad-ui-app-web :is(.mx-3) {
+  margin-left: 0.75rem;
+  margin-right: 0.75rem;
+}
+
+.salad-ui-app-web :is(.mx-3\.5) {
+  margin-left: 0.875rem;
+  margin-right: 0.875rem;
+}
+
+.salad-ui-app-web :is(.mx-auto) {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.salad-ui-app-web :is(.my-1) {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.salad-ui-app-web :is(.my-12) {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+.salad-ui-app-web :is(.my-2) {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.salad-ui-app-web :is(.my-4) {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.salad-ui-app-web :is(.my-8) {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.salad-ui-app-web :is(.-mr-3) {
+  margin-right: -0.75rem;
+}
+
+.salad-ui-app-web :is(.mb-1) {
+  margin-bottom: 0.25rem;
+}
+
+.salad-ui-app-web :is(.mb-2) {
+  margin-bottom: 0.5rem;
+}
+
+.salad-ui-app-web :is(.mb-4) {
+  margin-bottom: 1rem;
+}
+
+.salad-ui-app-web :is(.ml-1) {
+  margin-left: 0.25rem;
+}
+
+.salad-ui-app-web :is(.ml-2) {
+  margin-left: 0.5rem;
+}
+
+.salad-ui-app-web :is(.ml-4) {
+  margin-left: 1rem;
+}
+
+.salad-ui-app-web :is(.ml-auto) {
+  margin-left: auto;
+}
+
+.salad-ui-app-web :is(.mr-2) {
+  margin-right: 0.5rem;
+}
+
+.salad-ui-app-web :is(.mr-3) {
+  margin-right: 0.75rem;
+}
+
+.salad-ui-app-web :is(.mt-0) {
+  margin-top: 0px;
+}
+
+.salad-ui-app-web :is(.mt-0\.5) {
+  margin-top: 0.125rem;
+}
+
+.salad-ui-app-web :is(.mt-1) {
+  margin-top: 0.25rem;
+}
+
+.salad-ui-app-web :is(.mt-10) {
+  margin-top: 2.5rem;
+}
+
+.salad-ui-app-web :is(.mt-11) {
+  margin-top: 2.75rem;
+}
+
+.salad-ui-app-web :is(.mt-14) {
+  margin-top: 3.5rem;
+}
+
+.salad-ui-app-web :is(.mt-16) {
+  margin-top: 4rem;
+}
+
+.salad-ui-app-web :is(.mt-2) {
+  margin-top: 0.5rem;
+}
+
+.salad-ui-app-web :is(.mt-3) {
+  margin-top: 0.75rem;
+}
+
+.salad-ui-app-web :is(.mt-4) {
+  margin-top: 1rem;
+}
+
+.salad-ui-app-web :is(.box-border) {
+  box-sizing: border-box;
+}
+
+.salad-ui-app-web :is(.box-content) {
+  box-sizing: content-box;
+}
+
+.salad-ui-app-web :is(.line-clamp-none) {
+  overflow: visible;
+  display: block;
+  -webkit-box-orient: horizontal;
+  -webkit-line-clamp: none;
+}
+
+.salad-ui-app-web :is(.\!block) {
+  display: block !important;
+}
+
+.salad-ui-app-web :is(.block) {
+  display: block;
+}
+
+.salad-ui-app-web :is(.inline-block) {
+  display: inline-block;
+}
+
+.salad-ui-app-web :is(.inline) {
+  display: inline;
+}
+
+.salad-ui-app-web :is(.flex) {
+  display: flex;
+}
+
+.salad-ui-app-web :is(.inline-flex) {
+  display: inline-flex;
+}
+
+.salad-ui-app-web :is(.\!table) {
+  display: table !important;
+}
+
+.salad-ui-app-web :is(.table) {
+  display: table;
+}
+
+.salad-ui-app-web :is(.inline-table) {
+  display: inline-table;
+}
+
+.salad-ui-app-web :is(.table-caption) {
+  display: table-caption;
+}
+
+.salad-ui-app-web :is(.table-cell) {
+  display: table-cell;
+}
+
+.salad-ui-app-web :is(.table-column) {
+  display: table-column;
+}
+
+.salad-ui-app-web :is(.table-column-group) {
+  display: table-column-group;
+}
+
+.salad-ui-app-web :is(.table-footer-group) {
+  display: table-footer-group;
+}
+
+.salad-ui-app-web :is(.table-header-group) {
+  display: table-header-group;
+}
+
+.salad-ui-app-web :is(.table-row-group) {
+  display: table-row-group;
+}
+
+.salad-ui-app-web :is(.table-row) {
+  display: table-row;
+}
+
+.salad-ui-app-web :is(.flow-root) {
+  display: flow-root;
+}
+
+.salad-ui-app-web :is(.\!grid) {
+  display: grid !important;
+}
+
+.salad-ui-app-web :is(.grid) {
+  display: grid;
+}
+
+.salad-ui-app-web :is(.inline-grid) {
+  display: inline-grid;
+}
+
+.salad-ui-app-web :is(.contents) {
+  display: contents;
+}
+
+.salad-ui-app-web :is(.list-item) {
+  display: list-item;
+}
+
+.salad-ui-app-web :is(.\!hidden) {
+  display: none !important;
+}
+
+.salad-ui-app-web :is(.hidden) {
+  display: none;
+}
+
+.salad-ui-app-web :is(.aspect-square) {
+  aspect-ratio: 1 / 1;
+}
+
+.salad-ui-app-web :is(.size-1) {
+  width: 0.25rem;
+  height: 0.25rem;
+}
+
+.salad-ui-app-web :is(.size-4) {
+  width: 1rem;
+  height: 1rem;
+}
+
+.salad-ui-app-web :is(.size-6) {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.salad-ui-app-web :is(.h-1) {
+  height: 0.25rem;
+}
+
+.salad-ui-app-web :is(.h-10) {
+  height: 2.5rem;
+}
+
+.salad-ui-app-web :is(.h-11) {
+  height: 2.75rem;
+}
+
+.salad-ui-app-web :is(.h-12) {
+  height: 3rem;
+}
+
+.salad-ui-app-web :is(.h-16) {
+  height: 4rem;
+}
+
+.salad-ui-app-web :is(.h-2) {
+  height: 0.5rem;
+}
+
+.salad-ui-app-web :is(.h-2\.5) {
+  height: 0.625rem;
+}
+
+.salad-ui-app-web :is(.h-3) {
+  height: 0.75rem;
+}
+
+.salad-ui-app-web :is(.h-3\.5) {
+  height: 0.875rem;
+}
+
+.salad-ui-app-web :is(.h-32) {
+  height: 8rem;
+}
+
+.salad-ui-app-web :is(.h-4) {
+  height: 1rem;
+}
+
+.salad-ui-app-web :is(.h-5) {
+  height: 1.25rem;
+}
+
+.salad-ui-app-web :is(.h-6) {
+  height: 1.5rem;
+}
+
+.salad-ui-app-web :is(.h-7) {
+  height: 1.75rem;
+}
+
+.salad-ui-app-web :is(.h-8) {
+  height: 2rem;
+}
+
+.salad-ui-app-web :is(.h-9) {
+  height: 2.25rem;
+}
+
+.salad-ui-app-web :is(.h-\[1px\]) {
+  height: 1px;
+}
+
+.salad-ui-app-web :is(.h-\[200px\]) {
+  height: 200px;
+}
+
+.salad-ui-app-web :is(.h-full) {
+  height: 100%;
+}
+
+.salad-ui-app-web :is(.h-px) {
+  height: 1px;
+}
+
+.salad-ui-app-web :is(.h-svh) {
+  height: 100svh;
+}
+
+.salad-ui-app-web :is(.max-h-96) {
+  max-height: 24rem;
+}
+
+.salad-ui-app-web :is(.max-h-\[300px\]) {
+  max-height: 300px;
+}
+
+.salad-ui-app-web :is(.min-h-0) {
+  min-height: 0px;
+}
+
+.salad-ui-app-web :is(.min-h-\[6rem\]) {
+  min-height: 6rem;
+}
+
+.salad-ui-app-web :is(.min-h-\[80px\]) {
+  min-height: 80px;
+}
+
+.salad-ui-app-web :is(.min-h-full) {
+  min-height: 100%;
+}
+
+.salad-ui-app-web :is(.min-h-svh) {
+  min-height: 100svh;
+}
+
+.salad-ui-app-web :is(.w-1\/4) {
+  width: 25%;
+}
+
+.salad-ui-app-web :is(.w-10) {
+  width: 2.5rem;
+}
+
+.salad-ui-app-web :is(.w-11) {
+  width: 2.75rem;
+}
+
+.salad-ui-app-web :is(.w-12) {
+  width: 3rem;
+}
+
+.salad-ui-app-web :is(.w-14) {
+  width: 3.5rem;
+}
+
+.salad-ui-app-web :is(.w-16) {
+  width: 4rem;
+}
+
+.salad-ui-app-web :is(.w-2) {
+  width: 0.5rem;
+}
+
+.salad-ui-app-web :is(.w-2\.5) {
+  width: 0.625rem;
+}
+
+.salad-ui-app-web :is(.w-2\/3) {
+  width: 66.666667%;
+}
+
+.salad-ui-app-web :is(.w-24) {
+  width: 6rem;
+}
+
+.salad-ui-app-web :is(.w-3) {
+  width: 0.75rem;
+}
+
+.salad-ui-app-web :is(.w-3\.5) {
+  width: 0.875rem;
+}
+
+.salad-ui-app-web :is(.w-3\/4) {
+  width: 75%;
+}
+
+.salad-ui-app-web :is(.w-32) {
+  width: 8rem;
+}
+
+.salad-ui-app-web :is(.w-4) {
+  width: 1rem;
+}
+
+.salad-ui-app-web :is(.w-5) {
+  width: 1.25rem;
+}
+
+.salad-ui-app-web :is(.w-6) {
+  width: 1.5rem;
+}
+
+.salad-ui-app-web :is(.w-64) {
+  width: 16rem;
+}
+
+.salad-ui-app-web :is(.w-7) {
+  width: 1.75rem;
+}
+
+.salad-ui-app-web :is(.w-72) {
+  width: 18rem;
+}
+
+.salad-ui-app-web :is(.w-80) {
+  width: 20rem;
+}
+
+.salad-ui-app-web :is(.w-9) {
+  width: 2.25rem;
+}
+
+.salad-ui-app-web :is(.w-\[--sidebar-width\]) {
+  width: var(--sidebar-width);
+}
+
+.salad-ui-app-web :is(.w-\[100px\]) {
+  width: 100px;
+}
+
+.salad-ui-app-web :is(.w-\[180px\]) {
+  width: 180px;
+}
+
+.salad-ui-app-web :is(.w-\[1px\]) {
+  width: 1px;
+}
+
+.salad-ui-app-web :is(.w-\[300px\]) {
+  width: 300px;
+}
+
+.salad-ui-app-web :is(.w-\[40rem\]) {
+  width: 40rem;
+}
+
+.salad-ui-app-web :is(.w-\[60\%\]) {
+  width: 60%;
+}
+
+.salad-ui-app-web :is(.w-\[this-is\\\\\]) {
+  width: this-is\\;
+}
+
+.salad-ui-app-web :is(.w-\[this-is\]) {
+  width: this-is;
+}
+
+.salad-ui-app-web :is(.w-\[weird-and-invalid\]) {
+  width: weird-and-invalid;
+}
+
+.salad-ui-app-web :is(.w-auto) {
+  width: auto;
+}
+
+.salad-ui-app-web :is(.w-full) {
+  width: 100%;
+}
+
+.salad-ui-app-web :is(.min-w-0) {
+  min-width: 0px;
+}
+
+.salad-ui-app-web :is(.min-w-5) {
+  min-width: 1.25rem;
+}
+
+.salad-ui-app-web :is(.min-w-\[8rem\]) {
+  min-width: 8rem;
+}
+
+.salad-ui-app-web :is(.min-w-full) {
+  min-width: 100%;
+}
+
+.salad-ui-app-web :is(.max-w-3xl) {
+  max-width: 48rem;
+}
+
+.salad-ui-app-web :is(.max-w-\[--skeleton-width\]) {
+  max-width: var(--skeleton-width);
+}
+
+.salad-ui-app-web :is(.max-w-lg) {
+  max-width: 32rem;
+}
+
+.salad-ui-app-web :is(.max-w-sm) {
+  max-width: 24rem;
+}
+
+.salad-ui-app-web :is(.flex-1) {
+  flex: 1 1 0%;
+}
+
+.salad-ui-app-web :is(.flex-none) {
+  flex: none;
+}
+
+.salad-ui-app-web :is(.flex-shrink) {
+  flex-shrink: 1;
+}
+
+.salad-ui-app-web :is(.shrink) {
+  flex-shrink: 1;
+}
+
+.salad-ui-app-web :is(.shrink-0) {
+  flex-shrink: 0;
+}
+
+.salad-ui-app-web :is(.flex-grow) {
+  flex-grow: 1;
+}
+
+.salad-ui-app-web :is(.grow) {
+  flex-grow: 1;
+}
+
+.salad-ui-app-web :is(.table-auto) {
+  table-layout: auto;
+}
+
+.salad-ui-app-web :is(.table-fixed) {
+  table-layout: fixed;
+}
+
+.salad-ui-app-web :is(.caption-top) {
+  caption-side: top;
+}
+
+.salad-ui-app-web :is(.caption-bottom) {
+  caption-side: bottom;
+}
+
+.salad-ui-app-web :is(.border-collapse) {
+  border-collapse: collapse;
+}
+
+.salad-ui-app-web :is(.border-separate) {
+  border-collapse: separate;
+}
+
+.salad-ui-app-web :is(.-translate-x-1\/2) {
+  --tw-translate-x: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.salad-ui-app-web :is(.-translate-x-px) {
+  --tw-translate-x: -1px;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.salad-ui-app-web :is(.-translate-y-1\/2) {
+  --tw-translate-y: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.salad-ui-app-web :is(.translate-x-\[-50\%\]) {
+  --tw-translate-x: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.salad-ui-app-web :is(.translate-x-px) {
+  --tw-translate-x: 1px;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.salad-ui-app-web :is(.translate-y-0) {
+  --tw-translate-y: 0px;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.salad-ui-app-web :is(.translate-y-4) {
+  --tw-translate-y: 1rem;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.salad-ui-app-web :is(.translate-y-\[-50\%\]) {
+  --tw-translate-y: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.salad-ui-app-web :is(.\!transform) {
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)) !important;
+}
+
+.salad-ui-app-web :is(.transform) {
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.salad-ui-app-web :is(.transform-cpu) {
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.salad-ui-app-web :is(.transform-gpu) {
+  transform: translate3d(var(--tw-translate-x), var(--tw-translate-y), 0) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.salad-ui-app-web :is(.transform-none) {
+  transform: none;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .5;
+  }
+}
+
+.salad-ui-app-web :is(.animate-pulse) {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.salad-ui-app-web :is(.animate-spin) {
+  animation: spin 1s linear infinite;
+}
+
+.salad-ui-app-web :is(.cursor-default) {
+  cursor: default;
+}
+
+.salad-ui-app-web :is(.cursor-pointer) {
+  cursor: pointer;
+}
+
+.salad-ui-app-web :is(.touch-auto) {
+  touch-action: auto;
+}
+
+.salad-ui-app-web :is(.touch-none) {
+  touch-action: none;
+}
+
+.salad-ui-app-web :is(.touch-pan-x) {
+  --tw-pan-x: pan-x;
+  touch-action: var(--tw-pan-x) var(--tw-pan-y) var(--tw-pinch-zoom);
+}
+
+.salad-ui-app-web :is(.touch-pan-left) {
+  --tw-pan-x: pan-left;
+  touch-action: var(--tw-pan-x) var(--tw-pan-y) var(--tw-pinch-zoom);
+}
+
+.salad-ui-app-web :is(.touch-pan-right) {
+  --tw-pan-x: pan-right;
+  touch-action: var(--tw-pan-x) var(--tw-pan-y) var(--tw-pinch-zoom);
+}
+
+.salad-ui-app-web :is(.touch-pan-y) {
+  --tw-pan-y: pan-y;
+  touch-action: var(--tw-pan-x) var(--tw-pan-y) var(--tw-pinch-zoom);
+}
+
+.salad-ui-app-web :is(.touch-pan-up) {
+  --tw-pan-y: pan-up;
+  touch-action: var(--tw-pan-x) var(--tw-pan-y) var(--tw-pinch-zoom);
+}
+
+.salad-ui-app-web :is(.touch-pan-down) {
+  --tw-pan-y: pan-down;
+  touch-action: var(--tw-pan-x) var(--tw-pan-y) var(--tw-pinch-zoom);
+}
+
+.salad-ui-app-web :is(.touch-pinch-zoom) {
+  --tw-pinch-zoom: pinch-zoom;
+  touch-action: var(--tw-pan-x) var(--tw-pan-y) var(--tw-pinch-zoom);
+}
+
+.salad-ui-app-web :is(.touch-manipulation) {
+  touch-action: manipulation;
+}
+
+.salad-ui-app-web :is(.select-none) {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+
+.salad-ui-app-web :is(.select-text) {
+  -webkit-user-select: text;
+     -moz-user-select: text;
+          user-select: text;
+}
+
+.salad-ui-app-web :is(.select-all) {
+  -webkit-user-select: all;
+     -moz-user-select: all;
+          user-select: all;
+}
+
+.salad-ui-app-web :is(.select-auto) {
+  -webkit-user-select: auto;
+     -moz-user-select: auto;
+          user-select: auto;
+}
+
+.salad-ui-app-web :is(.resize-none) {
+  resize: none;
+}
+
+.salad-ui-app-web :is(.resize-y) {
+  resize: vertical;
+}
+
+.salad-ui-app-web :is(.resize-x) {
+  resize: horizontal;
+}
+
+.salad-ui-app-web :is(.resize) {
+  resize: both;
+}
+
+.salad-ui-app-web :is(.snap-none) {
+  scroll-snap-type: none;
+}
+
+.salad-ui-app-web :is(.snap-x) {
+  scroll-snap-type: x var(--tw-scroll-snap-strictness);
+}
+
+.salad-ui-app-web :is(.snap-y) {
+  scroll-snap-type: y var(--tw-scroll-snap-strictness);
+}
+
+.salad-ui-app-web :is(.snap-both) {
+  scroll-snap-type: both var(--tw-scroll-snap-strictness);
+}
+
+.salad-ui-app-web :is(.snap-mandatory) {
+  --tw-scroll-snap-strictness: mandatory;
+}
+
+.salad-ui-app-web :is(.snap-proximity) {
+  --tw-scroll-snap-strictness: proximity;
+}
+
+.salad-ui-app-web :is(.snap-start) {
+  scroll-snap-align: start;
+}
+
+.salad-ui-app-web :is(.snap-end) {
+  scroll-snap-align: end;
+}
+
+.salad-ui-app-web :is(.snap-center) {
+  scroll-snap-align: center;
+}
+
+.salad-ui-app-web :is(.snap-align-none) {
+  scroll-snap-align: none;
+}
+
+.salad-ui-app-web :is(.snap-normal) {
+  scroll-snap-stop: normal;
+}
+
+.salad-ui-app-web :is(.snap-always) {
+  scroll-snap-stop: always;
+}
+
+.salad-ui-app-web :is(.list-inside) {
+  list-style-position: inside;
+}
+
+.salad-ui-app-web :is(.list-outside) {
+  list-style-position: outside;
+}
+
+.salad-ui-app-web :is(.list-none) {
+  list-style-type: none;
+}
+
+.salad-ui-app-web :is(.appearance-none) {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+}
+
+.salad-ui-app-web :is(.appearance-auto) {
+  -webkit-appearance: auto;
+     -moz-appearance: auto;
+          appearance: auto;
+}
+
+.salad-ui-app-web :is(.break-before-auto) {
+  -moz-column-break-before: auto;
+       break-before: auto;
+}
+
+.salad-ui-app-web :is(.break-before-avoid) {
+  -moz-column-break-before: avoid;
+       break-before: avoid;
+}
+
+.salad-ui-app-web :is(.break-before-all) {
+  -moz-column-break-before: all;
+       break-before: all;
+}
+
+.salad-ui-app-web :is(.break-before-avoid-page) {
+  -moz-column-break-before: avoid;
+       break-before: avoid-page;
+}
+
+.salad-ui-app-web :is(.break-before-page) {
+  -moz-column-break-before: page;
+       break-before: page;
+}
+
+.salad-ui-app-web :is(.break-before-left) {
+  -moz-column-break-before: left;
+       break-before: left;
+}
+
+.salad-ui-app-web :is(.break-before-right) {
+  -moz-column-break-before: right;
+       break-before: right;
+}
+
+.salad-ui-app-web :is(.break-before-column) {
+  -moz-column-break-before: column;
+       break-before: column;
+}
+
+.salad-ui-app-web :is(.break-inside-auto) {
+  -moz-column-break-inside: auto;
+       break-inside: auto;
+}
+
+.salad-ui-app-web :is(.break-inside-avoid) {
+  -moz-column-break-inside: avoid;
+       break-inside: avoid;
+}
+
+.salad-ui-app-web :is(.break-inside-avoid-page) {
+  break-inside: avoid-page;
+}
+
+.salad-ui-app-web :is(.break-inside-avoid-column) {
+  -moz-column-break-inside: avoid;
+       break-inside: avoid-column;
+}
+
+.salad-ui-app-web :is(.break-after-auto) {
+  -moz-column-break-after: auto;
+       break-after: auto;
+}
+
+.salad-ui-app-web :is(.break-after-avoid) {
+  -moz-column-break-after: avoid;
+       break-after: avoid;
+}
+
+.salad-ui-app-web :is(.break-after-all) {
+  -moz-column-break-after: all;
+       break-after: all;
+}
+
+.salad-ui-app-web :is(.break-after-avoid-page) {
+  -moz-column-break-after: avoid;
+       break-after: avoid-page;
+}
+
+.salad-ui-app-web :is(.break-after-page) {
+  -moz-column-break-after: page;
+       break-after: page;
+}
+
+.salad-ui-app-web :is(.break-after-left) {
+  -moz-column-break-after: left;
+       break-after: left;
+}
+
+.salad-ui-app-web :is(.break-after-right) {
+  -moz-column-break-after: right;
+       break-after: right;
+}
+
+.salad-ui-app-web :is(.break-after-column) {
+  -moz-column-break-after: column;
+       break-after: column;
+}
+
+.salad-ui-app-web :is(.grid-flow-row) {
+  grid-auto-flow: row;
+}
+
+.salad-ui-app-web :is(.grid-flow-col) {
+  grid-auto-flow: column;
+}
+
+.salad-ui-app-web :is(.grid-flow-dense) {
+  grid-auto-flow: dense;
+}
+
+.salad-ui-app-web :is(.grid-flow-row-dense) {
+  grid-auto-flow: row dense;
+}
+
+.salad-ui-app-web :is(.grid-flow-col-dense) {
+  grid-auto-flow: column dense;
+}
+
+.salad-ui-app-web :is(.grid-cols-4) {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.salad-ui-app-web :is(.flex-row) {
+  flex-direction: row;
+}
+
+.salad-ui-app-web :is(.flex-row-reverse) {
+  flex-direction: row-reverse;
+}
+
+.salad-ui-app-web :is(.flex-col) {
+  flex-direction: column;
+}
+
+.salad-ui-app-web :is(.flex-col-reverse) {
+  flex-direction: column-reverse;
+}
+
+.salad-ui-app-web :is(.flex-wrap) {
+  flex-wrap: wrap;
+}
+
+.salad-ui-app-web :is(.flex-wrap-reverse) {
+  flex-wrap: wrap-reverse;
+}
+
+.salad-ui-app-web :is(.flex-nowrap) {
+  flex-wrap: nowrap;
+}
+
+.salad-ui-app-web :is(.place-content-center) {
+  place-content: center;
+}
+
+.salad-ui-app-web :is(.place-content-start) {
+  place-content: start;
+}
+
+.salad-ui-app-web :is(.place-content-end) {
+  place-content: end;
+}
+
+.salad-ui-app-web :is(.place-content-between) {
+  place-content: space-between;
+}
+
+.salad-ui-app-web :is(.place-content-around) {
+  place-content: space-around;
+}
+
+.salad-ui-app-web :is(.place-content-evenly) {
+  place-content: space-evenly;
+}
+
+.salad-ui-app-web :is(.place-content-baseline) {
+  place-content: baseline;
+}
+
+.salad-ui-app-web :is(.place-content-stretch) {
+  place-content: stretch;
+}
+
+.salad-ui-app-web :is(.place-items-start) {
+  place-items: start;
+}
+
+.salad-ui-app-web :is(.place-items-end) {
+  place-items: end;
+}
+
+.salad-ui-app-web :is(.place-items-center) {
+  place-items: center;
+}
+
+.salad-ui-app-web :is(.place-items-baseline) {
+  place-items: baseline;
+}
+
+.salad-ui-app-web :is(.place-items-stretch) {
+  place-items: stretch;
+}
+
+.salad-ui-app-web :is(.content-normal) {
+  align-content: normal;
+}
+
+.salad-ui-app-web :is(.content-center) {
+  align-content: center;
+}
+
+.salad-ui-app-web :is(.content-start) {
+  align-content: flex-start;
+}
+
+.salad-ui-app-web :is(.content-end) {
+  align-content: flex-end;
+}
+
+.salad-ui-app-web :is(.content-between) {
+  align-content: space-between;
+}
+
+.salad-ui-app-web :is(.content-around) {
+  align-content: space-around;
+}
+
+.salad-ui-app-web :is(.content-evenly) {
+  align-content: space-evenly;
+}
+
+.salad-ui-app-web :is(.content-baseline) {
+  align-content: baseline;
+}
+
+.salad-ui-app-web :is(.content-stretch) {
+  align-content: stretch;
+}
+
+.salad-ui-app-web :is(.items-start) {
+  align-items: flex-start;
+}
+
+.salad-ui-app-web :is(.items-end) {
+  align-items: flex-end;
+}
+
+.salad-ui-app-web :is(.items-center) {
+  align-items: center;
+}
+
+.salad-ui-app-web :is(.items-baseline) {
+  align-items: baseline;
+}
+
+.salad-ui-app-web :is(.items-stretch) {
+  align-items: stretch;
+}
+
+.salad-ui-app-web :is(.justify-normal) {
+  justify-content: normal;
+}
+
+.salad-ui-app-web :is(.justify-start) {
+  justify-content: flex-start;
+}
+
+.salad-ui-app-web :is(.justify-end) {
+  justify-content: flex-end;
+}
+
+.salad-ui-app-web :is(.justify-center) {
+  justify-content: center;
+}
+
+.salad-ui-app-web :is(.justify-between) {
+  justify-content: space-between;
+}
+
+.salad-ui-app-web :is(.justify-around) {
+  justify-content: space-around;
+}
+
+.salad-ui-app-web :is(.justify-evenly) {
+  justify-content: space-evenly;
+}
+
+.salad-ui-app-web :is(.justify-stretch) {
+  justify-content: stretch;
+}
+
+.salad-ui-app-web :is(.justify-items-start) {
+  justify-items: start;
+}
+
+.salad-ui-app-web :is(.justify-items-end) {
+  justify-items: end;
+}
+
+.salad-ui-app-web :is(.justify-items-center) {
+  justify-items: center;
+}
+
+.salad-ui-app-web :is(.justify-items-stretch) {
+  justify-items: stretch;
+}
+
+.salad-ui-app-web :is(.gap-1) {
+  gap: 0.25rem;
+}
+
+.salad-ui-app-web :is(.gap-1\.5) {
+  gap: 0.375rem;
+}
+
+.salad-ui-app-web :is(.gap-2) {
+  gap: 0.5rem;
+}
+
+.salad-ui-app-web :is(.gap-3) {
+  gap: 0.75rem;
+}
+
+.salad-ui-app-web :is(.gap-4) {
+  gap: 1rem;
+}
+
+.salad-ui-app-web :is(.gap-6) {
+  gap: 1.5rem;
+}
+
+.salad-ui-app-web :is(.space-x-2 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(0.5rem * var(--tw-space-x-reverse));
+  margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+.salad-ui-app-web :is(.space-y-1 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
+}
+
+.salad-ui-app-web :is(.space-y-1\.5 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.375rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.375rem * var(--tw-space-y-reverse));
+}
+
+.salad-ui-app-web :is(.space-y-2 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
+}
+
+.salad-ui-app-web :is(.space-y-6 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
+}
+
+.salad-ui-app-web :is(.space-y-8 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(2rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(2rem * var(--tw-space-y-reverse));
+}
+
+.salad-ui-app-web :is(.space-y-reverse > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-y-reverse: 1;
+}
+
+.salad-ui-app-web :is(.space-x-reverse > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-x-reverse: 1;
+}
+
+.salad-ui-app-web :is(.divide-x > :not([hidden]) ~ :not([hidden])) {
+  --tw-divide-x-reverse: 0;
+  border-right-width: calc(1px * var(--tw-divide-x-reverse));
+  border-left-width: calc(1px * calc(1 - var(--tw-divide-x-reverse)));
+}
+
+.salad-ui-app-web :is(.divide-y > :not([hidden]) ~ :not([hidden])) {
+  --tw-divide-y-reverse: 0;
+  border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
+  border-bottom-width: calc(1px * var(--tw-divide-y-reverse));
+}
+
+.salad-ui-app-web :is(.divide-y-reverse > :not([hidden]) ~ :not([hidden])) {
+  --tw-divide-y-reverse: 1;
+}
+
+.salad-ui-app-web :is(.divide-x-reverse > :not([hidden]) ~ :not([hidden])) {
+  --tw-divide-x-reverse: 1;
+}
+
+.salad-ui-app-web :is(.divide-solid > :not([hidden]) ~ :not([hidden])) {
+  border-style: solid;
+}
+
+.salad-ui-app-web :is(.divide-dashed > :not([hidden]) ~ :not([hidden])) {
+  border-style: dashed;
+}
+
+.salad-ui-app-web :is(.divide-dotted > :not([hidden]) ~ :not([hidden])) {
+  border-style: dotted;
+}
+
+.salad-ui-app-web :is(.divide-double > :not([hidden]) ~ :not([hidden])) {
+  border-style: double;
+}
+
+.salad-ui-app-web :is(.divide-none > :not([hidden]) ~ :not([hidden])) {
+  border-style: none;
+}
+
+.salad-ui-app-web :is(.divide-zinc-100 > :not([hidden]) ~ :not([hidden])) {
+  --tw-divide-opacity: 1;
+  border-color: rgb(244 244 245 / var(--tw-divide-opacity));
+}
+
+.salad-ui-app-web :is(.place-self-auto) {
+  place-self: auto;
+}
+
+.salad-ui-app-web :is(.place-self-start) {
+  place-self: start;
+}
+
+.salad-ui-app-web :is(.place-self-end) {
+  place-self: end;
+}
+
+.salad-ui-app-web :is(.place-self-center) {
+  place-self: center;
+}
+
+.salad-ui-app-web :is(.place-self-stretch) {
+  place-self: stretch;
+}
+
+.salad-ui-app-web :is(.self-auto) {
+  align-self: auto;
+}
+
+.salad-ui-app-web :is(.self-start) {
+  align-self: flex-start;
+}
+
+.salad-ui-app-web :is(.self-end) {
+  align-self: flex-end;
+}
+
+.salad-ui-app-web :is(.self-center) {
+  align-self: center;
+}
+
+.salad-ui-app-web :is(.self-stretch) {
+  align-self: stretch;
+}
+
+.salad-ui-app-web :is(.self-baseline) {
+  align-self: baseline;
+}
+
+.salad-ui-app-web :is(.justify-self-auto) {
+  justify-self: auto;
+}
+
+.salad-ui-app-web :is(.justify-self-start) {
+  justify-self: start;
+}
+
+.salad-ui-app-web :is(.justify-self-end) {
+  justify-self: end;
+}
+
+.salad-ui-app-web :is(.justify-self-center) {
+  justify-self: center;
+}
+
+.salad-ui-app-web :is(.justify-self-stretch) {
+  justify-self: stretch;
+}
+
+.salad-ui-app-web :is(.overflow-auto) {
+  overflow: auto;
+}
+
+.salad-ui-app-web :is(.overflow-hidden) {
+  overflow: hidden;
+}
+
+.salad-ui-app-web :is(.overflow-clip) {
+  overflow: clip;
+}
+
+.salad-ui-app-web :is(.overflow-visible) {
+  overflow: visible;
+}
+
+.salad-ui-app-web :is(.overflow-scroll) {
+  overflow: scroll;
+}
+
+.salad-ui-app-web :is(.overflow-x-auto) {
+  overflow-x: auto;
+}
+
+.salad-ui-app-web :is(.overflow-y-auto) {
+  overflow-y: auto;
+}
+
+.salad-ui-app-web :is(.overflow-x-hidden) {
+  overflow-x: hidden;
+}
+
+.salad-ui-app-web :is(.overflow-y-hidden) {
+  overflow-y: hidden;
+}
+
+.salad-ui-app-web :is(.overflow-x-clip) {
+  overflow-x: clip;
+}
+
+.salad-ui-app-web :is(.overflow-y-clip) {
+  overflow-y: clip;
+}
+
+.salad-ui-app-web :is(.overflow-x-visible) {
+  overflow-x: visible;
+}
+
+.salad-ui-app-web :is(.overflow-y-visible) {
+  overflow-y: visible;
+}
+
+.salad-ui-app-web :is(.overflow-x-scroll) {
+  overflow-x: scroll;
+}
+
+.salad-ui-app-web :is(.overflow-y-scroll) {
+  overflow-y: scroll;
+}
+
+.salad-ui-app-web :is(.overscroll-auto) {
+  overscroll-behavior: auto;
+}
+
+.salad-ui-app-web :is(.overscroll-contain) {
+  overscroll-behavior: contain;
+}
+
+.salad-ui-app-web :is(.overscroll-none) {
+  overscroll-behavior: none;
+}
+
+.salad-ui-app-web :is(.overscroll-y-auto) {
+  overscroll-behavior-y: auto;
+}
+
+.salad-ui-app-web :is(.overscroll-y-contain) {
+  overscroll-behavior-y: contain;
+}
+
+.salad-ui-app-web :is(.overscroll-y-none) {
+  overscroll-behavior-y: none;
+}
+
+.salad-ui-app-web :is(.overscroll-x-auto) {
+  overscroll-behavior-x: auto;
+}
+
+.salad-ui-app-web :is(.overscroll-x-contain) {
+  overscroll-behavior-x: contain;
+}
+
+.salad-ui-app-web :is(.overscroll-x-none) {
+  overscroll-behavior-x: none;
+}
+
+.salad-ui-app-web :is(.scroll-auto) {
+  scroll-behavior: auto;
+}
+
+.salad-ui-app-web :is(.scroll-smooth) {
+  scroll-behavior: smooth;
+}
+
+.salad-ui-app-web :is(.truncate) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.salad-ui-app-web :is(.overflow-ellipsis) {
+  text-overflow: ellipsis;
+}
+
+.salad-ui-app-web :is(.text-ellipsis) {
+  text-overflow: ellipsis;
+}
+
+.salad-ui-app-web :is(.text-clip) {
+  text-overflow: clip;
+}
+
+.salad-ui-app-web :is(.hyphens-none) {
+  -webkit-hyphens: none;
+          hyphens: none;
+}
+
+.salad-ui-app-web :is(.hyphens-manual) {
+  -webkit-hyphens: manual;
+          hyphens: manual;
+}
+
+.salad-ui-app-web :is(.hyphens-auto) {
+  -webkit-hyphens: auto;
+          hyphens: auto;
+}
+
+.salad-ui-app-web :is(.whitespace-normal) {
+  white-space: normal;
+}
+
+.salad-ui-app-web :is(.whitespace-nowrap) {
+  white-space: nowrap;
+}
+
+.salad-ui-app-web :is(.whitespace-pre) {
+  white-space: pre;
+}
+
+.salad-ui-app-web :is(.whitespace-pre-line) {
+  white-space: pre-line;
+}
+
+.salad-ui-app-web :is(.whitespace-pre-wrap) {
+  white-space: pre-wrap;
+}
+
+.salad-ui-app-web :is(.whitespace-break-spaces) {
+  white-space: break-spaces;
+}
+
+.salad-ui-app-web :is(.text-wrap) {
+  text-wrap: wrap;
+}
+
+.salad-ui-app-web :is(.text-nowrap) {
+  text-wrap: nowrap;
+}
+
+.salad-ui-app-web :is(.text-balance) {
+  text-wrap: balance;
+}
+
+.salad-ui-app-web :is(.text-pretty) {
+  text-wrap: pretty;
+}
+
+.salad-ui-app-web :is(.break-normal) {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.salad-ui-app-web :is(.break-words) {
+  overflow-wrap: break-word;
+}
+
+.salad-ui-app-web :is(.break-all) {
+  word-break: break-all;
+}
+
+.salad-ui-app-web :is(.break-keep) {
+  word-break: keep-all;
+}
+
+.salad-ui-app-web :is(.rounded) {
+  border-radius: 0.25rem;
+}
+
+.salad-ui-app-web :is(.rounded-2xl) {
+  border-radius: 1rem;
+}
+
+.salad-ui-app-web :is(.rounded-\[inherit\]) {
+  border-radius: inherit;
+}
+
+.salad-ui-app-web :is(.rounded-full) {
+  border-radius: 9999px;
+}
+
+.salad-ui-app-web :is(.rounded-lg) {
+  border-radius: 0.5rem;
+}
+
+.salad-ui-app-web :is(.rounded-md) {
+  border-radius: 0.375rem;
+}
+
+.salad-ui-app-web :is(.rounded-sm) {
+  border-radius: 0.125rem;
+}
+
+.salad-ui-app-web :is(.rounded-xl) {
+  border-radius: 0.75rem;
+}
+
+.salad-ui-app-web :is(.rounded-b) {
+  border-bottom-right-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+}
+
+.salad-ui-app-web :is(.rounded-e) {
+  border-start-end-radius: 0.25rem;
+  border-end-end-radius: 0.25rem;
+}
+
+.salad-ui-app-web :is(.rounded-l) {
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+}
+
+.salad-ui-app-web :is(.rounded-r) {
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+}
+
+.salad-ui-app-web :is(.rounded-s) {
+  border-start-start-radius: 0.25rem;
+  border-end-start-radius: 0.25rem;
+}
+
+.salad-ui-app-web :is(.rounded-t) {
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+}
+
+.salad-ui-app-web :is(.rounded-bl) {
+  border-bottom-left-radius: 0.25rem;
+}
+
+.salad-ui-app-web :is(.rounded-br) {
+  border-bottom-right-radius: 0.25rem;
+}
+
+.salad-ui-app-web :is(.rounded-ee) {
+  border-end-end-radius: 0.25rem;
+}
+
+.salad-ui-app-web :is(.rounded-es) {
+  border-end-start-radius: 0.25rem;
+}
+
+.salad-ui-app-web :is(.rounded-se) {
+  border-start-end-radius: 0.25rem;
+}
+
+.salad-ui-app-web :is(.rounded-ss) {
+  border-start-start-radius: 0.25rem;
+}
+
+.salad-ui-app-web :is(.rounded-tl) {
+  border-top-left-radius: 0.25rem;
+}
+
+.salad-ui-app-web :is(.rounded-tr) {
+  border-top-right-radius: 0.25rem;
+}
+
+.salad-ui-app-web :is(.\!border) {
+  border-width: 1px !important;
+}
+
+.salad-ui-app-web :is(.border) {
+  border-width: 1px;
+}
+
+.salad-ui-app-web :is(.border-2) {
+  border-width: 2px;
+}
+
+.salad-ui-app-web :is(.border-x) {
+  border-left-width: 1px;
+  border-right-width: 1px;
+}
+
+.salad-ui-app-web :is(.border-y) {
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+}
+
+.salad-ui-app-web :is(.border-b) {
+  border-bottom-width: 1px;
+}
+
+.salad-ui-app-web :is(.border-b-2) {
+  border-bottom-width: 2px;
+}
+
+.salad-ui-app-web :is(.border-e) {
+  border-inline-end-width: 1px;
+}
+
+.salad-ui-app-web :is(.border-l) {
+  border-left-width: 1px;
+}
+
+.salad-ui-app-web :is(.border-r) {
+  border-right-width: 1px;
+}
+
+.salad-ui-app-web :is(.border-s) {
+  border-inline-start-width: 1px;
+}
+
+.salad-ui-app-web :is(.border-t) {
+  border-top-width: 1px;
+}
+
+.salad-ui-app-web :is(.border-t-2) {
+  border-top-width: 2px;
+}
+
+.salad-ui-app-web :is(.border-solid) {
+  border-style: solid;
+}
+
+.salad-ui-app-web :is(.border-dashed) {
+  border-style: dashed;
+}
+
+.salad-ui-app-web :is(.border-dotted) {
+  border-style: dotted;
+}
+
+.salad-ui-app-web :is(.border-double) {
+  border-style: double;
+}
+
+.salad-ui-app-web :is(.border-hidden) {
+  border-style: hidden;
+}
+
+.salad-ui-app-web :is(.border-none) {
+  border-style: none;
+}
+
+.salad-ui-app-web :is(.border-gray-300) {
+  --tw-border-opacity: 1;
+  border-color: rgb(209 213 219 / var(--tw-border-opacity));
+}
+
+.salad-ui-app-web :is(.border-red-200) {
+  --tw-border-opacity: 1;
+  border-color: rgb(254 202 202 / var(--tw-border-opacity));
+}
+
+.salad-ui-app-web :is(.border-red-300) {
+  --tw-border-opacity: 1;
+  border-color: rgb(252 165 165 / var(--tw-border-opacity));
+}
+
+.salad-ui-app-web :is(.border-rose-400) {
+  --tw-border-opacity: 1;
+  border-color: rgb(251 113 133 / var(--tw-border-opacity));
+}
+
+.salad-ui-app-web :is(.border-transparent) {
+  border-color: transparent;
+}
+
+.salad-ui-app-web :is(.border-zinc-200) {
+  --tw-border-opacity: 1;
+  border-color: rgb(228 228 231 / var(--tw-border-opacity));
+}
+
+.salad-ui-app-web :is(.border-zinc-300) {
+  --tw-border-opacity: 1;
+  border-color: rgb(212 212 216 / var(--tw-border-opacity));
+}
+
+.salad-ui-app-web :is(.bg-\[rgb\(255\2c 0\2c 0\)\]) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 0 0 / var(--tw-bg-opacity));
+}
+
+.salad-ui-app-web :is(.bg-black\/80) {
+  background-color: rgb(0 0 0 / 0.8);
+}
+
+.salad-ui-app-web :is(.bg-emerald-50) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(236 253 245 / var(--tw-bg-opacity));
+}
+
+.salad-ui-app-web :is(.bg-rose-50) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 241 242 / var(--tw-bg-opacity));
+}
+
+.salad-ui-app-web :is(.bg-transparent) {
+  background-color: transparent;
+}
+
+.salad-ui-app-web :is(.bg-white) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+}
+
+.salad-ui-app-web :is(.bg-zinc-50\/90) {
+  background-color: rgb(250 250 250 / 0.9);
+}
+
+.salad-ui-app-web :is(.bg-zinc-900) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(24 24 27 / var(--tw-bg-opacity));
+}
+
+.salad-ui-app-web :is(.decoration-slice) {
+  -webkit-box-decoration-break: slice;
+          box-decoration-break: slice;
+}
+
+.salad-ui-app-web :is(.decoration-clone) {
+  -webkit-box-decoration-break: clone;
+          box-decoration-break: clone;
+}
+
+.salad-ui-app-web :is(.box-decoration-slice) {
+  -webkit-box-decoration-break: slice;
+          box-decoration-break: slice;
+}
+
+.salad-ui-app-web :is(.box-decoration-clone) {
+  -webkit-box-decoration-break: clone;
+          box-decoration-break: clone;
+}
+
+.salad-ui-app-web :is(.bg-fixed) {
+  background-attachment: fixed;
+}
+
+.salad-ui-app-web :is(.bg-local) {
+  background-attachment: local;
+}
+
+.salad-ui-app-web :is(.bg-scroll) {
+  background-attachment: scroll;
+}
+
+.salad-ui-app-web :is(.bg-clip-border) {
+  background-clip: border-box;
+}
+
+.salad-ui-app-web :is(.bg-clip-padding) {
+  background-clip: padding-box;
+}
+
+.salad-ui-app-web :is(.bg-clip-content) {
+  background-clip: content-box;
+}
+
+.salad-ui-app-web :is(.bg-clip-text) {
+  -webkit-background-clip: text;
+          background-clip: text;
+}
+
+.salad-ui-app-web :is(.bg-repeat) {
+  background-repeat: repeat;
+}
+
+.salad-ui-app-web :is(.bg-no-repeat) {
+  background-repeat: no-repeat;
+}
+
+.salad-ui-app-web :is(.bg-repeat-x) {
+  background-repeat: repeat-x;
+}
+
+.salad-ui-app-web :is(.bg-repeat-y) {
+  background-repeat: repeat-y;
+}
+
+.salad-ui-app-web :is(.bg-repeat-round) {
+  background-repeat: round;
+}
+
+.salad-ui-app-web :is(.bg-repeat-space) {
+  background-repeat: space;
+}
+
+.salad-ui-app-web :is(.bg-origin-border) {
+  background-origin: border-box;
+}
+
+.salad-ui-app-web :is(.bg-origin-padding) {
+  background-origin: padding-box;
+}
+
+.salad-ui-app-web :is(.bg-origin-content) {
+  background-origin: content-box;
+}
+
+.salad-ui-app-web :is(.fill-current) {
+  fill: currentColor;
+}
+
+.salad-ui-app-web :is(.fill-cyan-900) {
+  fill: #164e63;
+}
+
+.salad-ui-app-web :is(.fill-rose-900) {
+  fill: #881337;
+}
+
+.salad-ui-app-web :is(.object-contain) {
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+
+.salad-ui-app-web :is(.object-cover) {
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.salad-ui-app-web :is(.object-fill) {
+  -o-object-fit: fill;
+     object-fit: fill;
+}
+
+.salad-ui-app-web :is(.object-none) {
+  -o-object-fit: none;
+     object-fit: none;
+}
+
+.salad-ui-app-web :is(.object-scale-down) {
+  -o-object-fit: scale-down;
+     object-fit: scale-down;
+}
+
+.salad-ui-app-web :is(.p-0) {
+  padding: 0px;
+}
+
+.salad-ui-app-web :is(.p-1) {
+  padding: 0.25rem;
+}
+
+.salad-ui-app-web :is(.p-14) {
+  padding: 3.5rem;
+}
+
+.salad-ui-app-web :is(.p-2) {
+  padding: 0.5rem;
+}
+
+.salad-ui-app-web :is(.p-3) {
+  padding: 0.75rem;
+}
+
+.salad-ui-app-web :is(.p-4) {
+  padding: 1rem;
+}
+
+.salad-ui-app-web :is(.p-6) {
+  padding: 1.5rem;
+}
+
+.salad-ui-app-web :is(.px-1) {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+.salad-ui-app-web :is(.px-2) {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.salad-ui-app-web :is(.px-2\.5) {
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+}
+
+.salad-ui-app-web :is(.px-3) {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.salad-ui-app-web :is(.px-4) {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.salad-ui-app-web :is(.px-5) {
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+.salad-ui-app-web :is(.px-8) {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.salad-ui-app-web :is(.py-0) {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.salad-ui-app-web :is(.py-0\.5) {
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+}
+
+.salad-ui-app-web :is(.py-1) {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.salad-ui-app-web :is(.py-1\.5) {
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+}
+
+.salad-ui-app-web :is(.py-2) {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.salad-ui-app-web :is(.py-3) {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.salad-ui-app-web :is(.py-4) {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.salad-ui-app-web :is(.py-6) {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.salad-ui-app-web :is(.pb-4) {
+  padding-bottom: 1rem;
+}
+
+.salad-ui-app-web :is(.pl-6) {
+  padding-left: 1.5rem;
+}
+
+.salad-ui-app-web :is(.pl-8) {
+  padding-left: 2rem;
+}
+
+.salad-ui-app-web :is(.pr-2) {
+  padding-right: 0.5rem;
+}
+
+.salad-ui-app-web :is(.pr-2\.5) {
+  padding-right: 0.625rem;
+}
+
+.salad-ui-app-web :is(.pr-6) {
+  padding-right: 1.5rem;
+}
+
+.salad-ui-app-web :is(.pt-0) {
+  padding-top: 0px;
+}
+
+.salad-ui-app-web :is(.text-left) {
+  text-align: left;
+}
+
+.salad-ui-app-web :is(.text-center) {
+  text-align: center;
+}
+
+.salad-ui-app-web :is(.text-right) {
+  text-align: right;
+}
+
+.salad-ui-app-web :is(.text-justify) {
+  text-align: justify;
+}
+
+.salad-ui-app-web :is(.text-start) {
+  text-align: start;
+}
+
+.salad-ui-app-web :is(.text-end) {
+  text-align: end;
+}
+
+.salad-ui-app-web :is(.align-baseline) {
+  vertical-align: baseline;
+}
+
+.salad-ui-app-web :is(.align-top) {
+  vertical-align: top;
+}
+
+.salad-ui-app-web :is(.align-middle) {
+  vertical-align: middle;
+}
+
+.salad-ui-app-web :is(.align-bottom) {
+  vertical-align: bottom;
+}
+
+.salad-ui-app-web :is(.align-text-top) {
+  vertical-align: text-top;
+}
+
+.salad-ui-app-web :is(.align-text-bottom) {
+  vertical-align: text-bottom;
+}
+
+.salad-ui-app-web :is(.align-sub) {
+  vertical-align: sub;
+}
+
+.salad-ui-app-web :is(.align-super) {
+  vertical-align: super;
+}
+
+.salad-ui-app-web :is(.font-mono) {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.salad-ui-app-web :is(.text-2xl) {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.salad-ui-app-web :is(.text-3xl) {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.salad-ui-app-web :is(.text-lg) {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.salad-ui-app-web :is(.text-sm) {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.salad-ui-app-web :is(.text-xl) {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.salad-ui-app-web :is(.text-xs) {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.salad-ui-app-web :is(.font-bold) {
+  font-weight: 700;
+}
+
+.salad-ui-app-web :is(.font-medium) {
+  font-weight: 500;
+}
+
+.salad-ui-app-web :is(.font-normal) {
+  font-weight: 400;
+}
+
+.salad-ui-app-web :is(.font-semibold) {
+  font-weight: 600;
+}
+
+.salad-ui-app-web :is(.uppercase) {
+  text-transform: uppercase;
+}
+
+.salad-ui-app-web :is(.lowercase) {
+  text-transform: lowercase;
+}
+
+.salad-ui-app-web :is(.capitalize) {
+  text-transform: capitalize;
+}
+
+.salad-ui-app-web :is(.normal-case) {
+  text-transform: none;
+}
+
+.salad-ui-app-web :is(.italic) {
+  font-style: italic;
+}
+
+.salad-ui-app-web :is(.not-italic) {
+  font-style: normal;
+}
+
+.salad-ui-app-web :is(.normal-nums) {
+  font-variant-numeric: normal;
+}
+
+.salad-ui-app-web :is(.ordinal) {
+  --tw-ordinal: ordinal;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+}
+
+.salad-ui-app-web :is(.slashed-zero) {
+  --tw-slashed-zero: slashed-zero;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+}
+
+.salad-ui-app-web :is(.lining-nums) {
+  --tw-numeric-figure: lining-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+}
+
+.salad-ui-app-web :is(.oldstyle-nums) {
+  --tw-numeric-figure: oldstyle-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+}
+
+.salad-ui-app-web :is(.proportional-nums) {
+  --tw-numeric-spacing: proportional-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+}
+
+.salad-ui-app-web :is(.tabular-nums) {
+  --tw-numeric-spacing: tabular-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+}
+
+.salad-ui-app-web :is(.diagonal-fractions) {
+  --tw-numeric-fraction: diagonal-fractions;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+}
+
+.salad-ui-app-web :is(.stacked-fractions) {
+  --tw-numeric-fraction: stacked-fractions;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+}
+
+.salad-ui-app-web :is(.leading-5) {
+  line-height: 1.25rem;
+}
+
+.salad-ui-app-web :is(.leading-6) {
+  line-height: 1.5rem;
+}
+
+.salad-ui-app-web :is(.leading-8) {
+  line-height: 2rem;
+}
+
+.salad-ui-app-web :is(.leading-none) {
+  line-height: 1;
+}
+
+.salad-ui-app-web :is(.tracking-tight) {
+  letter-spacing: -0.025em;
+}
+
+.salad-ui-app-web :is(.tracking-widest) {
+  letter-spacing: 0.1em;
+}
+
+.salad-ui-app-web :is(.text-\[\#336699\]\/\[\.35\]) {
+  color: rgb(51 102 153 / .35);
+}
+
+.salad-ui-app-web :is(.text-blue-500) {
+  --tw-text-opacity: 1;
+  color: rgb(59 130 246 / var(--tw-text-opacity));
+}
+
+.salad-ui-app-web :is(.text-current) {
+  color: currentColor;
+}
+
+.salad-ui-app-web :is(.text-emerald-800) {
+  --tw-text-opacity: 1;
+  color: rgb(6 95 70 / var(--tw-text-opacity));
+}
+
+.salad-ui-app-web :is(.text-gray-600) {
+  --tw-text-opacity: 1;
+  color: rgb(75 85 99 / var(--tw-text-opacity));
+}
+
+.salad-ui-app-web :is(.text-gray-700) {
+  --tw-text-opacity: 1;
+  color: rgb(55 65 81 / var(--tw-text-opacity));
+}
+
+.salad-ui-app-web :is(.text-rose-600) {
+  --tw-text-opacity: 1;
+  color: rgb(225 29 72 / var(--tw-text-opacity));
+}
+
+.salad-ui-app-web :is(.text-rose-900) {
+  --tw-text-opacity: 1;
+  color: rgb(136 19 55 / var(--tw-text-opacity));
+}
+
+.salad-ui-app-web :is(.text-white) {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.salad-ui-app-web :is(.text-zinc-500) {
+  --tw-text-opacity: 1;
+  color: rgb(113 113 122 / var(--tw-text-opacity));
+}
+
+.salad-ui-app-web :is(.text-zinc-600) {
+  --tw-text-opacity: 1;
+  color: rgb(82 82 91 / var(--tw-text-opacity));
+}
+
+.salad-ui-app-web :is(.text-zinc-700) {
+  --tw-text-opacity: 1;
+  color: rgb(63 63 70 / var(--tw-text-opacity));
+}
+
+.salad-ui-app-web :is(.text-zinc-800) {
+  --tw-text-opacity: 1;
+  color: rgb(39 39 42 / var(--tw-text-opacity));
+}
+
+.salad-ui-app-web :is(.text-zinc-900) {
+  --tw-text-opacity: 1;
+  color: rgb(24 24 27 / var(--tw-text-opacity));
+}
+
+.salad-ui-app-web :is(.underline) {
+  text-decoration-line: underline;
+}
+
+.salad-ui-app-web :is(.overline) {
+  text-decoration-line: overline;
+}
+
+.salad-ui-app-web :is(.line-through) {
+  text-decoration-line: line-through;
+}
+
+.salad-ui-app-web :is(.no-underline) {
+  text-decoration-line: none;
+}
+
+.salad-ui-app-web :is(.decoration-solid) {
+  text-decoration-style: solid;
+}
+
+.salad-ui-app-web :is(.decoration-double) {
+  text-decoration-style: double;
+}
+
+.salad-ui-app-web :is(.decoration-dotted) {
+  text-decoration-style: dotted;
+}
+
+.salad-ui-app-web :is(.decoration-dashed) {
+  text-decoration-style: dashed;
+}
+
+.salad-ui-app-web :is(.decoration-wavy) {
+  text-decoration-style: wavy;
+}
+
+.salad-ui-app-web :is(.underline-offset-4) {
+  text-underline-offset: 4px;
+}
+
+.salad-ui-app-web :is(.antialiased) {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.salad-ui-app-web :is(.subpixel-antialiased) {
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+}
+
+.salad-ui-app-web :is(.opacity-0) {
+  opacity: 0;
+}
+
+.salad-ui-app-web :is(.opacity-100) {
+  opacity: 1;
+}
+
+.salad-ui-app-web :is(.opacity-20) {
+  opacity: 0.2;
+}
+
+.salad-ui-app-web :is(.opacity-40) {
+  opacity: 0.4;
+}
+
+.salad-ui-app-web :is(.opacity-50) {
+  opacity: 0.5;
+}
+
+.salad-ui-app-web :is(.opacity-60) {
+  opacity: 0.6;
+}
+
+.salad-ui-app-web :is(.opacity-70) {
+  opacity: 0.7;
+}
+
+.salad-ui-app-web :is(.opacity-75) {
+  opacity: 0.75;
+}
+
+.salad-ui-app-web :is(.bg-blend-normal) {
+  background-blend-mode: normal;
+}
+
+.salad-ui-app-web :is(.bg-blend-multiply) {
+  background-blend-mode: multiply;
+}
+
+.salad-ui-app-web :is(.bg-blend-screen) {
+  background-blend-mode: screen;
+}
+
+.salad-ui-app-web :is(.bg-blend-overlay) {
+  background-blend-mode: overlay;
+}
+
+.salad-ui-app-web :is(.bg-blend-darken) {
+  background-blend-mode: darken;
+}
+
+.salad-ui-app-web :is(.bg-blend-lighten) {
+  background-blend-mode: lighten;
+}
+
+.salad-ui-app-web :is(.bg-blend-color-dodge) {
+  background-blend-mode: color-dodge;
+}
+
+.salad-ui-app-web :is(.bg-blend-color-burn) {
+  background-blend-mode: color-burn;
+}
+
+.salad-ui-app-web :is(.bg-blend-hard-light) {
+  background-blend-mode: hard-light;
+}
+
+.salad-ui-app-web :is(.bg-blend-soft-light) {
+  background-blend-mode: soft-light;
+}
+
+.salad-ui-app-web :is(.bg-blend-difference) {
+  background-blend-mode: difference;
+}
+
+.salad-ui-app-web :is(.bg-blend-exclusion) {
+  background-blend-mode: exclusion;
+}
+
+.salad-ui-app-web :is(.bg-blend-hue) {
+  background-blend-mode: hue;
+}
+
+.salad-ui-app-web :is(.bg-blend-saturation) {
+  background-blend-mode: saturation;
+}
+
+.salad-ui-app-web :is(.bg-blend-color) {
+  background-blend-mode: color;
+}
+
+.salad-ui-app-web :is(.bg-blend-luminosity) {
+  background-blend-mode: luminosity;
+}
+
+.salad-ui-app-web :is(.mix-blend-normal) {
+  mix-blend-mode: normal;
+}
+
+.salad-ui-app-web :is(.mix-blend-multiply) {
+  mix-blend-mode: multiply;
+}
+
+.salad-ui-app-web :is(.mix-blend-screen) {
+  mix-blend-mode: screen;
+}
+
+.salad-ui-app-web :is(.mix-blend-overlay) {
+  mix-blend-mode: overlay;
+}
+
+.salad-ui-app-web :is(.mix-blend-darken) {
+  mix-blend-mode: darken;
+}
+
+.salad-ui-app-web :is(.mix-blend-lighten) {
+  mix-blend-mode: lighten;
+}
+
+.salad-ui-app-web :is(.mix-blend-color-dodge) {
+  mix-blend-mode: color-dodge;
+}
+
+.salad-ui-app-web :is(.mix-blend-color-burn) {
+  mix-blend-mode: color-burn;
+}
+
+.salad-ui-app-web :is(.mix-blend-hard-light) {
+  mix-blend-mode: hard-light;
+}
+
+.salad-ui-app-web :is(.mix-blend-soft-light) {
+  mix-blend-mode: soft-light;
+}
+
+.salad-ui-app-web :is(.mix-blend-difference) {
+  mix-blend-mode: difference;
+}
+
+.salad-ui-app-web :is(.mix-blend-exclusion) {
+  mix-blend-mode: exclusion;
+}
+
+.salad-ui-app-web :is(.mix-blend-hue) {
+  mix-blend-mode: hue;
+}
+
+.salad-ui-app-web :is(.mix-blend-saturation) {
+  mix-blend-mode: saturation;
+}
+
+.salad-ui-app-web :is(.mix-blend-color) {
+  mix-blend-mode: color;
+}
+
+.salad-ui-app-web :is(.mix-blend-luminosity) {
+  mix-blend-mode: luminosity;
+}
+
+.salad-ui-app-web :is(.mix-blend-plus-darker) {
+  mix-blend-mode: plus-darker;
+}
+
+.salad-ui-app-web :is(.mix-blend-plus-lighter) {
+  mix-blend-mode: plus-lighter;
+}
+
+.salad-ui-app-web :is(.\!shadow) {
+  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important;
+  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color) !important;
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
+}
+
+.salad-ui-app-web :is(.shadow) {
+  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.salad-ui-app-web :is(.shadow-\[0_0_0_1px_hsl\(var\(--sidebar-border\)\)\]) {
+  --tw-shadow: 0 0 0 1px hsl(var(--sidebar-border));
+  --tw-shadow-colored: 0 0 0 1px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.salad-ui-app-web :is(.shadow-lg) {
+  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.salad-ui-app-web :is(.shadow-md) {
+  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.salad-ui-app-web :is(.shadow-none) {
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.salad-ui-app-web :is(.shadow-sm) {
+  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.salad-ui-app-web :is(.shadow-zinc-700\/10) {
+  --tw-shadow-color: rgb(63 63 70 / 0.1);
+  --tw-shadow: var(--tw-shadow-colored);
+}
+
+.salad-ui-app-web :is(.outline-none) {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.salad-ui-app-web :is(.outline) {
+  outline-style: solid;
+}
+
+.salad-ui-app-web :is(.outline-dashed) {
+  outline-style: dashed;
+}
+
+.salad-ui-app-web :is(.outline-dotted) {
+  outline-style: dotted;
+}
+
+.salad-ui-app-web :is(.outline-double) {
+  outline-style: double;
+}
+
+.salad-ui-app-web :is(.ring) {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.salad-ui-app-web :is(.ring-0) {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.salad-ui-app-web :is(.ring-1) {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.salad-ui-app-web :is(.ring-inset) {
+  --tw-ring-inset: inset;
+}
+
+.salad-ui-app-web :is(.ring-emerald-500) {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(16 185 129 / var(--tw-ring-opacity));
+}
+
+.salad-ui-app-web :is(.ring-rose-500) {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(244 63 94 / var(--tw-ring-opacity));
+}
+
+.salad-ui-app-web :is(.ring-zinc-700\/10) {
+  --tw-ring-color: rgb(63 63 70 / 0.1);
+}
+
+.salad-ui-app-web :is(.blur) {
+  --tw-blur: blur(8px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.salad-ui-app-web :is(.drop-shadow) {
+  --tw-drop-shadow: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.salad-ui-app-web :is(.grayscale) {
+  --tw-grayscale: grayscale(100%);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.salad-ui-app-web :is(.invert) {
+  --tw-invert: invert(100%);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.salad-ui-app-web :is(.sepia) {
+  --tw-sepia: sepia(100%);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.salad-ui-app-web :is(.\!filter) {
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow) !important;
+}
+
+.salad-ui-app-web :is(.filter) {
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.salad-ui-app-web :is(.filter-none) {
+  filter: none;
+}
+
+.salad-ui-app-web :is(.backdrop-blur) {
+  --tw-backdrop-blur: blur(8px);
+  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+          backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+}
+
+.salad-ui-app-web :is(.backdrop-grayscale) {
+  --tw-backdrop-grayscale: grayscale(100%);
+  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+          backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+}
+
+.salad-ui-app-web :is(.backdrop-invert) {
+  --tw-backdrop-invert: invert(100%);
+  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+          backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+}
+
+.salad-ui-app-web :is(.backdrop-sepia) {
+  --tw-backdrop-sepia: sepia(100%);
+  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+          backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+}
+
+.salad-ui-app-web :is(.backdrop-filter) {
+  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+          backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+}
+
+.salad-ui-app-web :is(.backdrop-filter-none) {
+  -webkit-backdrop-filter: none;
+          backdrop-filter: none;
+}
+
+.salad-ui-app-web :is(.\!transition) {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter !important;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter !important;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition-duration: 150ms !important;
+}
+
+.salad-ui-app-web :is(.transition) {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.salad-ui-app-web :is(.transition-\[left\2c right\2c width\]) {
+  transition-property: left,right,width;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.salad-ui-app-web :is(.transition-\[margin\2c opa\]) {
+  transition-property: margin,opa;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.salad-ui-app-web :is(.transition-\[width\2c height\2c padding\]) {
+  transition-property: width,height,padding;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.salad-ui-app-web :is(.transition-\[width\]) {
+  transition-property: width;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.salad-ui-app-web :is(.transition-all) {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.salad-ui-app-web :is(.transition-colors) {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.salad-ui-app-web :is(.transition-opacity) {
+  transition-property: opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.salad-ui-app-web :is(.transition-transform) {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.salad-ui-app-web :is(.duration-200) {
+  transition-duration: 200ms;
+}
+
+.salad-ui-app-web :is(.duration-300) {
+  transition-duration: 300ms;
+}
+
+.salad-ui-app-web :is(.ease-in) {
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+}
+
+.salad-ui-app-web :is(.ease-in-out) {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.salad-ui-app-web :is(.ease-linear) {
+  transition-timing-function: linear;
+}
+
+.salad-ui-app-web :is(.ease-out) {
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+}
+
+.salad-ui-app-web :is(.contain-none) {
+  contain: none;
+}
+
+.salad-ui-app-web :is(.contain-content) {
+  contain: content;
+}
+
+.salad-ui-app-web :is(.contain-strict) {
+  contain: strict;
+}
+
+.salad-ui-app-web :is(.contain-size) {
+  --tw-contain-size: size;
+  contain: var(--tw-contain-size) var(--tw-contain-layout) var(--tw-contain-paint) var(--tw-contain-style);
+}
+
+.salad-ui-app-web :is(.contain-inline-size) {
+  --tw-contain-size: inline-size;
+  contain: var(--tw-contain-size) var(--tw-contain-layout) var(--tw-contain-paint) var(--tw-contain-style);
+}
+
+.salad-ui-app-web :is(.contain-layout) {
+  --tw-contain-layout: layout;
+  contain: var(--tw-contain-size) var(--tw-contain-layout) var(--tw-contain-paint) var(--tw-contain-style);
+}
+
+.salad-ui-app-web :is(.contain-paint) {
+  --tw-contain-paint: paint;
+  contain: var(--tw-contain-size) var(--tw-contain-layout) var(--tw-contain-paint) var(--tw-contain-style);
+}
+
+.salad-ui-app-web :is(.contain-style) {
+  --tw-contain-style: style;
+  contain: var(--tw-contain-size) var(--tw-contain-layout) var(--tw-contain-paint) var(--tw-contain-style);
+}
+
+.salad-ui-app-web :is(.content-\[\'this-is-also-valid\]-weirdly-enough\'\]) {
+  --tw-content: 'this-is-also-valid]-weirdly-enough';
+  content: var(--tw-content);
+}
+
+.salad-ui-app-web :is(.forced-color-adjust-auto) {
+  forced-color-adjust: auto;
+}
+
+.salad-ui-app-web :is(.forced-color-adjust-none) {
+  forced-color-adjust: none;
+}
+
+.salad-ui-app-web :is(.\[a-zA-Z0-9\:\\\\-\\\\\._\$\]) {
+  a-z-a--z0-9: \\-\\. $;
+}
+
+.salad-ui-app-web :is(.\[a-z_\:\.\\-\]) {
+  a-z_: .\-;
+}
+
+/* This file is for your main application CSS */
+
+@media (min-width: 640px) {
+  .sm\:container {
+    width: 100%;
+  }
+
+  @media (min-width: 640px) {
+    .sm\:container {
+      max-width: 640px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .sm\:container {
+      max-width: 768px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .sm\:container {
+      max-width: 1024px;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .sm\:container {
+      max-width: 1280px;
+    }
+  }
+
+  @media (min-width: 1536px) {
+    .sm\:container {
+      max-width: 1536px;
+    }
+  }
+}
+
+.salad-ui-app-web :is(.file\:border-0)::file-selector-button {
+  border-width: 0px;
+}
+
+.salad-ui-app-web :is(.file\:bg-transparent)::file-selector-button {
+  background-color: transparent;
+}
+
+.salad-ui-app-web :is(.file\:text-sm)::file-selector-button {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.salad-ui-app-web :is(.file\:font-medium)::file-selector-button {
+  font-weight: 500;
+}
+
+.salad-ui-app-web :is(.before\:content-\[attr\(data-content\)\])::before {
+  --tw-content: attr(data-content);
+  content: var(--tw-content);
+}
+
+.salad-ui-app-web :is(.after\:absolute)::after {
+  content: var(--tw-content);
+  position: absolute;
+}
+
+.salad-ui-app-web :is(.after\:-inset-2)::after {
+  content: var(--tw-content);
+  inset: -0.5rem;
+}
+
+.salad-ui-app-web :is(.after\:inset-y-0)::after {
+  content: var(--tw-content);
+  top: 0px;
+  bottom: 0px;
+}
+
+.salad-ui-app-web :is(.after\:left-1\/2)::after {
+  content: var(--tw-content);
+  left: 50%;
+}
+
+.salad-ui-app-web :is(.after\:w-\[2px\])::after {
+  content: var(--tw-content);
+  width: 2px;
+}
+
+.salad-ui-app-web :is(.hover\:cursor-pointer:hover) {
+  cursor: pointer;
+}
+
+.salad-ui-app-web :is(.hover\:bg-zinc-50:hover) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(250 250 250 / var(--tw-bg-opacity));
+}
+
+.salad-ui-app-web :is(.hover\:bg-zinc-700:hover) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(63 63 70 / var(--tw-bg-opacity));
+}
+
+.salad-ui-app-web :is(.hover\:font-bold:hover) {
+  font-weight: 700;
+}
+
+.salad-ui-app-web :is(.hover\:text-zinc-700:hover) {
+  --tw-text-opacity: 1;
+  color: rgb(63 63 70 / var(--tw-text-opacity));
+}
+
+.salad-ui-app-web :is(.hover\:underline:hover) {
+  text-decoration-line: underline;
+}
+
+.salad-ui-app-web :is(.hover\:opacity-100:hover) {
+  opacity: 1;
+}
+
+.salad-ui-app-web :is(.hover\:opacity-40:hover) {
+  opacity: 0.4;
+}
+
+.salad-ui-app-web :is(.hover\:shadow-\[0_0_0_1px_hsl\(var\(--sidebar-accent\)\)\]:hover) {
+  --tw-shadow: 0 0 0 1px hsl(var(--sidebar-accent));
+  --tw-shadow-colored: 0 0 0 1px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.salad-ui-app-web :is(.before\:hover\:text-center:hover)::before {
+  content: var(--tw-content);
+  text-align: center;
+}
+
+.salad-ui-app-web :is(.hover\:before\:text-center:hover)::before {
+  content: var(--tw-content);
+  text-align: center;
+}
+
+.salad-ui-app-web :is(.focus\:border-rose-400:focus) {
+  --tw-border-opacity: 1;
+  border-color: rgb(251 113 133 / var(--tw-border-opacity));
+}
+
+.salad-ui-app-web :is(.focus\:border-zinc-400:focus) {
+  --tw-border-opacity: 1;
+  border-color: rgb(161 161 170 / var(--tw-border-opacity));
+}
+
+.salad-ui-app-web :is(.focus\:outline-none:focus) {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.salad-ui-app-web :is(.focus\:ring-0:focus) {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.salad-ui-app-web :is(.focus\:ring-2:focus) {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.salad-ui-app-web :is(.focus\:ring-transparent:focus) {
+  --tw-ring-color: transparent;
+}
+
+.salad-ui-app-web :is(.focus\:ring-offset-2:focus) {
+  --tw-ring-offset-width: 2px;
+}
+
+.salad-ui-app-web :is(.focus\:hover\:text-center:hover:focus) {
+  text-align: center;
+}
+
+.salad-ui-app-web :is(.hover\:focus\:text-center:focus:hover) {
+  text-align: center;
+}
+
+.salad-ui-app-web :is(.focus-visible\:outline-none:focus-visible) {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.salad-ui-app-web :is(.focus-visible\:ring-1:focus-visible) {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.salad-ui-app-web :is(.focus-visible\:ring-2:focus-visible) {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.salad-ui-app-web :is(.focus-visible\:ring-offset-2:focus-visible) {
+  --tw-ring-offset-width: 2px;
+}
+
+.salad-ui-app-web :is(.active\:text-white\/80:active) {
+  color: rgb(255 255 255 / 0.8);
+}
+
+.salad-ui-app-web :is(.disabled\:pointer-events-none:disabled) {
+  pointer-events: none;
+}
+
+.salad-ui-app-web :is(.disabled\:cursor-not-allowed:disabled) {
+  cursor: not-allowed;
+}
+
+.salad-ui-app-web :is(.disabled\:opacity-50:disabled) {
+  opacity: 0.5;
+}
+
+.salad-ui-app-web :is(.group\/menu-item:focus-within .group-focus-within\/menu-item\:opacity-100) {
+  opacity: 1;
+}
+
+.salad-ui-app-web :is(.group:hover .group-hover\:bg-zinc-50) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(250 250 250 / var(--tw-bg-opacity));
+}
+
+.salad-ui-app-web :is(.group\/menu-item:hover .group-hover\/menu-item\:opacity-100) {
+  opacity: 1;
+}
+
+.salad-ui-app-web :is(.group:hover .group-hover\:opacity-70) {
+  opacity: 0.7;
+}
+
+.salad-ui-app-web :is(.peer:disabled ~ .peer-disabled\:cursor-not-allowed) {
+  cursor: not-allowed;
+}
+
+.salad-ui-app-web :is(.peer:disabled ~ .peer-disabled\:opacity-70) {
+  opacity: 0.7;
+}
+
+.salad-ui-app-web :is(.group\/menu-item:has([data-sidebar=menu-action]) .group-has-\[\[data-sidebar\=menu-action\]\]\/menu-item\:pr-8) {
+  padding-right: 2rem;
+}
+
+.salad-ui-app-web :is(.aria-disabled\:pointer-events-none[aria-disabled="true"]) {
+  pointer-events: none;
+}
+
+.salad-ui-app-web :is(.aria-disabled\:opacity-50[aria-disabled="true"]) {
+  opacity: 0.5;
+}
+
+.salad-ui-app-web :is(.data-\[disabled\]\:pointer-events-none[data-disabled]) {
+  pointer-events: none;
+}
+
+.salad-ui-app-web :is(.data-\[visible\=false\]\:hidden[data-visible=false]) {
+  display: none;
+}
+
+.salad-ui-app-web :is(.data-\[state\=checked\]\:translate-x-5[data-state=checked]) {
+  --tw-translate-x: 1.25rem;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.salad-ui-app-web :is(.data-\[state\=unchecked\]\:translate-x-0[data-state=unchecked]) {
+  --tw-translate-x: 0px;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.salad-ui-app-web :is(.data-\[disabled\=true\]\:cursor-not-allowed[data-disabled=true]) {
+  cursor: not-allowed;
+}
+
+.salad-ui-app-web :is(.data-\[disabled\]\:cursor-not-allowed[data-disabled]) {
+  cursor: not-allowed;
+}
+
+.salad-ui-app-web :is(.data-\[active\=true\]\:font-medium[data-active=true]) {
+  font-weight: 500;
+}
+
+.salad-ui-app-web :is(.data-\[disabled\=true\]\:opacity-50[data-disabled=true]) {
+  opacity: 0.5;
+}
+
+.salad-ui-app-web :is(.data-\[disabled\]\:opacity-50[data-disabled]) {
+  opacity: 0.5;
+}
+
+.salad-ui-app-web :is(.data-\[state\=open\]\:opacity-100[data-state=open]) {
+  opacity: 1;
+}
+
+.salad-ui-app-web :is(.data-\[state\=active\]\:shadow-sm[data-state=active]) {
+  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.salad-ui-app-web :is(.data-\[state\=closed\]\:duration-300[data-state=closed]) {
+  transition-duration: 300ms;
+}
+
+.salad-ui-app-web :is(.data-\[state\=open\]\:duration-500[data-state=open]) {
+  transition-duration: 500ms;
+}
+
+.salad-ui-app-web :is(.group[data-collapsible=offcanvas] .group-data-\[collapsible\=offcanvas\]\:left-\[calc\(var\(--sidebar-width\)\*-1\)\]) {
+  left: calc(var(--sidebar-width) * -1);
+}
+
+.salad-ui-app-web :is(.group[data-collapsible=offcanvas] .group-data-\[collapsible\=offcanvas\]\:right-\[calc\(var\(--sidebar-width\)\*-1\)\]) {
+  right: calc(var(--sidebar-width) * -1);
+}
+
+.salad-ui-app-web :is(.group[data-side=left] .group-data-\[side\=left\]\:-right-4) {
+  right: -1rem;
+}
+
+.salad-ui-app-web :is(.group[data-side=right] .group-data-\[side\=right\]\:left-0) {
+  left: 0px;
+}
+
+.salad-ui-app-web :is(.group[data-collapsible=icon] .group-data-\[collapsible\=icon\]\:-mt-8) {
+  margin-top: -2rem;
+}
+
+.salad-ui-app-web :is(.group\/item[data-state=checked] .group-data-\[state\=checked\]\/item\:flex) {
+  display: flex;
+}
+
+.salad-ui-app-web :is(.group[data-collapsible=icon] .group-data-\[collapsible\=icon\]\:hidden) {
+  display: none;
+}
+
+.salad-ui-app-web :is(.group[data-collapsible=icon] .group-data-\[collapsible\=icon\]\:\!size-8) {
+  width: 2rem !important;
+  height: 2rem !important;
+}
+
+.salad-ui-app-web :is(.group[data-collapsible=icon] .group-data-\[collapsible\=icon\]\:w-\[--sidebar-width-icon\]) {
+  width: var(--sidebar-width-icon);
+}
+
+.salad-ui-app-web :is(.group[data-collapsible=icon] .group-data-\[collapsible\=icon\]\:w-\[calc\(var\(--sidebar-width-icon\)_\+_theme\(spacing\.4\)\)\]) {
+  width: calc(var(--sidebar-width-icon) + 1rem);
+}
+
+.salad-ui-app-web :is(.group[data-collapsible=icon] .group-data-\[collapsible\=icon\]\:w-\[calc\(var\(--sidebar-width-icon\)_\+_theme\(spacing\.4\)_\+2px\)\]) {
+  width: calc(var(--sidebar-width-icon) + 1rem + 2px);
+}
+
+.salad-ui-app-web :is(.group[data-collapsible=offcanvas] .group-data-\[collapsible\=offcanvas\]\:w-0) {
+  width: 0px;
+}
+
+.salad-ui-app-web :is(.group[data-collapsible=offcanvas] .group-data-\[collapsible\=offcanvas\]\:translate-x-0) {
+  --tw-translate-x: 0px;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.salad-ui-app-web :is(.group[data-side=right] .group-data-\[side\=right\]\:rotate-180) {
+  --tw-rotate: 180deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.salad-ui-app-web :is(.group[data-collapsible=icon] .group-data-\[collapsible\=icon\]\:overflow-hidden) {
+  overflow: hidden;
+}
+
+.salad-ui-app-web :is(.group[data-variant=floating] .group-data-\[variant\=floating\]\:rounded-lg) {
+  border-radius: 0.5rem;
+}
+
+.salad-ui-app-web :is(.group[data-variant=floating] .group-data-\[variant\=floating\]\:border) {
+  border-width: 1px;
+}
+
+.salad-ui-app-web :is(.group[data-side=left] .group-data-\[side\=left\]\:border-r) {
+  border-right-width: 1px;
+}
+
+.salad-ui-app-web :is(.group[data-side=right] .group-data-\[side\=right\]\:border-l) {
+  border-left-width: 1px;
+}
+
+.salad-ui-app-web :is(.group[data-collapsible=icon] .group-data-\[collapsible\=icon\]\:\!p-0) {
+  padding: 0px !important;
+}
+
+.salad-ui-app-web :is(.group[data-collapsible=icon] .group-data-\[collapsible\=icon\]\:\!p-2) {
+  padding: 0.5rem !important;
+}
+
+.salad-ui-app-web :is(.group[data-collapsible=icon] .group-data-\[collapsible\=icon\]\:opacity-0) {
+  opacity: 0;
+}
+
+.salad-ui-app-web :is(.group[data-variant=floating] .group-data-\[variant\=floating\]\:shadow) {
+  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.salad-ui-app-web :is(.group[data-collapsible=offcanvas] .group-data-\[collapsible\=offcanvas\]\:after\:left-full)::after {
+  content: var(--tw-content);
+  left: 100%;
+}
+
+.salad-ui-app-web :is(.peer\/menu-button[data-size=default] ~ .peer-data-\[size\=default\]\/menu-button\:top-1\.5) {
+  top: 0.375rem;
+}
+
+.salad-ui-app-web :is(.peer\/menu-button[data-size=lg] ~ .peer-data-\[size\=lg\]\/menu-button\:top-2\.5) {
+  top: 0.625rem;
+}
+
+.salad-ui-app-web :is(.peer\/menu-button[data-size=sm] ~ .peer-data-\[size\=sm\]\/menu-button\:top-1) {
+  top: 0.25rem;
+}
+
+.salad-ui-app-web :is(.peer[data-variant=inset] ~ .peer-data-\[variant\=inset\]\:min-h-\[calc\(100svh-theme\(spacing\.4\)\)\]) {
+  min-height: calc(100svh - 1rem);
+}
+
+.salad-ui-app-web :is(.phx-submit-loading.phx-submit-loading\:opacity-75) {
+  opacity: 0.75;
+}
+
+.salad-ui-app-web :is(.phx-submit-loading .phx-submit-loading\:opacity-75) {
+  opacity: 0.75;
+}
+
+@media (min-width: 640px) {
+  .salad-ui-app-web :is(.sm\:mt-0) {
+    margin-top: 0px;
+  }
+
+  .salad-ui-app-web :is(.sm\:flex) {
+    display: flex;
+  }
+
+  .salad-ui-app-web :is(.sm\:w-96) {
+    width: 24rem;
+  }
+
+  .salad-ui-app-web :is(.sm\:w-full) {
+    width: 100%;
+  }
+
+  .salad-ui-app-web :is(.sm\:max-w-\[425px\]) {
+    max-width: 425px;
+  }
+
+  .salad-ui-app-web :is(.sm\:max-w-sm) {
+    max-width: 24rem;
+  }
+
+  .salad-ui-app-web :is(.sm\:translate-y-0) {
+    --tw-translate-y: 0px;
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  }
+
+  .salad-ui-app-web :is(.sm\:scale-100) {
+    --tw-scale-x: 1;
+    --tw-scale-y: 1;
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  }
+
+  .salad-ui-app-web :is(.sm\:scale-95) {
+    --tw-scale-x: .95;
+    --tw-scale-y: .95;
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  }
+
+  .salad-ui-app-web :is(.sm\:flex-row) {
+    flex-direction: row;
+  }
+
+  .salad-ui-app-web :is(.sm\:justify-end) {
+    justify-content: flex-end;
+  }
+
+  .salad-ui-app-web :is(.sm\:gap-2) {
+    gap: 0.5rem;
+  }
+
+  .salad-ui-app-web :is(.sm\:gap-2\.5) {
+    gap: 0.625rem;
+  }
+
+  .salad-ui-app-web :is(.sm\:gap-8) {
+    gap: 2rem;
+  }
+
+  .salad-ui-app-web :is(.sm\:space-x-2 > :not([hidden]) ~ :not([hidden])) {
+    --tw-space-x-reverse: 0;
+    margin-right: calc(0.5rem * var(--tw-space-x-reverse));
+    margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
+  }
+
+  .salad-ui-app-web :is(.sm\:overflow-visible) {
+    overflow: visible;
+  }
+
+  .salad-ui-app-web :is(.sm\:rounded-lg) {
+    border-radius: 0.5rem;
+  }
+
+  .salad-ui-app-web :is(.sm\:rounded-l-xl) {
+    border-top-left-radius: 0.75rem;
+    border-bottom-left-radius: 0.75rem;
+  }
+
+  .salad-ui-app-web :is(.sm\:rounded-r-xl) {
+    border-top-right-radius: 0.75rem;
+    border-bottom-right-radius: 0.75rem;
+  }
+
+  .salad-ui-app-web :is(.sm\:p-6) {
+    padding: 1.5rem;
+  }
+
+  .salad-ui-app-web :is(.sm\:px-0) {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  .salad-ui-app-web :is(.sm\:text-left) {
+    text-align: left;
+  }
+
+  .salad-ui-app-web :is(.sm\:text-sm) {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  .salad-ui-app-web :is(.sm\:leading-6) {
+    line-height: 1.5rem;
+  }
+
+  .salad-ui-app-web :is(.sm\:underline) {
+    text-decoration-line: underline;
+  }
+}
+
+@media (min-width: 768px) {
+  .salad-ui-app-web :is(.md\:block) {
+    display: block;
+  }
+
+  .salad-ui-app-web :is(.md\:flex) {
+    display: flex;
+  }
+
+  .salad-ui-app-web :is(.md\:hidden) {
+    display: none;
+  }
+
+  .salad-ui-app-web :is(.md\:min-w-\[450px\]) {
+    min-width: 450px;
+  }
+
+  .salad-ui-app-web :is(.md\:items-center) {
+    align-items: center;
+  }
+
+  .salad-ui-app-web :is(.md\:opacity-0) {
+    opacity: 0;
+  }
+
+  .salad-ui-app-web :is(.after\:md\:hidden)::after {
+    content: var(--tw-content);
+    display: none;
+  }
+
+  .salad-ui-app-web :is(.peer[data-variant=inset] ~ .md\:peer-data-\[variant\=inset\]\:m-2) {
+    margin: 0.5rem;
+  }
+
+  .salad-ui-app-web :is(.peer[data-state=collapsed][data-variant=inset] ~ .md\:peer-data-\[state\=collapsed\]\:peer-data-\[variant\=inset\]\:ml-2) {
+    margin-left: 0.5rem;
+  }
+
+  .salad-ui-app-web :is(.peer[data-variant=inset] ~ .md\:peer-data-\[variant\=inset\]\:ml-0) {
+    margin-left: 0px;
+  }
+
+  .salad-ui-app-web :is(.peer[data-variant=inset] ~ .md\:peer-data-\[variant\=inset\]\:rounded-xl) {
+    border-radius: 0.75rem;
+  }
+
+  .salad-ui-app-web :is(.peer[data-variant=inset] ~ .md\:peer-data-\[variant\=inset\]\:shadow) {
+    --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  }
+}
+
+@media (min-width: 1024px) {
+  .salad-ui-app-web :is(.lg\:max-w-\[600px\]) {
+    max-width: 600px;
+  }
+
+  .salad-ui-app-web :is(.lg\:py-8) {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  @media (min-width: 1024px) {
+    .salad-ui-app-web :is(.dark\:lg\:hover\:\[paint-order\:markers\]:hover) {
+      paint-order: markers;
+    }
+  }
+}
+
+.salad-ui-app-web :is(.\[\&\:has\(\[role\=checkbox\]\)\]\:pr-0:has([role=checkbox])) {
+  padding-right: 0px;
+}
+
+.salad-ui-app-web :is(.\[\&\>button\]\:hidden>button) {
+  display: none;
+}
+
+.salad-ui-app-web :is(.\[\&\>span\+div\]\:translate-y-\[-3px\]>span+div) {
+  --tw-translate-y: -3px;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.salad-ui-app-web :is(.\[\&\>span\:last-child\]\:truncate>span:last-child) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.salad-ui-app-web :is(.\[\&\>span\]\:absolute>span) {
+  position: absolute;
+}
+
+.salad-ui-app-web :is(.\[\&\>span\]\:left-4>span) {
+  left: 1rem;
+}
+
+.salad-ui-app-web :is(.\[\&\>span\]\:top-4>span) {
+  top: 1rem;
+}
+
+.salad-ui-app-web :is(.\[\&\>span\]\:line-clamp-1>span) {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.salad-ui-app-web :is(.\[\&\>span\~\*\]\:pl-7>span~*) {
+  padding-left: 1.75rem;
+}
+
+.salad-ui-app-web :is(.\[\&\>svg\]\:size-3\.5>svg) {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.salad-ui-app-web :is(.\[\&\>svg\]\:size-4>svg) {
+  width: 1rem;
+  height: 1rem;
+}
+
+.salad-ui-app-web :is(.\[\&\>svg\]\:shrink-0>svg) {
+  flex-shrink: 0;
+}
+
+.salad-ui-app-web :is(.\[\&\>tr\]\:last\:border-b-0:last-child>tr) {
+  border-bottom-width: 0px;
+}
+
+.salad-ui-app-web :is(.\[\&\[data-state\=open\]\>svg\]\:rotate-180[data-state=open]>svg) {
+  --tw-rotate: 180deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.salad-ui-app-web :is(.\[\&_\[data-part\=\'input\'\]\]\:h-12 [data-part='input']) {
+  height: 3rem;
+}
+
+.salad-ui-app-web :is(.\[\&_p\]\:leading-relaxed p) {
+  line-height: 1.625;
+}
+
+.salad-ui-app-web :is(.\[\&_svg\]\:pointer-events-none svg) {
+  pointer-events: none;
+}
+
+.salad-ui-app-web :is(.\[\&_svg\]\:size-4 svg) {
+  width: 1rem;
+  height: 1rem;
+}
+
+.salad-ui-app-web :is(.\[\&_svg\]\:h-4 svg) {
+  height: 1rem;
+}
+
+.salad-ui-app-web :is(.\[\&_svg\]\:w-4 svg) {
+  width: 1rem;
+}
+
+.salad-ui-app-web :is(.\[\&_svg\]\:shrink-0 svg) {
+  flex-shrink: 0;
+}
+
+.salad-ui-app-web :is(.\[\&_tr\:last-child\]\:border-0 tr:last-child) {
+  border-width: 0px;
+}
+
+.salad-ui-app-web :is(.\[\&_tr\]\:border-b tr) {
+  border-bottom-width: 1px;
+}
+
+.salad-ui-app-web :is([data-side=left][data-collapsible=offcanvas] .\[\[data-side\=left\]\[data-collapsible\=offcanvas\]_\&\]\:-right-2) {
+  right: -0.5rem;
+}
+
+.salad-ui-app-web :is([data-side=left][data-state=collapsed] .\[\[data-side\=left\]\[data-state\=collapsed\]_\&\]\:cursor-e-resize) {
+  cursor: e-resize;
+}
+
+.salad-ui-app-web :is([data-side=left] .\[\[data-side\=left\]_\&\]\:cursor-w-resize) {
+  cursor: w-resize;
+}
+
+.salad-ui-app-web :is([data-side=right][data-collapsible=offcanvas] .\[\[data-side\=right\]\[data-collapsible\=offcanvas\]_\&\]\:-left-2) {
+  left: -0.5rem;
+}
+
+.salad-ui-app-web :is([data-side=right][data-state=collapsed] .\[\[data-side\=right\]\[data-state\=collapsed\]_\&\]\:cursor-w-resize) {
+  cursor: w-resize;
+}
+
+.salad-ui-app-web :is([data-side=right] .\[\[data-side\=right\]_\&\]\:cursor-e-resize) {
+  cursor: e-resize;
+}

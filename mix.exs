@@ -25,14 +25,13 @@ defmodule SaladUI.MixProject do
     ]
   end
 
-  # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_), do: ["lib"]
-
-  # Run "mix help compile.app" to learn about applications.
+  # Configuration for the OTP application.
+  #
+  # Type `mix help compile.app` for more information.
   def application do
     [
-      extra_applications: [:logger]
+      mod: {SaladUI.Application, []},
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
@@ -56,17 +55,47 @@ defmodule SaladUI.MixProject do
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
+  # Specifies which paths to compile per environment.
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
+
+  # Specifies your project dependencies.
+  #
+  # Type `mix help deps` for examples and options.
   defp deps do
+    # styler:sort
     [
-      {:tw_merge, "~> 0.1"},
+      {:bandit, "~> 1.5"},
+      {:dns_cluster, "~> 0.1.1"},
+      {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
+      {:finch, "~> 0.13"},
+      {:floki, ">= 0.30.0", only: :test},
+      {:gettext, "~> 0.26"},
+      {:heroicons,
+       github: "tailwindlabs/heroicons",
+       tag: "v2.1.1",
+       sparse: "optimized",
+       app: false,
+       compile: false,
+       depth: 1},
+      {:jason, "~> 1.2"},
+      {:lucide_icons, "~> 2.0"},
+      {:phoenix, "~> 1.7.21"},
+      {:phoenix_html, "~> 4.1"},
+      {:phoenix_live_dashboard, "~> 0.8.3"},
+      {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 1.0"},
       {:mix_test_watch, "~> 1.2", only: [:dev, :test]},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
-      {:styler, "~> 0.7", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.24", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.10", only: [:dev, :test], runtime: false},
-      {:tailwind, "~> 0.2", only: [:dev, :test], runtime: Mix.env() == :dev}
+      {:styler, "~>1.4.1", only: [:dev, :test], runtime: false},
+      {:phoenix_storybook, "~> 0.8.0"},
+      {:swoosh, "~> 1.5"},
+      {:tailwind, "~> 0.2.0", only: [:dev, :test], runtime: Mix.env() == :dev},
+      {:telemetry_metrics, "~> 1.0"},
+      {:telemetry_poller, "~> 1.0"},
+      {:tw_merge, "~> 0.1"}
     ]
   end
 
@@ -78,8 +107,15 @@ defmodule SaladUI.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      test: ["test  --color"],
-      audit: ["format", "credo", "coveralls"]
+      setup: ["deps.get", "assets.setup", "assets.build"],
+      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
+      "assets.build": ["tailwind salad_ui", "esbuild salad_ui"],
+      "assets.deploy": [
+        "tailwind storybook --minify",
+        "tailwind salad_ui --minify",
+        "esbuild salad_ui --minify",
+        "phx.digest"
+      ]
     ]
   end
 end
