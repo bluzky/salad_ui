@@ -1,0 +1,34 @@
+{
+  "name": "salad_ui",
+  "version": "1.0.0",
+  "description": "Phoenix LiveView components library and framework",
+  "main": "index.js",
+  "files": [
+    "README.md",
+    "LICENSE.md",
+    "package.json",
+    "priv/static/*",
+    "assets/*",
+    "assets/core/*",
+    "assets/components/*"
+  ],
+  "exports": {
+    ".": "./index.js",
+    "./component/*": "./assets/component/*.js",
+    "./core/*": "./assets/core/*.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bluzky/salad_ui.git"
+  },
+  "keywords": ["liveview", "phoenix", "framework", "salad_ui"],
+  "author": "Bluzky (Daniel Nguyen)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bluzky/salad_ui/issues"
+  },
+  "homepage": "https://github.com/bluzky/salad_ui#readme"
+}

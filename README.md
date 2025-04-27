@@ -141,7 +141,7 @@ It's also important to note that you must format your code with `mix format` bef
 | Context Menu   | ❌    |      |
 | Dialog         | ✅    | ✅     |
 | Drawer         | ❌    |      |
-| Dropdown Menu  | ✅    |      |
+| Dropdown Menu  | ✅    | ✅     |
 | Form           | ✅    | ✅     |
 | Hover Card     | ✅    | ✅      |
 | Input          | ✅    | ✅     |

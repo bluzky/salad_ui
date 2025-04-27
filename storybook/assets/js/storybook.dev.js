@@ -3,19 +3,19 @@
 // such:
 //
 import { ChartHook } from "./hooks";
-import SaladUI from "salad_ui";
-import "salad_ui/components/dialog";
-import "salad_ui/components/select";
-import "salad_ui/components/tabs";
-import "salad_ui/components/radio_group";
-import "salad_ui/components/popover";
-import "salad_ui/components/hover-card";
-import "salad_ui/components/collapsible";
-import "salad_ui/components/tooltip";
-import "salad_ui/components/accordion";
-import "salad_ui/components/slider";
-import "salad_ui/components/switch";
-import "salad_ui/components/dropdown_menu";
+import SaladUI from "../../../assets/index";
+import "../../../assets/components/dialog";
+import "../../../assets/components/select";
+import "../../../assets/components/tabs";
+import "../../../assets/components/radio_group";
+import "../../../assets/components/popover";
+import "../../../assets/components/hover-card";
+import "../../../assets/components/collapsible";
+import "../../../assets/components/tooltip";
+import "../../../assets/components/accordion";
+import "../../../assets/components/slider";
+import "../../../assets/components/switch";
+import "../../../assets/components/dropdown_menu";
 
 // import * as Params from "./params";
 // import * as Uploaders from "./uploaders";

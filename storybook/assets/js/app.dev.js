@@ -21,9 +21,9 @@ import "phoenix_html";
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
-import SaladUI from "salad_ui";
-import "salad_ui/components/dialog";
-import "salad_ui/components/select";
+import SaladUI from "../../../assets/index";
+import "../../../assets/components/dialog";
+import "../../../assets/components/select";
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
