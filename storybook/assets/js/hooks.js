@@ -1,8 +1,6 @@
 // In production, replace with only the chart types you are using
 import Chart from "chart.js/auto";
-import SaladUIFramework from "../../../assets/index.js";
-import "../../../assets/components/command.js";
-import "../../../assets/components/dialog.js";
+import SaladUIFramework from "salad_ui";
 
 // utility function to fetch CSS variables
 function cssvar(name) {

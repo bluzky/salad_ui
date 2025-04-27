@@ -9,13 +9,14 @@
     "package.json",
     "priv/static/*",
     "assets/*",
-    "assets/core/*",
-    "assets/components/*"
+    "assets/salad_ui/*",
+    "assets/salad_ui/core/*",
+    "assets/salad_ui/components/*"
   ],
   "exports": {
-    ".": "./index.js",
-    "./component/*": "./assets/component/*.js",
-    "./core/*": "./assets/core/*.js"
+    ".": "./assets/salad_ui/index.js",
+    "./components/*": "./assets/salad_ui/components/*.js",
+    "./core/*": "./assets/salad_ui/core/*.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
