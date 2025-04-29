@@ -42,19 +42,6 @@ defmodule SaladUI.Helpers do
     Phoenix.json_library().encode!(data)
   end
 
-  def dispatch_command(command_name, opts) do
-    details = %{
-      command: command_name,
-      params: opts[:details]
-    }
-
-    Phoenix.LiveView.JS.dispatch(
-      %Phoenix.LiveView.JS{},
-      "salad_ui:command",
-      Keyword.put(opts, :details, details)
-    )
-  end
-
   # normalize_integer
   def normalize_integer(value) when is_integer(value), do: value
 
@@ -85,42 +72,6 @@ defmodule SaladUI.Helpers do
     id
     |> String.replace(~r/[^a-zA-Z0-9]/, "-")
     |> String.downcase()
-  end
-
-  @doc """
-  Variant helper for generating classes based on side and align
-  """
-  @variants %{
-    side: %{
-      "top" => "bottom-full mb-2",
-      "bottom" => "top-full mt-2",
-      "left" => "right-full mr-2",
-      "right" => "left-full ml-2"
-    },
-    align: %{
-      "start-horizontal" => "left-0",
-      "center-horizontal" => "left-1/2 -translate-x-1/2 slide-in-from-left-1/2",
-      "end-horizontal" => "right-0",
-      "start-vertical" => "top-0",
-      "center-vertical" => "top-1/2 -translate-y-1/2 slide-in-from-top-1/2",
-      "end-vertical" => "bottom-0"
-    }
-  }
-
-  @spec side_variant(String.t(), String.t()) :: String.t()
-  def side_variant(side, align \\ "center") do
-    Enum.map_join(%{side: side, align: align(align, side)}, " ", fn {key, value} -> @variants[key][value] end)
-  end
-
-  # decide align class based on side
-  defp align(align, side) do
-    cond do
-      side in ["top", "bottom"] ->
-        "#{align}-horizontal"
-
-      side in ["left", "right"] ->
-        "#{align}-vertical"
-    end
   end
 
   @variants %{
