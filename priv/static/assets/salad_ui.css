@@ -1,0 +1,39 @@
+/* Scroll area */
+
+/* firefox */
+.salad-scroll-area {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+}
+
+.salad-scroll-area:hover {
+    scrollbar-color: #c2c2c2 transparent;
+}
+
+/* Chrome, Edge, and Safari */
+.salad-scroll-area::-webkit-scrollbar {
+    width: 6px;
+    background-color: transparent;
+}
+
+.salad-scroll-area::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 5px;
+}
+
+.salad-scroll-area::-webkit-scrollbar-thumb {
+    background-color: #c2c2c2;
+    border-radius: 14px;
+}
+
+.animate-indeterminate-progress {
+    animation: indeterminate-progress 1.5s infinite linear;
+    background: linear-gradient(
+        to right,
+        transparent,
+        currentColor,
+        transparent
+    );
+    background-size: 200% 100%;
+    width: 100%;
+}

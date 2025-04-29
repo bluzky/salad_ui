@@ -23,7 +23,7 @@ defmodule SaladUI.Patcher.TailwindPatcher do
       |> add_plugins()
       |> add_theme()
 
-    if opts[:as_lib] == true do
+    if true do
       add_content_watch(content)
     else
       content
