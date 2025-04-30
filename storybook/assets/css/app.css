@@ -1,7 +1,7 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
-@import "../../deps/salad_ui/assets/app.css";
+@import "../../deps/salad_ui/priv/static/assets/salad_ui.css";
 
 /* This file is for your main application CSS */
 :root {
