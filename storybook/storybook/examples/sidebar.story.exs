@@ -1,7 +1,7 @@
 defmodule Storybook.Examples.Sidebar do
   @moduledoc false
   use PhoenixStorybook.Story, :example
- 
+
   @impl true
   def mount(_params, _session, socket) do
     {:ok, socket}

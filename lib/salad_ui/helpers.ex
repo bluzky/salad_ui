@@ -274,7 +274,7 @@ defmodule SaladUI.Helpers do
   def as_child(%{tag: tag, child: child_tag} = assigns) when is_function(tag, 1) do
     assigns
     |> Map.drop([:tag, :child])
-    |> assign(:as_tag, child_tag)
+    |> assign(:"as-tag", child_tag)
     |> tag.()
   end
 

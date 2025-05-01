@@ -69,7 +69,6 @@ defmodule Storybook.SaladUIComponents.Select do
           name: "fruit",
           value: "banana",
           "use-portal": false
-
         },
         let: :select,
         slots: [

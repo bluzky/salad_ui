@@ -149,7 +149,7 @@ defmodule SaladStorybookWeb.Demo.SidebarFour do
           <.sidebar_trigger target="main-sidebar" class="-ml-1">
             <Lucideicons.panel_left class="w-4 h-4" />
           </.sidebar_trigger>
-          <.separator orientation="vertical" class="mr-2 h-4"/>
+          <.separator orientation="vertical" class="mr-2 h-4" />
           <.breadcrumb>
             <.breadcrumb_list>
               <.breadcrumb_item class="hidden md:block">
@@ -157,7 +157,7 @@ defmodule SaladStorybookWeb.Demo.SidebarFour do
                   Building Your Application
                 </.breadcrumb_link>
               </.breadcrumb_item>
-              <.breadcrumb_separator class="hidden md:block"/>
+              <.breadcrumb_separator class="hidden md:block" />
               <.breadcrumb_item>
                 <.breadcrumb_page>
                   Data Fetching
@@ -207,13 +207,18 @@ defmodule SaladStorybookWeb.Demo.SidebarFour do
             <.sidebar_menu_item :for={group <- @data.nav_main}>
               <.sidebar_menu_button>
                 <a href={group.url} class="font-medium">
-                  <%= group.title %>
+                  {group.title}
                 </a>
               </.sidebar_menu_button>
               <.sidebar_menu_sub>
                 <.sidebar_menu_sub_item :for={item <- group.items}>
-                  <.as_child tag={&sidebar_menu_sub_button/1} child="a" is_active={item[:is_active]} href={item.url}>
-                    <%= item.title %>
+                  <.as_child
+                    tag={&sidebar_menu_sub_button/1}
+                    child="a"
+                    is_active={item[:is_active]}
+                    href={item.url}
+                  >
+                    {item.title}
                   </.as_child>
                 </.sidebar_menu_sub_item>
               </.sidebar_menu_sub>
@@ -261,7 +266,7 @@ defmodule SaladStorybookWeb.Demo.SidebarFour do
                   Documentation
                 </span>
                 <span class="">
-                  v<%= @default_version %>
+                  v{@default_version}
                 </span>
               </div>
               <Lucideicons.chevrons_up_down class="ml-auto" />
@@ -270,7 +275,7 @@ defmodule SaladStorybookWeb.Demo.SidebarFour do
           <.dropdown_menu_content class="w-full" align="start">
             <.menu>
               <.menu_item :for={item <- @versions}>
-                v<%= item %>
+                v{item}
               </.menu_item>
             </.menu>
           </.dropdown_menu_content>

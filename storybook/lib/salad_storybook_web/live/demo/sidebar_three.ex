@@ -207,13 +207,18 @@ defmodule SaladStorybookWeb.Demo.SidebarThree do
             <.sidebar_menu_item :for={group <- @data.nav_main}>
               <.sidebar_menu_button>
                 <a href={group.url} class="font-medium">
-                  <%= group.title %>
+                  {group.title}
                 </a>
               </.sidebar_menu_button>
               <.sidebar_menu_sub>
                 <.sidebar_menu_sub_item :for={item <- group.items}>
-                  <.as_child tag={&sidebar_menu_sub_button/1} child="a" is_active={item[:is_active]} href={item.url}>
-                    <%= item.title %>
+                  <.as_child
+                    tag={&sidebar_menu_sub_button/1}
+                    child="a"
+                    is_active={item[:is_active]}
+                    href={item.url}
+                  >
+                    {item.title}
                   </.as_child>
                 </.sidebar_menu_sub_item>
               </.sidebar_menu_sub>
@@ -261,7 +266,7 @@ defmodule SaladStorybookWeb.Demo.SidebarThree do
                   Documentation
                 </span>
                 <span class="">
-                  v<%= @default_version %>
+                  v{@default_version}
                 </span>
               </div>
               <Lucideicons.chevrons_up_down class="ml-auto" />
@@ -270,7 +275,7 @@ defmodule SaladStorybookWeb.Demo.SidebarThree do
           <.dropdown_menu_content class="w-full" align="start">
             <.menu>
               <.menu_item :for={item <- @versions}>
-                v<%= item %>
+                v{item}
               </.menu_item>
             </.menu>
           </.dropdown_menu_content>

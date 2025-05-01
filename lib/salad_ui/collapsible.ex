@@ -81,11 +81,16 @@ defmodule SaladUI.Collapsible do
   The trigger element that toggles the collapsible content.
   """
   attr :class, :string, default: nil
-  attr :as_tag, :any, default: "div"
+  attr :"as-tag", :any, default: "div"
   attr :rest, :global
   slot :inner_block, required: true
 
   def collapsible_trigger(assigns) do
+    assigns =
+      assigns
+      |> assign(:as_tag, assigns[:as_tag])
+      |> assign(:"as-tag", nil)
+
     ~H"""
     <.dynamic
       data-part="trigger"

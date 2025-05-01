@@ -236,20 +236,20 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
               </.button>
             </.dropdown_menu_trigger>
             <.dropdown_menu_content align="end">
-                <.dropdown_menu_label>
-                  My Account
-                </.dropdown_menu_label>
-                <.dropdown_menu_separator></.dropdown_menu_separator>
-                <.dropdown_menu_item>
-                  Settings
-                </.dropdown_menu_item>
-                <.dropdown_menu_item>
-                  Support
-                </.dropdown_menu_item>
-                <.dropdown_menu_separator></.dropdown_menu_separator>
-                <.dropdown_menu_item>
-                  Logout
-                </.dropdown_menu_item>
+              <.dropdown_menu_label>
+                My Account
+              </.dropdown_menu_label>
+              <.dropdown_menu_separator></.dropdown_menu_separator>
+              <.dropdown_menu_item>
+                Settings
+              </.dropdown_menu_item>
+              <.dropdown_menu_item>
+                Support
+              </.dropdown_menu_item>
+              <.dropdown_menu_separator></.dropdown_menu_separator>
+              <.dropdown_menu_item>
+                Logout
+              </.dropdown_menu_item>
             </.dropdown_menu_content>
           </.dropdown_menu>
         </header>
@@ -333,21 +333,21 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
                       </.button>
                     </.dropdown_menu_trigger>
                     <.dropdown_menu_content align="end">
-                        <.dropdown_menu_label>
-                          Filter by
-                        </.dropdown_menu_label>
-                        <.dropdown_menu_separator />
-                        <.dropdown_menu_item>
-                          Fulfilled
-                        </.dropdown_menu_item>
-                        <.dropdown_menu_item>
-                          Declined
-                        </.dropdown_menu_item>
-                        <.dropdown_menu_item>
-                          Refunded
-                        </.dropdown_menu_item>
+                      <.dropdown_menu_label>
+                        Filter by
+                      </.dropdown_menu_label>
+                      <.dropdown_menu_separator />
+                      <.dropdown_menu_item>
+                        Fulfilled
+                      </.dropdown_menu_item>
+                      <.dropdown_menu_item>
+                        Declined
+                      </.dropdown_menu_item>
+                      <.dropdown_menu_item>
+                        Refunded
+                      </.dropdown_menu_item>
                     </.dropdown_menu_content>
-                    </.dropdown_menu>
+                  </.dropdown_menu>
                   <.button size="sm" variant="outline" class="h-7 gap-1 text-sm">
                     <Lucideicons.file class="h-3.5 w-3.5" />
                     <span class="sr-only sm:not-sr-only">
@@ -625,16 +625,16 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
                       </.button>
                     </.dropdown_menu_trigger>
                     <.dropdown_menu_content align="end">
-                        <.dropdown_menu_item>
-                          Edit
-                        </.dropdown_menu_item>
-                        <.dropdown_menu_item>
-                          Export
-                        </.dropdown_menu_item>
-                        <.dropdown_menu_separator></.dropdown_menu_separator>
-                        <.dropdown_menu_item>
-                          Trash
-                        </.dropdown_menu_item>
+                      <.dropdown_menu_item>
+                        Edit
+                      </.dropdown_menu_item>
+                      <.dropdown_menu_item>
+                        Export
+                      </.dropdown_menu_item>
+                      <.dropdown_menu_separator></.dropdown_menu_separator>
+                      <.dropdown_menu_item>
+                        Trash
+                      </.dropdown_menu_item>
                     </.dropdown_menu_content>
                   </.dropdown_menu>
                 </div>

@@ -112,7 +112,7 @@ defmodule SaladStorybookWeb.Demo.DashboardOne do
       </aside>
       <div class="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <header class="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
-          <.sheet>
+          <.sheet id="menu">
             <.sheet_trigger target="sheet">
               <.button size="icon" variant="outline" class="sm:hidden">
                 <Lucideicons.panel_left class="h-5 w-5" />
@@ -186,7 +186,7 @@ defmodule SaladStorybookWeb.Demo.DashboardOne do
               class="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
             />
           </div>
-          <.dropdown_menu>
+          <.dropdown_menu id="accounts">
             <.dropdown_menu_trigger>
               <.button variant="outline" size="icon" class="overflow-hidden rounded-full">
                 <img
@@ -199,14 +199,12 @@ defmodule SaladStorybookWeb.Demo.DashboardOne do
               </.button>
             </.dropdown_menu_trigger>
             <.dropdown_menu_content align="end">
-              <.menu>
-                <.menu_label>My Account</.menu_label>
-                <.menu_separator />
-                <.menu_item>Settings</.menu_item>
-                <.menu_item>Support</.menu_item>
-                <.menu_separator />
-                <.menu_item>Logout</.menu_item>
-              </.menu>
+              <.dropdown_menu_label>My Account</.dropdown_menu_label>
+              <.dropdown_menu_separator />
+              <.dropdown_menu_item>Settings</.dropdown_menu_item>
+              <.dropdown_menu_item>Support</.dropdown_menu_item>
+              <.dropdown_menu_separator />
+              <.dropdown_menu_item>Logout</.dropdown_menu_item>
             </.dropdown_menu_content>
           </.dropdown_menu>
         </header>
@@ -222,7 +220,7 @@ defmodule SaladStorybookWeb.Demo.DashboardOne do
                 </.tabs_trigger>
               </.tabs_list>
               <div class="ml-auto flex items-center gap-2">
-                <.dropdown_menu>
+                <.dropdown_menu id="filters">
                   <.dropdown_menu_trigger>
                     <.button variant="outline" size="sm" class="h-8 gap-1">
                       <Lucideicons.list_filter class="h-3.5 w-3.5" />
@@ -232,17 +230,15 @@ defmodule SaladStorybookWeb.Demo.DashboardOne do
                     </.button>
                   </.dropdown_menu_trigger>
                   <.dropdown_menu_content align="end">
-                    <.menu>
-                      <.menu_label>Filter by</.menu_label>
-                      <.menu_separator />
-                      <.menu_item>
-                        Active
-                      </.menu_item>
-                      <.menu_item>Draft</.menu_item>
-                      <.menu_item>
-                        Archived
-                      </.menu_item>
-                    </.menu>
+                    <.dropdown_menu_label>Filter by</.dropdown_menu_label>
+                    <.dropdown_menu_separator />
+                    <.dropdown_menu_item>
+                      Active
+                    </.dropdown_menu_item>
+                    <.dropdown_menu_item>Draft</.dropdown_menu_item>
+                    <.dropdown_menu_item>
+                      Archived
+                    </.dropdown_menu_item>
                   </.dropdown_menu_content>
                 </.dropdown_menu>
                 <.button size="sm" variant="outline" class="h-8 gap-1">
@@ -294,22 +290,22 @@ defmodule SaladStorybookWeb.Demo.DashboardOne do
                           <.skeleton class="h-16 w-16" />
                         </.table_cell>
                         <.table_cell class="font-medium">
-                          <%= product.name %>
+                          {product.name}
                         </.table_cell>
                         <.table_cell>
-                          <.badge variant="outline"><%= product.status %></.badge>
+                          <.badge variant="outline">{product.status}</.badge>
                         </.table_cell>
                         <.table_cell class="hidden md:table-cell">
-                          $<%= product.price %>
+                          ${product.price}
                         </.table_cell>
                         <.table_cell class="hidden md:table-cell">
-                          <%= product.total_sales %>
+                          {product.total_sales}
                         </.table_cell>
                         <.table_cell class="hidden md:table-cell">
-                          <%= product.created_at |> Calendar.strftime("%Y-%m-%d %I:%M:%S %p") %>
+                          {product.created_at |> Calendar.strftime("%Y-%m-%d %I:%M:%S %p")}
                         </.table_cell>
                         <.table_cell>
-                          <.dropdown_menu>
+                          <.dropdown_menu id="actions">
                             <.dropdown_menu_trigger>
                               <.button aria-haspopup="true" size="icon" variant="ghost">
                                 <Lucideicons.ellipsis class="h-4 w-4" />
@@ -317,11 +313,9 @@ defmodule SaladStorybookWeb.Demo.DashboardOne do
                               </.button>
                             </.dropdown_menu_trigger>
                             <.dropdown_menu_content align="end">
-                              <.menu>
-                                <.menu_label>Actions</.menu_label>
-                                <.menu_item>Edit</.menu_item>
-                                <.menu_item>Delete</.menu_item>
-                              </.menu>
+                              <.dropdown_menu_label>Actions</.dropdown_menu_label>
+                              <.dropdown_menu_item>Edit</.dropdown_menu_item>
+                              <.dropdown_menu_item>Delete</.dropdown_menu_item>
                             </.dropdown_menu_content>
                           </.dropdown_menu>
                         </.table_cell>

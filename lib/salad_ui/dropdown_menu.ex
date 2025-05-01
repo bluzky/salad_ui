@@ -134,7 +134,10 @@ defmodule SaladUI.DropdownMenu do
   slot :inner_block, required: true
 
   def dropdown_menu_trigger(assigns) do
-    assigns = assign(assigns, :as_tag, assigns[:"as-tag"])
+    assigns =
+      assigns
+      |> assign(:as_tag, assigns[:"as-tag"])
+      |> assign(:"as-tag", nil)
 
     ~H"""
     <.dynamic tag={@as_tag} data-part="trigger" tab-index="0" class={classes(["", @class])} {@rest}>
@@ -177,6 +180,7 @@ defmodule SaladUI.DropdownMenu do
       data-side-offset={@side_offset}
       data-align-offset={@align_offset}
       class="absolute z-50"
+      style="min-width: var(--salad-reference-width)"
       hidden
     >
       <div

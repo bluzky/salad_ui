@@ -214,19 +214,20 @@ defmodule SaladStorybookWeb.Demo.SidebarFive do
             >
               <.sidebar_menu_item>
                 <.as_child tag={&collapsible_trigger/1} child={&sidebar_menu_button/1}>
-                  <%= group.title %>
+                  {group.title}
                   <.plus class="ml-auto group-data-[state=open]/collapsible:hidden" />
                   <.minus class="ml-auto group-data-[state=closed]/collapsible:hidden" />
                 </.as_child>
                 <.collapsible_content>
                   <.sidebar_menu_sub>
                     <.sidebar_menu_sub_item :for={item <- group.items}>
-                      <.as_child tag={&sidebar_menu_sub_button/1}
+                      <.as_child
+                        tag={&sidebar_menu_sub_button/1}
                         child="a"
                         is_active={item[:is_active]}
                         href={item.url}
                       >
-                        <%= item.title %>
+                        {item.title}
                       </.as_child>
                     </.sidebar_menu_sub_item>
                   </.sidebar_menu_sub>
@@ -276,7 +277,7 @@ defmodule SaladStorybookWeb.Demo.SidebarFive do
                   Documentation
                 </span>
                 <span class="">
-                  v<%= @default_version %>
+                  v{@default_version}
                 </span>
               </div>
               <Lucideicons.chevrons_up_down class="ml-auto" />
@@ -285,7 +286,7 @@ defmodule SaladStorybookWeb.Demo.SidebarFive do
           <.dropdown_menu_content class="w-full" align="start">
             <.menu>
               <.menu_item :for={item <- @versions}>
-                v<%= item %>
+                v{item}
               </.menu_item>
             </.menu>
           </.dropdown_menu_content>
