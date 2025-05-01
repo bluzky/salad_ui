@@ -38,7 +38,7 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
             </span>
           </.link>
           <.tooltip>
-            <tooltip_trigger>
+            <.tooltip_trigger>
               <.link
                 href="#"
                 class="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
@@ -48,13 +48,13 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
                   Dashboard
                 </span>
               </.link>
-            </tooltip_trigger>
+            </.tooltip_trigger>
             <.tooltip_content side="right">
               Dashboard
             </.tooltip_content>
           </.tooltip>
           <.tooltip>
-            <tooltip_trigger>
+            <.tooltip_trigger>
               <.link
                 href="#"
                 class="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
@@ -64,13 +64,13 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
                   Orders
                 </span>
               </.link>
-            </tooltip_trigger>
+            </.tooltip_trigger>
             <.tooltip_content side="right">
               Orders
             </.tooltip_content>
           </.tooltip>
           <.tooltip>
-            <tooltip_trigger>
+            <.tooltip_trigger>
               <.link
                 href="#"
                 class="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
@@ -80,13 +80,13 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
                   Products
                 </span>
               </.link>
-            </tooltip_trigger>
+            </.tooltip_trigger>
             <.tooltip_content side="right">
               Products
             </.tooltip_content>
           </.tooltip>
           <.tooltip>
-            <tooltip_trigger>
+            <.tooltip_trigger>
               <.link
                 href="#"
                 class="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
@@ -96,13 +96,13 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
                   Customers
                 </span>
               </.link>
-            </tooltip_trigger>
+            </.tooltip_trigger>
             <.tooltip_content side="right">
               Customers
             </.tooltip_content>
           </.tooltip>
           <.tooltip>
-            <tooltip_trigger>
+            <.tooltip_trigger>
               <.link
                 href="#"
                 class="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
@@ -112,7 +112,7 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
                   Analytics
                 </span>
               </.link>
-            </tooltip_trigger>
+            </.tooltip_trigger>
             <.tooltip_content side="right">
               Analytics
             </.tooltip_content>
@@ -120,7 +120,7 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
         </nav>
         <nav class="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
           <.tooltip>
-            <tooltip_trigger>
+            <.tooltip_trigger>
               <.link
                 href="#"
                 class="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
@@ -130,7 +130,7 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
                   Settings
                 </span>
               </.link>
-            </tooltip_trigger>
+            </.tooltip_trigger>
             <.tooltip_content side="right">
               Settings
             </.tooltip_content>
@@ -139,8 +139,8 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
       </aside>
       <div class="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <header class="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
-          <.sheet>
-            <.sheet_trigger target="side">
+          <.sheet id="sheet">
+            <.sheet_trigger>
               <.button size="icon" variant="outline" class="sm:hidden">
                 <Lucideicons.panel_left class="h-5 w-5" />
                 <span class="sr-only">
@@ -223,7 +223,7 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
               class="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
             />
           </div>
-          <.dropdown_menu>
+          <.dropdown_menu id="dropdown">
             <.dropdown_menu_trigger>
               <.button variant="outline" size="icon" class="overflow-hidden rounded-full">
                 <img
@@ -236,22 +236,20 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
               </.button>
             </.dropdown_menu_trigger>
             <.dropdown_menu_content align="end">
-              <.menu>
-                <.menu_label>
+                <.dropdown_menu_label>
                   My Account
-                </.menu_label>
-                <.menu_separator></.menu_separator>
-                <.menu_item>
+                </.dropdown_menu_label>
+                <.dropdown_menu_separator></.dropdown_menu_separator>
+                <.dropdown_menu_item>
                   Settings
-                </.menu_item>
-                <.menu_item>
+                </.dropdown_menu_item>
+                <.dropdown_menu_item>
                   Support
-                </.menu_item>
-                <.menu_separator></.menu_separator>
-                <.menu_item>
+                </.dropdown_menu_item>
+                <.dropdown_menu_separator></.dropdown_menu_separator>
+                <.dropdown_menu_item>
                   Logout
-                </.menu_item>
-              </.menu>
+                </.dropdown_menu_item>
             </.dropdown_menu_content>
           </.dropdown_menu>
         </header>
@@ -311,21 +309,21 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
                 </.card_footer>
               </.card>
             </div>
-            <.tabs :let={builder} id="tabs" default="week">
+            <.tabs id="tabs" default="week">
               <div class="flex items-center">
                 <.tabs_list>
-                  <.tabs_trigger builder={builder} value="week">
+                  <.tabs_trigger value="week">
                     Week
                   </.tabs_trigger>
-                  <.tabs_trigger builder={builder} value="month">
+                  <.tabs_trigger value="month">
                     Month
                   </.tabs_trigger>
-                  <.tabs_trigger builder={builder} value="year">
+                  <.tabs_trigger value="year">
                     Year
                   </.tabs_trigger>
                 </.tabs_list>
                 <div class="ml-auto flex items-center gap-2">
-                  <.dropdown_menu>
+                  <.dropdown_menu id="filter">
                     <.dropdown_menu_trigger>
                       <.button variant="outline" size="sm" class="h-7 gap-1 text-sm">
                         <Lucideicons.list_filter class="h-3.5 w-3.5" />
@@ -335,23 +333,21 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
                       </.button>
                     </.dropdown_menu_trigger>
                     <.dropdown_menu_content align="end">
-                      <.menu>
-                        <.menu_label>
+                        <.dropdown_menu_label>
                           Filter by
-                        </.menu_label>
-                        <.menu_separator />
-                        <.menu_item>
+                        </.dropdown_menu_label>
+                        <.dropdown_menu_separator />
+                        <.dropdown_menu_item>
                           Fulfilled
-                        </.menu_item>
-                        <.menu_item>
+                        </.dropdown_menu_item>
+                        <.dropdown_menu_item>
                           Declined
-                        </.menu_item>
-                        <.menu_item>
+                        </.dropdown_menu_item>
+                        <.dropdown_menu_item>
                           Refunded
-                        </.menu_item>
-                      </.menu>
+                        </.dropdown_menu_item>
                     </.dropdown_menu_content>
-                  </.dropdown_menu>
+                    </.dropdown_menu>
                   <.button size="sm" variant="outline" class="h-7 gap-1 text-sm">
                     <Lucideicons.file class="h-3.5 w-3.5" />
                     <span class="sr-only sm:not-sr-only">
@@ -619,7 +615,7 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
                       Track Order
                     </span>
                   </.button>
-                  <.dropdown_menu>
+                  <.dropdown_menu id="action">
                     <.dropdown_menu_trigger>
                       <.button size="icon" variant="outline" class="h-8 w-8">
                         <Lucideicons.ellipsis_vertical class="h-3.5 w-3.5" />
@@ -629,18 +625,16 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
                       </.button>
                     </.dropdown_menu_trigger>
                     <.dropdown_menu_content align="end">
-                      <.menu>
-                        <.menu_item>
+                        <.dropdown_menu_item>
                           Edit
-                        </.menu_item>
-                        <.menu_item>
+                        </.dropdown_menu_item>
+                        <.dropdown_menu_item>
                           Export
-                        </.menu_item>
-                        <.menu_separator></.menu_separator>
-                        <.menu_item>
+                        </.dropdown_menu_item>
+                        <.dropdown_menu_separator></.dropdown_menu_separator>
+                        <.dropdown_menu_item>
                           Trash
-                        </.menu_item>
-                      </.menu>
+                        </.dropdown_menu_item>
                     </.dropdown_menu_content>
                   </.dropdown_menu>
                 </div>

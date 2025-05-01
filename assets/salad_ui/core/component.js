@@ -4,7 +4,7 @@
  * Provides state management, event handling, and ARIA support
  */
 import StateMachine from "./state-machine";
-import { animateTransition } from "./utils";
+import { animateTransition, queryDOM } from "./utils";
 
 class Component {
   constructor(el, options) {
@@ -32,9 +32,7 @@ class Component {
     this.ariaManager = new AriaManager(this, this.ariaConfig);
 
     // ignore item's part
-    this.allParts = Array.from(this.el.querySelectorAll("[data-part]")).concat([
-      this.el,
-    ]);
+    this.allParts = this.queryParts();
     if (ignoreItems) {
       this.allParts = this.allParts.filter(
         (element) =>
@@ -61,6 +59,14 @@ class Component {
       console.error("SaladUI: Error parsing component options:", error);
       this.options = {};
     }
+  }
+
+  queryParts() {
+    return queryDOM(this.el, (node) => {
+      if (!node.dataset?.part) return 0;
+      if (node.getAttribute("phx-hook") != null) return -1;
+      return 1;
+    }).concat([this.el]);
   }
 
   initEventMappings() {

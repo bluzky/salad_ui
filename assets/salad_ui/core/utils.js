@@ -98,3 +98,67 @@ export function addOrRemoveClasses(
     targetElement.classList.remove(...removeClasses.filter(Boolean));
   }
 }
+
+/**
+ * Filter result constants
+ * @enum {number}
+ */
+const FilterResult = {
+  IGNORE_AND_CONTINUE: 0, // Ignore node but traverse children
+  SELECT_AND_CONTINUE: 1, // Select node and traverse children
+  IGNORE_AND_SKIP: -1, // Ignore node and skip children
+};
+
+/**
+ * Custom DOM query selector with advanced filtering capabilities
+ *
+ * @param {Node} root - Starting DOM node
+ * @param {Function} filterFunction - Function returning a FilterResult value
+ * @param {Object} [options] - Optional settings
+ * @param {boolean} [options.breadthFirst=true] - Use breadth-first (true) or depth-first (false)
+ * @returns {Element[]} Matching elements
+ */
+export function queryDOM(
+  root,
+  filterFunction,
+  options = { breadthFirst: true },
+) {
+  // Validate inputs
+  if (!(root instanceof Node)) throw new TypeError("Root must be a DOM node");
+  if (typeof filterFunction !== "function")
+    throw new TypeError("Filter must be a function");
+
+  const result = [];
+  const nodes = [...root.children];
+  const getNext =
+    options.breadthFirst !== false ? () => nodes.shift() : () => nodes.pop();
+
+  while (nodes.length > 0) {
+    const current = getNext();
+
+    // Skip non-element nodes
+    if (!(current instanceof Element)) continue;
+
+    // Process based on filter result
+    const filterResult = filterFunction(current);
+
+    if (filterResult === FilterResult.SELECT_AND_CONTINUE) {
+      result.push(current);
+      addChildren(current, nodes);
+    } else if (filterResult === FilterResult.IGNORE_AND_CONTINUE) {
+      addChildren(current, nodes);
+    }
+    // IGNORE_AND_SKIP: do nothing
+  }
+
+  return result;
+}
+
+/**
+ * Add element's children to the traversal collection
+ */
+function addChildren(element, collection) {
+  for (let i = 0; i < element.children.length; i++) {
+    collection.push(element.children[i]);
+  }
+}
