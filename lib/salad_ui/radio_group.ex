@@ -43,7 +43,8 @@ defmodule SaladUI.RadioGroup do
     assigns =
       assigns
       |> assign(:event_map, Jason.encode!(event_map))
-      |> assign(:options,
+      |> assign(
+        :options,
         Jason.encode!(%{
           initialValue: assigns.value
         })
@@ -92,14 +93,7 @@ defmodule SaladUI.RadioGroup do
       tabindex="-1"
       {@rest}
     >
-      <input
-        type="radio"
-        id={@id}
-        value={@value}
-        disabled={@disabled}
-        class="sr-only"
-        tabindex="-1"
-      />
+      <input type="radio" id={@id} value={@value} disabled={@disabled} class="sr-only" tabindex="-1" />
       <span class="hidden group-data-[state=checked]/item:flex items-center justify-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"

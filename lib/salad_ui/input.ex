@@ -32,9 +32,11 @@ defmodule SaladUI.Input do
   attr :id, :any, default: nil
   attr :name, :any, default: nil
   attr :value, :any
+
   attr :type, :string,
     default: "text",
     values: ~w(date datetime-local email file hidden month number password tel text time url week)
+
   attr :"default-value", :any
   attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
   attr :class, :any, default: nil
@@ -43,8 +45,10 @@ defmodule SaladUI.Input do
 
   def input(assigns) do
     assigns = prepare_assign(assigns)
+
     rest =
       Map.merge(assigns.rest, Map.take(assigns, [:id, :name, :value, :type]))
+
     assigns = assign(assigns, :rest, rest)
 
     ~H"""

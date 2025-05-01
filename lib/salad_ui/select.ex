@@ -235,7 +235,7 @@ defmodule SaladUI.Select do
           @class
         ])
       }
-      tabindex={@disabled && "-1" || "0"}
+      tabindex={(@disabled && "-1") || "0"}
       {@rest}
     >
       <span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">

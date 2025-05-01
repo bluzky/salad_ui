@@ -44,10 +44,12 @@ defmodule SaladUI.Progress do
       {@rest}
     >
       <div
-        class={classes([
-          "h-full w-full flex-1 bg-primary transition-all",
-          @indeterminate && "animate-indeterminate-progress"
-        ])}
+        class={
+          classes([
+            "h-full w-full flex-1 bg-primary transition-all",
+            @indeterminate && "animate-indeterminate-progress"
+          ])
+        }
         style={if @indeterminate, do: nil, else: "transform: translateX(-#{100 - @value}%)"}
       >
       </div>
