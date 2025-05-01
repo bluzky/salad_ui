@@ -8,8 +8,22 @@ defmodule Storybook.SaladUIComponents.DropdownMenu do
 
   def imports,
     do: [
-      {DropdownMenu, [ dropdown_menu_trigger: 1, dropdown_menu_content: 1, dropdown_menu_label: 1, dropdown_menu_separator: 1, dropdown_menu_item: 1, dropdown_menu_shortcut: 1, dropdown_menu_group: 1,
-        dropdown_menu_checkbox_item: 1, dropdown_menu_radio_group: 1, dropdown_menu_radio_item: 1, dropdown_menu_sub: 1, dropdown_menu_sub_trigger: 1, dropdown_menu_sub_content: 1]},
+      {DropdownMenu,
+       [
+         dropdown_menu_trigger: 1,
+         dropdown_menu_content: 1,
+         dropdown_menu_label: 1,
+         dropdown_menu_separator: 1,
+         dropdown_menu_item: 1,
+         dropdown_menu_shortcut: 1,
+         dropdown_menu_group: 1,
+         dropdown_menu_checkbox_item: 1,
+         dropdown_menu_radio_group: 1,
+         dropdown_menu_radio_item: 1,
+         dropdown_menu_sub: 1,
+         dropdown_menu_sub_trigger: 1,
+         dropdown_menu_sub_content: 1
+       ]},
       {SaladUI.Button, [button: 1]},
       {SaladStorybookWeb.CoreComponents, [icon: 1]}
     ]
@@ -72,29 +86,29 @@ defmodule Storybook.SaladUIComponents.DropdownMenu do
         description: "Dropdown with checkbox",
         template: """
         <.dropdown_menu id="text-formatting">
-  <.dropdown_menu_trigger>
-    <.button variant="outline">Format</.button>
-  </.dropdown_menu_trigger>
-  <.dropdown_menu_content>
-    <.dropdown_menu_checkbox_item
-      checked
-      on-checked-change="toggle_bold"
-    >
-      <span class="font-bold">Bold</span>
-    </.dropdown_menu_checkbox_item>
-    <.dropdown_menu_checkbox_item
-      on-checked-change={JS.push("toggle_italic")}
-    >
-      <span class="italic">Italic</span>
-    </.dropdown_menu_checkbox_item>
-    <.dropdown_menu_checkbox_item
-      on-select="format_underline"
-      on-checked-change={JS.push("toggle_underline")}
-    >
-      <span class="underline">Underline</span>
-    </.dropdown_menu_checkbox_item>
-  </.dropdown_menu_content>
-</.dropdown_menu>
+        <.dropdown_menu_trigger>
+        <.button variant="outline">Format</.button>
+        </.dropdown_menu_trigger>
+        <.dropdown_menu_content>
+        <.dropdown_menu_checkbox_item
+        checked
+        on-checked-change="toggle_bold"
+        >
+        <span class="font-bold">Bold</span>
+        </.dropdown_menu_checkbox_item>
+        <.dropdown_menu_checkbox_item
+        on-checked-change={JS.push("toggle_italic")}
+        >
+        <span class="italic">Italic</span>
+        </.dropdown_menu_checkbox_item>
+        <.dropdown_menu_checkbox_item
+        on-select="format_underline"
+        on-checked-change={JS.push("toggle_underline")}
+        >
+        <span class="underline">Underline</span>
+        </.dropdown_menu_checkbox_item>
+        </.dropdown_menu_content>
+        </.dropdown_menu>
         """
       }
     ]

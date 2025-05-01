@@ -128,7 +128,7 @@ class TabsComponent extends Component {
     triggerItem.instance.focus();
 
     // Emit event
-    this.pushEvent("tab-changed", { value, previousValue });
+    this.pushEvent("tab-changed", { value });
   }
 
   updateActiveTab() {

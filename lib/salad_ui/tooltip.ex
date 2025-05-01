@@ -77,7 +77,7 @@ defmodule SaladUI.Tooltip do
       phx-hook="SaladUI"
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -94,7 +94,7 @@ defmodule SaladUI.Tooltip do
   def tooltip_trigger(assigns) do
     ~H"""
     <div data-part="trigger" class={classes(["", @class])} {@rest}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -119,10 +119,11 @@ defmodule SaladUI.Tooltip do
   slot :inner_block, required: true
 
   def tooltip_content(assigns) do
-    assigns = assign(assigns,
-      side_offset: assigns[:"side-offset"],
-      align_offset: assigns[:"align-offset"]
-    )
+    assigns =
+      assign(assigns,
+        side_offset: assigns[:"side-offset"],
+        align_offset: assigns[:"align-offset"]
+      )
 
     ~H"""
     <div
@@ -140,14 +141,14 @@ defmodule SaladUI.Tooltip do
       hidden
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
 
   defp get_animation_config do
     %{
-        "closed_to_open" => %{
+      "closed_to_open" => %{
         duration: 200,
         target_part: "content"
       },

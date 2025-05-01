@@ -43,7 +43,7 @@ defmodule SaladStorybookWeb.Demo.DashboardThree do
           Analytics
         </.link>
       </nav>
-      <.sheet>
+      <.sheet id="menu">
         <.sheet_trigger target="sheet-content">
           <.button variant="outline" size="icon" class="shrink-0 md:hidden">
             <.icon name="hero-bars-3" class="h-5 w-5" />
@@ -88,7 +88,7 @@ defmodule SaladStorybookWeb.Demo.DashboardThree do
             />
           </div>
         </form>
-        <.dropdown_menu>
+        <.dropdown_menu id="accounts">
           <.dropdown_menu_trigger>
             <.button variant="secondary" size="icon" class="rounded-full">
               <.icon name="hero-user-circle" class="h-5 w-5" />
@@ -96,14 +96,12 @@ defmodule SaladStorybookWeb.Demo.DashboardThree do
             </.button>
           </.dropdown_menu_trigger>
           <.dropdown_menu_content align="end">
-            <.menu>
-              <.menu_label>My Account</.menu_label>
-              <.menu_separator />
-              <.menu_item>Settings</.menu_item>
-              <.menu_item>Support</.menu_item>
-              <.menu_separator />
-              <.menu_item>Logout</.menu_item>
-            </.menu>
+            <.dropdown_menu_label>My Account</.dropdown_menu_label>
+            <.dropdown_menu_separator />
+            <.dropdown_menu_item>Settings</.dropdown_menu_item>
+            <.dropdown_menu_item>Support</.dropdown_menu_item>
+            <.dropdown_menu_separator />
+            <.dropdown_menu_item>Logout</.dropdown_menu_item>
           </.dropdown_menu_content>
         </.dropdown_menu>
       </div>

@@ -157,11 +157,16 @@ defmodule SaladUI.Sidebar do
   """
   attr(:class, :string, default: nil)
   attr :target, :string, required: true, doc: "The id of the target sidebar"
-  attr :as_tag, :any, default: "button"
+  attr :"as-tag", :any, default: "button"
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
   def sidebar_trigger(assigns) do
+    assigns =
+      assigns
+      |> assign(:as_tag, assigns[:as_tag])
+      |> assign(:"as-tag", nil)
+
     ~H"""
     <.dynamic
       tag={@as_tag}
@@ -371,11 +376,16 @@ defmodule SaladUI.Sidebar do
   TODO: class merge not work well here
   """
   attr(:class, :string, default: nil)
-  attr :as_tag, :any, default: "div"
+  attr :"as-tag", :any, default: "div"
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
   def sidebar_group_label(assigns) do
+    assigns =
+      assigns
+      |> assign(:as_tag, assigns[:as_tag])
+      |> assign(:"as-tag", nil)
+
     ~H"""
     <.dynamic
       data-sidebar="group-label"
@@ -504,12 +514,17 @@ defmodule SaladUI.Sidebar do
   attr(:class, :string, default: nil)
   attr :is_mobile, :boolean, default: false
   attr :state, :string, default: "expanded"
-  attr :as_tag, :any, default: "button"
+  attr :"as-tag", :any, default: "button"
   attr(:rest, :global)
   slot(:inner_block, required: true)
   attr :tooltip, :string, required: false
 
   def sidebar_menu_button(assigns) do
+    assigns =
+      assigns
+      |> assign(:as_tag, assigns[:as_tag])
+      |> assign(:"as-tag", nil)
+
     button = ~H"""
     <.dynamic
       tag={@as_tag}
@@ -688,11 +703,16 @@ defmodule SaladUI.Sidebar do
   attr :size, :string, values: ~w(sm md), default: "md"
   attr :is_active, :boolean, default: false
   attr(:class, :string, default: nil)
-  attr :as_tag, :any, default: "a"
+  attr :"as-tag", :any, default: "a"
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
   def sidebar_menu_sub_button(assigns) do
+    assigns =
+      assigns
+      |> assign(:as_tag, assigns[:as_tag])
+      |> assign(:"as-tag", nil)
+
     ~H"""
     <.dynamic
       tag={@as_tag}

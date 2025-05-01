@@ -56,7 +56,7 @@ defmodule SaladStorybookWeb.CoreComponents do
   def modal(assigns) do
     ~H"""
     <Dialog.dialog id={@id} show={@show} on_cancel={@on_cancel}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </Dialog.dialog>
     """
   end
@@ -93,8 +93,8 @@ defmodule SaladStorybookWeb.CoreComponents do
       <.icon :if={@kind == :info} name="hero-information-circle" class="h-4 w-4" />
       <.icon :if={@kind == :error} name="hero-exclamation-circle" class="h-4 w-4" />
 
-      <.alert_title :if={@title}><%= @title %></.alert_title>
-      <.alert_description><%= msg %></.alert_description>
+      <.alert_title :if={@title}>{@title}</.alert_title>
+      <.alert_description>{msg}</.alert_description>
       <button type="button" class="group absolute top-1 right-1 p-2" aria-label={gettext("close")}>
         <.icon name="hero-x-mark-solid" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
       </button>
@@ -125,7 +125,7 @@ defmodule SaladStorybookWeb.CoreComponents do
         phx-connected={hide("#client-error")}
         hidden
       >
-        <%= gettext("Attempting to reconnect") %>
+        {gettext("Attempting to reconnect")}
         <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
 
@@ -137,7 +137,7 @@ defmodule SaladStorybookWeb.CoreComponents do
         phx-connected={hide("#server-error")}
         hidden
       >
-        <%= gettext("Hang in there while we get back on track") %>
+        {gettext("Hang in there while we get back on track")}
         <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
     </div>
@@ -171,9 +171,9 @@ defmodule SaladStorybookWeb.CoreComponents do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
       <div class="mt-10 space-y-8 bg-white">
-        <%= render_slot(@inner_block, f) %>
+        {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
-          <%= render_slot(action, f) %>
+          {render_slot(action, f)}
         </div>
       </div>
     </.form>
@@ -204,7 +204,7 @@ defmodule SaladStorybookWeb.CoreComponents do
       ]}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </Button.button>
     """
   end
@@ -272,7 +272,7 @@ defmodule SaladStorybookWeb.CoreComponents do
     <div>
       <.form_label error={not Enum.empty?(@errors)} class="flex items-center gap-4 leading-6">
         <Checkbox.checkbox value={@value} id={@id} name={@name} {@rest} />
-        <%= @label %>
+        {@label}
       </.form_label>
       <.form_message errors={@errors} />
     </div>
@@ -282,7 +282,7 @@ defmodule SaladStorybookWeb.CoreComponents do
   def input(%{type: "select"} = assigns) do
     ~H"""
     <div>
-      <.label for={@id}><%= @label %></.label>
+      <.label for={@id}>{@label}</.label>
       <select
         id={@id}
         name={@name}
@@ -290,8 +290,8 @@ defmodule SaladStorybookWeb.CoreComponents do
         multiple={@multiple}
         {@rest}
       >
-        <option :if={@prompt} value=""><%= @prompt %></option>
-        <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
+        <option :if={@prompt} value="">{@prompt}</option>
+        {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
       <.form_message errors={@errors} />
     </div>
@@ -301,7 +301,7 @@ defmodule SaladStorybookWeb.CoreComponents do
   def input(%{type: "textarea"} = assigns) do
     ~H"""
     <.form_item>
-      <.form_label error={not Enum.empty?(@errors)}><%= @label %></.form_label>
+      <.form_label error={not Enum.empty?(@errors)}>{@label}</.form_label>
       <Textarea.textarea
         id={@id}
         name={@name}
@@ -320,7 +320,7 @@ defmodule SaladStorybookWeb.CoreComponents do
   def input(%{type: "range"} = assigns) do
     ~H"""
     <.form_item>
-      <.form_label error={not Enum.empty?(@errors)}><%= @label %></.form_label>
+      <.form_label error={not Enum.empty?(@errors)}>{@label}</.form_label>
       <Slider.slider
         id={@id}
         name={@name}
@@ -336,7 +336,7 @@ defmodule SaladStorybookWeb.CoreComponents do
   def input(assigns) do
     ~H"""
     <.form_item>
-      <.form_label error={not Enum.empty?(@errors)}><%= @label %></.form_label>
+      <.form_label error={not Enum.empty?(@errors)}>{@label}</.form_label>
       <Input.input
         id={@id}
         type={@type}
@@ -361,7 +361,7 @@ defmodule SaladStorybookWeb.CoreComponents do
   def label(assigns) do
     ~H"""
     <Label.label for={@for}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </Label.label>
     """
   end
@@ -380,13 +380,13 @@ defmodule SaladStorybookWeb.CoreComponents do
     <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
       <div>
         <h1 class="text-lg font-semibold leading-8 text-foreground">
-          <%= render_slot(@inner_block) %>
+          {render_slot(@inner_block)}
         </h1>
         <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-foreground">
-          <%= render_slot(@subtitle) %>
+          {render_slot(@subtitle)}
         </p>
       </div>
-      <div class="flex-none"><%= render_slot(@actions) %></div>
+      <div class="flex-none">{render_slot(@actions)}</div>
     </header>
     """
   end
@@ -428,10 +428,10 @@ defmodule SaladStorybookWeb.CoreComponents do
         <.table_header>
           <.table_row>
             <.table_head :for={col <- @col}>
-              <%= col[:label] %>
+              {col[:label]}
             </.table_head>
             <.table_head :if={@action != []} class="relative p-0 pb-4">
-              <span class="sr-only"><%= gettext("Actions") %></span>
+              <span class="sr-only">{gettext("Actions")}</span>
             </.table_head>
           </.table_row>
         </.table_header>
@@ -446,12 +446,12 @@ defmodule SaladStorybookWeb.CoreComponents do
               phx-click={@row_click && @row_click.(row)}
               class={[@row_click && "hover:cursor-pointer"]}
             >
-              <%= render_slot(col, @row_item.(row)) %>
+              {render_slot(col, @row_item.(row))}
             </.table_cell>
             <.table_cell :if={@action != []} class="relative w-14 p-0">
               <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
                 <span :for={action <- @action} class="relative ml-4 font-semibold">
-                  <%= render_slot(action, @row_item.(row)) %>
+                  {render_slot(action, @row_item.(row))}
                 </span>
               </div>
             </.table_cell>
@@ -481,8 +481,8 @@ defmodule SaladStorybookWeb.CoreComponents do
     <div class="mt-14">
       <dl class="-my-4 divide-y divide-zinc-100">
         <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
-          <dt class="w-1/4 flex-none font-medium text-muted-foreground"><%= item.title %></dt>
-          <dd class="text-foreground"><%= render_slot(item) %></dd>
+          <dt class="w-1/4 flex-none font-medium text-muted-foreground">{item.title}</dt>
+          <dd class="text-foreground">{render_slot(item)}</dd>
         </div>
       </dl>
     </div>
@@ -507,7 +507,7 @@ defmodule SaladStorybookWeb.CoreComponents do
         class="text-sm font-semibold leading-6 text-primary hover:text-primary/90"
       >
         <.icon name="hero-arrow-left-solid" class="h-3 w-3" />
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </.link>
     </div>
     """

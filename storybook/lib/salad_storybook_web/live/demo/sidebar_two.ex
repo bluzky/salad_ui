@@ -157,11 +157,12 @@ defmodule SaladStorybookWeb.Demo.SidebarTwo do
             class="group/collapsible"
           >
             <.sidebar_group>
-              <.as_child tag={&sidebar_group_label/1}
+              <.as_child
+                tag={&sidebar_group_label/1}
                 child={&collapsible_trigger/1}
                 class="group/label text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               >
-                <%= group.title %>
+                {group.title}
                 <Lucideicons.chevron_right class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
               </.as_child>
               <.collapsible_content>
@@ -170,7 +171,7 @@ defmodule SaladStorybookWeb.Demo.SidebarTwo do
                     <.sidebar_menu_item :for={item <- group.items}>
                       <.sidebar_menu_button is_active={item[:is_active]}>
                         <a href={item.url}>
-                          <%= item.title %>
+                          {item.title}
                         </a>
                       </.sidebar_menu_button>
                     </.sidebar_menu_item>
@@ -180,14 +181,14 @@ defmodule SaladStorybookWeb.Demo.SidebarTwo do
             </.sidebar_group>
           </.collapsible>
         </.sidebar_content>
-        <.sidebar_rail/>
+        <.sidebar_rail />
       </.sidebar>
       <.sidebar_inset>
         <header class="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <.sidebar_trigger target="main-sidebar" class="-ml-1">
             <Lucideicons.panel_left class="w-4 h-4" />
           </.sidebar_trigger>
-          <.separator orientation="vertical" class="mr-2 h-4"/>
+          <.separator orientation="vertical" class="mr-2 h-4" />
           <.breadcrumb>
             <.breadcrumb_list>
               <.breadcrumb_item class="hidden md:block">
@@ -195,7 +196,7 @@ defmodule SaladStorybookWeb.Demo.SidebarTwo do
                   Building Your Application
                 </.breadcrumb_link>
               </.breadcrumb_item>
-              <.breadcrumb_separator class="hidden md:block"/>
+              <.breadcrumb_separator class="hidden md:block" />
               <.breadcrumb_item>
                 <.breadcrumb_page>
                   Data Fetching
@@ -225,7 +226,7 @@ defmodule SaladStorybookWeb.Demo.SidebarTwo do
           <.label for="search" class="sr-only">
             Search
           </.label>
-          <.sidebar_input id="search" placeholder="Search the docs..." class="pl-8"/>
+          <.sidebar_input id="search" placeholder="Search the docs..." class="pl-8" />
           <search class="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50">
           </search>
         </.sidebar_group_content>
@@ -238,7 +239,7 @@ defmodule SaladStorybookWeb.Demo.SidebarTwo do
     ~H"""
     <.sidebar_menu>
       <.sidebar_menu_item>
-        <.dropdown_menu class="block">
+        <.dropdown_menu id="version" class="block">
           <.dropdown_menu_trigger>
             <.sidebar_menu_button
               size="lg"
@@ -252,18 +253,16 @@ defmodule SaladStorybookWeb.Demo.SidebarTwo do
                   Documentation
                 </span>
                 <span class="">
-                  v<%= @default_version %>
+                  v{@default_version}
                 </span>
               </div>
               <Lucideicons.chevrons_up_down class="ml-auto" />
             </.sidebar_menu_button>
           </.dropdown_menu_trigger>
           <.dropdown_menu_content class="w-full" align="start">
-            <.menu>
-              <.menu_item :for={item <- @versions}>
-                v<%= item %>
-              </.menu_item>
-            </.menu>
+            <.dropdown_menu_item :for={item <- @versions}>
+              v{item}
+            </.dropdown_menu_item>
           </.dropdown_menu_content>
         </.dropdown_menu>
       </.sidebar_menu_item>

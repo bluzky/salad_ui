@@ -84,12 +84,7 @@ defmodule SaladUI.Popover do
 
   def popover_trigger(assigns) do
     ~H"""
-    <div
-      data-part="trigger"
-      data-action="toggle"
-      class={classes(["", @class])}
-      {@rest}
-    >
+    <div data-part="trigger" data-action="toggle" class={classes(["", @class])} {@rest}>
       {render_slot(@inner_block)}
     </div>
     """
@@ -116,6 +111,7 @@ defmodule SaladUI.Popover do
 
   def popover_content(assigns) do
     assigns = assign(assigns, side_offset: assigns[:"side-offset"], align_offset: assigns[:"align-offset"])
+
     ~H"""
     <div
       data-part="positioner"

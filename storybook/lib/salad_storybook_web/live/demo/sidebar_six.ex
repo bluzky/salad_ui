@@ -203,8 +203,9 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
     ~H"""
     <.sidebar_menu>
       <.sidebar_menu_item>
-        <.dropdown_menu class="block">
-          <.as_child tag={&dropdown_menu_trigger/1}
+        <.dropdown_menu id="team" class="block">
+          <.as_child
+            tag={&dropdown_menu_trigger/1}
             child={&sidebar_menu_button/1}
             size="lg"
             class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
@@ -214,10 +215,10 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
             </div>
             <div class="grid flex-1 text-left text-sm leading-tight">
               <span class="truncate font-semibold">
-                <%= @active_team.name %>
+                {@active_team.name}
               </span>
               <span class="truncate text-xs">
-                <%= @active_team.plan %>
+                {@active_team.plan}
               </span>
             </div>
             <.chevrons_up_down class="ml-auto" />
@@ -227,31 +228,29 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
             align="start"
             side="right"
           >
-            <.menu>
-              <.menu_label class="text-xs text-muted-foreground">
-                Teams
-              </.menu_label>
+            <.dropdown_menu_label class="text-xs text-muted-foreground">
+              Teams
+            </.dropdown_menu_label>
 
-              <.menu_item :for={{team, index} <- Enum.with_index(@teams)} class="gap-2 p-2">
-                <div class="flex size-6 items-center justify-center rounded-sm border">
-                  <.dynamic tag={team.logo} class="size-4 shrink-0" />
-                </div>
-                <%= team.name %>
-                <.dropdown_menu_shortcut>
-                  ⌘<%= index + 1 %>
-                </.dropdown_menu_shortcut>
-              </.menu_item>
+            <.dropdown_menu_item :for={{team, index} <- Enum.with_index(@teams)} class="gap-2 p-2">
+              <div class="flex size-6 items-center justify-center rounded-sm border">
+                <.dynamic tag={team.logo} class="size-4 shrink-0" />
+              </div>
+              {team.name}
+              <.dropdown_menu_shortcut>
+                ⌘{index + 1}
+              </.dropdown_menu_shortcut>
+            </.dropdown_menu_item>
 
-              <.menu_separator></.menu_separator>
-              <.menu_item class="gap-2 p-2">
-                <div class="flex size-6 items-center justify-center rounded-md border bg-background">
-                  <.plus class="size-4" />
-                </div>
-                <div class="font-medium text-muted-foreground">
-                  Add team
-                </div>
-              </.menu_item>
-            </.menu>
+            <.dropdown_menu_separator></.dropdown_menu_separator>
+            <.dropdown_menu_item class="gap-2 p-2">
+              <div class="flex size-6 items-center justify-center rounded-md border bg-background">
+                <.plus class="size-4" />
+              </div>
+              <div class="font-medium text-muted-foreground">
+                Add team
+              </div>
+            </.dropdown_menu_item>
           </.dropdown_menu_content>
         </.dropdown_menu>
       </.sidebar_menu_item>
@@ -274,11 +273,15 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
           class="group/collapsible block"
         >
           <.sidebar_menu_item>
-            <.as_child tag={&collapsible_trigger/1} child={&sidebar_menu_button/1} tooltip={item.title}>
+            <.as_child
+              tag={&collapsible_trigger/1}
+              child={&sidebar_menu_button/1}
+              tooltip={item.title}
+            >
               <.dynamic :if={not is_nil(item.icon)} tag={item.icon} />
 
               <span>
-                <%= item.title %>
+                {item.title}
               </span>
               <.chevron_right class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
             </.as_child>
@@ -287,7 +290,7 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
                 <.sidebar_menu_sub_item :for={sub_item <- item.items}>
                   <.as_child tag={&sidebar_menu_sub_button/1} child="a" href={sub_item.url}>
                     <span>
-                      <%= sub_item.title %>
+                      {sub_item.title}
                     </span>
                   </.as_child>
                 </.sidebar_menu_sub_item>
@@ -308,12 +311,12 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
       </.sidebar_group_label>
       <.sidebar_menu>
         <.sidebar_menu_item :for={item <- @projects}>
-          <.dropdown_menu style="-ml-8 block">
+          <.dropdown_menu id="projects" style="-ml-8 block">
             <.dropdown_menu_trigger show_on_hover>
               <.as_child tag={&sidebar_menu_button/1} child="a" href={item.url}>
                 <.dynamic tag={item.icon} />
                 <span>
-                  <%= item.name %>
+                  {item.name}
                 </span>
               </.as_child>
               <.sidebar_menu_action>
@@ -324,27 +327,25 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
               </.sidebar_menu_action>
             </.dropdown_menu_trigger>
             <.dropdown_menu_content class="w-48 rounded-lg" side="right" align="start">
-              <.menu>
-                <.menu_item>
-                  <.folder class="text-muted-foreground h-4 w-4 mr-2" />
-                  <span>
-                    View Project
-                  </span>
-                </.menu_item>
-                <.menu_item>
-                  <.forward class="text-muted-foreground h-4 w-4 mr-2" />
-                  <span>
-                    Share Project
-                  </span>
-                </.menu_item>
-                <.menu_separator></.menu_separator>
-                <.menu_item>
-                  <.trash_2 class="text-muted-foreground h-4 w-4 mr-2" />
-                  <span>
-                    Delete Project
-                  </span>
-                </.menu_item>
-              </.menu>
+              <.dropdown_menu_item>
+                <.folder class="text-muted-foreground h-4 w-4 mr-2" />
+                <span>
+                  View Project
+                </span>
+              </.dropdown_menu_item>
+              <.dropdown_menu_item>
+                <.forward class="text-muted-foreground h-4 w-4 mr-2" />
+                <span>
+                  Share Project
+                </span>
+              </.dropdown_menu_item>
+              <.dropdown_menu_separator></.dropdown_menu_separator>
+              <.dropdown_menu_item>
+                <.trash_2 class="text-muted-foreground h-4 w-4 mr-2" />
+                <span>
+                  Delete Project
+                </span>
+              </.dropdown_menu_item>
             </.dropdown_menu_content>
           </.dropdown_menu>
         </.sidebar_menu_item>
@@ -365,8 +366,9 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
     ~H"""
     <.sidebar_menu>
       <.sidebar_menu_item>
-        <.dropdown_menu class="block">
-          <.as_child tag={&dropdown_menu_trigger/1}
+        <.dropdown_menu id="accounts" class="block">
+          <.as_child
+            tag={&dropdown_menu_trigger/1}
             child={&sidebar_menu_button/1}
             size="lg"
             class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
@@ -379,10 +381,10 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
             </.avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
               <span class="truncate font-semibold">
-                <%= @user.name %>
+                {@user.name}
               </span>
               <span class="truncate text-xs">
-                <%= @user.email %>
+                {@user.email}
               </span>
             </div>
             <.chevrons_up_down class="ml-auto size-4" />
@@ -393,48 +395,46 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
             align="end"
             sideoffset="{4}"
           >
-            <.menu>
-              <.menu_label class="p-0 font-normal">
-                <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <.avatar class="h-8 w-8 rounded-lg">
-                    <.avatar_image src="{user.avatar}" alt="{user.name}"></.avatar_image>
-                    <.avatar_fallback class="rounded-lg">
-                      CN
-                    </.avatar_fallback>
-                  </.avatar>
-                  <div class="grid flex-1 text-left text-sm leading-tight">
-                    <span class="truncate font-semibold">
-                      <%= @user.name %>
-                    </span>
-                    <span class="truncate text-xs">
-                      <%= @user.email %>
-                    </span>
-                  </div>
+            <.dropdown_menu_label class="p-0 font-normal">
+              <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                <.avatar class="h-8 w-8 rounded-lg">
+                  <.avatar_image src="{user.avatar}" alt="{user.name}"></.avatar_image>
+                  <.avatar_fallback class="rounded-lg">
+                    CN
+                  </.avatar_fallback>
+                </.avatar>
+                <div class="grid flex-1 text-left text-sm leading-tight">
+                  <span class="truncate font-semibold">
+                    {@user.name}
+                  </span>
+                  <span class="truncate text-xs">
+                    {@user.email}
+                  </span>
                 </div>
-              </.menu_label>
-              <.menu_separator></.menu_separator>
-              <dropdownmenugroup>
-                <.menu_item>
-                  <.sparkles class="w-4 h-4 mr-2" /> Upgrade to Pro
-                </.menu_item>
-              </dropdownmenugroup>
-              <.menu_separator></.menu_separator>
-              <dropdownmenugroup>
-                <.menu_item>
-                  <.badge_check class="w-4 h-4 mr-2" /> Account
-                </.menu_item>
-                <.menu_item>
-                  <.credit_card class="w-4 h-4 mr-2" /> Billing
-                </.menu_item>
-                <.menu_item>
-                  <.bell class="w-4 h-4 mr-2" /> Notifications
-                </.menu_item>
-              </dropdownmenugroup>
-              <.menu_separator></.menu_separator>
-              <.menu_item>
-                <.log_out class="w-4 h-4 mr-2" /> Log out
-              </.menu_item>
-            </.menu>
+              </div>
+            </.dropdown_menu_label>
+            <.dropdown_menu_separator></.dropdown_menu_separator>
+            <dropdownmenugroup>
+              <.dropdown_menu_item>
+                <.sparkles class="w-4 h-4 mr-2" /> Upgrade to Pro
+              </.dropdown_menu_item>
+            </dropdownmenugroup>
+            <.dropdown_menu_separator></.dropdown_menu_separator>
+            <dropdownmenugroup>
+              <.dropdown_menu_item>
+                <.badge_check class="w-4 h-4 mr-2" /> Account
+              </.dropdown_menu_item>
+              <.dropdown_menu_item>
+                <.credit_card class="w-4 h-4 mr-2" /> Billing
+              </.dropdown_menu_item>
+              <.dropdown_menu_item>
+                <.bell class="w-4 h-4 mr-2" /> Notifications
+              </.dropdown_menu_item>
+            </dropdownmenugroup>
+            <.dropdown_menu_separator></.dropdown_menu_separator>
+            <.dropdown_menu_item>
+              <.log_out class="w-4 h-4 mr-2" /> Log out
+            </.dropdown_menu_item>
           </.dropdown_menu_content>
         </.dropdown_menu>
       </.sidebar_menu_item>

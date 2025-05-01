@@ -1,6 +1,7 @@
 defmodule Storybook.SaladUIComponents.Tab do
   @moduledoc false
   use PhoenixStorybook.Story, :component
+
   alias SaladUI.Button
   alias SaladUI.Card
   alias SaladUI.Input
