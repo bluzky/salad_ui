@@ -86,19 +86,13 @@ defmodule SaladUI.AlertDialog do
   The trigger element that opens the alert dialog.
   """
   attr :class, :string, default: nil
-  attr :as_tag, :any, default: "div"
+  attr :as, :any, default: "div"
   slot :inner_block, required: true
   attr :rest, :global
 
   def alert_dialog_trigger(assigns) do
     ~H"""
-    <.dynamic
-      data-part="trigger"
-      data-action="open"
-      tag={@as_tag}
-      class={classes(["", @class])}
-      {@rest}
-    >
+    <.dynamic data-part="trigger" data-action="open" tag={@as} class={classes(["", @class])} {@rest}>
       {render_slot(@inner_block)}
     </.dynamic>
     """

@@ -75,42 +75,21 @@ defmodule SaladUI.Form do
       <.form_label field={@form[:email]}>Email</.form_label>
   """
   attr :class, :string, default: nil
-  attr :error, :boolean, default: false
 
   attr :field, Phoenix.HTML.FormField,
     default: nil,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
+  attr :error, :boolean, default: false, doc: "whether the field has an error"
   slot :inner_block, required: true
   attr :rest, :global
 
-  def form_label(%{field: field} = assigns) when not is_nil(field) do
-    assigns =
-      if Enum.empty?(field.errors) do
-        assigns
-      else
-        assign(assigns, error: true)
-      end
-
-    ~H"""
-    <SaladUI.Label.label
-      for={@field.id}
-      class={
-        classes([
-          @error && "text-destructive",
-          @class
-        ])
-      }
-      {@rest}
-    >
-      {render_slot(@inner_block)}
-    </SaladUI.Label.label>
-    """
-  end
-
   def form_label(assigns) do
+    assigns = assign(assigns, error: assigns[:error] || has_error?(assigns[:field]))
+
     ~H"""
     <SaladUI.Label.label
+      for={@field[:id]}
       class={
         classes([
           @error && "text-destructive",
@@ -174,31 +153,32 @@ defmodule SaladUI.Form do
       <.form_message>
         Please enter a valid email address.
       </.form_message>
-
-      <.form_message errors={["Email is required", "Must be a valid email"]} />
   """
   attr :field, Phoenix.HTML.FormField,
     default: nil,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
+  attr :errors, :any,
+    default: [],
+    doc: "a list of error messages to display"
+
   attr :class, :string, default: nil
-  attr :errors, :list, default: []
   slot :inner_block, required: false
   attr :rest, :global
 
   def form_message(assigns) do
-    assigns = prepare_assign(assigns)
+    assigns =
+      assigns
+      |> assign(error: has_error?(assigns[:field]) || not Enum.empty?(assigns[:errors]))
+      |> assign(:message, List.first(assigns[:errors] || field_errors(assigns[:field])))
 
     ~H"""
     <p
-      :if={msg = render_slot(@inner_block) || not Enum.empty?(@errors)}
-      class={classes(["text-destructive text-sm font-medium", @class])}
+      :if={(msg = render_slot(@inner_block)) || not is_nil(@error)}
+      class={classes(["text-sm font-medium", @error && "text-destructive", @class])}
       {@rest}
     >
-      <span :for={msg <- @errors} class="block">{msg}</span>
-      <%= if @errors == [] do %>
-        {msg}
-      <% end %>
+      {msg || @message}
     </p>
     """
   end

@@ -135,6 +135,8 @@ class DropdownMenuComponent extends Component {
   }
 
   onOpenEnter() {
+    this.previousFocusEl = document.activeElement;
+
     this.initializePositionedElement();
     this.positionedElement?.activate();
     this.menu.activate();
@@ -144,7 +146,8 @@ class DropdownMenuComponent extends Component {
   onClosedEnter() {
     this.positionedElement?.deactivate();
     this.pushEvent("closed");
-    this.trigger.querySelector("button").focus();
+    this.previousFocusEl?.focus();
+    this.previousFocusEl = null;
   }
 
   onItemSelect(_item) {

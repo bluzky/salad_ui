@@ -126,21 +126,16 @@ defmodule SaladUI.DropdownMenu do
   ## Options
 
   * `:class` - Additional CSS classes.
-  * `:as-tag` - The HTML tag to use for the trigger. Defaults to `"div"`.
+  * `:as` - The HTML tag to use for the trigger. Defaults to `"div"`.
   """
   attr :class, :string, default: nil
-  attr :"as-tag", :any, default: "div"
+  attr :as, :any, default: "div"
   attr :rest, :global
   slot :inner_block, required: true
 
   def dropdown_menu_trigger(assigns) do
-    assigns =
-      assigns
-      |> assign(:as_tag, assigns[:"as-tag"])
-      |> assign(:"as-tag", nil)
-
     ~H"""
-    <.dynamic tag={@as_tag} data-part="trigger" tab-index="0" class={classes(["", @class])} {@rest}>
+    <.dynamic tag={@as} data-part="trigger" tab-index="0" class={classes(["", @class])} {@rest}>
       {render_slot(@inner_block)}
     </.dynamic>
     """
@@ -258,6 +253,7 @@ defmodule SaladUI.DropdownMenu do
   attr :variant, :string, values: ~w(default destructive), default: "default"
   attr :disabled, :boolean, default: false
   attr :"on-select", :any, default: nil, doc: "Handler for item selection"
+  attr :as, :any, default: "div"
   attr :rest, :global
   slot :inner_block, required: true
 
@@ -270,14 +266,15 @@ defmodule SaladUI.DropdownMenu do
       assign(assigns, :event_map, json(event_map))
 
     ~H"""
-    <div
+    <.dynamic
+      tag={@as}
       data-part="item"
       data-value={@value}
       data-disabled={@disabled}
       data-event-mappings={@event_map}
       class={
         classes([
-          "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0",
+          "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:mr-2",
           @variant == "destructive" &&
             "text-destructive focus:bg-destructive/10 focus:text-destructive dark:focus:bg-destructive/20",
           @class
@@ -287,7 +284,48 @@ defmodule SaladUI.DropdownMenu do
       {@rest}
     >
       {render_slot(@inner_block)}
-    </div>
+    </.dynamic>
+    """
+  end
+
+  @doc """
+  An item in the dropdown menu.
+
+  ## Options
+
+  * `:disabled` - Whether the item is disabled. Defaults to `false`.
+  * `:variant` - Visual style variant of the item (default or destructive).
+  * `:on-select` - Handler for item selection.
+  * `:class` - Additional CSS classes.
+  """
+  attr :class, :string, default: nil
+  attr :value, :string, default: nil
+  attr :variant, :string, values: ~w(default destructive), default: "default"
+  attr :disabled, :boolean, default: false
+  attr :rest, :global, include: ~w(href method)
+  slot :inner_block, required: true
+
+  def dropdown_menu_link_item(assigns) do
+    # Collect event mappings
+
+    ~H"""
+    <.link
+      data-part="item"
+      data-value={@value}
+      data-disabled={@disabled}
+      class={
+        classes([
+          "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:mr-2",
+          @variant == "destructive" &&
+            "text-destructive focus:bg-destructive/10 focus:text-destructive dark:focus:bg-destructive/20",
+          @class
+        ])
+      }
+      tabindex={if @disabled, do: "-1", else: "0"}
+      {@rest}
+    >
+      {render_slot(@inner_block)}
+    </.link>
     """
   end
 

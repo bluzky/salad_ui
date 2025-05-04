@@ -9,13 +9,14 @@ defmodule Storybook.CoreComponents.Modal do
 
   def imports,
     do: [
-      {CoreComponents, [button: 1, hide_modal: 1, show_modal: 1]},
-      {Dialog, [dialog_header: 1, dialog_title: 1, dialog_description: 1, dialog_footer: 1]}
+      {CoreComponents, [button: 1]},
+      {Dialog, [dialog_header: 1, dialog_title: 1, dialog_description: 1, dialog_footer: 1]},
+      {SaladUI.JS, [dispatch_command: 3]}
     ]
 
   def template do
     """
-    <.button phx-click={show_modal(":variation_id")} psb-code-hidden>
+    <.button phx-click={dispatch_command(%JS{}, "open", to: "#modal-single-default")} psb-code-hidden>
       Open modal
     </.button>
     <.psb-variation/>
@@ -30,7 +31,7 @@ defmodule Storybook.CoreComponents.Modal do
           """
           Modal body
           <.dialog_footer>
-              <.button type="submit">Cancel</.button>
+              <.button type="submit" data-action="close">Cancel</.button>
           </.dialog_footer>
 
           """

@@ -59,6 +59,7 @@ defmodule SaladUI.Button do
       type={@type}
       class={
         classes([
+          "phx-submit-loading:opacity-75",
           @variant_class,
           @class
         ])

@@ -76,11 +76,7 @@ defmodule SaladStorybook.Helpers.JsxToHeex do
                    |> Map.new(fn {name, _} -> {String.replace(to_string(name), "_", ""), ".#{name}"} end)
 
   @custom_mapping %{
-    "link" => ".link",
-    "dropdownmenulabel" => ".menu_label",
-    "dropdownmenuseparator" => ".menu_separator",
-    "dropdownmenuitem" => ".menu_item",
-    "dropdownmenucheckboxitem" => ".menu_item"
+    "link" => ".link"
   }
 
   @explicit_tag_mapping Map.merge(@default_mapping, @custom_mapping)

@@ -55,8 +55,10 @@ defmodule SaladStorybookWeb.CoreComponents do
 
   def modal(assigns) do
     ~H"""
-    <Dialog.dialog id={@id} show={@show} on_cancel={@on_cancel}>
-      {render_slot(@inner_block)}
+    <Dialog.dialog id={@id} open={@show} on-close={@on_cancel}>
+      <Dialog.dialog_content>
+        {render_slot(@inner_block)}
+      </Dialog.dialog_content>
     </Dialog.dialog>
     """
   end
@@ -561,14 +563,6 @@ defmodule SaladStorybookWeb.CoreComponents do
          "opacity-0 .translate-y-4 sm:.translate-y-0 sm:scale-95"}
     )
   end
-
-  # def show_modal(js \\ %JS{}, id) when is_binary(id) do
-  #   Dialog.show_modal(js, id)
-  # end
-
-  # def hide_modal(js \\ %JS{}, id) do
-  #   Dialog.hide_modal(js, id)
-  # end
 
   @doc """
   Translates an error message using gettext.

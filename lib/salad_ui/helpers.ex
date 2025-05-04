@@ -28,6 +28,24 @@ defmodule SaladUI.Helpers do
     assign(assigns, value: value)
   end
 
+  @doc """
+  This function return list of error message from form field
+  """
+  def field_errors(%Phoenix.HTML.FormField{} = field) do
+    Enum.map(field.errors, &translate_error(&1))
+  end
+
+  def field_errors(_), do: []
+
+  @doc """
+  This function return true if the field has error
+  """
+  def has_error?(%Phoenix.HTML.FormField{} = field) do
+    not Enum.empty?(field.errors)
+  end
+
+  def has_error?(_field), do: false
+
   # Helper function to add event mappings
   def add_event_mapping(map \\ %{}, assigns, event, key) do
     if assigns[key] do
@@ -252,7 +270,7 @@ defmodule SaladUI.Helpers do
 
   @doc """
   This component mimic behavior of `asChild` attribute from shadcn/ui.
-  It works by passing all attribute from `as_child` tag to `tag` function component, add pass `child` attribute to the `as_tag` attribute of the `tag` function component.
+  It works by passing all attribute from `as_child` tag to `tag` function component, add pass `child` attribute to the `as` attribute of the `tag` function component.
 
   The `tag` function component should accept `as_tag` attribute to render the child component.
 
@@ -267,14 +285,14 @@ defmodule SaladUI.Helpers do
   Normally this can be archieved by using `dropdown_menu_trigger` component directly but this will fire copile warning.
 
   ```heex
-  <.dropdown_menu_trigger as_tag={&sidebar_menu_button/1} class="bg-primary text-primary-foreground">
+  <.dropdown_menu_trigger as={&sidebar_menu_button/1} class="bg-primary text-primary-foreground">
      Hello World
   </.dropdown_menu_trigger>
   """
   def as_child(%{tag: tag, child: child_tag} = assigns) when is_function(tag, 1) do
     assigns
     |> Map.drop([:tag, :child])
-    |> assign(:"as-tag", child_tag)
+    |> assign(:as, child_tag)
     |> tag.()
   end
 

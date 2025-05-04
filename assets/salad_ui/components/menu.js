@@ -70,12 +70,6 @@ class MenuItemBase extends Component {
   }
 
   handleActivation(event) {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-    }
-
     if (this.disabled) return;
     this.pushEvent(
       "item-selected",
@@ -175,6 +169,12 @@ class MenuCheckboxItem extends MenuItemBase {
 
   handleActivation(event) {
     super.handleActivation(event);
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+    }
+
     if (this.disabled) return;
 
     this.transition("toggle");

@@ -1,3 +1,4 @@
+==> salad_ui
 defmodule Storybook.SaladUIComponents.Sheet do
   @moduledoc false
   use PhoenixStorybook.Story, :component
@@ -171,7 +172,7 @@ defmodule Storybook.SaladUIComponents.Sheet do
             </.sheet_content>
           </.sheet>
 
-          <.button phx-click={%JS{} |> SaladUI.LiveView.JS.dispatch_command("open", to: "#sheet-programmatic")}>
+          <.button phx-click={%JS{} |> SaladUI.JS.dispatch_command("open", to: "#sheet-programmatic")}>
             Open Sheet Programmatically
           </.button>
         </div>

@@ -71,6 +71,7 @@ defmodule SaladUI.Sidebar do
           @class
         ])
       }
+      data-variant={@variant}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -82,11 +83,12 @@ defmodule SaladUI.Sidebar do
     assigns = assign(assigns, :sidebar_width_mobile, @sidebar_width_mobile)
 
     ~H"""
-    <.sheet>
+    <.sheet id={@id}>
       <.sheet_content
         data-sidebar="sidebar"
         data-mobile="true"
         class="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+        data-variant={@variant}
         style={
           style([
             %{
@@ -157,19 +159,14 @@ defmodule SaladUI.Sidebar do
   """
   attr(:class, :string, default: nil)
   attr :target, :string, required: true, doc: "The id of the target sidebar"
-  attr :"as-tag", :any, default: "button"
+  attr :as, :any, default: "button"
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
   def sidebar_trigger(assigns) do
-    assigns =
-      assigns
-      |> assign(:as_tag, assigns[:as_tag])
-      |> assign(:"as-tag", nil)
-
     ~H"""
     <.dynamic
-      tag={@as_tag}
+      tag={@as}
       data-sidebar="trigger"
       variant="ghost"
       size="icon"
@@ -177,7 +174,21 @@ defmodule SaladUI.Sidebar do
       phx-click={JS.exec("phx-toggle-sidebar", to: "#" <> @target)}
       {@rest}
     >
-      {render_slot(@inner_block)}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="h-4 w-4"
+      >
+        <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+        <path d="M9 3v18"></path>
+      </svg>
       <span class="sr-only">Toggle Sidebar</span>
     </.dynamic>
     """
@@ -376,20 +387,15 @@ defmodule SaladUI.Sidebar do
   TODO: class merge not work well here
   """
   attr(:class, :string, default: nil)
-  attr :"as-tag", :any, default: "div"
+  attr :as, :any, default: "div"
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
   def sidebar_group_label(assigns) do
-    assigns =
-      assigns
-      |> assign(:as_tag, assigns[:as_tag])
-      |> assign(:"as-tag", nil)
-
     ~H"""
     <.dynamic
       data-sidebar="group-label"
-      tag={@as_tag}
+      tag={@as}
       class={
         Enum.join(
           [
@@ -490,7 +496,7 @@ defmodule SaladUI.Sidebar do
 
   def sidebar_menu_item(assigns) do
     ~H"""
-    <div
+    <li
       data-sidebar="menu-item"
       class={
         classes([
@@ -501,7 +507,7 @@ defmodule SaladUI.Sidebar do
       {@rest}
     >
       {render_slot(@inner_block)}
-    </div>
+    </li>
     """
   end
 
@@ -514,24 +520,19 @@ defmodule SaladUI.Sidebar do
   attr(:class, :string, default: nil)
   attr :is_mobile, :boolean, default: false
   attr :state, :string, default: "expanded"
-  attr :"as-tag", :any, default: "button"
+  attr :as, :any, default: "button"
   attr(:rest, :global)
   slot(:inner_block, required: true)
   attr :tooltip, :string, required: false
 
   def sidebar_menu_button(assigns) do
-    assigns =
-      assigns
-      |> assign(:as_tag, assigns[:as_tag])
-      |> assign(:"as-tag", nil)
-
     button = ~H"""
     <.dynamic
-      tag={@as_tag}
+      tag={@as}
       data-sidebar="menu-button"
       data-size={@size}
       data-active={@is_active}
-      class={classes([get_variant(%{variant: @variant, size: @size}), @class])}
+      class={classes([sidebar_button_variant(%{variant: @variant, size: @size}), @class])}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -703,19 +704,14 @@ defmodule SaladUI.Sidebar do
   attr :size, :string, values: ~w(sm md), default: "md"
   attr :is_active, :boolean, default: false
   attr(:class, :string, default: nil)
-  attr :"as-tag", :any, default: "a"
+  attr :as, :any, default: "a"
   attr(:rest, :global)
   slot(:inner_block, required: true)
 
   def sidebar_menu_sub_button(assigns) do
-    assigns =
-      assigns
-      |> assign(:as_tag, assigns[:as_tag])
-      |> assign(:"as-tag", nil)
-
     ~H"""
     <.dynamic
-      tag={@as_tag}
+      tag={@as}
       data-sidebar="menu-sub-button"
       data-size={@size}
       data-active={@is_active}
@@ -755,7 +751,7 @@ defmodule SaladUI.Sidebar do
     }
   }
   @shared_classes "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0"
-  defp get_variant(input) do
+  defp sidebar_button_variant(input) do
     @shared_classes <> " " <> variant_class(@variant_config, input)
   end
 

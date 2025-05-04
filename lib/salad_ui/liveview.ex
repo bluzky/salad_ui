@@ -26,7 +26,7 @@ defmodule SaladUI.LiveView do
   end
 end
 
-defmodule SaladUI.LiveView.JS do
+defmodule SaladUI.JS do
   @moduledoc """
   Helper functions for integrating SaladUI with Phoenix LiveView using JavaScript commands.
   """
@@ -48,7 +48,7 @@ defmodule SaladUI.LiveView.JS do
   ## Example
   ```elixir
   <button
-    phx-click={%JS{} |> SaladUI.LiveView.JS.dispatch_command("open", to: "#dialog")}> Click me </button>
+    phx-click={%JS{} |> SaladUI.JS.dispatch_command("open", to: "#dialog")}> Click me </button>
   ```
   """
   def dispatch_command(js \\ %Phoenix.LiveView.JS{}, command_name, opts \\ []) do
