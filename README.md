@@ -102,7 +102,7 @@ config :salad_ui, :error_translator_function, {MyAppWeb.CoreComponents, :transla
 Here is how to start develop SaladUI on local machine.
 
 1. Clone this repo
-2. Clone `https://github.com/bluzky/salad_storybook` in the same directory with **Salad UI**
+2. Go into storybook folder
 3. Start storybook
 
 ```
