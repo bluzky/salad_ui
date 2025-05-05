@@ -106,7 +106,7 @@ Here is how to start develop SaladUI on local machine.
 3. Start storybook
 
 ```
-cd salad_storybook
+cd storybook
 mix phx.server
 ```
 
