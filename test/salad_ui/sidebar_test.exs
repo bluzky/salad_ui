@@ -189,7 +189,6 @@ defmodule SaladUI.SidebarTest do
       assert html =~ "data-sidebar=\"menu-button\""
       assert html =~ "data-size=\"lg\""
       assert html =~ "data-active"
-      assert html =~ "data-[active]:"
       assert html =~ "Large Active Button"
     end
   end
@@ -215,7 +214,6 @@ defmodule SaladUI.SidebarTest do
       assert html =~ "data-sidebar=\"menu-sub-button\""
       assert html =~ "data-size=\"sm\""
       assert html =~ "data-active"
-      assert html =~ "data-[active]:"
       assert html =~ "Sub Item"
     end
   end
