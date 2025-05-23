@@ -187,12 +187,14 @@ class Component {
   }
 
   setupEvents() {
+    if (this.eventSetupCompleted) return;
     this.el.addEventListener("click", this.handleActionClick.bind(this));
 
     this.setupKeyEventHandlers();
     this.setupMouseEventHandlers();
 
     this.setupComponentEvents();
+    this.eventSetupCompleted = true;
   }
 
   /**
@@ -362,7 +364,6 @@ class Component {
    * @param {Object} params - Optional parameters from state transition
    */
   updateUI(params = {}) {
-    console.log("Updating UI", this.stateMachine.state);
     const currentState = this.stateMachine.state;
 
     // Update data-state attributes on all parts and root element
@@ -377,7 +378,6 @@ class Component {
    * Update part visibility based on current state configuration
    */
   updatePartsVisibility() {
-    console.log("Updating visibility");
     const currentState = this.stateMachine.state;
     const stateVisibility = this.hiddenConfig[currentState];
     if (!stateVisibility) return;
@@ -387,7 +387,6 @@ class Component {
       partElements.forEach((element) => {
         if (element) {
           element.hidden = hidden;
-          console.log("Setting hidden", partName, hidden, Date.now());
         }
       });
     });

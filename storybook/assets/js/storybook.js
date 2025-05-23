@@ -2,7 +2,6 @@
 // require connect parameters, uncomment the following lines and declare them as
 // such:
 //
-import { ChartHook } from "./hooks";
 import SaladUI from "salad_ui";
 import "salad_ui/components/dialog";
 import "salad_ui/components/select";
@@ -16,6 +15,7 @@ import "salad_ui/components/accordion";
 import "salad_ui/components/slider";
 import "salad_ui/components/switch";
 import "salad_ui/components/dropdown_menu";
+import "salad_ui/components/chart";
 
 // import * as Params from "./params";
 // import * as Uploaders from "./uploaders";
@@ -23,7 +23,6 @@ import "salad_ui/components/dropdown_menu";
 (function () {
   window.storybook = {
     Hooks: {
-      ChartHook,
       SaladUI: SaladUI.SaladUIHook,
     },
   };

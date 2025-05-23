@@ -155,7 +155,7 @@ defmodule SaladUI.Table do
 
   * `:class` - Additional CSS classes
   """
-  attr :class, :string, default: nil
+  attr :class, :any, default: nil
   attr :rest, :global
   slot :inner_block, required: true
 

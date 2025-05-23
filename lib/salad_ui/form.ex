@@ -80,6 +80,8 @@ defmodule SaladUI.Form do
     default: nil,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
+  attr :for, :string, default: nil
+
   attr :error, :boolean, default: false, doc: "whether the field has an error"
   slot :inner_block, required: true
   attr :rest, :global
@@ -89,7 +91,7 @@ defmodule SaladUI.Form do
 
     ~H"""
     <SaladUI.Label.label
-      for={@field[:id]}
+      for={(@field && @field.id) || @for}
       class={
         classes([
           @error && "text-destructive",

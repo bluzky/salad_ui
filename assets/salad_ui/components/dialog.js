@@ -6,13 +6,16 @@ import ClickOutsideMonitor from "../core/click-outside";
 
 class DialogComponent extends Component {
   constructor(el, hookContext) {
-    super(el, { hookContext });
+    super(el, { hookContext, initialState: "closed" });
 
     // Initialize properties
     this.root = this.el;
     this.content = this.getPart("content");
     this.contentPanel = this.getPart("content-panel");
     this.config.preventDefaultKeys = ["Escape"];
+
+    this.setupEvents();
+    this.transition(this.el.dataset.open == "true" ? "open" : "close");
   }
 
   getComponentConfig() {
@@ -126,6 +129,7 @@ class DialogComponent extends Component {
 
   onOpenEnter() {
     // Initialize focus trap if not already created
+    this.el.focus();
     if (!this.focusTrap) {
       this.focusTrap = new FocusTrap(this.contentPanel);
     }

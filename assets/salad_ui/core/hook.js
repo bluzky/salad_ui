@@ -43,6 +43,7 @@ const SaladUIHook = {
   },
 
   destroyed() {
+    this.component?.destroy();
     this.component = null;
   },
 };

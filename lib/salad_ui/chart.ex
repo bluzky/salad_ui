@@ -1,33 +1,3 @@
-defmodule SaladUI.LiveChart do
-  @moduledoc false
-
-  use Phoenix.LiveComponent
-
-  @impl true
-  def render(assigns) do
-    ~H"""
-    <canvas
-      id={@id}
-      phx-hook="ChartHook"
-      data-chartconfig={Jason.encode!(@chart_config)}
-      role="img"
-      aria-label={@name}
-    >
-    </canvas>
-    """
-  end
-
-  @impl true
-  def update(%{id: id, chart_data: chart_data} = assigns, socket) do
-    socket =
-      socket
-      |> assign(assigns)
-      |> push_event("update-chart-#{id}", %{data: chart_data})
-
-    {:ok, socket}
-  end
-end
-
 defmodule SaladUI.Chart do
   @moduledoc """
   Chart component.
@@ -82,13 +52,18 @@ defmodule SaladUI.Chart do
 
   def chart(assigns) do
     ~H"""
-    <.live_component
-      module={SaladUI.LiveChart}
+    <canvas
       id={@id}
       name={@name}
-      chart_config={@chart_config}
-      chart_data={@chart_data}
-    />
+      phx-hook="SaladUI"
+      data-component="chart"
+      data-part="root"
+      data-chartconfig={Jason.encode!(@chart_config)}
+      data-chart-data={Jason.encode!(@chart_data)}
+      role="img"
+      aria-label={@name}
+    >
+    </canvas>
     """
   end
 end

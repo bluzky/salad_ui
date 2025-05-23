@@ -14,7 +14,7 @@ defmodule SaladUI.LiveView do
 
   ## Example
   ```elixir
-  send_command(socket, "#dialog", "open")
+  send_command(socket, "dialog", "open")
   ```
   """
   def send_command(socket, component_id, command, params \\ %{}) do

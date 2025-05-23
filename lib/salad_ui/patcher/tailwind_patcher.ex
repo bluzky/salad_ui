@@ -17,7 +17,7 @@ defmodule SaladUI.Patcher.TailwindPatcher do
     File.write!(tailwind_config_path, new_content)
   end
 
-  defp update_content(content, opts) do
+  defp update_content(content, _opts) do
     content =
       content
       |> add_plugins()

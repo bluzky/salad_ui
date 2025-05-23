@@ -78,7 +78,7 @@ defmodule SaladUI.Dialog do
       class="relative z-50 group/dialog"
       data-component="dialog"
       data-options={@options}
-      data-state={@initial_state}
+      data-open={to_string(@open)}
       data-event-mappings={@event_map}
       phx-hook="SaladUI"
       data-part="root"

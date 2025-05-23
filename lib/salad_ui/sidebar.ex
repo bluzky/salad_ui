@@ -161,7 +161,6 @@ defmodule SaladUI.Sidebar do
   attr :target, :string, required: true, doc: "The id of the target sidebar"
   attr :as, :any, default: "button"
   attr(:rest, :global)
-  slot(:inner_block, required: true)
 
   def sidebar_trigger(assigns) do
     ~H"""

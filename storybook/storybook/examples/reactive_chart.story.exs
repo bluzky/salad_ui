@@ -5,6 +5,8 @@ defmodule Storybook.Examples.ReactiveChart do
   import SaladUI.Button
   import SaladUI.Chart
 
+  alias SaladUI.LiveView
+
   def doc do
     "An example of a chart that auto updates whenever its data changes."
   end
@@ -16,7 +18,7 @@ defmodule Storybook.Examples.ReactiveChart do
       responsive: true
     },
     desktop: %{label: "Desktop", backgroundColor: "hsl(var(--chart-1))"},
-    mobile: %{label: "Mobile", backgroundColor: "hsl(var(--chart-2))"}
+    mobile: %{label: "Mobile", backgroundColor: "hsl(var(--chart-5))"}
   }
 
   @chart_data [
@@ -61,6 +63,11 @@ defmodule Storybook.Examples.ReactiveChart do
         %{desktop: :rand.uniform(100), mobile: :rand.uniform(100)}
       end)
 
-    {:noreply, assign(socket, :chart_data, new_chart_data)}
+    socket =
+      LiveView.send_command(socket, "reactive-chart", "update", %{
+        data: new_chart_data
+      })
+
+    {:noreply, socket}
   end
 end
