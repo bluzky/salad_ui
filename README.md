@@ -21,6 +21,8 @@
 <a href="https://github.com/bluzky/salad_ui/commits/main"><img src="https://img.shields.io/github/last-commit/bluzky/salad_ui.svg" alt="Last Updated"></a>
 </div>
 
+![Demo admin](./docs/images/demo.gif)
+
 ## 🚧 V1 is under development, for V0 source code, checkout branch v0
 
 ## [Demo storybook v1](https://salad-storybook.fly.dev/)
