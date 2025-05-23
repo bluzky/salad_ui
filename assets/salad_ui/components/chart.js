@@ -9,12 +9,13 @@ function cssvar(name) {
 
 const RESERVED_CONFIG_KEYS = ["labels", "type", "options"];
 const RESERVED_DATASET_KEYS = ["datakey"];
-const DEFAULT_CHART_TYPE = "bar";
+const DEFAULT_CHART_TYPE = "line";
 
 class ChartComponent extends Component {
   constructor(el, hookContext) {
     super(el, { hookContext });
-    this.chartConfig = this.getConfiguration();
+    this.chartOptions = JSON.parse(this.el.dataset.chartOptions || "{}");
+    this.chartType = this.el.dataset.chartType || DEFAULT_CHART_TYPE;
     this.initializeChart();
   }
 
@@ -30,25 +31,32 @@ class ChartComponent extends Component {
 
   handleCommand(command, params) {
     if (command === "update") {
-      this.updateChartData(params.data);
+      this.updateChart(params);
       return true;
     }
   }
 
   initializeChart() {
-    const config = this.chartConfig;
-    const datasets = this.extractDatasets(config);
+    const data = JSON.parse(this.el.dataset.chartData);
 
     this.chart = new Chart(this.el, {
-      type: config.type || DEFAULT_CHART_TYPE,
-      data: {
-        labels: config.labels || [],
-        datasets,
-      },
-      options: config.options || {},
+      type: this.chartType,
+      data: data,
+      options: this.chartOptions,
     });
+  }
 
-    this.updateChartData(JSON.parse(this.el.dataset.chartData));
+  updateChart(payload) {
+    if (payload.data) {
+      this.chart.data = { ...this.chart.data, ...payload.data };
+    }
+
+    if (payload.options) {
+      this.chartOptions = { ...this.chartOptions, ...payload.options };
+      this.chart.options = this.chartOptions;
+    }
+
+    this.chart.update();
   }
 
   extractDatasets(config) {
@@ -74,32 +82,6 @@ class ChartComponent extends Component {
           ),
         );
       });
-  }
-
-  updateChartData(newData) {
-    const datasets = this.processDatasets(newData, this.chartConfig);
-
-    datasets.forEach((dataset, index) => {
-      this.chart.data.datasets[index].data = dataset.data;
-    });
-
-    this.chart.update();
-  }
-
-  processDatasets(data, config) {
-    return Object.entries(config)
-      .filter(([key]) => !RESERVED_CONFIG_KEYS.includes(key))
-      .map(([key, value]) => ({
-        data: this.extractDataPoints(data, value.datakey || key),
-      }));
-  }
-
-  extractDataPoints(data, key) {
-    return data.map((item) => item[key] || 0);
-  }
-
-  getConfiguration() {
-    return JSON.parse(this.el.dataset.chartconfig);
   }
 
   destroy() {

@@ -11,36 +11,31 @@ defmodule Storybook.Examples.ReactiveChart do
     "An example of a chart that auto updates whenever its data changes."
   end
 
-  @chart_config %{
-    type: "bar",
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    options: %{
-      responsive: true
-    },
-    desktop: %{label: "Desktop", backgroundColor: "hsl(var(--chart-1))"},
-    mobile: %{label: "Mobile", backgroundColor: "hsl(var(--chart-5))"}
+  @chart_options %{
+    responsive: true
   }
 
-  @chart_data [
-    %{desktop: 10, mobile: 20},
-    %{desktop: 20, mobile: 10},
-    %{desktop: 30, mobile: 10},
-    %{desktop: 40, mobile: 80},
-    %{desktop: 50, mobile: 20},
-    %{desktop: 60, mobile: 90},
-    %{desktop: 70, mobile: 30},
-    %{desktop: 80, mobile: 30},
-    %{desktop: 90, mobile: 40},
-    %{desktop: 100, mobile: 50},
-    %{desktop: 90, mobile: 60},
-    %{desktop: 80, mobile: 70}
-  ]
+  @chart_data %{
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    datasets: [
+      %{
+        label: "Desktop",
+        data: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 90, 80],
+        backgroundColor: "rgb(0, 0, 0)"
+      },
+      %{
+        label: "Mobile",
+        data: [20, 10, 10, 80, 20, 90, 30, 30, 40, 50, 60, 70],
+        backgroundColor: "rgb(128, 128, 128)"
+      }
+    ]
+  }
 
   @impl true
   def mount(_params, _session, socket) do
     socket =
       socket
-      |> assign(:chart_config, @chart_config)
+      |> assign(:chart_options, @chart_options)
       |> assign(:chart_data, @chart_data)
 
     {:ok, socket}
@@ -50,7 +45,12 @@ defmodule Storybook.Examples.ReactiveChart do
   def render(assigns) do
     ~H"""
     <div class="container flex flex-col gap-y-4">
-      <.chart id="reactive-chart" chart_config={@chart_config} chart_data={@chart_data} />
+      <.chart
+        id="reactive-chart"
+        chart-options={@chart_options}
+        chart-data={@chart_data}
+        chart-type="bar"
+      />
       <.button phx-click="update-chart">Update Chart</.button>
     </div>
     """
@@ -59,9 +59,21 @@ defmodule Storybook.Examples.ReactiveChart do
   @impl true
   def handle_event("update-chart", _params, socket) do
     new_chart_data =
-      Enum.map(socket.assigns.chart_data, fn _ ->
-        %{desktop: :rand.uniform(100), mobile: :rand.uniform(100)}
-      end)
+      Map.merge(socket.assigns.chart_data, %{
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        datasets: [
+          %{
+            label: "Desktop",
+            data: Enum.map(1..12, fn _ -> :rand.uniform(100) end),
+            backgroundColor: "rgb(0, 0, 0)"
+          },
+          %{
+            label: "Mobile",
+            data: Enum.map(1..12, fn _ -> :rand.uniform(100) end),
+            backgroundColor: "rgb(128, 128, 128)"
+          }
+        ]
+      })
 
     socket =
       LiveView.send_command(socket, "reactive-chart", "update", %{

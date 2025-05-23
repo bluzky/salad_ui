@@ -4,9 +4,9 @@ defmodule SaladUI.Chart do
 
   This component displays a chart using a live component for real-time updates. Data and configuration are passed as attributes, and the rendering is managed on the client side through a hook called `ChartHook`. This hook initializes, manages the lifecycle, and renders the chart using a chart library. `SaladUI` comes with [Chart.js](https://www.chartjs.org/) as default, but you can rewrite `ChartHook` to integrate another chart library.
 
-  ## Chart config
+  ## Chart options
 
-  The `chart_config` map defines the appearance and behavior of the chart:
+  The `chart_options` map defines the appearance and behavior of the chart:
 
   - Special keys
     - `labels`: A list of labels for the x-axis
@@ -14,7 +14,7 @@ defmodule SaladUI.Chart do
     - `options`: A map of chart options following the chart library's API
 
   - Dataset configuration:
-    Any additional keys in the config map define datasets. For example:
+    Any additional keys in the options map define datasets. For example:
 
     ```elixir
     %{
@@ -47,10 +47,17 @@ defmodule SaladUI.Chart do
 
   attr :id, :string, required: true
   attr :name, :string, default: "", doc: "name of the chart for screen readers"
-  attr :chart_config, :map, required: true
-  attr :chart_data, :list, required: true
+  attr :"chart-type", :string, default: "line", doc: "type of the chart (e.g., line, bar)"
+  attr :"chart-options", :map, required: true
+  attr :"chart-data", :list, required: true
 
   def chart(assigns) do
+    assigns =
+      assigns
+      |> assign(:chart_options, assigns[:"chart-options"])
+      |> assign(:chart_data, assigns[:"chart-data"])
+      |> assign(:chart_type, assigns[:"chart-type"])
+
     ~H"""
     <canvas
       id={@id}
@@ -58,7 +65,8 @@ defmodule SaladUI.Chart do
       phx-hook="SaladUI"
       data-component="chart"
       data-part="root"
-      data-chartconfig={Jason.encode!(@chart_config)}
+      data-chart-type={@chart_type}
+      data-chart-options={Jason.encode!(@chart_options)}
       data-chart-data={Jason.encode!(@chart_data)}
       role="img"
       aria-label={@name}
