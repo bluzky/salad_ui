@@ -28,7 +28,7 @@ class PositionedElement {
       flip: true,
 
       // Portal options
-      usePortal: true,
+      usePortal: false,
       portalContainer: document.body,
 
       // Focus management
@@ -334,6 +334,10 @@ class PositionedElement {
       this.clickOutsideMonitor.destroy();
     }
     this.scrollManager.destroy();
+
+    if (Portal.isInPortal(this.element)) {
+      this.element.remove();
+    }
 
     // Clear references
     this.element = null;

@@ -71,7 +71,6 @@ class Component {
 
   initEventMappings() {
     this.onClientCommand = this.onClientCommand.bind(this);
-    this.el.addEventListener("salad_ui:command", this.onClientCommand);
 
     try {
       const mappingsString = this.el.getAttribute("data-event-mappings");
@@ -187,7 +186,12 @@ class Component {
   }
 
   setupEvents() {
-    if (this.eventSetupCompleted) return;
+    if (this.eventSetupCompleted) {
+      this.removeAllEvents();
+    }
+
+    this.el.addEventListener("salad_ui:command", this.onClientCommand);
+
     this.el.addEventListener("click", this.handleActionClick.bind(this));
 
     this.setupKeyEventHandlers();
@@ -442,16 +446,20 @@ class Component {
     return this.stateMachine.previousState;
   }
 
+  removeAllEvents() {
+    this.el.removeEventListener("salad_ui:command", this.onClientCommand);
+    this.el.removeEventListener("click", this.handleActionClick);
+    this.removeKeyEventHandlers();
+    this.removeMouseEventListeners();
+  }
+
   // Cleanup method to remove event listeners and references
   destroy() {
     // Lifecycle hook before destruction
     this.beforeDestroy();
 
     // Remove event listeners
-    this.el.removeEventListener("salad_ui:command", this.onClientCommand);
-    this.el.removeEventListener("click", this.handleActionClick);
-    this.removeKeyEventHandlers();
-    this.removeMouseEventListeners();
+    this.removeAllEvents();
     this.ariaManager = null;
 
     // Allow garbage collection

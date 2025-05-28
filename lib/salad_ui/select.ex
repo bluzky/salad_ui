@@ -36,7 +36,7 @@ defmodule SaladUI.Select do
   attr :value, :any, default: nil, doc: "The value of the select"
   attr :"default-value", :any, default: nil, doc: "The default value of the select"
   attr :multiple, :boolean, default: false, doc: "Allow multiple selection"
-  attr :"use-portal", :boolean, default: true, doc: "Whether to render the content in a portal"
+  attr :"use-portal", :boolean, default: false, doc: "Whether to render the content in a portal"
   attr :"portal-container", :string, default: nil, doc: "CSS selector for the portal container"
   attr :"on-value-changed", :any, default: nil, doc: "Handler for value changed event"
   attr :"on-open", :any, default: nil, doc: "Handler for select open event"
