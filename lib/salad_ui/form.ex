@@ -161,7 +161,7 @@ defmodule SaladUI.Form do
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
   attr :errors, :any,
-    default: [],
+    default: nil,
     doc: "a list of error messages to display"
 
   attr :class, :string, default: nil
@@ -171,12 +171,14 @@ defmodule SaladUI.Form do
   def form_message(assigns) do
     assigns =
       assigns
-      |> assign(error: has_error?(assigns[:field]) || not Enum.empty?(assigns[:errors]))
+      |> assign(
+        error: has_error?(assigns[:field]) || (not is_nil(assigns[:errors]) and not Enum.empty?(assigns[:errors]))
+      )
       |> assign(:message, List.first(assigns[:errors] || field_errors(assigns[:field])))
 
     ~H"""
     <p
-      :if={(msg = render_slot(@inner_block)) || not is_nil(@error)}
+      :if={(msg = render_slot(@inner_block)) || @error}
       class={classes(["text-sm font-medium", @error && "text-destructive", @class])}
       {@rest}
     >
