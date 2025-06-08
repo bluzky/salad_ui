@@ -20,7 +20,7 @@ defmodule Storybook.Examples.Sidebar do
       <.section url="/demo/sidebar-three" source_url="" title="A sidebar with submenus." />
       <.section url="/demo/sidebar-four" source_url="" title="A floating sidebar with submenus." />
       <.section url="/demo/sidebar-five" source_url="" title="A sidebar with collapsible submenus." />
-      <.section url="/demo/sidebar-six" source_urr="" title="A sidebar that collapses to icons." />
+      <.section url="/demo/sidebar-six" source_url="" title="A sidebar that collapses to icons." />
     </div>
     """
   end
