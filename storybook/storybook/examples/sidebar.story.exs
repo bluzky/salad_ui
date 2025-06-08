@@ -13,14 +13,14 @@ defmodule Storybook.Examples.Sidebar do
     <div class="space-y-12">
       <.section
         url="/demo/sidebar-one"
-        source_ulr=""
+        source_url=""
         title="A simple sidebar with navigation grouped by section."
       />
-      <.section url="/demo/sidebar-two" source_ulr="" title="A sidebar with collapsible sections." />
-      <.section url="/demo/sidebar-three" source_ulr="" title="A sidebar with submenus." />
-      <.section url="/demo/sidebar-four" source_ulr="" title="A floating sidebar with submenus." />
-      <.section url="/demo/sidebar-five" source_ulr="" title="A sidebar with collapsible submenus." />
-      <.section url="/demo/sidebar-six" source_ulr="" title="A sidebar that collapses to icons." />
+      <.section url="/demo/sidebar-two" source_url="" title="A sidebar with collapsible sections." />
+      <.section url="/demo/sidebar-three" source_url="" title="A sidebar with submenus." />
+      <.section url="/demo/sidebar-four" source_url="" title="A floating sidebar with submenus." />
+      <.section url="/demo/sidebar-five" source_url="" title="A sidebar with collapsible submenus." />
+      <.section url="/demo/sidebar-six" source_urr="" title="A sidebar that collapses to icons." />
     </div>
     """
   end
