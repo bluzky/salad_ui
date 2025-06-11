@@ -46,7 +46,8 @@ defmodule SaladUI.RadioGroup do
       |> assign(
         :options,
         Jason.encode!(%{
-          initialValue: assigns.value
+          initialValue: assigns.value,
+          name: assigns.name
         })
       )
 
