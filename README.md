@@ -23,7 +23,7 @@
 
 ![Demo admin](./docs/images/demo.gif)
 
-## 🚧 V1 is under development, for V0 source code, checkout branch v0
+## 🚧 V1 is now beta release
 
 ## [Demo storybook v1](https://salad-storybook.fly.dev/)
 
@@ -36,60 +36,91 @@
 ```elixir
 def deps do
   [
-    {:salad_ui, "~> 0.14"},
+    {:salad_ui, "~> 1.0.0-beta.1"},
   ]
 end
 ```
 
-2. Add `TwMerge.Cache` to `application.ex`
+2. Choose your installation method:
+
+### Method 1: Quick Setup (Using as Library)
+
+For a quick start with minimal configuration:
+
+```bash
+mix salad.setup
+```
+
+This sets up SaladUI to use components directly from the library. You can start using components immediately:
 
 ```elixir
-children = [
-    ...,
-    TwMerge.Cache
-]
-```
+defmodule MyAppWeb.PageLive do
+  use MyAppWeb, :live_view
+  import SaladUI.Button
+  import SaladUI.Dialog
 
-3. Setup `salad_ui`
-
-3.1 **Using `salad_ui` as part of your project:**
-
-> This way you can install only components that you want to use or you want to edit SaladUI's component source code to fit your need.
-> If you just want to use SaladUI's components, see **Using as library** below.
-
-- Init Salad UI in your project
-
-```
-#> cd your_project
-#> mix salad.init
-
-# install some components
-#> mix salad.add label button
-```
-
-3.2 **Using `salad_ui` as a library:**
-
-- Init Salad UI in your project with option `--as-lib`
-
-```
-#> cd your_project
-#> mix salad.init --as-lib
-```
-
-- Using in your project
-
-```elixir
-defmodule MyModule do
-    # import any component you need
-    import SaladUI.Button
-
-    def render(_) do
-      ~H"""
-      <.button>Click me</.button>
-      """
-    end
+  def render(_) do
+    ~H"""
+    <.button>Click me</.button>
+    <.dialog id="my-dialog">
+      <.dialog_content>
+        <p>Hello world!</p>
+      </.dialog_content>
+    </.dialog>
+    """
+  end
 end
 ```
+
+### Method 2: Local Installation (Customizable)
+
+For full customization with local component files:
+
+```bash
+# Default installation
+mix salad.install
+
+# With custom prefix and color scheme
+mix salad.install --prefix MyUI --color-scheme slate
+```
+
+This copies all component files to your project under `lib/my_app_web/components/ui/` where you can customize them:
+
+```elixir
+defmodule MyAppWeb.PageLive do
+  use MyAppWeb, :live_view
+  import MyAppWeb.Components.UI.Button
+  import MyAppWeb.Components.UI.Dialog
+
+  def render(_) do
+    ~H"""
+    <.button>Click me</.button>
+    <.dialog id="my-dialog">
+      <.dialog_content>
+        <p>Hello world!</p>
+      </.dialog_content>
+    </.dialog>
+    """
+  end
+end
+```
+
+## What Each Method Does
+
+### `mix salad.setup`
+- ✅ Sets up Tailwind CSS and color schemes
+- ✅ Configures JavaScript hooks and components
+- ✅ Ready to use immediately
+- ❌ Components cannot be customized
+- ❌ Uses external package dependencies
+
+### `mix salad.install`
+- ✅ Sets up Tailwind CSS and color schemes
+- ✅ Copies all component source code locally
+- ✅ Copies all JavaScript files locally
+- ✅ Full customization possible
+- ✅ No external runtime dependencies
+- ✅ Custom module prefixes
 
 ## More configuration
 
@@ -98,6 +129,7 @@ end
 ```elixir
 config :salad_ui, :error_translator_function, {MyAppWeb.CoreComponents, :translate_error}
 ```
+
 
 ## 🛠️ Development
 
@@ -114,14 +146,7 @@ mix phx.server
 
 ## Unit Testing
 
-In your project folder make sure the dependencies are installed by running `mix deps.get`, then once completed you can run:
-
-- `mix test` to run tests once or,
-- `mix test.watch` to watch file and run tests on file changes.
-
-To run the failing tests only, just run `mix test.watch --stale`.
-
-It's also important to note that you must format your code with `mix format` before sending a pull request, otherwise the build in github will fail.
+All v1 component are not covered by UnitTest. Currently I'm working on an important project so I don't have much time for this. If you're interested in this project, please help to add Unit Test if possible. 🙏
 
 ## List of components
 
