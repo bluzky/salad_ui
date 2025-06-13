@@ -44,7 +44,7 @@ defmodule Mix.Tasks.Salad.Install do
 
   # Copy all JavaScript files to assets/js/ui/
   defp copy_javascript_files(igniter) do
-    source_dir = js_source_path("")
+    source_dir = [Application.app_dir(:salad_ui), "assets/salad_ui"]
     target_dir = "./assets/js/ui"
 
     # Create target directory if it doesn't exist
@@ -52,6 +52,9 @@ defmodule Mix.Tasks.Salad.Install do
 
     # Get all .js files from the source directory
     js_files = Path.wildcard(Path.join(source_dir, "**/*.js"))
+
+    IO.inspect(source_dir)
+    IO.inspect(js_files)
 
     Enum.reduce(js_files, igniter, fn source_file, acc_igniter ->
       # Get relative path from source directory
@@ -69,14 +72,14 @@ defmodule Mix.Tasks.Salad.Install do
   # Copy all component files to lib/<app>_web/components/ui/
   defp copy_component_files(igniter, prefix) do
     app_name = get_app_name(igniter)
-    source_dir = component_source_path("")
+    source_dir = Path.join([Application.app_dir(:salad_ui), "lib"])
     target_dir = "./lib/#{app_name}_web/components/ui"
 
     # Create target directory if it doesn't exist
     File.mkdir_p!(target_dir)
 
     # Get all .ex files from the source directory
-    component_files = Path.wildcard(Path.join(source_dir, "*.ex"))
+    component_files = Path.wildcard(Path.join(source_dir, "**/*.ex"))
 
     Enum.reduce(component_files, igniter, fn source_file, acc_igniter ->
       filename = Path.basename(source_file)
@@ -262,14 +265,6 @@ defmodule Mix.Tasks.Salad.Install do
   # Helper functions for paths
   defp assets_path(directory) do
     Path.join([:code.priv_dir(:salad_ui), "static/assets", directory])
-  end
-
-  defp js_source_path(directory) do
-    Path.join([:code.priv_dir(:salad_ui), "static/js", directory])
-  end
-
-  defp component_source_path(directory) do
-    Path.join([:code.priv_dir(:salad_ui), "static/components", directory])
   end
 
   defp get_app_name(igniter) do
