@@ -52,7 +52,12 @@ defmodule SaladUI.MixProject do
   defp docs do
     [
       main: "readme",
-      extras: ["README.md"]
+      extras: [
+        "README.md",
+        "docs/implement_simple_component.md",
+        "docs/complex_component_guide.md",
+        "docs/component_config_guide.md"
+      ]
     ]
   end
 

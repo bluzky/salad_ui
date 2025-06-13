@@ -4,7 +4,7 @@ This document defines the configuration structure for SaladUI components returne
 
 ## Overview
 
-```javascript
+```js
 getComponentConfig() {
   return {
     stateMachine: { /* State definitions and transitions */ },
@@ -21,7 +21,7 @@ Defines component states, transitions, and lifecycle handlers.
 
 ### Structure
 
-```javascript
+```js
 stateMachine: {
   stateName: {
     enter: "handlerMethod" | handlerFunction,    // Called when entering state
@@ -35,7 +35,7 @@ stateMachine: {
 
 ### Example
 
-```javascript
+```js
 stateMachine: {
   closed: {
     enter: "onClosedEnter",
@@ -64,7 +64,7 @@ stateMachine: {
 
 ### State Handler Methods
 
-```javascript
+```js
 // Method referenced by string
 onOpenEnter(params) {
   console.log("Dialog opened with", params);
@@ -79,7 +79,7 @@ enter: (params) => {
 
 ### Transition Functions
 
-```javascript
+```js
 transitions: {
   // Simple transition
   open: "open",
@@ -106,7 +106,7 @@ Defines event handlers for different states, organized by event type and target 
 
 ### Structure
 
-```javascript
+```js
 events: {
   stateName: {
     mouseMap: {
@@ -127,7 +127,7 @@ events: {
 
 ### Mouse Events
 
-```javascript
+```js
 events: {
   closed: {
     mouseMap: {
@@ -158,7 +158,7 @@ events: {
 
 ### Keyboard Events
 
-```javascript
+```js
 events: {
   open: {
     keyEventTarget: "content",  // Keys are listened on content part
@@ -186,7 +186,7 @@ events: {
 
 Any valid `event.key` value can be used:
 
-```javascript
+```js
 keyMap: {
   "a": "actionA",
   "Enter": "confirm",
@@ -205,7 +205,7 @@ keyMap: {
 
 Any valid DOM mouse event can be used:
 
-```javascript
+```js
 mouseMap: {
   partName: {
     "click": "action",
@@ -223,6 +223,7 @@ mouseMap: {
     "focusout": "focusOut"
   }
 }
+```
 
 ## Hidden Configuration
 
@@ -230,7 +231,7 @@ Controls part visibility based on component state.
 
 ### Structure
 
-```javascript
+```js
 hiddenConfig: {
   stateName: {
     partName: boolean  // true = hidden, false = visible
@@ -240,7 +241,7 @@ hiddenConfig: {
 
 ### Example
 
-```javascript
+```js
 hiddenConfig: {
   closed: {
     content: true,        // Hide content when closed
@@ -280,7 +281,7 @@ Sets accessibility attributes on parts based on state.
 
 ### Structure
 
-```javascript
+```js
 ariaConfig: {
   partName: {
     all: { attribute: "value" },        // Always applied
@@ -291,7 +292,7 @@ ariaConfig: {
 
 ### Basic Example
 
-```javascript
+```js
 ariaConfig: {
   trigger: {
     all: { role: "button", haspopup: "dialog" },
@@ -308,7 +309,7 @@ ariaConfig: {
 
 ### Attribute Mapping
 
-```javascript
+```js
 // Config -> HTML
 role: "button"           // -> role="button"
 expanded: "true"         // -> aria-expanded="true"
@@ -318,7 +319,7 @@ labelledby: "title-id"   // -> aria-labelledby="title-id"
 
 ### Dynamic Values
 
-```javascript
+```js
 ariaConfig: {
   slider: {
     all: {
@@ -332,7 +333,7 @@ ariaConfig: {
 
 ### Common Patterns
 
-```javascript
+```js
 // Dialog
 ariaConfig: {
   trigger: {
@@ -368,7 +369,7 @@ ariaConfig: {
 
 ## Complete Example
 
-```javascript
+```js
 getComponentConfig() {
   return {
     stateMachine: {
