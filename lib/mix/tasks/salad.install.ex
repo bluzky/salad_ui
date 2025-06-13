@@ -5,7 +5,7 @@ defmodule Mix.Tasks.Salad.Install do
   ## Usage
 
       mix salad.install
-      mix salad.install --prefix MyUI
+      mix salad.install --prefix MyUIWeb.Components.UI
       mix salad.install --color-scheme slate
       mix salad.install --prefix CustomComponents --color-scheme blue
   """
@@ -44,7 +44,8 @@ defmodule Mix.Tasks.Salad.Install do
 
   # Copy all JavaScript files to assets/js/ui/
   defp copy_javascript_files(igniter) do
-    source_dir = [Application.app_dir(:salad_ui), "assets/salad_ui"]
+    {:ok, dep_path} = find_salad_ui_dep()
+    source_dir = Path.join([dep_path, "assets/salad_ui"])
     target_dir = "./assets/js/ui"
 
     # Create target directory if it doesn't exist
@@ -71,49 +72,56 @@ defmodule Mix.Tasks.Salad.Install do
 
   # Copy all component files to lib/<app>_web/components/ui/
   defp copy_component_files(igniter, prefix) do
+    {:ok, dep_path} = find_salad_ui_dep()
+
     app_name = get_app_name(igniter)
-    source_dir = Path.join([Application.app_dir(:salad_ui), "lib"])
+    source_dir = Path.join([dep_path, "lib/salad_ui"])
     target_dir = "./lib/#{app_name}_web/components/ui"
 
     # Create target directory if it doesn't exist
     File.mkdir_p!(target_dir)
 
     # Get all .ex files from the source directory
-    component_files = Path.wildcard(Path.join(source_dir, "**/*.ex"))
+    component_files =
+      Path.wildcard(Path.join(source_dir, "**/*.ex"))
 
-    Enum.reduce(component_files, igniter, fn source_file, acc_igniter ->
-      filename = Path.basename(source_file)
-      target_file = Path.join(target_dir, filename)
+    igniter =
+      Enum.reduce(component_files, igniter, fn source_file, acc_igniter ->
+        filename = Path.basename(source_file)
+        target_file = Path.join(target_dir, filename)
 
-      # Read source content and transform it
-      source_content = File.read!(source_file)
-      transformed_content = transform_component_content(source_content, prefix, app_name)
+        # Read source content and transform it
+        source_content = File.read!(source_file)
+        transformed_content = transform_component_content(source_content, prefix)
 
-      # Write transformed content to target
-      File.write!(target_file, transformed_content)
+        # Write transformed content to target
+        Igniter.create_new_file(acc_igniter, target_file, transformed_content)
+      end)
 
-      acc_igniter
-    end)
+    # copy root index file
+    ui_file = [Path.join([dep_path, "lib/salad_ui.ex"])]
+
+    content =
+      ui_file
+      |> File.read!()
+      |> transform_component_content(prefix)
+
+    Igniter.create_new_file(igniter, Path.join(target_dir, "ui.ex"), content)
   end
 
   # Transform component content to replace module prefix
-  defp transform_component_content(content, prefix, app_name) do
-    app_web_module = Phoenix.Naming.camelize("#{app_name}_web")
-
+  defp transform_component_content(content, prefix) do
     content
-    |> String.replace("defmodule SaladUI.", "defmodule #{app_web_module}.Components.UI.")
-    |> String.replace("use SaladUI, :component", "use #{app_web_module}, :html")
-    |> String.replace("import SaladUI.", "import #{app_web_module}.Components.UI.")
-    |> String.replace("alias SaladUI.", "alias #{app_web_module}.Components.UI.")
+    |> String.replace("defmodule SaladUI", "defmodule #{prefix}")
+    |> String.replace("use SaladUI, :component", "use #{prefix}, :component")
+    |> String.replace("import SaladUI.", "import #{prefix}.")
+    |> String.replace("alias SaladUI.", "alias #{prefix}.")
     |> replace_component_calls_with_prefix(prefix)
   end
 
   # Replace component calls with custom prefix
   defp replace_component_calls_with_prefix(content, prefix) when prefix != "SaladUI" do
-    # This is a simplified approach - in practice you might want more sophisticated parsing
-    String.replace(content, ~r/<\.([a-z_]+)/, fn _match, component_name ->
-      "<.#{String.downcase(prefix)}_#{component_name}"
-    end)
+    String.replace(content, "SaladUI.", prefix <> ".")
   end
 
   defp replace_component_calls_with_prefix(content, _prefix), do: content
@@ -267,12 +275,24 @@ defmodule Mix.Tasks.Salad.Install do
     Path.join([:code.priv_dir(:salad_ui), "static/assets", directory])
   end
 
-  defp get_app_name(igniter) do
-    case Igniter.Project.Application.app_name(igniter) do
-      {:ok, app_name} -> app_name
-      # fallback
-      _ -> "my_app"
+  defp find_salad_ui_dep do
+    Mix.Dep.load_and_cache()
+    |> Enum.find(&(&1.app == :salad_ui))
+    |> case do
+      %Mix.Dep{opts: opts} = dep ->
+        {:ok, opts[:path] || default_dep_path(dep)}
+
+      nil ->
+        {:error, "SaladUI not found in dependencies"}
     end
+  end
+
+  defp default_dep_path(dep) do
+    Path.join([File.cwd!(), "deps", Atom.to_string(dep.app)])
+  end
+
+  defp get_app_name(igniter) do
+    Igniter.Project.Application.app_name(igniter)
   end
 
   defp get_default_prefix(igniter) do

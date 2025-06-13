@@ -1,13 +1,92 @@
 defmodule Mix.Tasks.Salad.Setup do
-  @moduledoc false
+  @moduledoc """
+  Set up SaladUI in a Phoenix LiveView project.
+
+  This task configures the complete SaladUI development environment by:
+
+  * Adding TwMerge.Cache to the application supervision tree
+  * Configuring CSS color scheme variables (default: gray)
+  * Copying SaladUI CSS files to assets/css/
+  * Patching Tailwind CSS configuration with SaladUI-specific settings
+  * Installing tailwindcss-animate plugin
+  * Setting up JavaScript imports and LiveView hooks
+
+  ## Usage
+
+      mix salad.setup
+      mix salad.setup --color-scheme slate
+      mix salad.setup -c blue
+
+  ## Options
+
+    * `--color-scheme` (or `-c`) - Color scheme to use (default: "gray")
+      Available schemes: gray, slate, stone, neutral, red, orange, amber,
+      yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet,
+      purple, fuchsia, pink, rose
+
+  ## What it does
+
+  1. **TwMerge Integration** - Adds TwMerge.Cache as a supervised process for
+     CSS class merging functionality
+
+  2. **CSS Setup**
+     - Copies salad_ui.css to assets/css/
+     - Adds color scheme variables to app.css
+     - Imports SaladUI styles into the main CSS file
+
+  3. **Tailwind Configuration**
+     - Patches tailwind.config.js with SaladUI-specific plugins
+     - Copies tailwind.colors.json with design tokens
+     - Adds @tailwindcss/typography and tailwindcss-animate plugins
+
+  4. **JavaScript Setup**
+     - Downloads and installs tailwindcss-animate
+     - Patches app.js to import SaladUI components and hooks
+     - Registers SaladUIHook with LiveView
+
+  ## After running this task
+
+  You can immediately start using SaladUI components in your templates:
+
+      <.button>Click me</.button>
+      <.dialog id="my-dialog">
+        <.dialog_content>
+          <p>Hello world!</p>
+        </.dialog_content>
+      </.dialog>
+
+  ## Files modified
+
+  * `lib/[app]/application.ex` - Adds TwMerge.Cache
+  * `assets/css/app.css` - Adds color scheme and imports
+  * `assets/css/salad_ui.css` - Created
+  * `assets/tailwind.config.js` - Updated with plugins and content paths
+  * `assets/tailwind.colors.json` - Created
+  * `assets/js/app.js` - Adds SaladUI imports and hooks
+  * `assets/vendor/tailwindcss-animate.js` - Downloaded
+
+  ## Example
+
+      # Use default gray color scheme
+      mix salad.setup
+
+      # Use slate color scheme
+      mix salad.setup --color-scheme slate
+
+      # Short form
+      mix salad.setup -c blue
+  """
   use Igniter.Mix.Task
 
   @impl Igniter.Mix.Task
   def igniter(igniter) do
-    # Parse command-line arguments
-    # args = igniter.args.argv
-    # IO.inspect(args)
-    color_scheme = "gray"
+    {opts, _args} =
+      OptionParser.parse!(igniter.args.argv,
+        strict: [color_scheme: :string],
+        aliases: [c: :color_scheme]
+      )
+
+    color_scheme = opts[:color_scheme] || "gray"
 
     igniter
     |> patch_tw_merge()
