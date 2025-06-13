@@ -36,7 +36,7 @@
 ```elixir
 def deps do
   [
-    {:salad_ui, "~> 1.0.0-beta.1"},
+    {:salad_ui, "~> 1.0.0-beta.2"},
   ]
 end
 ```
