@@ -41,7 +41,9 @@ defmodule SaladUI.MixProject do
       maintainers: ["Dung Nguyen"],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/bluzky/salad_ui"},
-      files: ~w(lib assets/salad_ui priv .formatter.exs mix.exs README*)
+      files:
+        ~w(lib assets/salad_ui priv .formatter.exs mix.exs README*) ++
+          ~w(CHANGELOG.md LICENSE package.json)
     ]
   end
 
