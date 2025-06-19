@@ -42,7 +42,6 @@ class Component {
       );
     }
 
-    this.populateID();
     this.updateUI();
     this.updatePartsVisibility();
 
@@ -370,29 +369,6 @@ class Component {
     if (this.destroyed) return;
 
     return this.stateMachine.transition(event, params);
-  }
-
-  // set id for all children that not set id yet
-  populateID() {
-    const allParts = this.queryParts();
-    const groupedElements = {};
-    allParts.forEach((element) => {
-      const dataAttributeValue = element.dataset.part;
-      if (!groupedElements[dataAttributeValue]) {
-        groupedElements[dataAttributeValue] = [];
-      }
-      groupedElements[dataAttributeValue].push(element);
-    });
-
-    Object.keys(groupedElements).forEach((partName) => {
-      const parts = groupedElements[partName];
-
-      parts.forEach((part, index) => {
-        if (!part.id) {
-          part.id = `${this.el.id}-${partName}${parts.length > 1 ? `-${index}` : ""}`;
-        }
-      });
-    });
   }
 
   /**
