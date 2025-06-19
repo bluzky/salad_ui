@@ -10,6 +10,7 @@
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
+    {Application.get_env(:live_debugger, :live_debugger_tags)}
   </head>
   <body class="salad-storybook-web bg-white antialiased">
     {@inner_content}

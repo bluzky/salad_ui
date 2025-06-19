@@ -67,6 +67,8 @@ class StateMachine {
    * @param {Object} params - Parameters to pass to handlers
    */
   executeTransition(prevState, nextState, params = {}) {
+    if (!this.options.validCheck()) return;
+
     // Execute exit handlers
     this.executeStateHandler(prevState, "exit", params);
 
@@ -88,6 +90,8 @@ class StateMachine {
       // If it returns a promise, wait for completion before executing enter handler
       callbackResult
         .then(() => {
+          if (!this.options.validCheck()) return;
+
           this.executeStateHandler(nextState, "enter", params);
         })
         .catch((error) => {

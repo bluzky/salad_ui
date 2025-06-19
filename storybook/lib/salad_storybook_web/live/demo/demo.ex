@@ -25,16 +25,15 @@ defmodule SaladStorybookWeb.Demo.Demo do
           <h2 class="text-xl font-semibold">Fruit Selector</h2>
 
           <.select
-            :let={builder}
             id="fruit-select"
             value={@selected_fruit}
             name="fruit"
-            on_value_changed="handle_fruit_select"
+            on-value-changed="handle_fruit_select"
           >
             <.select_trigger class="w-[180px]">
               <.select_value placeholder="Select a fruit" />
             </.select_trigger>
-            <.select_content builder={builder}>
+            <.select_content>
               <.select_group>
                 <.select_label>Fruits</.select_label>
                 <.select_item value="apple">Apple</.select_item>
@@ -62,7 +61,7 @@ defmodule SaladStorybookWeb.Demo.Demo do
             id="country-select"
             value={@selected_country}
             name="country"
-            on_value_changed="handle_country_select"
+            on-value-changed="handle_country_select"
           >
             <.select_trigger class="w-[180px]">
               <.select_value placeholder="Select your country" />
@@ -95,7 +94,7 @@ defmodule SaladStorybookWeb.Demo.Demo do
             name="skills"
             multiple={true}
             value={@selected_skills}
-            on_value_changed="handle_skills_select"
+            on-value-changed="handle_skills_select"
           >
             <.select_trigger>
               <.select_value placeholder="Select skills" />
@@ -118,16 +117,11 @@ defmodule SaladStorybookWeb.Demo.Demo do
         <form phx-change="form_changed" phx-submit="submit_form" class="max-w-sm">
           <div class="mb-4">
             <label class="block text-sm font-medium mb-1">Favorite Fruit</label>
-            <.select
-              :let={builder}
-              id="form-fruit-select"
-              name="favorite_fruit"
-              value={@selected_fruit}
-            >
+            <.select id="form-fruit-select" name="favorite_fruit" value={@form_data["favorite_fruit"]}>
               <.select_trigger>
                 <.select_value placeholder="Choose a fruit" />
               </.select_trigger>
-              <.select_content builder={builder}>
+              <.select_content>
                 <.select_item value="apple">Apple</.select_item>
                 <.select_item value="banana">Banana</.select_item>
                 <.select_item value="orange">Orange</.select_item>
@@ -138,11 +132,11 @@ defmodule SaladStorybookWeb.Demo.Demo do
 
           <div class="mb-4">
             <label class="block text-sm font-medium mb-1">Country</label>
-            <.select :let={builder} id="form-country-select" name="country" value={@selected_country}>
+            <.select id="form-country-select" name="country" value={@form_data["country"]}>
               <.select_trigger>
                 <.select_value placeholder="Select a country" />
               </.select_trigger>
-              <.select_content builder={builder}>
+              <.select_content>
                 <.select_item value="us">United States</.select_item>
                 <.select_item value="ca">Canada</.select_item>
                 <.select_item value="uk">United Kingdom</.select_item>
@@ -184,6 +178,12 @@ defmodule SaladStorybookWeb.Demo.Demo do
   def handle_event("submit_form", params, socket) do
     # Process the form submission with the selected values
     IO.inspect(params, label: "Form Submission")
-    {:noreply, put_flash(socket, :info, "Form submitted successfully!")}
+
+    socket =
+      socket
+      |> put_flash(:info, "Form submitted successfully!")
+      |> assign(:form_data, params)
+
+    {:noreply, socket}
   end
 end
