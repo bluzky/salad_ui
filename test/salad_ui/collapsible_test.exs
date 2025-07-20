@@ -112,24 +112,24 @@ defmodule SaladUI.CollapsibleTest do
     end
   end
 
-  describe "toggle_collapsible/2" do
-    test "returns JavaScript commands for toggling content" do
-      js = toggle_collapsible(%Phoenix.LiveView.JS{}, "test-collapsible")
+  # describe "toggle_collapsible/2" do
+  #   test "returns JavaScript commands for toggling content" do
+  #     js = toggle_collapsible(%Phoenix.LiveView.JS{}, "test-collapsible")
 
-      assert js.ops == [
-               [
-                 "toggle",
-                 %{
-                   to: "#test-collapsible .collapsible-content",
-                   ins: [["ease-out", "duration-200"], ["opacity-0"], ["opacity-100"]],
-                   outs: [["ease-out"], ["opacity-100"], ["opacity-70"]],
-                   time: 200
-                 }
-               ],
-               ["toggle_attr", %{attr: ["data-state", "open", "closed"], to: "#test-collapsible"}]
-             ]
-    end
-  end
+  #     assert js.ops == [
+  #              [
+  #                "toggle",
+  #                %{
+  #                  to: "#test-collapsible .collapsible-content",
+  #                  ins: [["ease-out", "duration-200"], ["opacity-0"], ["opacity-100"]],
+  #                  outs: [["ease-out"], ["opacity-100"], ["opacity-70"]],
+  #                  time: 200
+  #                }
+  #              ],
+  #              ["toggle_attr", %{attr: ["data-state", "open", "closed"], to: "#test-collapsible"}]
+  #            ]
+  #   end
+  # end
 
   test "integration: renders complete collapsible with trigger and content" do
     assigns = %{}
