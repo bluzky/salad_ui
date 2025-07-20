@@ -60,7 +60,7 @@ defmodule SaladUI.JS do
     Phoenix.LiveView.JS.dispatch(
       js,
       "salad_ui:command",
-      opts |> Keyword.put(:detail, details) |> IO.inspect(label: "dispatch_command")
+      Keyword.put(opts, :detail, details)
     )
   end
 end

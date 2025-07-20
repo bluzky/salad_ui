@@ -20,5 +20,5 @@ defmodule SaladStorybookWeb.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext, otp_app: :salad_storybook
+  use Gettext.Backend, otp_app: :salad_storybook
 end

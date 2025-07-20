@@ -15,8 +15,8 @@ defmodule SaladStorybookWeb.CoreComponents do
   Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
   """
   use Phoenix.Component
+  use Gettext, backend: SaladStorybookWeb.Gettext
 
-  import SaladStorybookWeb.Gettext
   import SaladUI.Alert
   import SaladUI.Form, except: [form: 1]
   import SaladUI.Table, except: [table: 1]

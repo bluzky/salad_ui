@@ -90,16 +90,14 @@ config :swoosh, :api_client, false
 config :tailwind,
   storybook: [
     args: ~w(
-          --config=tailwind.config.js
-          --input=css/storybook.dev.css
+          --input=css/storybook.css
           --output=../priv/static/assets/storybook.css
         ),
     cd: Path.expand("../assets", __DIR__)
   ],
   default: [
     args: ~w(
-          --config=tailwind.config.js
-          --input=css/app.dev.css
+          --input=css/app.css
           --output=../priv/static/assets/app.css
         ),
     cd: Path.expand("../assets", __DIR__)

@@ -21,12 +21,12 @@ defmodule Storybook.Examples.ReactiveChart do
       %{
         label: "Desktop",
         data: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 90, 80],
-        backgroundColor: "rgb(0, 0, 0)"
+        backgroundColor: "var(--color-chart-1)"
       },
       %{
         label: "Mobile",
         data: [20, 10, 10, 80, 20, 90, 30, 30, 40, 50, 60, 70],
-        backgroundColor: "rgb(128, 128, 128)"
+        backgroundColor: "var(--color-chart-2)"
       }
     ]
   }
@@ -65,12 +65,12 @@ defmodule Storybook.Examples.ReactiveChart do
           %{
             label: "Desktop",
             data: Enum.map(1..12, fn _ -> :rand.uniform(100) end),
-            backgroundColor: "rgb(0, 0, 0)"
+            backgroundColor: "var(--color-chart-1)"
           },
           %{
             label: "Mobile",
             data: Enum.map(1..12, fn _ -> :rand.uniform(100) end),
-            backgroundColor: "rgb(128, 128, 128)"
+            backgroundColor: "var(--color-chart-2)"
           }
         ]
       })
