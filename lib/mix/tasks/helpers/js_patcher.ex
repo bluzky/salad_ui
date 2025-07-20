@@ -63,10 +63,10 @@ defmodule SaladUI.Patcher.JSPatcher do
   """
   def add_hook(js_content, hooks) do
     # First, extract the entire LiveSocket block
-    liveSocket_regex =
+    live_socket_regex =
       ~r/(let\s+liveSocket\s*=\s*new\s+LiveSocket\s*\(\s*"[^"]*"\s*,\s*Socket\s*,\s*\{)([\s\S]*?)(\}\s*\))/
 
-    case Regex.run(liveSocket_regex, js_content) do
+    case Regex.run(live_socket_regex, js_content) do
       nil ->
         # LiveSocket initialization not found
         js_content

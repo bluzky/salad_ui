@@ -14,10 +14,12 @@ defmodule SaladUI.PopoverTest do
         |> rendered_to_string()
         |> clean_string()
 
-      assert html =~ ~r/<div class=\"text-green-500\".+Popover<\/div>/
+      assert html =~ ~s(data-part="trigger")
+      assert html =~ ~s(class="text-green-500")
+      assert html =~ "Popover"
     end
 
-    test "popover_content top" do
+    test "popover_content default (bottom)" do
       assigns = %{id: "xxx-id"}
 
       html =
@@ -27,13 +29,27 @@ defmodule SaladUI.PopoverTest do
         |> rendered_to_string()
         |> clean_string()
 
-      for class <-
-            ~w(absolute hidden p-4 mb-2 rounded-md bg-popover text-popover-foreground outline-none shadow-md z-50 left-1/2 bottom-full w-72 -translate-x-1/2 animate-in border data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:hidden fade-in-0 slide-in-from-left-1/2 zoom-in-95) do
-        assert html =~ class
-      end
+      # Check for positioner wrapper
+      assert html =~ ~s(data-part="positioner")
+      # default side
+      assert html =~ ~s(data-side="bottom")
+      assert html =~ ~s(hidden)
+
+      # Check for content element
+      assert html =~ ~s(data-part="content")
+      assert html =~ ~s(id="xxx-id")
+
+      # Check for content wrapper classes
+      assert html =~ ~s(z-50)
+      assert html =~ ~s(w-72)
+      assert html =~ ~s(rounded-md)
+      assert html =~ ~s(border)
+      assert html =~ ~s(bg-popover)
+      assert html =~ ~s(p-4)
+      assert html =~ ~s(text-popover-foreground)
+      assert html =~ ~s(shadow-md)
 
       assert html =~ "Popover Content"
-      assert html =~ "data-side=\"top\""
     end
 
     test "It renders popover_content bottom correctly" do
@@ -46,10 +62,20 @@ defmodule SaladUI.PopoverTest do
         |> rendered_to_string()
         |> clean_string()
 
-      for class <-
-            ~w(absolute hidden p-4 mt-2 rounded-md bg-popover text-popover-foreground outline-none shadow-md z-50 left-1/2 top-full w-72 -translate-x-1/2 animate-in border data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:hidden fade-in-0 slide-in-from-left-1/2 zoom-in-95) do
-        assert html =~ class
-      end
+      # Check for data attributes
+      assert html =~ ~s(data-part="content")
+      assert html =~ ~s(data-side="bottom")
+      assert html =~ ~s(hidden)
+
+      # Check for content wrapper classes
+      assert html =~ ~s(z-50)
+      assert html =~ ~s(w-72)
+      assert html =~ ~s(rounded-md)
+      assert html =~ ~s(border)
+      assert html =~ ~s(bg-popover)
+      assert html =~ ~s(p-4)
+      assert html =~ ~s(text-popover-foreground)
+      assert html =~ ~s(shadow-md)
 
       assert html =~ "Popover Content"
     end
@@ -64,13 +90,22 @@ defmodule SaladUI.PopoverTest do
         |> rendered_to_string()
         |> clean_string()
 
-      for class <-
-            ~w(absolute hidden p-4 ml-2 rounded-md bg-popover text-popover-foreground outline-none shadow-md z-50 left-full top-1/2 w-72 -translate-y-1/2 animate-in border data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:hidden fade-in-0 slide-in-from-top-1/2 zoom-in-95) do
-        assert html =~ class
-      end
+      # Check for data attributes
+      assert html =~ ~s(data-part="content")
+      assert html =~ ~s(data-side="right")
+      assert html =~ ~s(hidden)
+
+      # Check for content wrapper classes
+      assert html =~ ~s(z-50)
+      assert html =~ ~s(w-72)
+      assert html =~ ~s(rounded-md)
+      assert html =~ ~s(border)
+      assert html =~ ~s(bg-popover)
+      assert html =~ ~s(p-4)
+      assert html =~ ~s(text-popover-foreground)
+      assert html =~ ~s(shadow-md)
 
       assert html =~ "Popover Content"
-      assert html =~ "data-side=\"right\""
     end
   end
 end

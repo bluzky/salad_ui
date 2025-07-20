@@ -15,7 +15,9 @@ defmodule SaladUI.CollapsibleTest do
         """)
 
       assert html =~ ~s(id="test-collapsible")
-      assert html =~ ~s(phx-toggle-collapsible)
+      assert html =~ ~s(data-component="collapsible")
+      assert html =~ ~s(phx-hook="SaladUI")
+      assert html =~ ~s(data-part="root")
       assert html =~ "Test Content"
     end
 
@@ -29,9 +31,7 @@ defmodule SaladUI.CollapsibleTest do
         </.collapsible>
         """)
 
-      for class <- ~w(inline-block relative custom-class) do
-        assert html =~ class
-      end
+      assert html =~ ~s(class="relative custom-class")
     end
   end
 
@@ -62,7 +62,9 @@ defmodule SaladUI.CollapsibleTest do
         </.collapsible_trigger>
         """)
 
-      assert html =~ ~s(class="custom-trigger-class")
+      assert html =~ ~s(custom-trigger-class)
+      assert html =~ ~s(data-part="trigger")
+      assert html =~ "Click me"
     end
   end
 
@@ -77,10 +79,11 @@ defmodule SaladUI.CollapsibleTest do
         </.collapsible_content>
         """)
 
-      for class <- ~w(collapsible-content hidden transition-all duration-200 ease-in-out) do
-        assert html =~ class
-      end
-
+      assert html =~ ~s(data-part="content")
+      assert html =~ ~s(hidden)
+      assert html =~ ~s(transition-all)
+      assert html =~ ~s(duration-200)
+      assert html =~ ~s(ease-in-out)
       assert html =~ "Hidden content"
     end
 
@@ -136,8 +139,8 @@ defmodule SaladUI.CollapsibleTest do
 
     html =
       rendered_to_string(~H"""
-      <.collapsible :let={builder} id="test-collapsible" open={false}>
-        <.collapsible_trigger builder={builder}>
+      <.collapsible id="test-collapsible" open={false}>
+        <.collapsible_trigger>
           <button>Toggle</button>
         </.collapsible_trigger>
         <.collapsible_content>
@@ -148,7 +151,7 @@ defmodule SaladUI.CollapsibleTest do
 
     assert html =~ "Toggle"
     assert html =~ "Hidden Content"
-    assert html =~ "collapsible-content"
-    assert html =~ ~s(phx-toggle-collapsible)
+    assert html =~ ~s(data-component="collapsible")
+    assert html =~ ~s(phx-hook="SaladUI")
   end
 end

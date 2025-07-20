@@ -146,9 +146,7 @@ defmodule SaladStorybookWeb.Demo.SidebarFour do
       <.sidebar_main data={@data}></.sidebar_main>
       <.sidebar_inset>
         <header class="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-          <.sidebar_trigger target="main-sidebar" class="-ml-1">
-            <Lucideicons.panel_left class="w-4 h-4" />
-          </.sidebar_trigger>
+          <.sidebar_trigger target="main-sidebar" class="-ml-1" />
           <.separator orientation="vertical" class="mr-2 h-4" />
           <.breadcrumb>
             <.breadcrumb_list>
@@ -252,7 +250,7 @@ defmodule SaladStorybookWeb.Demo.SidebarFour do
     ~H"""
     <.sidebar_menu>
       <.sidebar_menu_item>
-        <.dropdown_menu class="block">
+        <.dropdown_menu id="sidebar-version-menu" class="block">
           <.dropdown_menu_trigger>
             <.sidebar_menu_button
               size="lg"

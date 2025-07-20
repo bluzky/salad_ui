@@ -16,5 +16,5 @@ chart.js@^4.4.5:
 
 chartjs@^0.3.24:
   version "0.3.24"
-  resolved "https://registry.yarnpkg.com/chartjs/-/chartjs-0.3.24.tgz#3addeb5ae3606b3e89e346c27d52ca158416e93d"
+  resolved "https://registry.npmjs.org/chartjs/-/chartjs-0.3.24.tgz"
   integrity sha512-h6G9qcDqmFYnSWqjWCzQMeOLiypS+pM6Fq2Rj7LPty8Kjx5yHonwwJ7oEHImZpQ2u9Pu36XGYfardvvBiQVrhg==

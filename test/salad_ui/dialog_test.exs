@@ -80,10 +80,6 @@ defmodule SaladUI.DialogTest do
 
       html =
         rendered_to_string(~H"""
-        <%# <.button phx-click={show_modal("my-modal")}> %>
-        <%#   Open modal %>
-        <%# </.button> %>
-
         <.dialog id="my-modal" on_cancel={Phoenix.LiveView.JS.navigate("")} class="w-[700px]">
           <.dialog_header>
             <.dialog_title>Edit profile</.dialog_title>

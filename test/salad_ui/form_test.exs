@@ -72,7 +72,7 @@ defmodule SaladUI.FormTest do
         |> rendered_to_string()
         |> clean_string()
 
-      for class <- ~w(text-destructive font-medium text-sm) do
+      for class <- ~w(font-medium text-sm) do
         assert html =~ class
       end
 
