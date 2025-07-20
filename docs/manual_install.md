@@ -70,8 +70,6 @@ module.exports = {
 ```
 cd assets
 npm i -D tailwindcss-animate
-# or yarn
-yarn add -D tailwindcss-animate
 ```
 
 3. **Add javascript to handle event from server**

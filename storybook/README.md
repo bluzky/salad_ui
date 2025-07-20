@@ -16,7 +16,7 @@
 
 3. Install node modules
 
-`cd assets && yarn`
+`cd assets && npm install`
 
 4. Install dependency & start
 ```

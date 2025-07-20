@@ -57,7 +57,7 @@ defmodule SaladStorybook.MixProject do
       {:phoenix_live_view, "~> 1.0.17", override: true},
       {:phoenix_live_dashboard, "~> 0.8.7"},
       {:esbuild, "~> 0.10.0", runtime: Mix.env() == :dev},
-      {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
       {:swoosh, "~> 1.19.3"},
       {:finch, "~> 0.13"},
       {:telemetry_metrics, "~> 0.6"},

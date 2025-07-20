@@ -1,7 +1,5 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
-@import "../../deps/salad_ui/priv/static/assets/salad_ui.css";
+@import "tailwindcss";
+@import "../../../priv/static/assets/salad_ui.css";
 
 /* This file is for your main application CSS */
 :root {
@@ -24,9 +22,10 @@
     --ring: 215 20.2% 65.1%;
     --input: 214.3 31.8% 91.4%;
     --border: 214.3 31.8% 91.4%;
-    --sucess: #dcfce7;
+    --success: #dcfce7;
     --success-foreground: #22c55e;
-    --info: #dbeafe, --info-foreground: #3b82f6;
+    --info: #dbeafe;
+    --info-foreground: #3b82f6;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;

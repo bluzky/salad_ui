@@ -47,12 +47,12 @@ defmodule Storybook.SaladUIComponents.Chart do
         %{
           label: "Temperature",
           data: [10, 20, 30, 40, 50, 60, 70, 80],
-          backgroundColor: "rgba(0,0,0)"
+          backgroundColor: "var(--color-chart-1)"
         },
         %{
           label: "Humidity",
           data: [20, 10, 10, 80, 20, 90, 30, 30],
-          backgroundColor: "rgba(128,128,128)"
+          backgroundColor: "var(--color-chart-2)"
         }
       ]
     }
@@ -65,13 +65,13 @@ defmodule Storybook.SaladUIComponents.Chart do
         %{
           label: "Sales",
           data: [10, 70, 30, 50],
-          borderColor: "rgb(0,0,0)",
+          borderColor: "var(--color-chart-1)",
           tension: 0.4
         },
         %{
           label: "Revenue",
           data: [20, 50, 40, 90],
-          borderColor: "rgb(128, 128, 128)",
+          borderColor: "var(--color-chart-2)",
           tension: 0.4
         }
       ]

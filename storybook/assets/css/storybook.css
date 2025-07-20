@@ -1,19 +1,111 @@
 /* This is your custom storybook stylesheet. */
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
-@import "../../deps/salad_ui/priv/static/assets/salad_ui.css";
+@import "tailwindcss";
+
+/* Important selector configuration - handled via postcss.config.js or CLI flag */
+
+/* Plugins */
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+@plugin "../vendor/tailwindcss-animate";
+
+/* Phoenix LiveView Variants */
+@variant phx-no-feedback ([".phx-no-feedback&", ".phx-no-feedback &"]);
+@variant phx-click-loading ([".phx-click-loading&", ".phx-click-loading &"]);
+@variant phx-submit-loading ([".phx-submit-loading&", ".phx-submit-loading &"]);
+@variant phx-change-loading ([".phx-change-loading&", ".phx-change-loading &"]);
+
+/* Theme Configuration */
+@theme {
+  /* Colors */
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-background: hsl(var(--background));
+  --color-border: hsl(var(--border));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-foreground: hsl(var(--foreground));
+  --color-input: hsl(var(--input));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-ring: hsl(var(--ring));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  
+  /* Sidebar colors */
+  --color-sidebar: hsl(var(--sidebar-background));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+}
+
+/* Content Sources */
+@source "../../lib/**/*.*ex";
+@source "../../**/*.story.exs";
+@source "../../../lib/**/*.ex";
+
+@import "../../../priv/static/assets/salad_ui.css";
 @import "./color.css";
+
+/* Theme overrides for storybook components */
+/* Only apply to SaladUI demo tables, not the welcome page */
+#table-single-table.border-zinc-200 {
+  border-color: hsl(var(--border)) !important;
+}
+
+#table-single-table.divide-zinc-100 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--color-zinc-100) !important;
+}
+
+/* Fix table header border color only for SaladUI table demos - use zinc-100 */
+.salad-storybook-web table:has(#table-single-table) thead[class*="[&_tr]:border-b"] tr {
+  border-bottom-color: var(--color-zinc-100);
+}
+
+/* Fix Tailwind v4 border default color change */
+@layer utilities {
+  .border {
+    border-color: hsl(var(--border));
+  }
+  .border-t {
+    border-top-color: hsl(var(--border));
+  }
+  .border-r {
+    border-right-color: hsl(var(--border));
+  }
+  .border-b {
+    border-bottom-color: hsl(var(--border));
+  }
+  .border-l {
+    border-left-color: hsl(var(--border));
+  }
+  .border-x {
+    border-left-color: hsl(var(--border));
+    border-right-color: hsl(var(--border));
+  }
+  .border-y {
+    border-top-color: hsl(var(--border));
+    border-bottom-color: hsl(var(--border));
+  }
+}
 
 /*
  * Put your component styling within the Tailwind utilities layer.
  * See the https://hexdocs.pm/phoenix_storybook/sandboxing.html guide for more info.
  */
 
-@layer utilities {
-    * {
-        font-family: system-ui;
-    }
+/* Custom styles */
+* {
+    font-family: system-ui;
 }
 
 .psb-text-indigo-600,
