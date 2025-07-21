@@ -38,6 +38,7 @@ defmodule SaladUI.Checkbox do
   attr :field, Phoenix.HTML.FormField
   attr :class, :string, default: nil
   attr :rest, :global
+  attr :mode, :atom, default: :boolean, values: [:boolean, :multi_select]
 
   def checkbox(assigns) do
     assigns =
@@ -47,7 +48,8 @@ defmodule SaladUI.Checkbox do
       assign_new(assigns, :checked, fn -> Phoenix.HTML.Form.normalize_value("checkbox", assigns.value) end)
 
     ~H"""
-    <input type="hidden" name={@name} value="false" />
+    <input :if={@mode == :boolean} type="hidden" name={@name} value="false" />
+    <input :if={@mode == :multi_select} type="hidden" name={@name<>"[]"} value="" />
     <input
       type="checkbox"
       class={
@@ -56,8 +58,8 @@ defmodule SaladUI.Checkbox do
           @class
         ])
       }
-      name={@name}
-      value="true"
+      name={if @mode == :boolean, do: @name, else: @name <> "[]"}
+      value={if @mode == :boolean, do: "true", else: @value}
       checked={@checked}
       {@rest}
     />
