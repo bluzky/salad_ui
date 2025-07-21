@@ -87,7 +87,12 @@ defmodule SaladUI.Form do
   attr :rest, :global
 
   def form_label(assigns) do
-    assigns = assign(assigns, error: assigns[:error] || has_error?(assigns[:field]))
+    assigns =
+      assign(assigns,
+        error:
+          assigns[:error] ||
+            (assigns[:field] && Phoenix.Component.used_input?(assigns[:field]) && has_error?(assigns[:field]))
+      )
 
     ~H"""
     <SaladUI.Label.label
@@ -172,7 +177,10 @@ defmodule SaladUI.Form do
     assigns =
       assigns
       |> assign(
-        error: has_error?(assigns[:field]) || (not is_nil(assigns[:errors]) and not Enum.empty?(assigns[:errors]))
+        error:
+          Phoenix.Component.used_input?(assigns[:field]) &&
+            (has_error?(assigns[:field]) ||
+               (not is_nil(assigns[:errors]) and not Enum.empty?(assigns[:errors])))
       )
       |> assign(:message, List.first(assigns[:errors] || field_errors(assigns[:field])))
 
