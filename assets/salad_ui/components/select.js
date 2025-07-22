@@ -162,6 +162,8 @@ class SelectComponent extends Component {
 
     // Initialize select items
     this.initializeItems();
+    this.syncHiddenInputs();
+    this.addUnusedHiddenInput(this.options.name);
     this.initializePlaceholder();
   }
 
@@ -303,6 +305,8 @@ class SelectComponent extends Component {
   onClosedEnter() {
     // Update hidden input(s)
     this.syncHiddenInputs();
+    this.removeUnusedHiddenInput();
+    this.dispatchChangeEvent();
     this.pushEvent("closed");
   }
 
@@ -459,6 +463,42 @@ class SelectComponent extends Component {
       input.name = name;
       input.value = values[0];
       this.el.appendChild(input);
+    }
+  }
+
+  // Helper to generate the _unused_ input name
+  addUnusedHiddenInput(name) {
+    // If the unused input was already removed, do not add it again
+    if (this.el.dataset.unusedInputRemoved === "true") {
+      return;
+    }
+    let unusedName;
+    if (!name.includes("[")) {
+      unusedName = `_unused_${name}`;
+    } else {
+      unusedName = name.replace(/(\[)([^\[\]]+)(\])$/, (match, open, field, close) => `${open}_unused_${field}${close}`);
+    }
+    if (!this.el.querySelector(`input[type='hidden'][name='${unusedName}']`)) {
+      const unusedInput = document.createElement("input");
+      unusedInput.type = "hidden";
+      unusedInput.name = unusedName;
+      unusedInput.value = "";
+      this.el.appendChild(unusedInput);
+    }
+  }
+
+  removeUnusedHiddenInput() {
+    const unusedInputs = this.el.querySelectorAll("input[type='hidden'][name^='_unused_']");
+    unusedInputs.forEach((input) => input.remove());
+    // Set a flag so we know not to re-add
+    this.el.dataset.unusedInputRemoved = "true";
+  }
+
+  dispatchChangeEvent() {
+    // Find the first hidden input and dispatch a change event on it
+    const firstHiddenInput = this.el.querySelector("input[type='hidden']");
+    if (firstHiddenInput) {
+      firstHiddenInput.dispatchEvent(new Event("change", { bubbles: true }));
     }
   }
 
