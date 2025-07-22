@@ -9,6 +9,8 @@ class RadioGroupComponent extends Component {
 
     // Initialize properties
     this.items = this.getAllParts("item");
+    this.form = el.closest('form');
+    this._skipInitialChangeEvent = true; // <-- Add this flag
 
     // Set keyboard navigation defaults
     this.config.preventDefaultKeys = [
@@ -109,7 +111,7 @@ class RadioGroupComponent extends Component {
       this.transition("valueChanged", { value, previousValue });
 
       this.collection.select(collectionItem);
-      this.updateItemStates();
+      this.updateItemStates(); // This will handle the change event dispatch
 
       // Emit value changed event
       this.pushEvent("value-changed", {
@@ -141,6 +143,7 @@ class RadioGroupComponent extends Component {
       // Update native radio input if present
       const input = item.querySelector('input[type="radio"]');
       if (input) {
+        const wasChecked = input.checked;
         input.checked = isSelected;
         input.disabled = isDisabled;
 
@@ -148,8 +151,16 @@ class RadioGroupComponent extends Component {
         if (!input.name && this.options.name) {
           input.name = this.options.name;
         }
+
+        // Only dispatch if this input is now checked, and not during initial setup
+        if (wasChecked !== isSelected && isSelected && !this._skipInitialChangeEvent) {
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
       }
     });
+
+    // After the first run, allow change events
+    this._skipInitialChangeEvent = false;
   }
 
   navigateItem(direction) {
