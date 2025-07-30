@@ -21,7 +21,7 @@ defmodule Storybook.Examples.ServerEvent do
   @impl true
   def render(assigns) do
     ~H"""
-    <.sheet>
+    <.sheet id="my-sheet">
       <.sheet_trigger target="my-sheet">
         <.button variant="outline">Open</.button>
       </.sheet_trigger>
