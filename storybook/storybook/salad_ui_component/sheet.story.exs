@@ -1,4 +1,3 @@
-==> salad_ui
 defmodule Storybook.SaladUIComponents.Sheet do
   @moduledoc false
   use PhoenixStorybook.Story, :component
