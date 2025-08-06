@@ -9,7 +9,7 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
     user: %{
       name: "shadcn",
       email: "m@example.com",
-      avatar: "/avatars/shadcn.jpg"
+      avatar: "https://github.com/shadcn.png"
     },
     teams: [
       %{
@@ -398,7 +398,7 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
             <.dropdown_menu_label class="p-0 font-normal">
               <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <.avatar class="h-8 w-8 rounded-lg">
-                  <.avatar_image src="{user.avatar}" alt="{user.name}"></.avatar_image>
+                  <.avatar_image src={@user.avatar} alt={@user.name} />
                   <.avatar_fallback class="rounded-lg">
                     CN
                   </.avatar_fallback>

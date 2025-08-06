@@ -131,23 +131,18 @@ defmodule Storybook.Examples.FormDemo do
 
               <.form_item>
                 <.label>Color</.label>
-                <.select
-                  :let={select}
-                  field={f[:color]}
-                  id="color-select"
-                  name="color"
-                  placeholder="Select a color"
-                >
-                  <.select_trigger builder={select} class="w-[180px]" />
-                  <.select_content class="w-full" builder={select}>
+                <.select field={f[:color]} id="color-select" name="color">
+                  <.select_trigger class="w-[180px]">
+                    <.select_value placeholder="Select a color" />
+                  </.select_trigger>
+                  <.select_content>
                     <.select_group>
-                      <.select_item builder={select} value="red" label="Red"></.select_item>
-                      <.select_item builder={select} value="green" label="Blue"></.select_item>
-                      <.select_item builder={select} value="pink"></.select_item>
+                      <.select_item value="red">Red</.select_item>
+                      <.select_item value="blue">Blue</.select_item>
+                      <.select_item value="pink">Pink</.select_item>
                       <.select_separator />
-                      <.select_item builder={select} disabled value="yellow" label="YELLOW">
-                      </.select_item>
-                      <.select_item builder={select} value="purple"></.select_item>
+                      <.select_item disabled value="yellow">Yellow</.select_item>
+                      <.select_item value="purple">Purple</.select_item>
                     </.select_group>
                   </.select_content>
                 </.select>
