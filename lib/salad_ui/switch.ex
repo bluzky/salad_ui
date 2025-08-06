@@ -22,7 +22,7 @@ defmodule SaladUI.Switch do
   attr :id, :string, default: nil
   attr :name, :string, default: nil
   attr :class, :string, default: nil
-  attr :checked, :boolean, default: false
+  attr :checked, :boolean
   attr :disabled, :boolean, default: false
   attr :"on-checked-changed", :any, default: nil, doc: "Handler for value change event"
 
@@ -33,7 +33,7 @@ defmodule SaladUI.Switch do
     assigns = prepare_assign(assigns)
 
     # Normalize value for boolean
-    assigns = assign(assigns, :checked, normalize_boolean(assigns.checked))
+    assigns = assign_new(assigns, :checked, fn -> normalize_boolean(assigns.value) end)
 
     # Collect event mappings
     event_map =
