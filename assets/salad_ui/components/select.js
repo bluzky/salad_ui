@@ -436,13 +436,10 @@ class SelectComponent extends Component {
 
     // Create new hidden inputs
     if (this.multiple) {
-      // Multiple select - create multiple inputs with array notation
-      const inputName = name ? `${name}[]` : "";
-
       values.forEach((value) => {
         const input = document.createElement("input");
         input.type = "hidden";
-        input.name = inputName;
+        input.name = name;
         input.value = value;
         this.el.appendChild(input);
       });
