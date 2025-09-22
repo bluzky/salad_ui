@@ -252,7 +252,7 @@ defmodule SaladStorybookWeb.Demo.SidebarThree do
     ~H"""
     <.sidebar_menu>
       <.sidebar_menu_item>
-        <.dropdown_menu class="block">
+        <.dropdown_menu id="sidebar-three-dropdown" class="block">
           <.dropdown_menu_trigger>
             <.sidebar_menu_button
               size="lg"
