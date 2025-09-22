@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - id: run-action
-        uses: sobelow/action@1afd6d2cae70ae8bd900b58506f54487ed863912
+        uses: sobelow/action@a9bf221c4eef7e7a4486fa1f06257511c9780b46
       - name: Upload report
         uses: github/codeql-action/upload-sarif@v2
         with:
