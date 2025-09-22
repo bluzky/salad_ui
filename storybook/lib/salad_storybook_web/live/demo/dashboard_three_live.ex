@@ -9,7 +9,6 @@ defmodule SaladStorybookWeb.Demo.DashboardThree do
   import SaladUI.Card
   import SaladUI.DropdownMenu
   import SaladUI.Input
-  import SaladUI.Menu
   import SaladUI.Sheet
   import SaladUI.Table
 
