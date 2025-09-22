@@ -268,7 +268,6 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
         <.collapsible
           :for={item <- @items}
           id={id(item.title)}
-          aschild="aschild"
           open={item[:is_active]}
           class="group/collapsible block"
         >
@@ -312,7 +311,7 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
       <.sidebar_menu>
         <.sidebar_menu_item :for={item <- @projects}>
           <.dropdown_menu id="projects" style="-ml-8 block">
-            <.dropdown_menu_trigger show_on_hover>
+            <.dropdown_menu_trigger>
               <.as_child tag={&sidebar_menu_button/1} child="a" href={item.url}>
                 <.dynamic tag={item.icon} />
                 <span>
@@ -393,7 +392,7 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
             class="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
             side="right"
             align="end"
-            sideoffset="{4}"
+            side-offset={4}
           >
             <.dropdown_menu_label class="p-0 font-normal">
               <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
