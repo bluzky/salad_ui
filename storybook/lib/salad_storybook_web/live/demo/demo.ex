@@ -57,7 +57,6 @@ defmodule SaladStorybookWeb.Demo.Demo do
           <h2 class="text-xl font-semibold">Country Selector</h2>
 
           <.select
-            :let={builder}
             id="country-select"
             value={@selected_country}
             name="country"
@@ -66,7 +65,7 @@ defmodule SaladStorybookWeb.Demo.Demo do
             <.select_trigger class="w-[180px]">
               <.select_value placeholder="Select your country" />
             </.select_trigger>
-            <.select_content builder={builder}>
+            <.select_content>
               <.select_group>
                 <.select_label>Americas</.select_label>
                 <.select_item value="us">United States</.select_item>
@@ -89,7 +88,6 @@ defmodule SaladStorybookWeb.Demo.Demo do
         </div>
         <div class="mt-8">
           <.select
-            :let={builder}
             id="skills-select"
             name="skills"
             multiple={true}
@@ -99,7 +97,7 @@ defmodule SaladStorybookWeb.Demo.Demo do
             <.select_trigger>
               <.select_value placeholder="Select skills" />
             </.select_trigger>
-            <.select_content builder={builder}>
+            <.select_content>
               <.select_group>
                 <.select_label>Programming</.select_label>
                 <.select_item value="javascript">JavaScript</.select_item>
