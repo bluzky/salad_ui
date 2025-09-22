@@ -16,7 +16,7 @@ defmodule SaladStorybookWeb.CoreComponents do
   """
   use Phoenix.Component
 
-  import SaladStorybookWeb.Gettext
+  use Gettext, backend: SaladStorybookWeb.Gettext
   import SaladUI.Alert
   import SaladUI.Form, except: [form: 1]
   import SaladUI.Table, except: [table: 1]
