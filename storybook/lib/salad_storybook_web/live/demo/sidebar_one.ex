@@ -166,14 +166,12 @@ defmodule SaladStorybookWeb.Demo.SidebarOne do
             </.sidebar_group_content>
           </.sidebar_group>
         </.sidebar_content>
-        <.sidebar_rail></.sidebar_rail>
+        <.sidebar_rail />
       </.sidebar>
       <.sidebar_inset>
         <header class="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-          <.sidebar_trigger target="main-sidebar" class="-ml-1">
-            <Lucideicons.panel_left class="w-4 h-4" />
-          </.sidebar_trigger>
-          <.separator orientation="vertical" class="mr-2 h-4"></.separator>
+          <.sidebar_trigger target="main-sidebar" class="-ml-1" />
+          <.separator orientation="vertical" class="mr-2 h-4" />
           <.breadcrumb>
             <.breadcrumb_list>
               <.breadcrumb_item class="hidden md:block">
@@ -181,7 +179,7 @@ defmodule SaladStorybookWeb.Demo.SidebarOne do
                   Building Your Application
                 </.breadcrumb_link>
               </.breadcrumb_item>
-              <.breadcrumb_separator class="hidden md:block"></.breadcrumb_separator>
+              <.breadcrumb_separator class="hidden md:block" />
               <.breadcrumb_item>
                 <.breadcrumb_page>
                   Data Fetching
@@ -211,7 +209,7 @@ defmodule SaladStorybookWeb.Demo.SidebarOne do
           <.label for="search" class="sr-only">
             Search
           </.label>
-          <.sidebar_input id="search" placeholder="Search the docs..." class="pl-8"></.sidebar_input>
+          <.sidebar_input id="search" placeholder="Search the docs..." class="pl-8" />
           <search class="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50">
           </search>
         </.sidebar_group_content>

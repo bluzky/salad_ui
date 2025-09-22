@@ -146,10 +146,8 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
       <.sidebar_main data={@data}></.sidebar_main>
       <.sidebar_inset>
         <header class="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-          <.sidebar_trigger target="main-sidebar" class="-ml-1">
-            <Lucideicons.panel_left class="w-4 h-4" />
-          </.sidebar_trigger>
-          <.separator orientation="vertical" class="mr-2 h-4"></.separator>
+          <.sidebar_trigger target="main-sidebar" class="-ml-1" />
+          <.separator orientation="vertical" class="mr-2 h-4" />
           <.breadcrumb>
             <.breadcrumb_list>
               <.breadcrumb_item class="hidden md:block">
@@ -157,7 +155,7 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
                   Building Your Application
                 </.breadcrumb_link>
               </.breadcrumb_item>
-              <.breadcrumb_separator class="hidden md:block"></.breadcrumb_separator>
+              <.breadcrumb_separator class="hidden md:block" />
               <.breadcrumb_item>
                 <.breadcrumb_page>
                   Data Fetching
