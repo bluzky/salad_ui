@@ -66,7 +66,7 @@ defmodule SaladStorybook.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:plug_cowboy, "~> 2.5"},
-      {:phoenix_storybook, "~> 0.8"},
+      {:phoenix_storybook, "~> 0.9.2"},
       {:styler, "~> 0.7", only: [:dev, :test], runtime: false},
       {:floki, "~> 0.36"},
       {:faker, "~> 0.18"},
