@@ -177,8 +177,6 @@ defmodule SaladStorybookWeb.Demo.Demo do
 
   def handle_event("submit_form", params, socket) do
     # Process the form submission with the selected values
-    IO.inspect(params, label: "Form Submission")
-
     socket =
       socket
       |> put_flash(:info, "Form submitted successfully!")

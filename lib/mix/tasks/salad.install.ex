@@ -54,9 +54,6 @@ defmodule Mix.Tasks.Salad.Install do
     # Get all .js files from the source directory
     js_files = Path.wildcard(Path.join(source_dir, "**/*.js"))
 
-    IO.inspect(source_dir)
-    IO.inspect(js_files)
-
     Enum.reduce(js_files, igniter, fn source_file, acc_igniter ->
       # Get relative path from source directory
       relative_path = Path.relative_to(source_file, source_dir)
