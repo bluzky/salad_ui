@@ -33,7 +33,7 @@ defmodule SaladUI.Pagination do
   Renders a pagination component.
   """
   attr :class, :string, default: nil
-  attr :rest, :global
+  attr :rest, :global, include: ~w(href navigate patch)
   slot :inner_block, required: true
 
   def pagination(assigns) do
@@ -58,7 +58,7 @@ defmodule SaladUI.Pagination do
   Renders pagination content wrapper.
   """
   attr :class, :string, default: nil
-  attr :rest, :global
+  attr :rest, :global, include: ~w(href navigate patch)
   slot :inner_block, required: true
 
   def pagination_content(assigns) do
@@ -81,7 +81,7 @@ defmodule SaladUI.Pagination do
   Renders a pagination item container.
   """
   attr :class, :string, default: nil
-  attr :rest, :global
+  attr :rest, :global, include: ~w(href navigate patch)
   slot :inner_block, required: true
 
   def pagination_item(assigns) do
@@ -111,7 +111,7 @@ defmodule SaladUI.Pagination do
   attr :"is-active", :boolean, default: false
   attr :size, :string, default: "icon", values: ~w(default sm lg icon)
   attr :class, :string, default: nil
-  attr :rest, :global
+  attr :rest, :global, include: ~w(href navigate patch)
   slot :inner_block, required: true
 
   def pagination_link(assigns) do
@@ -146,7 +146,7 @@ defmodule SaladUI.Pagination do
   Renders a next page button.
   """
   attr :class, :string, default: nil
-  attr :rest, :global
+  attr :rest, :global, include: ~w(href navigate patch)
 
   def pagination_next(assigns) do
     ~H"""
@@ -175,7 +175,7 @@ defmodule SaladUI.Pagination do
   Renders a previous page button.
   """
   attr :class, :string, default: nil
-  attr :rest, :global
+  attr :rest, :global, include: ~w(href navigate patch)
 
   def pagination_previous(assigns) do
     ~H"""
@@ -204,7 +204,7 @@ defmodule SaladUI.Pagination do
   Renders an ellipsis for page ranges.
   """
   attr :class, :string, default: nil
-  attr :rest, :global
+  attr :rest, :global, include: ~w(href navigate patch)
 
   def pagination_ellipsis(assigns) do
     ~H"""
