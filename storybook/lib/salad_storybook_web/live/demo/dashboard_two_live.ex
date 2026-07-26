@@ -8,7 +8,6 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
   import SaladUI.Card
   import SaladUI.DropdownMenu
   import SaladUI.Input
-  import SaladUI.Menu
   import SaladUI.Pagination
   import SaladUI.Progress
   import SaladUI.Separator

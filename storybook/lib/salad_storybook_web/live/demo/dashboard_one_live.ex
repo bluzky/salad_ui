@@ -8,7 +8,6 @@ defmodule SaladStorybookWeb.Demo.DashboardOne do
   import SaladUI.Card
   import SaladUI.DropdownMenu
   import SaladUI.Input
-  import SaladUI.Menu
   import SaladUI.Sheet
   import SaladUI.Skeleton
   import SaladUI.Table
@@ -209,13 +208,13 @@ defmodule SaladStorybookWeb.Demo.DashboardOne do
           </.dropdown_menu>
         </header>
         <main class="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-          <.tabs :let={builder} default="all" id="tabs">
+          <.tabs default="all" id="tabs">
             <div class="flex items-center">
               <.tabs_list>
-                <.tabs_trigger value="all" builder={builder}>All</.tabs_trigger>
-                <.tabs_trigger value="active" builder={builder}>Active</.tabs_trigger>
-                <.tabs_trigger value="draft" builder={builder}>Draft</.tabs_trigger>
-                <.tabs_trigger value="archived" builder={builder} class="hidden sm:flex">
+                <.tabs_trigger value="all">All</.tabs_trigger>
+                <.tabs_trigger value="active">Active</.tabs_trigger>
+                <.tabs_trigger value="draft">Draft</.tabs_trigger>
+                <.tabs_trigger value="archived" class="hidden sm:flex">
                   Archived
                 </.tabs_trigger>
               </.tabs_list>
