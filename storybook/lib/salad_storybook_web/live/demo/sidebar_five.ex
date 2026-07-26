@@ -3,7 +3,7 @@ defmodule SaladStorybookWeb.Demo.SidebarFive do
   use SaladStorybookWeb, :demo_view
   use SaladUI
 
-  import Lucideicons, except: [import: 1, quote: 1, menu: 1]
+  import Lucideicons, except: [import: 1, quote: 1, menu: 1, sidebar: 1]
 
   @data %{
     versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],

@@ -93,12 +93,19 @@ defmodule SaladUI.Sheet do
   The trigger element that opens the sheet.
   """
   attr :class, :string, default: nil
+  attr :target, :string, default: nil
   attr :rest, :global
   slot :inner_block, required: true
 
   def sheet_trigger(assigns) do
     ~H"""
-    <div data-part="trigger" data-action="open" class={classes(["", @class])} {@rest}>
+    <div
+      data-part="trigger"
+      data-action="open"
+      data-target={@target}
+      class={classes(["", @class])}
+      {@rest}
+    >
       {render_slot(@inner_block)}
     </div>
     """

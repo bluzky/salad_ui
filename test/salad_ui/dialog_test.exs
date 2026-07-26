@@ -80,7 +80,7 @@ defmodule SaladUI.DialogTest do
 
       html =
         rendered_to_string(~H"""
-        <.button phx-click={show_modal("my-modal")}>
+        <.button phx-click={SaladUI.JS.dispatch_command(%Phoenix.LiveView.JS{}, "open", to: "#my-modal")}>
           Open modal
         </.button>
 
