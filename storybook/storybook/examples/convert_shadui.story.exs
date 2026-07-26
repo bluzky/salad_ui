@@ -45,7 +45,7 @@ defmodule Storybook.Examples.ConvertShadui do
   end
 
   defp jsx_to_heex(socket, jsx \\ "") do
-    case jsx |> SaladStorybook.Helpers.JsxToHeex.convert() |> IO.inspect() do
+    case jsx |> SaladStorybook.Helpers.JsxToHeex.convert() do
       {:ok, heex} -> assign(socket, :output, {:safe, heex})
       {:error, message} -> assign(socket, :output, "ERROR: #{message}")
     end

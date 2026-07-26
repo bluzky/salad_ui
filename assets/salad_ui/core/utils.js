@@ -38,7 +38,6 @@ export function animateTransition(animConfig, targetElement) {
  * @returns {Promise} Promise that resolves when animation completes
  */
 export function executeAnimation(targetElement, animOptions) {
-  console.log("Animating", targetElement, animOptions);
   return new Promise((resolve) => {
     const { animation, duration } = animOptions;
     let [transitionRun, transitionStart, transitionEnd] = animation || [
