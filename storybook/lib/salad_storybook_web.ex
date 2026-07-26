@@ -43,7 +43,8 @@ defmodule SaladStorybookWeb do
         layouts: [html: SaladStorybookWeb.Layouts]
 
       import Plug.Conn
-      import SaladStorybookWeb.Gettext
+
+      use Gettext, backend: SaladStorybookWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -94,7 +95,8 @@ defmodule SaladStorybookWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import SaladStorybookWeb.CoreComponents, only: [flash_group: 1]
-      import SaladStorybookWeb.Gettext
+
+      use Gettext, backend: SaladStorybookWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
