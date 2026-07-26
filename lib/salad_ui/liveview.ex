@@ -31,6 +31,8 @@ defmodule SaladUI.JS do
   Helper functions for integrating SaladUI with Phoenix LiveView using JavaScript commands.
   """
 
+  alias Phoenix.LiveView.JS
+
   @doc """
   Dispatch a command to a SaladUI component using JavaScript.
   This is useful for programmatically controlling components from client-side code.
@@ -51,22 +53,24 @@ defmodule SaladUI.JS do
     phx-click={%JS{} |> SaladUI.JS.dispatch_command("open", to: "#dialog")}> Click me </button>
   ```
   """
-  def dispatch_command(js \\ %Phoenix.LiveView.JS{}, command_name, opts \\ []) do
+  def dispatch_command(js \\ %JS{}, command_name, opts \\ []) do
     details = %{
       command: command_name,
       params: opts[:detail]
     }
 
-    Phoenix.LiveView.JS.dispatch(
+    JS.dispatch(
       js,
       "salad_ui:command",
-      opts |> Keyword.put(:detail, details)
+      Keyword.put(opts, :detail, details)
     )
   end
 end
 
-defimpl Jason.Encoder, for: Phoenix.LiveView.JS do
-  def encode(value, opts) do
-    Jason.Encode.list(value.ops, opts)
+if !Code.ensure_loaded?(Jason.Encoder.Phoenix.LiveView.JS) do
+  defimpl Jason.Encoder, for: Phoenix.LiveView.JS do
+    def encode(value, opts) do
+      Jason.Encode.list(value.ops, opts)
+    end
   end
 end

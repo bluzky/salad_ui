@@ -251,7 +251,7 @@ defmodule SaladUI.Sidebar do
   Render
   """
   attr(:class, :string, default: nil)
-  attr(:rest, :global)
+  attr(:rest, :global, include: ~w(placeholder))
 
   def sidebar_input(assigns) do
     ~H"""
