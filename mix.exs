@@ -59,7 +59,30 @@ defmodule SaladUI.MixProject do
         "docs/implement_simple_component.md",
         "docs/complex_component_guide.md",
         "docs/component_config_guide.md",
-        "docs/component_communications_explain.md"
+        "docs/component_communications_explain.md",
+        "docs/js_documentation_index.md",
+        "docs/js_architecture_overview.md",
+        "docs/js_component_patterns.md",
+        "docs/js_component_reference.md",
+        "docs/js_state_transition_flow.md"
+      ],
+      groups_for_extras: [
+        "Getting Started": [
+          "README.md"
+        ],
+        "Component Guides": [
+          "docs/implement_simple_component.md",
+          "docs/complex_component_guide.md",
+          "docs/component_config_guide.md",
+          "docs/component_communications_explain.md"
+        ],
+        "JavaScript Documentation": [
+          "docs/js_documentation_index.md",
+          "docs/js_architecture_overview.md",
+          "docs/js_component_patterns.md",
+          "docs/js_component_reference.md",
+          "docs/js_state_transition_flow.md"
+        ]
       ]
     ]
   end
