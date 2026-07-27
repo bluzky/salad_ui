@@ -57,7 +57,7 @@ class DialogComponent extends Component {
       ariaConfig: {
         content: {
           all: {
-            role: "dialog",
+            role: this.options.role || "dialog",
           },
           open: {
             hidden: "false",

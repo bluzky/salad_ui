@@ -176,8 +176,8 @@ defmodule SaladUI.Form do
 
     ~H"""
     <p
-      :if={(msg = render_slot(@inner_block)) || not is_nil(@error)}
-      class={classes(["text-sm font-medium", @error && "text-destructive", @class])}
+      :if={(msg = render_slot(@inner_block)) || @error}
+      class={classes(["text-sm font-medium", (msg || @error) && "text-destructive", @class])}
       {@rest}
     >
       {msg || @message}

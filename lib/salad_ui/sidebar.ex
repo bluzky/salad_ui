@@ -204,7 +204,7 @@ defmodule SaladUI.Sidebar do
     <button
       data-sidebar="rail"
       aria-label="Toggle Sidebar"
-      tab-index={-1}
+      tabindex={-1}
       onclick={exec_closest("phx-toggle-sidebar", ".sidebar-root")}
       title="Toggle Sidebar"
       class={
@@ -625,8 +625,7 @@ defmodule SaladUI.Sidebar do
   attr(:rest, :global)
 
   def sidebar_menu_skeleton(assigns) do
-    width = :rand.uniform(40) + 50
-    assigns = assign(assigns, :width, width)
+    assigns = assign(assigns, :width, 70)
 
     ~H"""
     <div

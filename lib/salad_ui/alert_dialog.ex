@@ -61,7 +61,8 @@ defmodule SaladUI.AlertDialog do
       |> assign(
         :options,
         json(%{
-          animations: get_animation_config()
+          animations: get_animation_config(),
+          role: "alertdialog"
         })
       )
 
