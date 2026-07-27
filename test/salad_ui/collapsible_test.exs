@@ -15,8 +15,54 @@ defmodule SaladUI.CollapsibleTest do
         """)
 
       assert html =~ ~s(id="test-collapsible")
-      assert html =~ ~s(phx-toggle-collapsible)
+      assert html =~ ~s(data-component="collapsible")
+      assert html =~ ~s(data-part="root")
+      assert html =~ ~s(data-state="closed")
+      assert html =~ ~s(phx-hook="SaladUI")
       assert html =~ "Test Content"
+    end
+
+    test "sets initial data-state to open when open is true" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.collapsible id="test-collapsible" open>
+          Test Content
+        </.collapsible>
+        """)
+
+      assert html =~ ~s(data-state="open")
+    end
+
+    test "encodes open state and animation config into data-options" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.collapsible id="test-collapsible" open>
+          Test Content
+        </.collapsible>
+        """)
+
+      assert html =~ ~s(&quot;open&quot;:true)
+      assert html =~ ~s(&quot;animations&quot;)
+      assert html =~ ~s(&quot;closed_to_open&quot;)
+      assert html =~ ~s(&quot;open_to_closed&quot;)
+    end
+
+    test "encodes on-open/on-close handlers into data-event-mappings" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.collapsible id="test-collapsible" on-open="opened" on-close="closed">
+          Test Content
+        </.collapsible>
+        """)
+
+      assert html =~ ~s(&quot;opened&quot;:&quot;opened&quot;)
+      assert html =~ ~s(&quot;closed&quot;:&quot;closed&quot;)
     end
 
     test "applies custom class" do
@@ -29,14 +75,14 @@ defmodule SaladUI.CollapsibleTest do
         </.collapsible>
         """)
 
-      for class <- ~w(inline-block relative custom-class) do
+      for class <- ~w(relative custom-class) do
         assert html =~ class
       end
     end
   end
 
   describe "collapsible_trigger/1" do
-    test "renders trigger with click handler" do
+    test "renders trigger with data-action and accessibility attributes" do
       assigns = %{}
 
       html =
@@ -48,8 +94,24 @@ defmodule SaladUI.CollapsibleTest do
         </.collapsible>
         """)
 
-      assert html =~ "test-collapsible"
+      assert html =~ ~s(data-part="trigger")
+      assert html =~ ~s(data-action="toggle")
+      assert html =~ ~s(role="button")
+      assert html =~ ~s(tabindex="0")
       assert html =~ "Click me"
+    end
+
+    test "renders as a different tag when :as is provided" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.collapsible_trigger as="button">
+          Click me
+        </.collapsible_trigger>
+        """)
+
+      assert html =~ ~s(<button)
     end
 
     test "applies custom class to trigger" do
@@ -62,12 +124,12 @@ defmodule SaladUI.CollapsibleTest do
         </.collapsible_trigger>
         """)
 
-      assert html =~ ~s(class="custom-trigger-class")
+      assert html =~ "cursor-pointer custom-trigger-class"
     end
   end
 
   describe "collapsible_content/1" do
-    test "renders content with default classes" do
+    test "renders content hidden by default with transition classes" do
       assigns = %{}
 
       html =
@@ -77,7 +139,10 @@ defmodule SaladUI.CollapsibleTest do
         </.collapsible_content>
         """)
 
-      for class <- ~w(collapsible-content hidden transition-all duration-200 ease-in-out) do
+      assert html =~ ~s(data-part="content")
+      assert html =~ "hidden"
+
+      for class <- ~w(transition-all duration-200 ease-in-out) do
         assert html =~ class
       end
 
@@ -117,8 +182,8 @@ defmodule SaladUI.CollapsibleTest do
 
     html =
       rendered_to_string(~H"""
-      <.collapsible :let={builder} id="test-collapsible" open={false}>
-        <.collapsible_trigger builder={builder}>
+      <.collapsible id="test-collapsible" open={false}>
+        <.collapsible_trigger>
           <button>Toggle</button>
         </.collapsible_trigger>
         <.collapsible_content>
@@ -129,7 +194,8 @@ defmodule SaladUI.CollapsibleTest do
 
     assert html =~ "Toggle"
     assert html =~ "Hidden Content"
-    assert html =~ "collapsible-content"
-    assert html =~ ~s(phx-toggle-collapsible)
+    assert html =~ ~s(data-part="trigger")
+    assert html =~ ~s(data-part="content")
+    assert html =~ ~s(data-action="toggle")
   end
 end
