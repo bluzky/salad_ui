@@ -12,6 +12,11 @@ defmodule SaladUI.LiveView do
   - `command`: The name of the command to send. Command could be any transitions that component state machine support or custom commands that supported by component.
   - `params`: Optional parameters for the command.
 
+  ## How it works
+  This pushes a `saladui:command` (no underscore) event over the LiveView socket, handled
+  client-side via `handleEvent`. For dispatching a command from client-side JS instead, see
+  `SaladUI.JS.dispatch_command/3`, which uses a separate `salad_ui:command` DOM event.
+
   ## Example
   ```elixir
   send_command(socket, "dialog", "open")
@@ -43,9 +48,14 @@ defmodule SaladUI.JS do
   - `opts`: Options for the command, including `:detail` for additional parameters.
 
   ## How it works
-  This function use JS.dispatch to send a command to the component similar to `send_command/4`.
+  This function dispatches a `salad_ui:command` DOM custom event (via `JS.dispatch/3`) that the
+  target component listens for and handles the same way it handles `send_command/4` — both end
+  up calling the component's `handleCommand`.
 
-  Each component listens for the `salad_ui:command` event and executes the corresponding command similar to the way it handle `send_command/4` from server side .
+  Note this is a different, client-only event from the one `send_command/4` pushes from the
+  server (`saladui:command`, no underscore, delivered over the LiveView socket). The two exist
+  as separate channels by design: this one is a real DOM event dispatched directly at a target
+  element, while `send_command/4`'s is a LiveView `push_event` handled via `handleEvent`.
 
   ## Example
   ```elixir
