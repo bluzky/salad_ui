@@ -32,6 +32,26 @@ Comprehensive overview of the JavaScript architecture and how it integrates with
 - You need to debug component behavior
 - You're designing new components
 
+#### [Component Lifecycle](component_lifecycle.md)
+The authoritative reference for `Component`'s mount → transition → update →
+destroy lifecycle, and the extension-hook contract subclasses must follow.
+
+**Topics:**
+- Mount phase (construction, `setupEvents()`, `afterMount()`)
+- Runtime state transitions (pointer to State Machine Flow)
+- Update flow (LiveView patch destroys and recreates the instance)
+- Destroy flow (`beforeDestroy()`, `removeAllEvents()`, `teardownComponentEvents()`)
+- Extension hook reference table
+- Rules — and the real bug each one prevents
+- Worked `DialogComponent` example
+- Common pitfalls (a leaked `document` listener, explained end-to-end)
+
+**Read this if:**
+- You're overriding `setupComponentEvents()`, `afterMount()`, or `beforeDestroy()`
+- You're adding a listener or utility (monitor, trap, observer) that outlives a single event
+- You're debugging a listener/memory leak
+- You want to know exactly when a given hook runs and what's safe to assume at that point
+
 #### [State Machine Flow](js_state_transition_flow.md)
 Visual diagrams showing state transition execution flow with and without animations.
 
@@ -189,7 +209,7 @@ Quick reference for all JavaScript components and their APIs.
 
 ### Path 4: Debugging and Troubleshooting
 
-1. Read: [Architecture Overview](js_architecture_overview.md) - "Component Lifecycle" section
+1. Read: [Component Lifecycle](component_lifecycle.md) - Complete
 2. Read: [Component Reference](js_component_reference.md) - "Testing" and "Common Pitfalls" sections
 3. Review: [Component Communications Guide](component_communications_explain.md)
 4. Check: [Component Configuration Guide](component_config_guide.md) for config issues
@@ -374,14 +394,20 @@ class DialogComponent extends Component {
 ```
 assets/salad_ui/
 ├── index.js                           # Main export
-├── core/
+├── core/                              # See core/README.md for the full file-by-file breakdown
+│   ├── README.md                      # Core module overview
 │   ├── component.js                   # Base Component class
 │   ├── state-machine.js               # State machine
 │   ├── hook.js                        # LiveView hook
 │   ├── factory.js                     # Registry & factory
-│   ├── utils.js                       # Utilities
+│   ├── utils.js                       # Animation/class/DOM utilities
+│   ├── collection.js                  # Selectable/focusable item collection
 │   ├── focus-trap.js                  # Focus trap utility
-│   └── click-outside.js               # Click outside monitor
+│   ├── click-outside.js               # Click outside monitor
+│   ├── portal.js                      # DOM re-parenting utility
+│   ├── positioner.js                  # Floating-element position math
+│   ├── positioned-element.js          # Popover/select/tooltip positioning
+│   └── scroll-manager.js              # Scroll/resize repositioning
 └── components/
     ├── accordion.js
     ├── chart.js
@@ -402,6 +428,7 @@ assets/salad_ui/
 docs/
 ├── js_documentation_index.md          # This file
 ├── js_architecture_overview.md        # Architecture guide
+├── component_lifecycle.md             # Component lifecycle reference
 ├── js_component_patterns.md           # Patterns & best practices
 ├── js_component_reference.md          # API reference
 ├── js_state_transition_flow.md        # State transition diagrams

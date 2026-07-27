@@ -6,6 +6,30 @@
 import StateMachine from "./state-machine.js";
 import { animateTransition, queryDOM } from "./utils.js";
 
+/**
+ * Base class every interactive SaladUI component extends.
+ *
+ * Lifecycle (see docs/component_lifecycle.md for the full reference):
+ *
+ *   1. `new ComponentClass(el, options)` — the constructor runs
+ *      parseOptions/initConfig/initStateMachine and does a first,
+ *      un-animated `updateUI()` + `updatePartsVisibility()`. DOM
+ *      listeners are NOT attached yet.
+ *   2. `setupEvents()` — called exactly once by `factory.js` right after
+ *      construction. Subclasses must NOT call this themselves; do any
+ *      one-time listener setup by overriding `setupComponentEvents()`
+ *      instead (call `super.setupComponentEvents()` first).
+ *   3. `afterMount()` — called once by `factory.js`, immediately after
+ *      `setupEvents()`. Use this for logic that needs both the
+ *      subclass's own fields (set in its constructor) and live
+ *      listeners, e.g. an initial state transition.
+ *   4. `destroy()` — calls `beforeDestroy()`, then `removeAllEvents()`
+ *      (which calls `teardownComponentEvents()`), then clears
+ *      references. Override `teardownComponentEvents()` to tear down
+ *      anything created in `setupComponentEvents()` — the two must stay
+ *      paired, since `removeAllEvents()` can also run mid-lifetime if
+ *      `setupEvents()` is ever invoked again.
+ */
 class Component {
   constructor(el, options) {
     const { hookContext, initialState = "idle", ignoreItems = true } = options;
@@ -112,7 +136,11 @@ class Component {
 
   /**
    * Get component configuration
-   * Override in subclasses to provide component-specific configuration
+   * Override in subclasses to provide component-specific configuration.
+   * Must return a fresh object literal on every call — the returned
+   * stateMachine config is mutated in place (enter/exit strings get
+   * bound to instance methods, see bindStateHandlers()), so returning a
+   * cached/shared object would leak bound handlers across instances.
    * @returns {Object} Configuration object with stateMachine, events, and ariaConfig
    */
   getComponentConfig() {
@@ -222,7 +250,25 @@ class Component {
     });
   }
 
+  /**
+   * Override in subclasses to attach any listeners/utilities beyond the
+   * base key/mouse maps (e.g. a ClickOutsideMonitor). Called once, from
+   * setupEvents(). Always call super.setupComponentEvents() first, and
+   * give every long-lived thing you create here a matching teardown in
+   * teardownComponentEvents() — nothing added here is cleaned up
+   * automatically.
+   */
   setupComponentEvents() {
+    // Override in component subclasses
+  }
+
+  /**
+   * Tear down anything set up in setupComponentEvents(). Called from
+   * removeAllEvents(), so it runs both when events are re-established
+   * (setupEvents() called again) and on destroy(). Always call
+   * super.teardownComponentEvents() first.
+   */
+  teardownComponentEvents() {
     // Override in component subclasses
   }
 
@@ -458,6 +504,7 @@ class Component {
     this.el.removeEventListener("click", this.handleActionClick);
     this.removeKeyEventHandlers();
     this.removeMouseEventListeners();
+    this.teardownComponentEvents();
   }
 
   // Cleanup method to remove event listeners and references
@@ -479,6 +526,25 @@ class Component {
   }
 
   // Lifecycle hooks
+
+  /**
+   * Called once by the factory right after setupEvents(), i.e. once the
+   * component is fully constructed and its listeners are attached.
+   * Subclasses that need to run logic depending on both their own fields
+   * (set in their constructor) and on listeners being live (e.g. an
+   * initial transition) should do it here instead of calling
+   * setupEvents() themselves from their constructor.
+   */
+  afterMount() {}
+
+  /**
+   * Called once by destroy(), before any listeners are removed and
+   * before references are cleared. Use for cleanup that must happen
+   * while `this.el`/parts/hook are still valid (e.g. deactivating a
+   * FocusTrap). For anything created in setupComponentEvents(), prefer
+   * teardownComponentEvents() instead — it stays paired with its setup
+   * counterpart and also runs if setupEvents() is ever re-invoked.
+   */
   beforeDestroy() {}
 
   // Alias for transition()

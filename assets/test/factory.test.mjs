@@ -13,6 +13,10 @@ class FakeComponent {
   setupEvents() {
     this.setupEventsCalled = true;
   }
+
+  afterMount() {
+    this.afterMountCalled = true;
+  }
 }
 
 test("create() returns null and logs an error for an unregistered type", () => {
@@ -29,7 +33,7 @@ test("create() returns null and logs an error for an unregistered type", () => {
   }
 });
 
-test("create() instantiates the registered class and calls setupEvents", () => {
+test("create() instantiates the registered class and calls setupEvents then afterMount", () => {
   registry.register("fake", FakeComponent);
 
   const el = { id: "fake-1" };
@@ -40,6 +44,7 @@ test("create() instantiates the registered class and calls setupEvents", () => {
   assert.equal(instance.el, el);
   assert.equal(instance.hookContext, hookContext);
   assert.equal(instance.setupEventsCalled, true);
+  assert.equal(instance.afterMountCalled, true);
 });
 
 test("register() returns the registry to allow chaining", () => {

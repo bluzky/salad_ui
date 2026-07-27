@@ -1,7 +1,8 @@
-// saladui/core/animation-utils.js
+// saladui/core/utils.js
 /**
- * Animation utilities for SaladUI framework components
- * Provides functions to handle animations and transitions
+ * Shared utilities for SaladUI framework components:
+ * animation/transition helpers (animateTransition, executeAnimation),
+ * class-list helpers (addOrRemoveClasses), and DOM traversal (queryDOM).
  */
 
 /**

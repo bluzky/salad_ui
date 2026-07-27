@@ -24,6 +24,8 @@ class FakeComponent {
     this.setupEventsCalled = true;
   }
 
+  afterMount() {}
+
   handleCommand(command, params) {
     this.commands.push({ command, params });
   }

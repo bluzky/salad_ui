@@ -16,16 +16,21 @@ Base class for all interactive components.
 - `allParts` - Array of queryable parts
 
 **Methods:**
-- `getComponentConfig()` - Override to define component behavior
+- `getComponentConfig()` - Override to define component behavior (must return a fresh object each call)
 - `transition(event, params)` - Trigger state transition
 - `getPart(name)` - Get single part by name
 - `getAllParts(name)` - Get all parts with name
 - `getPartId(name)` - Get or generate ID for part
 - `pushEvent(event, data)` - Send event to server
 - `handleCommand(command, params)` - Handle server commands
-- `setupComponentEvents()` - Override for custom event setup
-- `beforeDestroy()` - Override for cleanup
+- `setupComponentEvents()` - Override for custom event setup, called once by `setupEvents()`
+- `teardownComponentEvents()` - Override to undo `setupComponentEvents()`, called from `removeAllEvents()`
+- `afterMount()` - Override for logic that needs live listeners, called once right after `setupEvents()`
+- `beforeDestroy()` - Override for cleanup, called before listeners are removed
 - `destroy()` - Cleanup and remove listeners
+
+See [Component Lifecycle](component_lifecycle.md) for the full contract
+between these hooks (which pair with which, and why).
 
 ### StateMachine (`core/state-machine.js`)
 
@@ -623,16 +628,25 @@ setupComponentEvents() {
   }
 }
 
+// Pair teardown with setup — not beforeDestroy(). teardownComponentEvents()
+// also runs if setupEvents() is ever re-invoked, so this is the only place
+// guaranteed to undo what setupComponentEvents() created. See
+// docs/component_lifecycle.md#common-pitfalls for what goes wrong if this
+// cleanup lives in beforeDestroy() instead.
+teardownComponentEvents() {
+  super.teardownComponentEvents();
+  this.clickOutsideMonitor?.destroy();
+  this.clickOutsideMonitor = null;
+}
+
 onOpenEnter() {
+  // start()/stop() just pause/resume the monitor — they don't create or
+  // destroy it.
   this.clickOutsideMonitor?.start();
 }
 
 onClosedEnter() {
   this.clickOutsideMonitor?.stop();
-}
-
-beforeDestroy() {
-  this.clickOutsideMonitor?.destroy();
 }
 ```
 
@@ -711,9 +725,9 @@ dialog.dispatchEvent(new CustomEvent("salad_ui:command", {
 
 Add logging to components:
 ```javascript
-onStateChanged(prev, next, params) {
-  console.log(`State: ${prev} → ${next}`, params);
-  return super.onStateChanged(prev, next, params);
+onStateChanged(prev, next) {
+  console.log(`State: ${prev} → ${next}`);
+  return super.onStateChanged(prev, next);
 }
 
 transition(event, params) {
@@ -727,7 +741,7 @@ transition(event, params) {
 1. **Cache part references** in constructor
 2. **Use event delegation** where possible
 3. **Debounce expensive operations** (search, positioning)
-4. **Cleanup in beforeDestroy()** to prevent memory leaks
+4. **Pair setup/teardown**: undo `setupComponentEvents()` in `teardownComponentEvents()`, and other cleanup in `beforeDestroy()`, to prevent memory leaks
 5. **Minimize DOM queries** in event handlers
 6. **Use requestAnimationFrame** for animations
 7. **Lazy initialize** expensive features (focus trap, positioning)
@@ -735,9 +749,10 @@ transition(event, params) {
 ## Common Pitfalls
 
 1. **Forgetting to register component** - Always call `SaladUI.register()`
-2. **Not cleaning up listeners** - Implement `beforeDestroy()`
+2. **Not cleaning up listeners** - Anything created in `setupComponentEvents()` needs a matching `teardownComponentEvents()`; other cleanup goes in `beforeDestroy()`
 3. **Querying parts too early** - Parts may not be available in constructor
 4. **Missing ARIA attributes** - Define complete `ariaConfig`
+5. **Calling `setupEvents()` yourself** - It's called exactly once by the factory; use `afterMount()` if you need logic to run after listeners are live (see [Component Lifecycle](component_lifecycle.md#common-pitfalls) for the bug this caused historically)
 5. **Not handling LiveView updates** - Component is recreated on updates
 6. **Circular event loops** - Be careful with pushEvent triggering updates
 7. **Missing error handling** - Validate data in `parseOptions()`

@@ -1,4 +1,4 @@
-// saladui/core/collection-manager.js
+// saladui/core/collection.js
 /**
  * Collection utility for SaladUI components
  * Manages collections of items with focus, highlight, and selection states
