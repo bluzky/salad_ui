@@ -1,6 +1,6 @@
 // saladui/components/collapsible.js
-import Component from "../core/component";
-import SaladUI from "../index";
+import Component from "../core/component.js";
+import SaladUI from "../index.js";
 
 class CollapsibleComponent extends Component {
   constructor(el, hookContext) {
@@ -34,15 +34,17 @@ class CollapsibleComponent extends Component {
       },
       events: {
         closed: {
+          keyEventTarget: "trigger",
           keyMap: {
-            Enter: "toggle",
-            " ": "toggle",
+            Enter: "handleTriggerActivation",
+            " ": "handleTriggerActivation",
           },
         },
         open: {
+          keyEventTarget: "trigger",
           keyMap: {
-            Enter: "toggle",
-            " ": "toggle",
+            Enter: "handleTriggerActivation",
+            " ": "handleTriggerActivation",
           },
         },
       },
@@ -74,6 +76,19 @@ class CollapsibleComponent extends Component {
         },
       },
     };
+  }
+
+  // The "closed" and "open" states each register their own keydown listener
+  // on the trigger (identical keyMap), so a single Enter/Space keypress hits
+  // both listeners in the same dispatch: the first one's transition flips
+  // the state synchronously, which makes the second listener's state guard
+  // match too, immediately re-firing and undoing the toggle. Stamp the
+  // native event so activation only actually runs once per keypress.
+  handleTriggerActivation(event) {
+    if (event.__saladuiHandled) return;
+    event.__saladuiHandled = true;
+
+    this.transition("toggle", { originalEvent: event, target: this.trigger });
   }
 
   // State handlers

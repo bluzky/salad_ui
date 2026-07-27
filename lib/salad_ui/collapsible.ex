@@ -91,6 +91,8 @@ defmodule SaladUI.Collapsible do
       data-part="trigger"
       data-action="toggle"
       tag={@as}
+      role="button"
+      tabindex="0"
       class={classes(["cursor-pointer", @class])}
       {@rest}
     >
