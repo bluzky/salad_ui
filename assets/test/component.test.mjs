@@ -2,16 +2,16 @@ import assert from "node:assert/strict";
 import { after, before, test } from "node:test";
 
 import Component from "../salad_ui/core/component.js";
-import { installDom, uninstallDom } from "./helpers/dom.mjs";
+import { installDom, uninstallDom, wait } from "./helpers/dom.mjs";
 
 before(() => installDom());
 after(() => uninstallDom());
 
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 class TestComponent extends Component {
   entered = [];
   exited = [];
+  setupEventsCount = 0;
+  teardownEventsCount = 0;
 
   constructor(el, options) {
     super(el, options);
@@ -53,6 +53,16 @@ class TestComponent extends Component {
 
   onEnterClosed() {
     this.entered.push("closed");
+  }
+
+  setupComponentEvents() {
+    super.setupComponentEvents();
+    this.setupEventsCount++;
+  }
+
+  teardownComponentEvents() {
+    super.teardownComponentEvents();
+    this.teardownEventsCount++;
   }
 }
 
@@ -302,6 +312,45 @@ test("destroy() marks the component destroyed, makes transition()/handleActionCl
   assert.equal(component.destroyed, true);
   assert.equal(component.transition("open"), undefined);
   assert.doesNotThrow(() => click(elements.trigger));
+});
+
+test("setupEvents()/removeAllEvents() pair setupComponentEvents()/teardownComponentEvents()", () => {
+  const { component } = buildComponent();
+
+  assert.equal(component.setupEventsCount, 0);
+  assert.equal(component.teardownEventsCount, 0);
+
+  component.setupEvents();
+  assert.equal(component.setupEventsCount, 1);
+  assert.equal(component.teardownEventsCount, 0);
+
+  component.setupEvents();
+  assert.equal(component.setupEventsCount, 2);
+  assert.equal(component.teardownEventsCount, 1);
+
+  component.removeAllEvents();
+  assert.equal(component.setupEventsCount, 2);
+  assert.equal(component.teardownEventsCount, 2);
+
+  component.removeAllEvents();
+  assert.equal(component.setupEventsCount, 2);
+  assert.equal(component.teardownEventsCount, 2);
+});
+
+test("destroy() tears down active component events once, even with multiple setupEvents() calls", () => {
+  const { component } = buildComponent();
+
+  component.setupEvents();
+  component.setupEvents();
+
+  assert.equal(component.setupEventsCount, 2);
+  assert.equal(component.teardownEventsCount, 1);
+
+  component.destroy();
+  assert.equal(component.teardownEventsCount, 2);
+
+  component.destroy();
+  assert.equal(component.teardownEventsCount, 2);
 });
 
 test("getPartId() assigns and memoizes an id derived from the root element's id", () => {

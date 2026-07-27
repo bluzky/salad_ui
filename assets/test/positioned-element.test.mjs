@@ -3,12 +3,10 @@ import { after, before, test } from "node:test";
 
 import Portal from "../salad_ui/core/portal.js";
 import PositionedElement from "../salad_ui/core/positioned-element.js";
-import { installDom, setRect, uninstallDom } from "./helpers/dom.mjs";
+import { installDom, setRect, uninstallDom, wait } from "./helpers/dom.mjs";
 
 before(() => installDom());
 after(() => uninstallDom());
-
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function buildDom() {
   document.body.innerHTML = `

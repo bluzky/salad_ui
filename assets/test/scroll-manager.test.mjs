@@ -2,12 +2,10 @@ import assert from "node:assert/strict";
 import { after, before, beforeEach, test } from "node:test";
 
 import ScrollManager from "../salad_ui/core/scroll-manager.js";
-import { installDom, uninstallDom } from "./helpers/dom.mjs";
+import { installDom, uninstallDom, wait } from "./helpers/dom.mjs";
 
 before(() => installDom());
 after(() => uninstallDom());
-
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 let scrollable;
 let ref;

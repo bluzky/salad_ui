@@ -47,6 +47,7 @@ class Component {
     this.hiddenConfig = {};
     this.ariaConfig = {};
     this.destroyed = false;
+    this.eventSetupCompleted = false;
 
     // Initialize component
     this.parseOptions();
@@ -220,6 +221,8 @@ class Component {
   }
 
   setupEvents() {
+    if (this.destroyed) return;
+
     if (this.eventSetupCompleted) {
       this.removeAllEvents();
     }
@@ -500,17 +503,23 @@ class Component {
   }
 
   removeAllEvents() {
+    if (!this.eventSetupCompleted) return;
+
     this.el.removeEventListener("salad_ui:command", this.onClientCommand);
     this.el.removeEventListener("click", this.handleActionClick);
     this.removeKeyEventHandlers();
     this.removeMouseEventListeners();
     this.teardownComponentEvents();
+    this.eventSetupCompleted = false;
   }
 
   // Cleanup method to remove event listeners and references
   destroy() {
+    if (this.destroyed) return;
+
     // Lifecycle hook before destruction
     this.beforeDestroy();
+    this.destroyed = true;
 
     // Remove event listeners
     this.removeAllEvents();
@@ -522,7 +531,6 @@ class Component {
     this.hook = null;
     this.options = null;
     this.componentConfig = null;
-    this.destroyed = true;
   }
 
   // Lifecycle hooks

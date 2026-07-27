@@ -63,6 +63,8 @@ export function uninstallDom() {
   }
 }
 
+export const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export function setRect(element, rect) {
   Object.assign(element, {
     getBoundingClientRect: () => ({

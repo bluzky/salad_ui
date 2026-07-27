@@ -80,3 +80,38 @@ test("ignores stale async enter handlers", async () => {
   assert.equal(machine.state, "idle");
   assert.deepEqual(enters, ["idle"]);
 });
+
+test("skips async enter handlers when validCheck becomes false before resolution", async () => {
+  const enters = [];
+  let valid = true;
+  let resolveOpenAnimation;
+
+  const machine = createMachine(
+    {
+      open: { enter: () => enters.push("open") },
+    },
+    {
+      validCheck: () => valid,
+      onStateChanged: (_prevState, nextState) => {
+        if (nextState === "open") {
+          return new Promise((resolve) => {
+            resolveOpenAnimation = resolve;
+          });
+        }
+
+        return null;
+      },
+    },
+  );
+
+  assert.equal(machine.transition("open"), true);
+  assert.equal(machine.state, "open");
+  assert.deepEqual(enters, []);
+
+  valid = false;
+  resolveOpenAnimation();
+  await Promise.resolve();
+
+  assert.equal(machine.state, "open");
+  assert.deepEqual(enters, []);
+});

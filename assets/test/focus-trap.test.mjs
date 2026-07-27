@@ -2,12 +2,10 @@ import assert from "node:assert/strict";
 import { after, before, test } from "node:test";
 
 import FocusTrap from "../salad_ui/core/focus-trap.js";
-import { installDom, uninstallDom } from "./helpers/dom.mjs";
+import { installDom, uninstallDom, wait } from "./helpers/dom.mjs";
 
 before(() => installDom());
 after(() => uninstallDom());
-
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // FocusTrap schedules its initial focus 50ms after activate(); waiting this
 // long avoids leaving a pending timer that fires after a test (and its trap)
