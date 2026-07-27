@@ -52,7 +52,9 @@ export default [
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
-      globals: nodeGlobals,
+      // Tests install a jsdom-backed `window`/`document` (see test/helpers/dom.mjs)
+      // to exercise browser-facing core modules, alongside plain Node globals.
+      globals: { ...browserGlobals, ...nodeGlobals },
     },
   },
 ];

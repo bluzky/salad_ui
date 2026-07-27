@@ -1,5 +1,5 @@
 // saladui/core/hook.js
-import { registry } from "./factory";
+import { registry } from "./factory.js";
 
 const SaladUIHook = {
   mounted() {

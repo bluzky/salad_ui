@@ -3,8 +3,8 @@
  * Base Component class for SaladUI framework
  * Provides state management, event handling, and ARIA support
  */
-import StateMachine from "./state-machine";
-import { animateTransition, queryDOM } from "./utils";
+import StateMachine from "./state-machine.js";
+import { animateTransition, queryDOM } from "./utils.js";
 
 class Component {
   constructor(el, options) {

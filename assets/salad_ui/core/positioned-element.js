@@ -2,11 +2,11 @@
 /**
  * PositionedElement - Main positioning class that integrates all positioning utilities
  */
-import Positioner from "./positioner";
-import FocusTrap from "./focus-trap";
-import ClickOutsideMonitor from "./click-outside";
-import Portal from "./portal";
-import ScrollManager from "./scroll-manager";
+import Positioner from "./positioner.js";
+import FocusTrap from "./focus-trap.js";
+import ClickOutsideMonitor from "./click-outside.js";
+import Portal from "./portal.js";
+import ScrollManager from "./scroll-manager.js";
 
 class PositionedElement {
   /**
