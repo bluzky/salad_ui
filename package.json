@@ -19,7 +19,10 @@
     "./core/*": "./assets/salad_ui/core/*.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "format": "npm --prefix assets run format",
+    "format:check": "npm --prefix assets run format:check",
+    "lint": "npm --prefix assets run lint",
+    "test": "node --test assets/test/**/*.test.mjs"
   },
   "repository": {
     "type": "git",

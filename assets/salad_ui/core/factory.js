@@ -20,6 +20,7 @@ class ComponentRegistry {
 
     // Call setupEvents after the component is fully initialized
     instance.setupEvents();
+    instance.afterMount();
 
     return instance;
   }

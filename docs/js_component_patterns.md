@@ -2,6 +2,9 @@
 
 This guide covers common patterns, best practices, and solutions for building SaladUI JavaScript components.
 
+> For the lifecycle rules behind the setup/teardown pairing used throughout
+> this guide, see [Component Lifecycle](component_lifecycle.md).
+
 ## Table of Contents
 
 1. [Component Structure Patterns](#component-structure-patterns)
@@ -179,6 +182,17 @@ class ModalComponent extends Component {
     }
   }
 
+  // Pair teardown with setup, not beforeDestroy() — teardownComponentEvents()
+  // is guaranteed to run whenever setupComponentEvents() does (including if
+  // setupEvents() is ever re-invoked), so it's the only safe place to undo
+  // what setup created. See docs/component_lifecycle.md#common-pitfalls.
+  teardownComponentEvents() {
+    super.teardownComponentEvents();
+
+    this.clickOutsideMonitor?.destroy();
+    this.clickOutsideMonitor = null;
+  }
+
   onOpenEnter() {
     // Initialize focus trap
     if (!this.focusTrap) {
@@ -186,7 +200,8 @@ class ModalComponent extends Component {
     }
     this.focusTrap.activate();
 
-    // Start click outside monitor
+    // start()/stop() just pause/resume the monitor created in
+    // setupComponentEvents() above — they don't create or destroy it.
     this.clickOutsideMonitor?.start();
 
     this.pushEvent("opened");
@@ -199,11 +214,10 @@ class ModalComponent extends Component {
   }
 
   beforeDestroy() {
+    // FocusTrap isn't created in setupComponentEvents(), so its cleanup
+    // stays here rather than in teardownComponentEvents().
     this.focusTrap?.destroy();
     this.focusTrap = null;
-
-    this.clickOutsideMonitor?.destroy();
-    this.clickOutsideMonitor = null;
   }
 }
 
@@ -335,7 +349,7 @@ constructor(el, hookContext) {
   this.stateHistory = [];
 }
 
-onStateChanged(prevState, nextState, params) {
+onStateChanged(prevState, nextState) {
   this.stateHistory.push({
     from: prevState,
     to: nextState,
@@ -347,7 +361,7 @@ onStateChanged(prevState, nextState, params) {
     this.stateHistory.shift();
   }
 
-  return super.onStateChanged(prevState, nextState, params);
+  return super.onStateChanged(prevState, nextState);
 }
 
 handleCommand(command, params) {

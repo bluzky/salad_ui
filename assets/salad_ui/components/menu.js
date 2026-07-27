@@ -69,7 +69,7 @@ class MenuItemBase extends Component {
     }
   }
 
-  handleActivation(event) {
+  handleActivation() {
     if (this.disabled) return;
     this.pushEvent(
       "item-selected",

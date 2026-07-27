@@ -110,7 +110,7 @@ class PopoverComponent extends Component {
     }
   }
 
-  onOpenEnter(params = {}) {
+  onOpenEnter() {
     this.initializePositionedElement();
     this.positionedElement?.activate();
     this.pushEvent("opened");

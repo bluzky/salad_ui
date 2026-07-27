@@ -53,7 +53,7 @@ class DropdownMenuComponent extends Component {
           },
           mouseMap: {
             trigger: {
-              click: (_e) => {
+              click: () => {
                 this.transition("open");
               },
             },
@@ -150,7 +150,7 @@ class DropdownMenuComponent extends Component {
     this.previousFocusEl = null;
   }
 
-  onItemSelect(_item) {
+  onItemSelect() {
     this.transition("close");
   }
 

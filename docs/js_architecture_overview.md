@@ -57,7 +57,7 @@ The foundation of all interactive components. Provides:
 - **Event Handling**: Automatic setup of mouse and keyboard events based on configuration
 - **ARIA Management**: Automatic accessibility attribute handling
 - **Part Management**: Query and manage component sub-elements via `data-part` attributes
-- **Lifecycle Hooks**: `beforeDestroy()` for cleanup
+- **Lifecycle Hooks**: `setupComponentEvents()`/`teardownComponentEvents()` (paired listener setup/teardown), `afterMount()` (post-mount, listeners live), `beforeDestroy()` (pre-teardown cleanup) — see the [Component Lifecycle](component_lifecycle.md) doc for the full contract
 - **Server Communication**: `pushEvent()` for sending events to LiveView
 
 **Key Properties:**
@@ -72,12 +72,16 @@ this.ariaManager     // ARIA attribute manager
 
 **Key Methods:**
 ```javascript
-getComponentConfig()      // Override to define component behavior
-transition(event, params) // Trigger state transitions
-getPart(name)            // Get single part by name
-getAllParts(name)        // Get all parts with name
-pushEvent(event, data)   // Send event to server
-destroy()                // Cleanup and remove listeners
+getComponentConfig()          // Override to define component behavior (must return a fresh object each call)
+transition(event, params)     // Trigger state transitions
+getPart(name)                 // Get single part by name
+getAllParts(name)             // Get all parts with name
+pushEvent(event, data)        // Send event to server
+setupComponentEvents()        // Override: one-time listener setup, called once by setupEvents()
+teardownComponentEvents()     // Override: undo setupComponentEvents(), called from removeAllEvents()
+afterMount()                  // Override: runs once, right after setupEvents()
+beforeDestroy()               // Override: cleanup before listeners are removed
+destroy()                     // Cleanup and remove listeners
 ```
 
 ### 2. StateMachine (`core/state-machine.js`)
@@ -262,53 +266,68 @@ UI Updates (no server round-trip)
 
 ## Component Lifecycle
 
+> **Full reference:** [Component Lifecycle](component_lifecycle.md) covers
+> every phase in detail, the extension-hook contract (`setupComponentEvents`/
+> `teardownComponentEvents`/`afterMount`/`beforeDestroy`), the rules behind
+> that contract, and a worked `DialogComponent` example. Summary below.
+
 ### Initialization Flow
 
 ```javascript
 1. LiveView mounts element with phx-hook="SaladUI"
 2. SaladUIHook.mounted() called
-3. registry.create(componentType, el, hookContext)
-4. Component constructor:
-   - parseOptions() from data-options
-   - initEventMappings() from data-event-mappings
-   - initConfig() calls getComponentConfig()
-   - initStateMachine() creates state machine
-   - queryParts() finds all data-part elements
-   - updateUI() sets initial ARIA and data-state
-   - updatePartsVisibility() shows/hides parts
-5. setupEvents() after construction:
-   - Add data-action click handler
-   - Add salad_ui:command listener
-   - Setup mouse event handlers from mouseMap
-   - Setup keyboard handlers from keyMap
-   - Call setupComponentEvents() hook
+3. registry.create(componentType, el, hookContext):
+   a. new ComponentClass(el, hookContext) — Component constructor:
+      - parseOptions() from data-options
+      - initEventMappings() from data-event-mappings (binds
+        onClientCommand/handleActionClick once, for the instance's lifetime)
+      - initConfig() calls getComponentConfig()
+      - initStateMachine() creates state machine
+      - queryParts() finds all data-part elements
+      - updateUI() sets initial ARIA and data-state
+      - updatePartsVisibility() shows/hides parts
+      // then the subclass's own constructor body runs (cache parts, etc.)
+      // no DOM listeners exist yet
+   b. instance.setupEvents() — called once, by the factory:
+      - Add data-action click handler
+      - Add salad_ui:command listener
+      - Setup mouse event handlers from mouseMap
+      - Setup keyboard handlers from keyMap
+      - Call setupComponentEvents() hook
+   c. instance.afterMount() — called once, right after setupEvents():
+      - No-op by default; override for logic needing both the subclass's
+        own fields and live listeners (e.g. an initial state transition)
 ```
+
+Subclasses must not call `setupEvents()` themselves — see
+[Component Lifecycle → Rules](component_lifecycle.md#rules) for why.
 
 ### Update Flow (LiveView Patch)
 
 ```javascript
 1. LiveView patches DOM
 2. SaladUIHook.updated() called
-3. component.destroy():
-   - Call beforeDestroy() hook
-   - Remove all event listeners
-   - Clear references
-4. Reinitialize component (same as initialization)
+3. component.destroy() (full destroy phase, see below)
+4. Reinitialize component (full initialization flow again, on a new instance)
 ```
+
+Every patch to a component's root element destroys and fully recreates the
+component instance — it does not diff/preserve the old one.
 
 ### Destruction Flow
 
 ```javascript
-1. Element removed from DOM
+1. Element removed from DOM (or hook.updated() about to recreate it)
 2. SaladUIHook.destroyed() called
-3. component.destroy()
-4. beforeDestroy() hook:
-   - Component-specific cleanup (FocusTrap, monitors, etc.)
-5. removeAllEvents():
-   - Remove mouse event listeners
-   - Remove keyboard event listeners
-   - Remove command listener
-6. Clear all references for garbage collection
+3. component.destroy():
+   a. beforeDestroy() hook — cleanup needing el/parts/hook still valid
+      (e.g. FocusTrap)
+   b. removeAllEvents():
+      - Remove mouse event listeners
+      - Remove keyboard event listeners
+      - Remove command listener
+      - teardownComponentEvents() hook — undo setupComponentEvents()
+   c. Clear all references for garbage collection
 ```
 
 ### State Transition Flow
@@ -321,7 +340,7 @@ UI Updates (no server round-trip)
    - Execute current state's exit handler
    - Update state (prevState → nextState)
    - Call onStateChanged callback
-3. Component.onStateChanged(prev, next, params):
+3. Component.onStateChanged(prevState, nextState):
    - Check for animation config
    - Update UI (data-state, ARIA)
    - If animation: animate then updatePartsVisibility()
@@ -329,6 +348,9 @@ UI Updates (no server round-trip)
 4. Execute new state's enter handler
 5. Component is now in new state
 ```
+
+See [State Machine Flow](js_state_transition_flow.md) for the diagrammed
+version of this sequence, with and without animation.
 
 ## Integration with Phoenix LiveView
 
@@ -435,7 +457,7 @@ Components use specific data attributes for configuration and behavior:
 3. **Use data-part** for all interactive sub-elements
 4. **Provide keyboard navigation** via keyMap
 5. **Include ARIA configuration** for accessibility
-6. **Clean up in beforeDestroy()** (timers, external listeners, etc.)
+6. **Pair setup with teardown**: anything created in `setupComponentEvents()` must be undone in `teardownComponentEvents()`; use `beforeDestroy()` for cleanup that doesn't originate there (see [Component Lifecycle](component_lifecycle.md#rules))
 7. **Use pushEvent()** for server communication
 8. **Return true from handleCommand()** if command was handled
 
@@ -461,7 +483,7 @@ Components use specific data attributes for configuration and behavior:
 
 1. **Query parts once** in constructor, cache references
 2. **Use setupComponentEvents()** for custom event setup
-3. **Remove listeners in beforeDestroy()** to prevent leaks
+3. **Remove those listeners in the matching teardownComponentEvents()** to prevent leaks
 4. **Avoid re-querying DOM** in event handlers
 5. **Use event delegation** where appropriate
 6. **Minimize state machine complexity** for simple components

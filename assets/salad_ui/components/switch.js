@@ -83,7 +83,7 @@ class SwitchComponent extends Component {
     this.config.preventDefaultKeys = [" ", "Enter"];
   }
 
-  onCheckedEnter(e) {
+  onCheckedEnter() {
     // Update hidden checkbox input
     const checkbox = this.el.querySelector('input[type="checkbox"]');
     if (checkbox) {
@@ -94,7 +94,7 @@ class SwitchComponent extends Component {
     this.pushEvent("checked-changed", { value: true });
   }
 
-  onUncheckedEnter(e) {
+  onUncheckedEnter() {
     // Update hidden checkbox input
     const checkbox = this.el.querySelector('input[type="checkbox"]');
     if (checkbox) {

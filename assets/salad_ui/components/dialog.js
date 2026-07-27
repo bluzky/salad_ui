@@ -13,8 +13,9 @@ class DialogComponent extends Component {
     this.content = this.getPart("content");
     this.contentPanel = this.getPart("content-panel");
     this.config.preventDefaultKeys = ["Escape"];
+  }
 
-    this.setupEvents();
+  afterMount() {
     this.transition(this.el.dataset.open == "true" ? "open" : "close");
   }
 
@@ -56,7 +57,7 @@ class DialogComponent extends Component {
       ariaConfig: {
         content: {
           all: {
-            role: "dialog",
+            role: this.options.role || "dialog",
           },
           open: {
             hidden: "false",
@@ -107,6 +108,14 @@ class DialogComponent extends Component {
     );
   }
 
+  teardownComponentEvents() {
+    super.teardownComponentEvents();
+
+    // Clean up click outside monitor
+    this.clickOutsideMonitor?.destroy();
+    this.clickOutsideMonitor = null;
+  }
+
   // State machine handlers
   onClosedEnter() {
     // Clean up focus trap
@@ -152,10 +161,6 @@ class DialogComponent extends Component {
     // Clean up focus trap
     this.focusTrap?.destroy();
     this.focusTrap = null;
-
-    // Clean up click outside monitor
-    this.clickOutsideMonitor?.destroy();
-    this.clickOutsideMonitor = null;
   }
 }
 
