@@ -134,7 +134,7 @@ class Component {
     }
   }
 
-  onStateChanged(prevState, nextState, params) {
+  onStateChanged(prevState, nextState) {
     if (this.destroyed) return;
 
     // Check if we should animate
@@ -373,9 +373,8 @@ class Component {
 
   /**
    * Update UI to reflect current state
-   * @param {Object} params - Optional parameters from state transition
    */
-  updateUI(params = {}) {
+  updateUI() {
     const currentState = this.stateMachine.state;
 
     // Update data-state attributes on all parts and root element
@@ -511,7 +510,7 @@ class AriaManager {
       if (!parts || parts.length === 0) return;
 
       // Apply attributes to all matching elements
-      parts.forEach((part, index) => {
+      parts.forEach((part) => {
         // Set ID if not already defined
         // this cause server dom patching break the client DOM
         // if (!part.id) {

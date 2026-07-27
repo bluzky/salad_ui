@@ -3,11 +3,17 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "format": "prettier --write salad_ui/**/*.js test/**/*.test.mjs eslint.config.js prettier.config.js package.json",
+    "format:check": "prettier --check salad_ui/**/*.js test/**/*.test.mjs eslint.config.js prettier.config.js package.json",
+    "lint": "eslint salad_ui/**/*.js test/**/*.test.mjs",
     "test": "node --test test/**/*.test.mjs"
   },
   "devDependencies": {
-    "tailwindcss-animate": "^1.0.7",
+    "@eslint/js": "^10.0.1",
     "@tailwindcss/forms": "^0.5.10",
-    "@tailwindcss/typography": "^0.5.16"
+    "@tailwindcss/typography": "^0.5.16",
+    "eslint": "^10.8.0",
+    "prettier": "^3.9.6",
+    "tailwindcss-animate": "^1.0.7"
   }
 }

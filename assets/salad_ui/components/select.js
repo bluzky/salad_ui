@@ -135,7 +135,7 @@ class SelectComponent extends Component {
 
     // Get configuration from options
     this.multiple = this.options.multiple || false;
-    this.usePortal = this.options.hasOwnProperty("usePortal")
+    this.usePortal = Object.hasOwn(this.options, "usePortal")
       ? this.options.usePortal
       : false;
     this.portalContainer = this.options.portalContainer || null;

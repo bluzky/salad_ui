@@ -19,6 +19,9 @@
     "./core/*": "./assets/salad_ui/core/*.js"
   },
   "scripts": {
+    "format": "npm --prefix assets run format",
+    "format:check": "npm --prefix assets run format:check",
+    "lint": "npm --prefix assets run lint",
     "test": "node --test assets/test/**/*.test.mjs"
   },
   "repository": {

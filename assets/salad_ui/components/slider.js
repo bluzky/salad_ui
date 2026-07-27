@@ -35,7 +35,9 @@ class SliderComponent extends Component {
     this.value = parseFloat(
       dataValue !== undefined && dataValue !== null
         ? dataValue
-        : (defaultValue !== undefined ? defaultValue : this.min),
+        : defaultValue !== undefined
+          ? defaultValue
+          : this.min,
     );
 
     // Clamp value to min/max

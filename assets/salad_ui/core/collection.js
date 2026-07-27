@@ -196,7 +196,7 @@ class Collection {
       case "last":
         return enabledItems[enabledItems.length - 1];
 
-      case "next":
+      case "next": {
         if (!referenceItem) return this.getItem("first");
 
         const nextIndex = enabledItems.indexOf(referenceItem) + 1;
@@ -204,9 +204,10 @@ class Collection {
           return loop ? enabledItems[0] : null;
         }
         return enabledItems[nextIndex];
+      }
 
       case "prev":
-      case "previous":
+      case "previous": {
         if (!referenceItem) return this.getItem("last");
 
         const currentIndex = enabledItems.indexOf(referenceItem);
@@ -217,6 +218,7 @@ class Collection {
           return loop ? enabledItems[enabledItems.length - 1] : null;
         }
         return enabledItems[prevIndex];
+      }
 
       default:
         return null;
