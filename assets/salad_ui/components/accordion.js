@@ -1,7 +1,7 @@
 // saladui/components/accordion.js
-import Component from "../core/component";
-import Collection from "../core/collection";
-import SaladUI from "../index";
+import Component from "../core/component.js";
+import Collection from "../core/collection.js";
+import SaladUI from "../index.js";
 
 /**
  * AccordionItem class to manage individual accordion items
@@ -10,15 +10,38 @@ import SaladUI from "../index";
 class AccordionItem extends Component {
   constructor(itemElement, parentComponent, options) {
     const { initialState = "closed" } = options || {};
+
+    // Assign real ids before super() runs the initial updateUI()/aria pass,
+    // so aria-controls/aria-labelledby never resolve to an empty string.
+    const trigger = itemElement.querySelector("[data-part='item-trigger']");
+    const content = itemElement.querySelector("[data-part='item-content']");
+    if (trigger && !trigger.id) trigger.id = `${itemElement.id}-trigger`;
+    if (content && !content.id) content.id = `${itemElement.id}-content`;
+
     super(itemElement, { initialState, ignoreItems: false });
     this.parent = parentComponent;
     this.value = itemElement.dataset.value;
     this.disabled = itemElement.dataset.disabled === "true";
 
-    this.trigger = itemElement.querySelector("[data-part='item-trigger']");
-    this.content = itemElement.querySelector("[data-part='item-content']");
+    this.trigger = trigger;
+    this.content = content;
     this.initialize();
     this.setupEvents();
+  }
+
+  // The server always renders data-state="closed" on the item element
+  // (it has no way to know which items should start open — that's
+  // derived client-side from the accordion's value/defaultValue), so
+  // skip the base class's DOM data-state override and keep the
+  // initialState computed by AccordionComponent.initializeItems().
+  parseOptions() {
+    try {
+      const optionsString = this.el.getAttribute("data-options");
+      this.options = optionsString ? JSON.parse(optionsString) : {};
+    } catch (error) {
+      console.error("SaladUI: Error parsing component options:", error);
+      this.options = {};
+    }
   }
 
   getComponentConfig() {
@@ -68,9 +91,14 @@ class AccordionItem extends Component {
         },
       },
       ariaConfig: {
+        // Resolved via this.el.querySelector rather than this.trigger/this.content:
+        // getComponentConfig() runs inside super(), before those fields are
+        // assigned (they're set after the super() call returns), and the
+        // very first updateUI()/aria pass happens during that super() call.
         "item-trigger": {
           all: {
-            controls: () => this.content?.id,
+            controls: () =>
+              this.el.querySelector("[data-part='item-content']")?.id,
           },
           open: {
             expanded: "true",
@@ -81,7 +109,8 @@ class AccordionItem extends Component {
         },
         "item-content": {
           all: {
-            labelledby: () => this.trigger?.id,
+            labelledby: () =>
+              this.el.querySelector("[data-part='item-trigger']")?.id,
           },
         },
       },
@@ -113,6 +142,17 @@ class AccordionItem extends Component {
   }
 
   handleTriggerActivation(event) {
+    // The "closed" and "open" states each register their own click/keydown
+    // listener for this same trigger (mouseMap/keyMap are identical between
+    // the two states), so a single click or Enter/Space hits both listeners
+    // in the same dispatch. toggleItem() below transitions the item
+    // synchronously, so by the time the second listener's state guard
+    // re-checks, it now matches too — running toggleItem() a second time
+    // and immediately flipping the item back. Stamp the native event so
+    // activation only actually runs once per physical click/keypress.
+    if (event.__saladuiAccordionHandled) return;
+    event.__saladuiAccordionHandled = true;
+
     event.preventDefault();
     if (!this.disabled && !this.parent.disabled) {
       this.parent.toggleItem(this);

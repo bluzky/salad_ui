@@ -1,7 +1,7 @@
 // saladui/index.js
-import Component from "./core/component";
-import { registry } from "./core/factory";
-import { SaladUIHook } from "./core/hook";
+import Component from "./core/component.js";
+import { registry } from "./core/factory.js";
+import { SaladUIHook } from "./core/hook.js";
 
 function register(type, ComponentClass) {
   registry.register(type, ComponentClass);
