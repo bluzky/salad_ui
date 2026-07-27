@@ -72,6 +72,7 @@ class Component {
 
   initEventMappings() {
     this.onClientCommand = this.onClientCommand.bind(this);
+    this.handleActionClick = this.handleActionClick.bind(this);
 
     try {
       const mappingsString = this.el.getAttribute("data-event-mappings");
@@ -154,7 +155,7 @@ class Component {
 
     // Animate with the config
     return animateTransition(animConfig, targetElement).then(() => {
-      if (this.destroyed) return;
+      if (this.destroyed || this.stateMachine.state !== nextState) return;
 
       this.updatePartsVisibility(nextState);
     });
@@ -197,7 +198,7 @@ class Component {
 
     this.el.addEventListener("salad_ui:command", this.onClientCommand);
 
-    this.el.addEventListener("click", this.handleActionClick.bind(this));
+    this.el.addEventListener("click", this.handleActionClick);
 
     this.setupKeyEventHandlers();
     this.setupMouseEventHandlers();

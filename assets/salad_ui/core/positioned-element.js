@@ -145,7 +145,7 @@ class PositionedElement {
     }
 
     // Restore from portal if needed
-    if (this.inPortal) {
+    if (Portal.isInPortal(this.element)) {
       this.restoreFromPortal();
     }
 
