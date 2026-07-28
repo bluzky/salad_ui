@@ -70,8 +70,7 @@ defmodule SaladUI.Chart do
       data-chart-data={Jason.encode!(@chart_data)}
       role="img"
       aria-label={@name}
-    >
-    </canvas>
+    ></canvas>
     """
   end
 end

@@ -33,14 +33,14 @@ defmodule Storybook.SaladUIComponents.Collapsible do
               </.button>
             </.collapsible_trigger>
           </div>
-          <div class="rounded-md border px-4 py-3 font-mono text-sm">
+          <div class="rounded-md border border-border px-4 py-3 font-mono text-sm">
             @radix-ui/primitives
           </div>
           <.collapsible_content class="space-y-2">
-            <div class="rounded-md border px-4 py-3 font-mono text-sm">
+            <div class="rounded-md border border-border px-4 py-3 font-mono text-sm">
               @radix-ui/colors
             </div>
-            <div class="rounded-md border px-4 py-3 font-mono text-sm">
+            <div class="rounded-md border border-border px-4 py-3 font-mono text-sm">
               @stitches/react
             </div>
           </.collapsible_content>

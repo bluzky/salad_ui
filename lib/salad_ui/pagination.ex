@@ -130,7 +130,7 @@ defmodule SaladUI.Pagination do
       aria-current={(assigns[:"is-active"] && "page") || ""}
       class={
         classes([
-          "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50",
+          "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:ring-ring focus-visible:outline-hidden focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50",
           @variation_class,
           @class
         ])
@@ -239,7 +239,7 @@ defmodule SaladUI.Pagination do
 
   @variants %{
     variant: %{
-      "outline" => "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+      "outline" => "border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground",
       "ghost" => "hover:bg-accent hover:text-accent-foreground"
     },
     size: %{

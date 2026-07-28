@@ -171,8 +171,8 @@ defmodule Mix.Tasks.Salad.Install do
     new_base_layer = """
     @layer base {
       #{color_scheme_code}
-      * {
-        @apply border-border !important;
+      *, ::after, ::before, ::backdrop, ::file-selector-button {
+        border-color: hsl(var(--border));
       }
     }\n
     """
@@ -196,7 +196,7 @@ defmodule Mix.Tasks.Salad.Install do
     IO.puts("Patching #{css_file}")
     IO.puts("Add:  #{import_snippet}")
 
-    unless String.contains?(content, import_snippet) do
+    if !String.contains?(content, import_snippet) do
       import_regex = ~r/(@import.*?;\n)/
       imports = Regex.scan(import_regex, content)
 
@@ -232,8 +232,8 @@ defmodule Mix.Tasks.Salad.Install do
   end
 
   defp patch_tailwind_config(igniter) do
-    tailwind_config_path = "./assets/tailwind.config.js"
-    SaladUI.Patcher.TailwindPatcher.patch(tailwind_config_path)
+    css_path = "./assets/css/app.css"
+    SaladUI.Patcher.TailwindPatcher.patch(css_path)
 
     igniter
   end

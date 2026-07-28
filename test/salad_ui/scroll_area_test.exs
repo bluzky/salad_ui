@@ -26,7 +26,7 @@ defmodule SaladUi.ScrollAreaTest do
         |> clean_string()
 
       assert html =~ "<div class=\"p-4\">"
-      assert html =~ "<div class=\"-mr-3\" style=\"min-width: 100%;\">"
+      assert html =~ ~s(<div class="-mr-3" style="min-width: 100%;">)
       assert html =~ "<h4 class=\"mb-4 text-sm font-medium leading-none\">Tags</h4>"
       assert html =~ "<div class=\"salad-scroll-area rounded-[inherit] h-full w-full overflow-y-auto overflow-x-hidden\">"
 

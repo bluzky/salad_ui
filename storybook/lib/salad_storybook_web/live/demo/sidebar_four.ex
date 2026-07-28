@@ -145,7 +145,7 @@ defmodule SaladStorybookWeb.Demo.SidebarFour do
     <.sidebar_provider style={%{"--sidebar-width": "19rem"}}>
       <.sidebar_main data={@data}></.sidebar_main>
       <.sidebar_inset>
-        <header class="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+        <header class="flex h-16 shrink-0 items-center gap-2 border-b border-border px-4">
           <.sidebar_trigger target="main-sidebar" class="-ml-1" />
           <.separator orientation="vertical" class="mr-2 h-4" />
           <.breadcrumb>

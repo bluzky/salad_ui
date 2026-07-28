@@ -46,7 +46,7 @@ defmodule Storybook.MyPage do
         </a>
       </div>
     </div>
-    <div class="flex min-h-screen w-full flex-col border rounded-lg overflow-hidden">
+    <div class="flex min-h-screen w-full flex-col border border-border rounded-lg overflow-hidden">
       <iframe src="/demo/dashboard-two" class="w-full h-[100vh]" />
     </div>
     """

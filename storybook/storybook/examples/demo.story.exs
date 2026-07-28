@@ -16,7 +16,7 @@ defmodule Storybook.Examples.Demo do
         <Lucideicons.link class="w-4 h-4 inline-block mr-2" /> View full page
       </a>
     </div>
-    <div class="border rounded-lg overflow-hidden mb-12">
+    <div class="border border-border rounded-lg overflow-hidden mb-12">
       <iframe src="/demo/dashboard-one" class="w-full h-[80vh]"></iframe>
     </div>
 
@@ -26,7 +26,7 @@ defmodule Storybook.Examples.Demo do
         <Lucideicons.link class="w-4 h-4 inline-block mr-2" /> View full page
       </a>
     </div>
-    <div class="border rounded-lg overflow-hidden mb-12">
+    <div class="border border-border rounded-lg overflow-hidden mb-12">
       <iframe src="/demo/dashboard-two" class="w-full h-[80vh]"></iframe>
     </div>
 
@@ -36,7 +36,7 @@ defmodule Storybook.Examples.Demo do
         <Lucideicons.link class="w-4 h-4 inline-block mr-2" /> View full page
       </a>
     </div>
-    <div class="border rounded-lg overflow-hidden mb-12">
+    <div class="border border-border rounded-lg overflow-hidden mb-12">
       <iframe src="/demo/dashboard-three" class="w-full h-[80vh]"></iframe>
     </div>
     """

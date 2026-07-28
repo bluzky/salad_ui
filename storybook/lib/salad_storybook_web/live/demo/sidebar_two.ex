@@ -184,7 +184,7 @@ defmodule SaladStorybookWeb.Demo.SidebarTwo do
         <.sidebar_rail />
       </.sidebar>
       <.sidebar_inset>
-        <header class="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+        <header class="flex h-16 shrink-0 items-center gap-2 border-b border-border px-4">
           <.sidebar_trigger target="main-sidebar" class="-ml-1" />
           <.separator orientation="vertical" class="mr-2 h-4" />
           <.breadcrumb>

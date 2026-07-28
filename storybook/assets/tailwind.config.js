@@ -23,10 +23,6 @@ module.exports = {
   },
   important: ".salad-storybook-web",
   plugins: [
-    require("@tailwindcss/forms"),
-    require("@tailwindcss/typography"),
-    require("./vendor/tailwindcss-animate"),
-
     // Allows prefixing tailwind classes with LiveView classes to add rules
     // only when LiveView classes are applied, for example:
     //

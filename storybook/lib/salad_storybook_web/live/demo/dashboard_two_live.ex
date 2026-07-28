@@ -25,7 +25,7 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
   def render(assigns) do
     ~H"""
     <div class="flex min-h-screen w-full flex-col bg-muted/40">
-      <aside class="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
+      <aside class="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r border-border bg-background sm:flex">
         <nav class="flex flex-col items-center gap-4 px-2 sm:py-5">
           <.link
             href="#"
@@ -783,7 +783,7 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
                   </dl>
                 </div>
               </.card_content>
-              <.card_footer class="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
+              <.card_footer class="flex flex-row items-center border-t border-border bg-muted/50 px-6 py-3">
                 <div class="text-xs text-muted-foreground">
                   Updated
                   <time datetime="2023-11-23">

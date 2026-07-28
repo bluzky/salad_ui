@@ -145,7 +145,7 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
     <.sidebar_provider>
       <.sidebar_main data={@data}></.sidebar_main>
       <.sidebar_inset>
-        <header class="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+        <header class="flex h-16 shrink-0 items-center gap-2 border-b border-border px-4">
           <.sidebar_trigger target="main-sidebar" class="-ml-1" />
           <.separator orientation="vertical" class="mr-2 h-4" />
           <.breadcrumb>
@@ -222,7 +222,7 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
             <.chevrons_up_down class="ml-auto" />
           </.as_child>
           <.dropdown_menu_content
-            class="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            class="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
             align="start"
             side="right"
           >
@@ -231,7 +231,7 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
             </.dropdown_menu_label>
 
             <.dropdown_menu_item :for={{team, index} <- Enum.with_index(@teams)} class="gap-2 p-2">
-              <div class="flex size-6 items-center justify-center rounded-sm border">
+              <div class="flex size-6 items-center justify-center rounded-xs border border-border">
                 <.dynamic tag={team.logo} class="size-4 shrink-0" />
               </div>
               {team.name}
@@ -242,7 +242,7 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
 
             <.dropdown_menu_separator></.dropdown_menu_separator>
             <.dropdown_menu_item class="gap-2 p-2">
-              <div class="flex size-6 items-center justify-center rounded-md border bg-background">
+              <div class="flex size-6 items-center justify-center rounded-md border border-border bg-background">
                 <.plus class="size-4" />
               </div>
               <div class="font-medium text-muted-foreground">
@@ -387,7 +387,7 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
             <.chevrons_up_down class="ml-auto size-4" />
           </.as_child>
           <.dropdown_menu_content
-            class="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            class="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
             side="right"
             align="end"
             side-offset={4}

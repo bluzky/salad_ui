@@ -48,7 +48,7 @@ defmodule SaladUI.SidebarTest do
         |> rendered_to_string()
         |> clean_string()
 
-      assert html =~ "flex h-full w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground"
+      assert html =~ "flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground"
       assert html =~ "Content"
     end
 
@@ -64,7 +64,7 @@ defmodule SaladUI.SidebarTest do
 
       assert html =~ "data-sidebar=\"sidebar\""
       assert html =~ "data-mobile=\"true\""
-      assert html =~ "w-[--sidebar-width]"
+      assert html =~ "w-(--sidebar-width)"
       assert html =~ "bg-sidebar"
       assert html =~ "Content"
     end

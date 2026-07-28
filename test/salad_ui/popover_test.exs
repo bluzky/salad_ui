@@ -28,7 +28,7 @@ defmodule SaladUI.PopoverTest do
         |> clean_string()
 
       for class <-
-            ~w(absolute hidden p-4 mb-2 rounded-md bg-popover text-popover-foreground outline-none shadow-md z-50 left-1/2 bottom-full w-72 -translate-x-1/2 animate-in border data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:hidden fade-in-0 slide-in-from-left-1/2 zoom-in-95) do
+            ~w(absolute hidden p-4 mb-2 rounded-md bg-popover text-popover-foreground outline-hidden shadow-md z-50 left-1/2 bottom-full w-72 -translate-x-1/2 animate-in border data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:hidden fade-in-0 slide-in-from-left-1/2 zoom-in-95) do
         assert html =~ class
       end
 
@@ -47,7 +47,7 @@ defmodule SaladUI.PopoverTest do
         |> clean_string()
 
       for class <-
-            ~w(absolute hidden p-4 mt-2 rounded-md bg-popover text-popover-foreground outline-none shadow-md z-50 left-1/2 top-full w-72 -translate-x-1/2 animate-in border data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:hidden fade-in-0 slide-in-from-left-1/2 zoom-in-95) do
+            ~w(absolute hidden p-4 mt-2 rounded-md bg-popover text-popover-foreground outline-hidden shadow-md z-50 left-1/2 top-full w-72 -translate-x-1/2 animate-in border data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:hidden fade-in-0 slide-in-from-left-1/2 zoom-in-95) do
         assert html =~ class
       end
 
@@ -65,7 +65,7 @@ defmodule SaladUI.PopoverTest do
         |> clean_string()
 
       for class <-
-            ~w(absolute hidden p-4 ml-2 rounded-md bg-popover text-popover-foreground outline-none shadow-md z-50 left-full top-1/2 w-72 -translate-y-1/2 animate-in border data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:hidden fade-in-0 slide-in-from-top-1/2 zoom-in-95) do
+            ~w(absolute hidden p-4 ml-2 rounded-md bg-popover text-popover-foreground outline-hidden shadow-md z-50 left-full top-1/2 w-72 -translate-y-1/2 animate-in border data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:hidden fade-in-0 slide-in-from-top-1/2 zoom-in-95) do
         assert html =~ class
       end
 

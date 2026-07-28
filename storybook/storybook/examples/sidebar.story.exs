@@ -42,7 +42,7 @@ defmodule Storybook.Examples.Sidebar do
           <Lucideicons.code_xml class="w-4 h-4 inline-block mr-2" /> Source code
         </a>
       </div>
-      <div class="border rounded-lg overflow-hidden mb-12">
+      <div class="border border-border rounded-lg overflow-hidden mb-12">
         <iframe src={@url} class="w-full h-[80vh]"></iframe>
       </div>
     </div>

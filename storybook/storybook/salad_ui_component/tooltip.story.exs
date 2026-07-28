@@ -127,7 +127,7 @@ defmodule Storybook.SaladUIComponents.Tooltip do
           </.tooltip_trigger>
           <.tooltip_content class="p-0 overflow-hidden">
             <div>
-              <div class="bg-muted p-3 font-medium border-b">Tooltip Header</div>
+              <div class="bg-muted p-3 font-medium border-b border-border">Tooltip Header</div>
               <div class="p-3">
                 <p>Tooltips can contain complex content including:</p>
                 <ul class="list-disc pl-4 mt-2 space-y-1">
