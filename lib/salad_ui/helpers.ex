@@ -4,10 +4,12 @@ defmodule SaladUI.Helpers do
 
   import Phoenix.Component
 
+  alias Phoenix.HTML.FormField
+
   @doc """
   Prepare input assigns for use in a form. Extract required attribute from the Form.Field struct and update current assigns.
   """
-  def prepare_assign(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
+  def prepare_assign(%{field: %FormField{} = field} = assigns) do
     assigns
     |> assign(field: nil, id: assigns[:id] || field.id)
     |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
@@ -31,7 +33,7 @@ defmodule SaladUI.Helpers do
   @doc """
   This function return list of error message from form field
   """
-  def field_errors(%Phoenix.HTML.FormField{} = field) do
+  def field_errors(%FormField{} = field) do
     Enum.map(field.errors, &translate_error(&1))
   end
 
@@ -40,7 +42,7 @@ defmodule SaladUI.Helpers do
   @doc """
   This function return true if the field has error
   """
-  def has_error?(%Phoenix.HTML.FormField{} = field) do
+  def has_error?(%FormField{} = field) do
     not Enum.empty?(field.errors)
   end
 
@@ -94,10 +96,10 @@ defmodule SaladUI.Helpers do
 
   @variants %{
     variant: %{
-      "default" => "bg-primary text-primary-foreground shadow hover:bg-primary/90",
-      "destructive" => "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
-      "outline" => "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
-      "secondary" => "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
+      "default" => "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90",
+      "destructive" => "bg-destructive text-destructive-foreground shadow-xs hover:bg-destructive/90",
+      "outline" => "border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground",
+      "secondary" => "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
       "ghost" => "hover:bg-accent hover:text-accent-foreground",
       "link" => "text-primary underline-offset-4 hover:underline"
     },
@@ -126,7 +128,7 @@ defmodule SaladUI.Helpers do
     variation_classes = Enum.map_join(variants, " ", fn {key, value} -> @variants[key][value] end)
 
     shared_classes =
-      "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50"
+      "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:ring-ring focus-visible:outline-hidden focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50"
 
     "#{shared_classes} #{variation_classes}"
   end

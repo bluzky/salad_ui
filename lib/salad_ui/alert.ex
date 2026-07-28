@@ -71,7 +71,7 @@ defmodule SaladUI.Alert do
       data-part="root"
       class={
         classes([
-          "relative w-full rounded-lg border p-4 [&>span~*]:pl-7 [&>span+div]:translate-y-[-3px] [&>span]:absolute [&>span]:left-4 [&>span]:top-4",
+          "relative w-full rounded-lg border border-border p-4 [&>span~*]:pl-7 [&>span+div]:translate-y-[-3px] [&>span]:absolute [&>span]:left-4 [&>span]:top-4",
           @variant_class,
           @class
         ])

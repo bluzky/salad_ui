@@ -39,6 +39,8 @@ defmodule SaladUI.Form do
   """
   use SaladUI, :component
 
+  alias Phoenix.HTML.FormField
+
   @doc """
   Form item component that acts as a container for a form field.
 
@@ -76,7 +78,7 @@ defmodule SaladUI.Form do
   """
   attr :class, :string, default: nil
 
-  attr :field, Phoenix.HTML.FormField,
+  attr :field, FormField,
     default: nil,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
@@ -156,7 +158,7 @@ defmodule SaladUI.Form do
         Please enter a valid email address.
       </.form_message>
   """
-  attr :field, Phoenix.HTML.FormField,
+  attr :field, FormField,
     default: nil,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
 

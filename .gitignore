@@ -29,6 +29,15 @@ salad_ui-*.tar
 
 node_modules/
 
+# Generated Tailwind build output (regenerate with `mix tailwind`); the
+# hand-authored source lives in assets/css/ and priv/static/assets/salad_ui.css
+# is a curated file that ships with the package, not build output.
+/priv/static/assets/app.css
+/priv/static/assets/storybook.css
+
+# In case you use Node.js/npm alongside yarn, ignore its stray lockfile.
+storybook/assets/package-lock.json
+
 /.vscode/
 /.ctags.d/
 .tags

@@ -7,7 +7,7 @@ defmodule Mix.Tasks.Salad.Setup do
   * Adding TwMerge.Cache to the application supervision tree
   * Configuring CSS color scheme variables (default: gray)
   * Copying SaladUI CSS files to assets/css/
-  * Patching Tailwind CSS configuration with SaladUI-specific settings
+  * Patching Tailwind CSS entrypoint with SaladUI-specific settings
   * Installing tailwindcss-animate plugin
   * Setting up JavaScript imports and LiveView hooks
 
@@ -35,8 +35,8 @@ defmodule Mix.Tasks.Salad.Setup do
      - Imports SaladUI styles into the main CSS file
 
   3. **Tailwind Configuration**
-     - Patches tailwind.config.js with SaladUI-specific plugins
-     - Copies tailwind.colors.json with design tokens
+     - Patches app.css with SaladUI-specific sources and theme tokens
+     - Copies tailwind.colors.json with design tokens for compatibility
      - Adds @tailwindcss/typography and tailwindcss-animate plugins
 
   4. **JavaScript Setup**
@@ -60,8 +60,8 @@ defmodule Mix.Tasks.Salad.Setup do
   * `lib/[app]/application.ex` - Adds TwMerge.Cache
   * `assets/css/app.css` - Adds color scheme and imports
   * `assets/css/salad_ui.css` - Created
-  * `assets/tailwind.config.js` - Updated with plugins and content paths
-  * `assets/tailwind.colors.json` - Created
+  * `assets/css/app.css` - Updated with Tailwind v4 sources, plugins, and theme tokens
+  * `assets/tailwind.colors.json` - Created for compatibility
   * `assets/js/app.js` - Adds SaladUI imports and hooks
   * `assets/vendor/tailwindcss-animate.js` - Downloaded
 
@@ -114,8 +114,8 @@ defmodule Mix.Tasks.Salad.Setup do
     new_base_layer = """
     @layer base {
       #{color_scheme_code}
-      * {
-        @apply border-border !important;
+      *, ::after, ::before, ::backdrop, ::file-selector-button {
+        border-color: hsl(var(--border));
       }
     }\n
     """
@@ -139,7 +139,7 @@ defmodule Mix.Tasks.Salad.Setup do
     IO.puts("Patching #{css_file}")
     IO.puts("Add:  #{import_snippet}")
 
-    unless String.contains?(content, import_snippet) do
+    if !String.contains?(content, import_snippet) do
       import_regex = ~r/(@import.*?;\n)/
       imports = Regex.scan(import_regex, content)
 
@@ -175,8 +175,8 @@ defmodule Mix.Tasks.Salad.Setup do
   end
 
   defp patch_tailwind_config(igniter) do
-    tailwind_config_path = "./assets/tailwind.config.js"
-    SaladUI.Patcher.TailwindPatcher.patch(tailwind_config_path)
+    css_path = "./assets/css/app.css"
+    SaladUI.Patcher.TailwindPatcher.patch(css_path)
 
     igniter
   end

@@ -1,138 +1,97 @@
 defmodule SaladUI.Patcher.TailwindPatcher do
   @moduledoc false
 
-  # TODO: Improve the formatting of the generated code,
-  # so the user does not to manually format his `tailwind.config.js`
-  # file after patching it.
+  @theme_block """
+  @theme {
+    --color-accent: hsl(var(--accent));
+    --color-accent-foreground: hsl(var(--accent-foreground));
+    --color-background: hsl(var(--background));
+    --color-border: hsl(var(--border));
+    --color-card: hsl(var(--card));
+    --color-card-foreground: hsl(var(--card-foreground));
+    --color-destructive: hsl(var(--destructive));
+    --color-destructive-foreground: hsl(var(--destructive-foreground));
+    --color-foreground: hsl(var(--foreground));
+    --color-input: hsl(var(--input));
+    --color-muted: hsl(var(--muted));
+    --color-muted-foreground: hsl(var(--muted-foreground));
+    --color-popover: hsl(var(--popover));
+    --color-popover-foreground: hsl(var(--popover-foreground));
+    --color-primary: hsl(var(--primary));
+    --color-primary-foreground: hsl(var(--primary-foreground));
+    --color-ring: hsl(var(--ring));
+    --color-secondary: hsl(var(--secondary));
+    --color-secondary-foreground: hsl(var(--secondary-foreground));
+    --color-sidebar: hsl(var(--sidebar-background));
+    --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+    --color-sidebar-primary: hsl(var(--sidebar-primary));
+    --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+    --color-sidebar-accent: hsl(var(--sidebar-accent));
+    --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+    --color-sidebar-border: hsl(var(--sidebar-border));
+    --color-sidebar-ring: hsl(var(--sidebar-ring));
+  }
+  """
 
-  @plugins ["@tailwindcss/typography", "./vendor/tailwindcss-animate"]
-  @tailwind_colors "./tailwind.colors.json"
+  @directives [
+    ~s(@source "../js";),
+    ~s(@source "../../lib";),
+    ~s(@source "../../deps/salad_ui/lib";),
+    ~s(@plugin "@tailwindcss/typography";),
+    ~s(@plugin "../vendor/tailwindcss-animate";)
+  ]
 
-  def patch(tailwind_config_path, opts \\ []) do
+  def patch(css_path, opts \\ []) do
     new_content =
-      tailwind_config_path
+      css_path
       |> File.read!()
       |> update_content(opts)
 
-    File.write!(tailwind_config_path, new_content)
+    File.write!(css_path, new_content)
   end
 
   defp update_content(content, _opts) do
-    content =
-      content
-      |> add_plugins()
-      |> add_theme()
-
-    if true do
-      add_content_watch(content)
-    else
-      content
-    end
+    content
+    |> replace_v3_imports()
+    |> ensure_tailwind_import()
+    |> ensure_theme()
+    |> ensure_directives()
   end
 
-  defp add_plugins(content) do
-    new_plugins = get_new_plugins(content)
-
-    if Enum.empty?(new_plugins) do
-      content
-    else
-      insert_plugins(content, new_plugins)
-    end
-  end
-
-  defp get_new_plugins(content) do
-    @plugins
-    |> Enum.reject(&String.contains?(content, &1))
-    |> Enum.map(&format_plugin/1)
-  end
-
-  defp format_plugin(plugin), do: "    require(\"#{plugin}\")"
-
-  defp insert_plugins(content, new_plugins) do
-    plugins_code = Enum.join(new_plugins, ",\n")
-
-    if has_plugins_section?(content) do
-      Regex.replace(~r/plugins:\s*\[/, content, "plugins: [\n#{plugins_code},")
-    else
-      Regex.replace(
-        ~r/module\.exports\s*=\s*{/,
-        content,
-        "module.exports = {\n  plugins: [\n#{plugins_code}\n  ],"
-      )
-    end
-  end
-
-  defp has_plugins_section?(content), do: Regex.match?(~r/plugins:\s*\[/, content)
-
-  defp add_theme(content) do
-    # Matches a full theme config in the Tailwind config file
-    # eg. theme: { extend: { colors: require("./tailwind.colors.json") } }
-    theme_regex =
-      ~r/theme:\s*{\s*extend:\s*{\s*colors:\s*require\(['""]#{Regex.escape(@tailwind_colors)}['"]\s*\)\s*}\s*}/
-
-    if Regex.match?(theme_regex, content) do
-      content
-    else
-      content
-      |> ensure_theme_object()
-      |> ensure_extend_object()
-      |> add_colors_config()
-    end
-  end
-
-  defp ensure_theme_object(content) do
-    if has_theme_object?(content) do
-      content
-    else
-      Regex.replace(~r/module\.exports\s*=\s*{/, content, "module.exports = {\n  theme: {},")
-    end
-  end
-
-  defp has_theme_object?(content), do: Regex.match?(~r/theme:\s*{/, content)
-
-  defp ensure_extend_object(content) do
-    if has_extend_object?(content) do
-      content
-    else
-      Regex.replace(~r/(theme:\s*{)/, content, "\\1\n    extend: {},")
-    end
-  end
-
-  defp has_extend_object?(content), do: Regex.match?(~r/theme:\s*{[^}]*extend:\s*{/, content)
-
-  defp add_colors_config(content) do
-    if has_colors_config?(content) do
-      replace_colors_config(content)
-    else
-      insert_colors_config(content)
-    end
-  end
-
-  defp has_colors_config?(content), do: Regex.match?(~r/extend:\s*{[^}]*colors:/, content)
-
-  defp replace_colors_config(content) do
-    # Matches a full colors config in the Tailwind config file
-    # eg. extend: { colors: { brand: "some-color" } }
-    regex = ~r/(extend:\s*{[^}]*)(colors:\s*(?:{[^}]*}|[^,}]+))/
-
+  defp replace_v3_imports(content) do
     Regex.replace(
-      regex,
+      ~r/@import\s+["']tailwindcss\/(base|components|utilities)["'];\n?/,
       content,
-      "\\1colors: require(\"#{@tailwind_colors}\")"
+      ""
     )
   end
 
-  defp insert_colors_config(content) do
-    Regex.replace(
-      ~r/(extend:\s*{)/,
-      content,
-      "\\1\n      colors: require(\"#{@tailwind_colors}\"),"
-    )
+  defp ensure_tailwind_import(content) do
+    if String.contains?(content, ~s(@import "tailwindcss";)) do
+      content
+    else
+      ~s(@import "tailwindcss";) <> "\n" <> content
+    end
   end
 
-  # add content directory to SaladUI library so Tailwind will extract css from lib too
-  defp add_content_watch(content) do
-    content_pattern = "\"../deps/salad_ui/lib/**/*.ex\""
-    Regex.replace(~r/content:\s*\[/, content, "content: [\n#{content_pattern},")
+  defp ensure_theme(content) do
+    if String.contains?(content, "--color-background:") do
+      content
+    else
+      append_block(content, @theme_block)
+    end
+  end
+
+  defp ensure_directives(content) do
+    Enum.reduce(@directives, content, fn directive, acc ->
+      if String.contains?(acc, directive), do: acc, else: append_block(acc, directive)
+    end)
+  end
+
+  defp append_block(content, block) do
+    content = String.trim_trailing(content)
+    block = String.trim(block)
+
+    content <> "\n\n" <> block <> "\n"
   end
 end

@@ -44,29 +44,44 @@ If you want to config yourself, here is step by step adding configuration to get
 }
 ```
 
-2. Configure tailwind
-- Tell tailwind to extract class from `SaladUI`
-- Add custom color
-- Add tailwind plugin
-```js
-module.exports = {
-  content: [
-    "../deps/salad_ui/lib/**/*.ex",
-    ],
-  theme: {
-    extend: {
-      colors: require("./tailwind.colors.json"),
-    },
-  },
-  plugins: [
-    require("@tailwindcss/typography"),
-    require("tailwindcss-animate"),
-    ...
-  ]
+2. Configure Tailwind v4 in `assets/css/app.css`
+- Tell Tailwind to extract classes from `SaladUI`
+- Add custom colors
+- Add Tailwind plugins
+```css
+@import "tailwindcss";
+
+@source "../../deps/salad_ui/lib";
+@source "../../lib";
+@source "../js";
+
+@plugin "@tailwindcss/typography";
+@plugin "tailwindcss-animate";
+
+@theme {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
 }
 ```
 
-- Install `tailwindcss-animate`
+- Install `tailwindcss-animate` when using npm-based Tailwind
 ```
 cd assets
 npm i -D tailwindcss-animate
@@ -109,7 +124,8 @@ body {
 - In case border color not working correctly, add following to your `app.css`
 ```css
 @layer base {
-    * {
-        @apply border-border !important;
+    *, ::after, ::before, ::backdrop, ::file-selector-button {
+        border-color: hsl(var(--border));
     }
+}
 ```

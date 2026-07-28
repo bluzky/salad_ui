@@ -21,7 +21,7 @@ defmodule Storybook.SaladUIComponents.Command do
       %Variation{
         id: :command,
         template: """
-        <.command id="command-2" class="rounded-lg border shadow-md md:min-w-[450px] w-full lg:max-w-[600px]">
+        <.command id="command-2" class="rounded-lg border border-border shadow-md md:min-w-[450px] w-full lg:max-w-[600px]">
           <.command_input placeholder="Type a command or search..." />
           <.command_empty>
             <span>No results found</span>

@@ -4,120 +4,79 @@ defmodule SaladUI.Patcher.TailwindPatcherTest do
   alias SaladUI.Patcher.TailwindPatcher
 
   @temp_dir "test/temp"
-  @tailwind_config "#{@temp_dir}/tailwind.config.js"
+  @tailwind_css "#{@temp_dir}/app.css"
 
   setup do
     File.mkdir_p!(@temp_dir)
     on_exit(fn -> File.rm_rf!(@temp_dir) end)
   end
 
-  describe "Test Tailwind CSS config patcher" do
-    test "patch/1 adds plugins when missing" do
-      initial_content = "module.exports = {}"
-      File.write!(@tailwind_config, initial_content)
+  describe "Test Tailwind CSS entrypoint patcher" do
+    test "patch/1 adds v4 import, sources, plugins, and theme when missing" do
+      File.write!(@tailwind_css, "")
 
-      TailwindPatcher.patch(@tailwind_config)
+      TailwindPatcher.patch(@tailwind_css)
 
-      patched_content = File.read!(@tailwind_config)
-      assert patched_content =~ "plugins: ["
-      assert patched_content =~ "require(\"@tailwindcss/typography\")"
-      assert patched_content =~ "require(\"./vendor/tailwindcss-animate\")"
+      patched_content = File.read!(@tailwind_css)
+      assert patched_content =~ ~s(@import "tailwindcss";)
+      assert patched_content =~ ~s(@source "../js";)
+      assert patched_content =~ ~s(@source "../../lib";)
+      assert patched_content =~ ~s(@source "../../deps/salad_ui/lib";)
+      assert patched_content =~ ~s(@plugin "@tailwindcss/typography";)
+      assert patched_content =~ ~s(@plugin "../vendor/tailwindcss-animate";)
+      assert patched_content =~ "@theme {"
+      assert patched_content =~ "--color-background: hsl(var(--background));"
     end
 
-    test "patch/1 doesn't duplicate existing plugins" do
+    test "patch/1 doesn't duplicate existing directives" do
       initial_content = """
-      module.exports = {
-        plugins: [
-          require("@tailwindcss/typography"),
-          require("./vendor/tailwindcss-animate")
-        ]
+      @import "tailwindcss";
+      @source "../js";
+      @source "../../lib";
+      @source "../../deps/salad_ui/lib";
+      @plugin "@tailwindcss/typography";
+      @plugin "../vendor/tailwindcss-animate";
+      @theme {
+        --color-background: hsl(var(--background));
       }
       """
 
-      File.write!(@tailwind_config, initial_content)
+      File.write!(@tailwind_css, initial_content)
 
-      TailwindPatcher.patch(@tailwind_config)
+      TailwindPatcher.patch(@tailwind_css)
 
-      patched_content = File.read!(@tailwind_config)
+      patched_content = File.read!(@tailwind_css)
 
-      assert patched_content =~ "require(\"@tailwindcss/typography\")"
-      assert patched_content =~ "require(\"./vendor/tailwindcss-animate\")"
-
-      # Count occurrences of each plugin
-      typography_count = patched_content |> String.split("@tailwindcss/typography") |> length() |> Kernel.-(1)
-      animate_count = patched_content |> String.split("./vendor/tailwindcss-animate") |> length() |> Kernel.-(1)
-
-      assert typography_count == 1
-      assert animate_count == 1
+      assert count(patched_content, ~s(@import "tailwindcss";)) == 1
+      assert count(patched_content, ~s(@source "../js";)) == 1
+      assert count(patched_content, ~s(@source "../../lib";)) == 1
+      assert count(patched_content, ~s(@source "../../deps/salad_ui/lib";)) == 1
+      assert count(patched_content, ~s(@plugin "@tailwindcss/typography";)) == 1
+      assert count(patched_content, ~s(@plugin "../vendor/tailwindcss-animate";)) == 1
+      assert count(patched_content, "--color-background:") == 1
     end
 
-    test "patch/1 adds theme and colors config when missing" do
-      initial_content = "module.exports = {}"
-      File.write!(@tailwind_config, initial_content)
-
-      TailwindPatcher.patch(@tailwind_config)
-
-      patched_content = File.read!(@tailwind_config)
-      assert patched_content =~ "theme: {"
-      assert patched_content =~ "extend: {"
-      assert patched_content =~ "colors: require(\"./tailwind.colors.json\")"
-    end
-
-    test "patch/1 updates existing colors config" do
+    test "patch/1 replaces v3 Tailwind imports" do
       initial_content = """
-      module.exports = {
-        theme: {
-          extend: {
-            colors: {
-              primary: '#000000'
-            }
-          }
-        }
-      }
+      @import "tailwindcss/base";
+      @import "tailwindcss/components";
+      @import "tailwindcss/utilities";
       """
 
-      File.write!(@tailwind_config, initial_content)
+      File.write!(@tailwind_css, initial_content)
 
-      TailwindPatcher.patch(@tailwind_config)
+      TailwindPatcher.patch(@tailwind_css)
 
-      patched_content = File.read!(@tailwind_config)
-      assert patched_content =~ "colors: require(\"./tailwind.colors.json\")"
-      refute patched_content =~ "primary: '#000000'"
+      patched_content = File.read!(@tailwind_css)
+
+      assert patched_content =~ ~s(@import "tailwindcss";)
+      refute patched_content =~ "tailwindcss/base"
+      refute patched_content =~ "tailwindcss/components"
+      refute patched_content =~ "tailwindcss/utilities"
     end
+  end
 
-    test "patch/1 doesn't duplicate theme and colors config" do
-      initial_content = """
-      module.exports = {
-        theme: {
-          extend: {
-            colors: require("./tailwind.colors.json")
-          }
-        }
-      }
-      """
-
-      File.write!(@tailwind_config, initial_content)
-
-      TailwindPatcher.patch(@tailwind_config)
-
-      patched_content = File.read!(@tailwind_config)
-
-      assert patched_content =~ """
-               theme: {
-                 extend: {
-                   colors: require("./tailwind.colors.json")
-                 }
-               }
-             """
-
-      # Count ocurrences
-      theme_count = patched_content |> String.split("theme: {") |> length() |> Kernel.-(1)
-      expand_count = patched_content |> String.split("extend: {") |> length() |> Kernel.-(1)
-      colors_count = patched_content |> String.split("colors: require") |> length() |> Kernel.-(1)
-
-      assert theme_count == 1
-      assert expand_count == 1
-      assert colors_count == 1
-    end
+  defp count(content, pattern) do
+    content |> String.split(pattern) |> length() |> Kernel.-(1)
   end
 end

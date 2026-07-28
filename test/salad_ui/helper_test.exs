@@ -1,6 +1,7 @@
 defmodule SaladUI.HelperTest do
   use ExUnit.Case, async: true
 
+  alias Phoenix.HTML.FormField
   alias SaladUI.Helpers
 
   test "prepare_assign with default value" do
@@ -36,7 +37,7 @@ defmodule SaladUI.HelperTest do
       __changed__: %{},
       value: "test",
       name: "name",
-      field: %Phoenix.HTML.FormField{value: "value", name: "field", id: "a", errors: [], field: :name, form: nil}
+      field: %FormField{value: "value", name: "field", id: "a", errors: [], field: :name, form: nil}
     }
 
     assert %{value: "test", name: "name"} = Helpers.prepare_assign(assigns)
@@ -45,7 +46,7 @@ defmodule SaladUI.HelperTest do
   test "prepare_assign used name/value from field" do
     assigns = %{
       __changed__: %{},
-      field: %Phoenix.HTML.FormField{value: "value", name: "field", id: "a", errors: [], field: :name, form: nil}
+      field: %FormField{value: "value", name: "field", id: "a", errors: [], field: :name, form: nil}
     }
 
     assert %{value: "value", name: "field"} = Helpers.prepare_assign(assigns)
@@ -55,7 +56,7 @@ defmodule SaladUI.HelperTest do
     assigns = %{
       __changed__: %{},
       multiple: "true",
-      field: %Phoenix.HTML.FormField{value: "value", name: "name", id: "a", errors: [], field: :name, form: nil}
+      field: %FormField{value: "value", name: "name", id: "a", errors: [], field: :name, form: nil}
     }
 
     assert %{name: "name[]"} = Helpers.prepare_assign(assigns)
@@ -66,7 +67,7 @@ defmodule SaladUI.HelperTest do
 
     assigns = %{
       __changed__: %{},
-      field: %Phoenix.HTML.FormField{
+      field: %FormField{
         value: "value",
         name: "name",
         id: "a",

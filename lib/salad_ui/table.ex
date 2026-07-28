@@ -64,7 +64,7 @@ defmodule SaladUI.Table do
 
   def table_header(assigns) do
     ~H"""
-    <thead class={classes(["[&_tr]:border-b", @class])} {@rest}>
+    <thead class={classes(["[&_tr]:border-b [&_tr]:border-border", @class])} {@rest}>
       {render_slot(@inner_block)}
     </thead>
     """
@@ -88,7 +88,7 @@ defmodule SaladUI.Table do
     <tr
       class={
         classes([
-          "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+          "border-b border-border transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
           @class
         ])
       }
@@ -179,7 +179,7 @@ defmodule SaladUI.Table do
     <tfoot
       class={
         classes([
-          "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
+          "border-t border-border bg-muted/50 font-medium [&>tr]:last:border-b-0",
           @class
         ])
       }

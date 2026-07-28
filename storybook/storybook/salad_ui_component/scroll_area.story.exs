@@ -11,7 +11,7 @@ defmodule Storybook.SaladUIComponents.ScrollArea do
       %Variation{
         id: :scroll_area,
         template: """
-        <.scroll_area class="h-72 w-48 rounded-md border">
+        <.scroll_area class="h-72 w-48 rounded-md border border-border">
           <div class="p-4">
             <h4 class="mb-4 text-sm font-medium leading-none">Tags</h4>
             <%= for tag <- 1..50 do %>

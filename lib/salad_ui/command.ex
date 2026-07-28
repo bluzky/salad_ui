@@ -6,7 +6,7 @@ defmodule SaladUI.Command do
 
   ## Example
 
-      <.command id="command" class="rounded-lg border shadow-md md:min-w-[450px] w-full lg:max-w-[600px]">
+      <.command id="command" class="rounded-lg border border-border shadow-md md:min-w-[450px] w-full lg:max-w-[600px]">
         <.command_input placeholder="Type a command or search..." />
         <.command_empty>
           <span>No results found</span>
@@ -128,7 +128,7 @@ defmodule SaladUI.Command do
 
   def command_input(assigns) do
     ~H"""
-    <div data-part="input-wrapper" class="flex items-center border-b px-3">
+    <div data-part="input-wrapper" class="flex items-center border-b border-border px-3">
       <.icon name="hero-magnifying-glass" />
       <input
         type="text"
@@ -139,7 +139,7 @@ defmodule SaladUI.Command do
         spellcheck="false"
         class={
           classes([
-            "flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 border-none focus:ring-transparent",
+            "flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 border-none focus:ring-transparent",
             @class
           ])
         }
@@ -284,7 +284,7 @@ defmodule SaladUI.Command do
       tabindex="-1"
       role="option"
       data-part="item"
-      class="[&_svg]:h-4 [&_svg]:w-4 relative flex cursor-default w-full gap-2 select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none disabled:pointer-events-none hover:bg-accent/75 data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground data-[visible=false]:hidden disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
+      class="[&_svg]:h-4 [&_svg]:w-4 relative flex cursor-default w-full gap-2 select-none items-center rounded-xs px-2 py-1.5 text-sm outline-hidden disabled:pointer-events-none hover:bg-accent/75 data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground data-[visible=false]:hidden disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
       data-selected={@selected}
       aria-selected={@selected}
       disabled={@disabled}

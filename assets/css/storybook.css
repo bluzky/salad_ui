@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@import "./tailwind.theme.css";
+@import "../../priv/static/assets/salad_ui.css";
+
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+@plugin "tailwindcss-animate";
+
+@source "../../config";
+@source "../../lib";
+@source "../salad_ui";

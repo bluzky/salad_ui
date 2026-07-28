@@ -1,7 +1,17 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import "tailwindcss";
+@import "../../../assets/css/tailwind.theme.css";
 @import "../../../priv/static/assets/salad_ui.css";
+
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+@plugin "../vendor/tailwindcss-animate";
+
+@config "../tailwind.config.js";
+@source "../js";
+@source "../../lib";
+@source "../../storybook";
+@source "../../../lib";
+@source "../../deps/salad_ui/lib";
 
 /* This file is for your main application CSS */
 :root {
