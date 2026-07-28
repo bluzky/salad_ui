@@ -5,15 +5,15 @@ defmodule Storybook.Examples.FormDemo.Item do
   import Ecto.Changeset
 
   schema "items" do
-    field :name, :string
-    field :description, :string
-    field :material, :string
-    field :sellable, :boolean, default: true
-    field :virtual, :boolean, default: false
-    field :color, :string, default: "red"
-    field :scale, :integer, default: 10
-    field :toggle, :boolean
-    field :style, :string
+    field(:name, :string)
+    field(:description, :string)
+    field(:material, :string)
+    field(:sellable, :boolean, default: true)
+    field(:virtual, :boolean, default: false)
+    field(:color, :string, default: "red")
+    field(:scale, :integer, default: 10)
+    field(:toggle, :boolean)
+    field(:style, :string)
   end
 
   def changeset(user, params \\ %{}) do
@@ -64,7 +64,13 @@ defmodule Storybook.Examples.FormDemo do
       <div class="flex flex-col">
         <main class="grid flex-1 gap-4 overflow-auto p-4 grid-cols-1 md:grid-cols-2">
           <div class="relative hidden flex-col items-start gap-8 md:flex">
-            <.form :let={f} for={@form} phx-submit="create_item" class="grid w-full items-start gap-6">
+            <.form
+              :let={f}
+              for={@form}
+              phx-change="validate_item"
+              phx-submit="create_item"
+              class="grid w-full items-start gap-6"
+            >
               <.form_item>
                 <.form_label error={not Enum.empty?(f[:name].errors)}>Item name</.form_label>
                 <.input
@@ -131,7 +137,7 @@ defmodule Storybook.Examples.FormDemo do
 
               <.form_item>
                 <.label>Color</.label>
-                <.select field={f[:color]} id="color-select" name="color">
+                <.select field={f[:color]} id="color-select">
                   <.select_trigger class="w-[180px]">
                     <.select_value placeholder="Select a color" />
                   </.select_trigger>
@@ -206,6 +212,16 @@ defmodule Storybook.Examples.FormDemo do
   end
 
   @impl true
+  def handle_event("validate_item", %{"item" => item_params} = params, socket) do
+    form =
+      %Item{}
+      |> Item.changeset(item_params)
+      |> Map.put(:action, :validate)
+      |> to_form()
+
+    {:noreply, assign(socket, form: form, output: inspect(params, pretty: true, width: 0))}
+  end
+
   def handle_event("create_item", %{"item" => item_params} = params, socket) do
     case %Item{} |> Item.changeset(item_params) |> Ecto.Changeset.apply_action(:insert) do
       {:error, changeset} ->

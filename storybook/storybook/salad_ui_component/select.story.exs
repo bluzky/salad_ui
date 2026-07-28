@@ -41,7 +41,6 @@ defmodule Storybook.SaladUIComponents.Select do
           "on-value-changed": "value_changed",
           "use-portal": false
         },
-        let: :select,
         slots: [
           """
             <.select_trigger class="w-[180px]">
@@ -70,7 +69,6 @@ defmodule Storybook.SaladUIComponents.Select do
           value: "banana",
           "use-portal": false
         },
-        let: :select,
         slots: [
           """
             <.select_trigger class="w-[180px]">
@@ -86,7 +84,7 @@ defmodule Storybook.SaladUIComponents.Select do
       },
       %Variation{
         id: :in_form,
-        description: "A select component used within a form",
+        description: "A select component used within a LiveView form with phx-change",
         attributes: %{
           id: "form-select",
           name: "fruit",
@@ -103,7 +101,6 @@ defmodule Storybook.SaladUIComponents.Select do
           <.button type="submit">Submit</.button>
         </form>
         """,
-        let: :select,
         slots: [
           """
             <.select_trigger class="min-w-64 w-full">
@@ -114,6 +111,33 @@ defmodule Storybook.SaladUIComponents.Select do
                 <.select_item value="apple">Apple</.select_item>
                 <.select_item value="banana">Banana</.select_item>
                 <.select_item value="blueberry">Blueberry</.select_item>
+              </.select_group>
+            </.select_content>
+          """
+        ]
+      },
+      %Variation{
+        id: :multiple_select,
+        description: "A multiple select that submits list params with a [] input name",
+        attributes: %{
+          id: "skills-select",
+          name: "skills",
+          multiple: true,
+          value: ["elixir"],
+          "use-portal": false,
+          "on-value-changed": "value_changed"
+        },
+        slots: [
+          """
+            <.select_trigger class="w-[220px]">
+              <.select_value placeholder="Select skills" />
+            </.select_trigger>
+            <.select_content>
+              <.select_group>
+                <.select_label>Skills</.select_label>
+                <.select_item value="elixir">Elixir</.select_item>
+                <.select_item value="phoenix">Phoenix</.select_item>
+                <.select_item value="liveview">LiveView</.select_item>
               </.select_group>
             </.select_content>
           """

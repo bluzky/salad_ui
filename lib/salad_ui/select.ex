@@ -143,13 +143,11 @@ defmodule SaladUI.Select do
     ~H"""
     <span
       data-part="value"
-      class={
-        classes(["select-value pointer-events-none before:content-[attr(data-content)]", @class])
-      }
+      class={classes(["select-value pointer-events-none", @class])}
       data-content={@placeholder}
       data-placeholder={@placeholder}
       {@rest}
-    ></span>
+    >{@placeholder}</span>
     """
   end
 
@@ -227,7 +225,7 @@ defmodule SaladUI.Select do
     <div
       data-part="item"
       data-value={@value}
-      data-disabled={@disabled}
+      data-disabled={@disabled && "true"}
       class={
         classes([
           "relative flex w-full cursor-default select-none items-center rounded-xs py-1.5 pl-8 pr-2 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",

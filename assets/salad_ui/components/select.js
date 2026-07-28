@@ -1,8 +1,8 @@
 // saladui/components/select.js
-import Component from "../core/component";
-import SaladUI from "../index";
-import Collection from "../core/collection";
-import PositionedElement from "../core/positioned-element";
+import Component from "../core/component.js";
+import SaladUI from "../index.js";
+import Collection from "../core/collection.js";
+import PositionedElement from "../core/positioned-element.js";
 
 /**
  * SelectItem class to manage individual select options
@@ -187,17 +187,12 @@ class SelectComponent extends Component {
       },
       events: {
         closed: {
-          keyEventTarget: "content",
+          keyEventTarget: "trigger",
           keyMap: {
             ArrowDown: "open",
             ArrowUp: "open",
             Enter: "open",
             " ": "open",
-          },
-          mouseMap: {
-            trigger: {
-              click: "toggle",
-            },
           },
         },
         open: {
@@ -240,12 +235,32 @@ class SelectComponent extends Component {
     };
   }
 
+  setupComponentEvents() {
+    super.setupComponentEvents();
+
+    this.handleTriggerClick = (event) => {
+      event.preventDefault();
+      if (this.disabled) return;
+
+      this.transition(this.state === "open" ? "close" : "open");
+    };
+
+    this.trigger?.addEventListener("click", this.handleTriggerClick);
+  }
+
+  teardownComponentEvents() {
+    super.teardownComponentEvents();
+
+    this.trigger?.removeEventListener("click", this.handleTriggerClick);
+    this.handleTriggerClick = null;
+  }
+
   initializeItems() {
     const itemElements = Array.from(
       this.el.querySelectorAll("[data-part='item']"),
     );
 
-    itemElements.map((element) => {
+    itemElements.forEach((element) => {
       // Create a SelectItem instance for each item
       const value = element.dataset.value;
 
@@ -259,6 +274,7 @@ class SelectComponent extends Component {
 
     // Update value display based on initial selection
     this.updateValueDisplay();
+    this.syncHiddenInputs();
   }
 
   initializePlaceholder() {
@@ -325,6 +341,8 @@ class SelectComponent extends Component {
     if (this.positionedElement) {
       this.positionedElement.deactivate();
     }
+
+    this.trigger?.focus({ preventScroll: true });
   }
 
   // Item management
@@ -337,6 +355,10 @@ class SelectComponent extends Component {
 
     // Update value display
     this.updateValueDisplay();
+
+    // Keep forms in sync immediately, not only after close
+    this.syncHiddenInputs();
+    this.dispatchFormEvents();
 
     // Close dropdown if single select
     if (!this.multiple) {
@@ -364,31 +386,34 @@ class SelectComponent extends Component {
 
     if (selectedValues.length === 0) {
       // No selection, show placeholder
-      this.valueDisplay.setAttribute("data-content", placeholder);
+      this.setValueDisplayText(placeholder);
     } else if (this.multiple) {
       // Multiple selection
       if (selectedValues.length === 1) {
         // Get the label from the selected item
         const selectedItem = this.collection.getItemByValue(selectedValues[0]);
-        this.valueDisplay.setAttribute(
-          "data-content",
-          selectedItem.instance.label,
+        this.setValueDisplayText(
+          selectedItem?.instance.label || selectedValues[0],
         );
       } else {
         // Show count for multiple selections
-        this.valueDisplay.setAttribute(
-          "data-content",
-          `${selectedValues.length} items selected`,
-        );
+        this.setValueDisplayText(`${selectedValues.length} items selected`);
       }
     } else {
       // Single selection - get label from the selected item
       const selectedItem = this.collection.getItemByValue(selectedValues[0]);
-      this.valueDisplay.setAttribute(
-        "data-content",
-        selectedItem.instance.label,
+      this.setValueDisplayText(
+        selectedItem?.instance.label || selectedValues[0],
       );
     }
+  }
+
+  setValueDisplayText(text) {
+    if (!this.valueDisplay) return;
+
+    const value = text || "";
+    this.valueDisplay.textContent = value;
+    this.valueDisplay.setAttribute("data-content", value);
   }
 
   // Navigation methods
@@ -414,7 +439,7 @@ class SelectComponent extends Component {
 
   highlightFirstSelectedOrFirstItem() {
     // Try to highlight the first selected item
-    const selectedValue = this.collection.getValue();
+    const selectedValue = this.collection.getValue(true)[0];
 
     const selectedItem =
       this.collection.getItemByValue(selectedValue) ||
@@ -428,29 +453,53 @@ class SelectComponent extends Component {
   syncHiddenInputs() {
     // Get the selected values
     const values = this.collection.getValue(true);
-    const name = this.options.name || "";
+    const name = this.getInputName();
 
     // Remove existing hidden inputs
-    const existingInputs = this.el.querySelectorAll("input[type='hidden']");
+    const existingInputs = this.el.querySelectorAll(
+      "input[type='hidden'][data-salad-ui-select-input='true']",
+    );
     existingInputs.forEach((input) => input.remove());
+
+    if (!name) return;
 
     // Create new hidden inputs
     if (this.multiple) {
       values.forEach((value) => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = name;
-        input.value = value;
-        this.el.appendChild(input);
+        this.el.appendChild(this.createHiddenInput(name, value));
       });
     } else if (values.length > 0) {
       // Single select - create one input
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = name;
-      input.value = values[0];
-      this.el.appendChild(input);
+      this.el.appendChild(this.createHiddenInput(name, values[0]));
     }
+  }
+
+  getInputName() {
+    const name = this.options.name || "";
+    if (!this.multiple || !name || name.endsWith("[]")) return name;
+
+    return `${name}[]`;
+  }
+
+  createHiddenInput(name, value) {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = name;
+    input.value = value;
+    input.dataset.saladUiSelectInput = "true";
+    return input;
+  }
+
+  dispatchFormEvents() {
+    const form = this.el.closest("form");
+    if (!form) return;
+
+    const target =
+      this.el.querySelector(
+        "input[type='hidden'][data-salad-ui-select-input='true']",
+      ) || form;
+
+    target.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   // Cleanup
