@@ -149,7 +149,7 @@ test("SSR-open state activates dialog and wires accessible labels", async () => 
   component.destroy();
 });
 
-test("LiveView hook updates preserve client-open dialog state", () => {
+test("LiveView hook updates remount dialog from server-rendered state", () => {
   const { el, trigger } = buildDialog();
   const hook = createHookInstance(el);
   hook.mounted();
@@ -160,9 +160,8 @@ test("LiveView hook updates preserve client-open dialog state", () => {
 
   assert.equal(original.destroyed, true);
   assert.notEqual(hook.component, original);
-  assert.equal(hook.component.state, "open");
-  assert.equal(el.querySelector('[data-part="content"]').hidden, false);
-  assert.equal(el.dataset.saladuiPreservedState, undefined);
+  assert.equal(hook.component.state, "closed");
+  assert.equal(el.querySelector('[data-part="content"]').hidden, true);
   hook.destroyed();
 });
 

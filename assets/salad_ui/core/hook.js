@@ -36,12 +36,9 @@ const SaladUIHook = {
 
   updated() {
     if (this.component) {
-      const preservedState = this.component.getUpdateState?.() ?? null;
-
-      this.component.destroy({ preserveState: preservedState !== null });
+      this.component.destroy();
       this.component = null;
-
-      this.initComponent({ initialStateOverride: preservedState });
+      this.initComponent();
     }
   },
 

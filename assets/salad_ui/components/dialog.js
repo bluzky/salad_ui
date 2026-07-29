@@ -5,54 +5,35 @@ import FocusTrap from "../core/focus-trap.js";
 import ClickOutsideMonitor from "../core/click-outside.js";
 
 class DialogComponent extends Component {
-  constructor(el, hookContext, { initialStateOverride = null } = {}) {
+  constructor(el, hookContext) {
     super(el, {
       hookContext,
       initialState: "closed",
-      initialStateOverride,
     });
 
     // Initialize properties
     this.root = this.el;
     this.content = this.getPart("content");
     this.contentPanel = this.getPart("content-panel");
-    this.serverState = this.getServerState();
     this.config.preventDefaultKeys = ["Escape"];
   }
 
   afterMount() {
     const requestedState =
-      this.initialStateOverride ||
-      (this.el.dataset.open === undefined
+      this.el.dataset.open === undefined
         ? this.el.dataset.state || "closed"
         : this.el.dataset.open === "true"
           ? "open"
-          : "closed");
+          : "closed";
 
     if (requestedState === this.state) {
       if (this.state === "open") {
-        this.onOpenEnter({ notify: this.initialStateOverride === null });
+        this.onOpenEnter();
       }
       return;
     }
 
     this.transition(requestedState === "open" ? "open" : "close");
-  }
-
-  getServerState() {
-    if (this.el.dataset.open === undefined) return null;
-
-    return this.el.dataset.open === "true" ? "open" : "closed";
-  }
-
-  getUpdateState() {
-    const nextServerState = this.getServerState();
-
-    if (nextServerState === null || nextServerState === this.serverState) {
-      return this.state;
-    }
-
-    return null;
   }
 
   getComponentConfig() {
@@ -193,9 +174,9 @@ class DialogComponent extends Component {
     if (notify) this.pushEvent("opened");
   }
 
-  beforeDestroy({ preserveState = false } = {}) {
+  beforeDestroy() {
     // Clean up focus trap
-    this.focusTrap?.destroy({ restoreFocus: !preserveState });
+    this.focusTrap?.destroy();
     this.focusTrap = null;
   }
 }

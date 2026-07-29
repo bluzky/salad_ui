@@ -32,12 +32,7 @@ import { animateTransition, queryDOM } from "./utils.js";
  */
 class Component {
   constructor(el, options) {
-    const {
-      hookContext,
-      initialState = "idle",
-      initialStateOverride = null,
-      ignoreItems = true,
-    } = options;
+    const { hookContext, initialState = "idle", ignoreItems = true } = options;
 
     this.el = el;
     this.hook = hookContext;
@@ -47,7 +42,6 @@ class Component {
     };
 
     this.initialState = initialState;
-    this.initialStateOverride = initialStateOverride;
     this.eventConfig = {};
     this.componentConfig = {};
     this.hiddenConfig = {};
@@ -86,9 +80,7 @@ class Component {
       const optionsString = this.el.getAttribute("data-options");
       this.options = optionsString ? JSON.parse(optionsString) : {};
       this.initialState =
-        this.initialStateOverride ||
-        this.el.getAttribute("data-state") ||
-        this.initialState;
+        this.el.getAttribute("data-state") || this.initialState;
     } catch (error) {
       console.error("SaladUI: Error parsing component options:", error);
       this.options = {};
@@ -562,14 +554,6 @@ class Component {
    * counterpart and also runs if setupEvents() is ever re-invoked.
    */
   beforeDestroy() {}
-
-  /**
-   * Return state that should survive a LiveView hook remount. Components
-   * opt in by overriding this method; `null` means server-rendered state wins.
-   */
-  getUpdateState() {
-    return null;
-  }
 
   // Alias for transition()
   handleCommand(command, params = {}) {
