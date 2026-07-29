@@ -1,8 +1,8 @@
 // saladui/components/dialog.js
-import Component from "../core/component";
-import SaladUI from "../index";
-import FocusTrap from "../core/focus-trap";
-import ClickOutsideMonitor from "../core/click-outside";
+import Component from "../core/component.js";
+import SaladUI from "../index.js";
+import FocusTrap from "../core/focus-trap.js";
+import ClickOutsideMonitor from "../core/click-outside.js";
 
 class DialogComponent extends Component {
   constructor(el, hookContext) {
@@ -16,7 +16,22 @@ class DialogComponent extends Component {
   }
 
   afterMount() {
-    this.transition(this.el.dataset.open == "true" ? "open" : "close");
+    const requestedState =
+      this.el.dataset.saladuiPreservedState ||
+      (this.el.dataset.open === undefined
+        ? this.el.dataset.state || "closed"
+        : this.el.dataset.open === "true"
+          ? "open"
+          : "closed");
+
+    delete this.el.dataset.saladuiPreservedState;
+
+    if (requestedState === this.state) {
+      if (this.state === "open") this.onOpenEnter();
+      return;
+    }
+
+    this.transition(requestedState === "open" ? "open" : "close");
   }
 
   getComponentConfig() {
@@ -56,19 +71,19 @@ class DialogComponent extends Component {
       },
       ariaConfig: {
         content: {
-          all: {
-            role: this.options.role || "dialog",
-          },
           open: {
             hidden: "false",
-            modal: "true",
           },
           closed: {
             hidden: "true",
           },
         },
         "content-panel": {
+          all: {
+            role: this.options.role || "dialog",
+          },
           open: {
+            modal: "true",
             labelledby: () => this.getPartId("title"),
             describedby: () => this.getPartId("description"),
           },

@@ -37,6 +37,7 @@ defmodule SaladUI.DialogTest do
         """)
 
       assert html =~ "Edit profile\n</h3>"
+      assert html =~ ~s(data-part="title")
 
       for css_class <- ~w(text-lg font-semibold leading-none tracking-tight) do
         assert html =~ css_class
@@ -54,6 +55,7 @@ defmodule SaladUI.DialogTest do
         """)
 
       assert html =~ "Make changes to your profile here click save when you're done\n\n</p>"
+      assert html =~ ~s(data-part="description")
 
       for css_class <- ~w(text-sm text-muted-foreground) do
         assert html =~ css_class

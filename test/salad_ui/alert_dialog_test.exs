@@ -26,7 +26,7 @@ defmodule SaladUI.AlertDialogTest do
 
       assert html =~ ~s(id="test-dialog")
       assert html =~ "Content"
-      assert html =~ ~s(class="inline-block relative")
+      assert html =~ ~s(class="relative z-50 group/alert-dialog")
     end
 
     test "renders with open state" do
@@ -41,6 +41,7 @@ defmodule SaladUI.AlertDialogTest do
 
       assert html =~ ~s(id="test-dialog")
       assert html =~ "Content"
+      assert html =~ ~s(data-state="open")
     end
 
     test "raises when missing required inner_block" do
@@ -55,18 +56,19 @@ defmodule SaladUI.AlertDialogTest do
   end
 
   describe "alert_dialog_trigger/1" do
-    test "renders trigger with builder" do
+    test "renders trigger" do
       assigns = assign_builder()
 
       html =
         rendered_to_string(~H"""
-        <.alert_dialog_trigger builder={%{id: "test-dialog"}}>
+        <.alert_dialog_trigger>
           <button>Open Dialog</button>
         </.alert_dialog_trigger>
         """)
 
       assert html =~ "Open Dialog"
-      assert html =~ ~s(phx-click)
+      assert html =~ ~s(data-part="trigger")
+      assert html =~ ~s(data-action="open")
     end
 
     test "renders with custom class" do
@@ -74,7 +76,7 @@ defmodule SaladUI.AlertDialogTest do
 
       html =
         rendered_to_string(~H"""
-        <.alert_dialog_trigger builder={%{id: "test-dialog"}} class="custom-class">
+        <.alert_dialog_trigger class="custom-class">
           <button>Open Dialog</button>
         </.alert_dialog_trigger>
         """)
@@ -82,16 +84,17 @@ defmodule SaladUI.AlertDialogTest do
       assert html =~ "custom-class"
     end
 
-    test "raises when missing required builder" do
+    test "renders without a deprecated builder assign" do
       assigns = assign_builder()
 
-      assert_raise KeyError, ~r/key :builder not found/, fn ->
+      html =
         rendered_to_string(~H"""
         <.alert_dialog_trigger>
           <button>Open Dialog</button>
         </.alert_dialog_trigger>
         """)
-      end
+
+      assert html =~ "Open Dialog"
     end
   end
 
@@ -101,27 +104,28 @@ defmodule SaladUI.AlertDialogTest do
 
       html =
         rendered_to_string(~H"""
-        <.alert_dialog_content builder={%{open: false}}>
+        <.alert_dialog_content>
           <div>Dialog Content</div>
         </.alert_dialog_content>
         """)
 
-      assert html =~ ~s(data-state="closed")
+      assert html =~ ~s(data-part="content")
+      assert html =~ "hidden"
       assert html =~ "Dialog Content"
-      assert html =~ "alert-dialog-content"
     end
 
-    test "renders content with open state" do
+    test "renders content structure" do
       assigns = assign_builder()
 
       html =
         rendered_to_string(~H"""
-        <.alert_dialog_content builder={%{open: true}}>
+        <.alert_dialog_content>
           <div>Dialog Content</div>
         </.alert_dialog_content>
         """)
 
-      assert html =~ ~s(data-state="open")
+      assert html =~ ~s(data-part="overlay")
+      assert html =~ ~s(data-part="content-panel")
     end
 
     test "renders with custom class" do
@@ -129,7 +133,7 @@ defmodule SaladUI.AlertDialogTest do
 
       html =
         rendered_to_string(~H"""
-        <.alert_dialog_content builder={%{open: false}} class="custom-class">
+        <.alert_dialog_content class="custom-class">
           <div>Dialog Content</div>
         </.alert_dialog_content>
         """)
@@ -270,13 +274,14 @@ defmodule SaladUI.AlertDialogTest do
 
       html =
         rendered_to_string(~H"""
-        <.alert_dialog_cancel builder={%{id: "test-dialog"}}>
+        <.alert_dialog_cancel>
           Cancel
         </.alert_dialog_cancel>
         """)
 
       assert html =~ "Cancel"
-      assert html =~ "phx-click"
+      assert html =~ ~s(data-part="cancel")
+      assert html =~ ~s(data-action="close")
 
       for class <- ~w(mt-2 sm:mt-0) do
         assert html =~ class
@@ -288,7 +293,7 @@ defmodule SaladUI.AlertDialogTest do
 
       html =
         rendered_to_string(~H"""
-        <.alert_dialog_cancel builder={%{id: "test-dialog"}} class="custom-class">
+        <.alert_dialog_cancel class="custom-class">
           Cancel
         </.alert_dialog_cancel>
         """)
@@ -296,16 +301,17 @@ defmodule SaladUI.AlertDialogTest do
       assert html =~ "custom-class"
     end
 
-    test "raises when missing required builder" do
+    test "renders without a deprecated builder assign" do
       assigns = assign_builder()
 
-      assert_raise KeyError, ~r/key :builder not found/, fn ->
+      html =
         rendered_to_string(~H"""
         <.alert_dialog_cancel>
           Cancel
         </.alert_dialog_cancel>
         """)
-      end
+
+      assert html =~ "Cancel"
     end
   end
 
@@ -345,10 +351,10 @@ defmodule SaladUI.AlertDialogTest do
       html =
         rendered_to_string(~H"""
         <.alert_dialog id="test-dialog">
-          <.alert_dialog_trigger builder={%{id: "test-dialog"}}>
+          <.alert_dialog_trigger>
             <button>Open Dialog</button>
           </.alert_dialog_trigger>
-          <.alert_dialog_content builder={%{open: false}}>
+          <.alert_dialog_content>
             <.alert_dialog_header>
               <.alert_dialog_title>Confirmation</.alert_dialog_title>
               <.alert_dialog_description>
@@ -356,7 +362,7 @@ defmodule SaladUI.AlertDialogTest do
               </.alert_dialog_description>
             </.alert_dialog_header>
             <.alert_dialog_footer>
-              <.alert_dialog_cancel builder={%{id: "test-dialog"}}>Cancel</.alert_dialog_cancel>
+              <.alert_dialog_cancel>Cancel</.alert_dialog_cancel>
               <.alert_dialog_action>Continue</.alert_dialog_action>
             </.alert_dialog_footer>
           </.alert_dialog_content>

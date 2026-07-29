@@ -4,7 +4,17 @@ import { registry } from "./factory.js";
 const SaladUIHook = {
   mounted() {
     this.initComponent();
+    this.dialogServerState = this.getDialogServerState();
     this.setupServerEvents();
+  },
+
+  getDialogServerState() {
+    if (this.el.getAttribute("data-component") !== "dialog") return null;
+
+    const open = this.el.dataset.open;
+    if (open === undefined) return null;
+
+    return open === "true" ? "open" : "closed";
   },
 
   initComponent() {
@@ -36,9 +46,24 @@ const SaladUIHook = {
 
   updated() {
     if (this.component) {
+      const isDialog = this.el.getAttribute("data-component") === "dialog";
+      const nextDialogServerState = this.getDialogServerState();
+      const preservedState =
+        isDialog &&
+        (nextDialogServerState === null ||
+          nextDialogServerState === this.dialogServerState)
+          ? this.component.state
+          : null;
+
       this.component.destroy();
       this.component = null;
+
+      if (preservedState) {
+        this.el.dataset.saladuiPreservedState = preservedState;
+      }
+
       this.initComponent();
+      this.dialogServerState = this.getDialogServerState();
       //   this.component.parseOptions();
       //   this.component.setupEvents();
       //   this.component.updatePartsVisibility();
@@ -49,6 +74,7 @@ const SaladUIHook = {
   destroyed() {
     this.component?.destroy();
     this.component = null;
+    this.dialogServerState = null;
   },
 };
 

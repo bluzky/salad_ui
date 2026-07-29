@@ -23,7 +23,7 @@ defmodule SaladUI.Patcher.TailwindPatcherTest do
       assert patched_content =~ ~s(@source "../../lib";)
       assert patched_content =~ ~s(@source "../../deps/salad_ui/lib";)
       assert patched_content =~ ~s(@plugin "@tailwindcss/typography";)
-      assert patched_content =~ ~s(@plugin "../vendor/tailwindcss-animate";)
+      assert patched_content =~ ~s(@import "../vendor/tw-animate.css";)
       assert patched_content =~ "@theme {"
       assert patched_content =~ "--color-background: hsl(var(--background));"
     end
@@ -35,7 +35,7 @@ defmodule SaladUI.Patcher.TailwindPatcherTest do
       @source "../../lib";
       @source "../../deps/salad_ui/lib";
       @plugin "@tailwindcss/typography";
-      @plugin "../vendor/tailwindcss-animate";
+      @import "../vendor/tw-animate.css";
       @theme {
         --color-background: hsl(var(--background));
       }
@@ -52,7 +52,7 @@ defmodule SaladUI.Patcher.TailwindPatcherTest do
       assert count(patched_content, ~s(@source "../../lib";)) == 1
       assert count(patched_content, ~s(@source "../../deps/salad_ui/lib";)) == 1
       assert count(patched_content, ~s(@plugin "@tailwindcss/typography";)) == 1
-      assert count(patched_content, ~s(@plugin "../vendor/tailwindcss-animate";)) == 1
+      assert count(patched_content, ~s(@import "../vendor/tw-animate.css";)) == 1
       assert count(patched_content, "--color-background:") == 1
     end
 

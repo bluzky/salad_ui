@@ -14,7 +14,6 @@
     "@tailwindcss/typography": "^0.5.16",
     "eslint": "^10.8.0",
     "jsdom": "^29.1.1",
-    "prettier": "^3.9.6",
-    "tailwindcss-animate": "^1.0.7"
+    "prettier": "^3.9.6"
   }
 }

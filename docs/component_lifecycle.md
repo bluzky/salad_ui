@@ -147,9 +147,12 @@ updated() {
 
 This means every LiveView patch to a component's root element — even an
 unrelated one — runs the full destroy phase and then the full mount phase
-again, on a brand new instance. Anything you rely on surviving a patch
-(e.g., in-memory state not reflected in `data-*` attributes) will be lost
-unless the server re-renders it into the DOM.
+again, on a brand new instance. `SaladUIHook` snapshots dialog state in a
+temporary `data-saladui-preserved-state` attribute before this remount, so
+a client-open dialog remains open after an unrelated patch. A changed
+`data-open` value still takes precedence, allowing a server patch to change
+dialog state. Other component state must be re-rendered by server into DOM to
+survive a patch.
 
 ```mermaid
 sequenceDiagram
@@ -249,9 +252,22 @@ class DialogComponent extends Component {
   }
 
   afterMount() {
-    // Listeners are live now, so it's safe to trigger the initial
-    // open/closed transition here.
-    this.transition(this.el.dataset.open == "true" ? "open" : "close");
+    const requestedState =
+      this.el.dataset.saladuiPreservedState ||
+      (this.el.dataset.open === undefined
+        ? this.el.dataset.state || "closed"
+        : this.el.dataset.open === "true"
+          ? "open"
+          : "closed");
+
+    delete this.el.dataset.saladuiPreservedState;
+
+    if (requestedState === this.state) {
+      if (this.state === "open") this.onOpenEnter();
+      return;
+    }
+
+    this.transition(requestedState === "open" ? "open" : "close");
   }
 
   setupComponentEvents() {
