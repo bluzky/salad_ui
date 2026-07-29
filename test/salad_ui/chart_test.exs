@@ -1,7 +1,7 @@
 defmodule SaladUI.ChartTest do
   use ComponentCase
 
-  alias SaladUI.LiveChart
+  import SaladUI.Chart
 
   @sample_config %{
     labels: ["Jan", "Feb", "Mar"],
@@ -21,15 +21,22 @@ defmodule SaladUI.ChartTest do
       assigns = %{
         id: "test-chart",
         name: "Test Chart",
-        chart_config: @sample_config,
+        chart_options: @sample_config,
         chart_data: @sample_data
       }
 
       html =
-        render_component(LiveChart, assigns)
+        rendered_to_string(~H"""
+        <.chart
+          id={@id}
+          name={@name}
+          chart-options={@chart_options}
+          chart-data={@chart_data}
+        />
+        """)
 
       assert html =~ ~s(id="test-chart")
-      assert html =~ ~s(phx-hook="ChartHook")
+      assert html =~ ~s(phx-hook="SaladUI")
       assert html =~ ~s(role="img")
       assert html =~ ~s(aria-label="Test Chart")
     end

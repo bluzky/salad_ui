@@ -1,192 +1,66 @@
 // saladui/core/collection.js
 /**
- * Collection utility for SaladUI components
- * Manages collections of items with focus, highlight, and selection states
+ * Collection primitives for item-based components.
+ *
+ * CollectionRegistry owns item order and disabled filtering.
+ * RovingFocus owns focused-item bookkeeping.
+ * Selection owns selected value state.
  */
-class Collection {
-  /**
-   * Create a collection manager
-   *
-   * @param {Object} options - Configuration options
-   * @param {string} options.type - Collection type: 'single' or 'multiple'
-   * @param {Array|*} options.defaultValue - Default value(s) if none provided
-   * @param {Array|*} options.value - Initial value(s) for the collection
-   * @param {function} options.getItemValue - Function to get value from an item instance
-   * @param {function} options.isItemDisabled - Function to check if an item is disabled
-   */
+
+class CollectionRegistry {
   constructor(options = {}) {
     this.options = {
-      type: "single",
-      defaultValue: null,
-      value: null,
       getItemValue: (item) => item.value,
       isItemDisabled: (item) => item.disabled,
       ...options,
     };
-
-    // Initialize collection
     this.items = [];
-    this.focusedItem = null;
-
-    // Initialize values
-    this.values = [];
-    if (this.options.value !== null && this.options.value !== undefined) {
-      this.setValues(this.options.value);
-    } else if (
-      this.options.defaultValue !== null &&
-      this.options.defaultValue !== undefined
-    ) {
-      this.setValues(this.options.defaultValue);
-    }
   }
 
-  /**
-   * Reset the collection
-   */
-  reset() {
-    this.items = [];
-    this.values = Array.isArray(this.options.defaultValue)
-      ? [...this.options.defaultValue]
-      : this.options.defaultValue
-        ? [this.options.defaultValue]
-        : [];
-    this.focusedItem = null;
+  isDisabled(item) {
+    return this.options.isItemDisabled(item.instance);
   }
 
-  /**
-   * Set collection values
-   *
-   * @param {Array|*} values - Value or array of values
-   */
-  setValues(values) {
-    if (values === undefined || values === null) {
-      this.values = Array.isArray(this.options.defaultValue)
-        ? [...this.options.defaultValue]
-        : this.options.defaultValue
-          ? [this.options.defaultValue]
-          : [];
-      return;
-    }
-
-    if (this.options.type === "single") {
-      this.values = Array.isArray(values) ? [values[0]] : [values];
-    } else {
-      this.values = Array.isArray(values) ? [...values] : [values];
-    }
-
-    // Update selected state for all items
-    this.updateSelectedStates();
-  }
-
-  /**
-   * Get the selected value(s)
-   * For 'multiple' type collections, returns an array of all selected values
-   * For 'single' type collections, returns just the first selected value (or null if none)
-   *
-   * @param {boolean} asArray - Force return value to be an array even for single selection
-   * @returns {*|Array} Selected value(s)
-   */
-  getValue(asArray = false) {
-    if (this.options.type === "multiple" || asArray) {
-      return [...this.values];
-    }
-    return this.values.length > 0 ? this.values[0] : null;
-  }
-
-  /**
-   * Add an item to the collection
-   *
-   * @param {Object} item - Item instance to add
-   * @param {*} value - Item value
-   * @returns {Object} The collection item wrapper
-   */
   add(item) {
-    const itemValue = this.options.getItemValue(item);
-
-    const isSelected = this.values.includes(itemValue);
-
     const collectionItem = {
       instance: item,
-      value: itemValue,
+      value: this.options.getItemValue(item),
       focused: false,
-      selected: isSelected,
+      selected: false,
     };
 
     this.items.push(collectionItem);
-
-    // Initialize item state
-    if (isSelected && typeof item.handleEvent === "function") {
-      item.handleEvent("select");
-    }
-
     return collectionItem;
   }
 
-  /**
-   * Remove an item from the collection
-   *
-   * @param {Object} itemInstance - Item instance to remove
-   */
   remove(itemInstance) {
     const index = this.items.findIndex(
       (item) => item.instance === itemInstance,
     );
-    if (index >= 0) {
-      const [removedItem] = this.items.splice(index, 1);
+    if (index < 0) return null;
 
-      if (this.focusedItem === removedItem) {
-        this.focusedItem = null;
-      }
-
-      // Remove from values if selected
-      if (removedItem.selected) {
-        this.values = this.values.filter(
-          (value) => value !== removedItem.value,
-        );
-      }
-    }
+    const [removedItem] = this.items.splice(index, 1);
+    return removedItem;
   }
 
-  /**
-   * Clear all items from the collection
-   */
   clear() {
     this.items = [];
-    this.focusedItem = null;
   }
 
-  /**
-   * Get item by its instance
-   *
-   * @param {Object} itemInstance - Item instance to find
-   * @returns {Object} Collection item or null if not found
-   */
+  enabledItems() {
+    return this.items.filter((item) => !this.isDisabled(item));
+  }
+
   getItemByInstance(itemInstance) {
     return this.items.find((item) => item.instance === itemInstance) || null;
   }
 
-  /**
-   * Get item by its value
-   *
-   * @param {*} value - Value to find
-   * @returns {Object} Collection item or null if not found
-   */
   getItemByValue(value) {
     return this.items.find((item) => item.value === value) || null;
   }
 
-  /**
-   * Get an item from the collection based on navigation direction
-   *
-   * @param {string} direction - Navigation direction: 'first', 'last', 'next', or 'prev'/'previous'
-   * @param {Object} referenceItem - Reference item for 'next' and 'prev' directions (optional)
-   * @param {boolean} loop - Whether to loop when reaching boundaries (optional, default: true)
-   * @returns {Object} The requested item or null if not found
-   */
   getItem(direction, referenceItem = null, loop = true) {
-    const enabledItems = this.items.filter(
-      (item) => !this.options.isItemDisabled(item.instance),
-    );
+    const enabledItems = this.enabledItems();
     if (enabledItems.length === 0) return null;
 
     switch (direction) {
@@ -225,16 +99,31 @@ class Collection {
     }
   }
 
-  /**
-   * Focus an item
-   *
-   * @param {Object} item - Item to focus
-   * @returns {boolean} Whether the operation was successful
-   */
-  focus(item) {
-    if (!item || this.options.isItemDisabled(item.instance)) return false;
+  each(callback) {
+    this.items.forEach((item) => callback(item.instance));
+  }
+}
 
-    // Clear previous focus
+class RovingFocus {
+  constructor(registry) {
+    this.registry = registry;
+    this.focusedItem = null;
+  }
+
+  reset() {
+    this.focusedItem = null;
+  }
+
+  remove(item) {
+    if (this.focusedItem === item) {
+      this.focusedItem = null;
+    }
+  }
+
+  focus(item) {
+    if (!item || this.registry.isDisabled(item)) return false;
+    if (this.focusedItem === item) return true;
+
     if (this.focusedItem) {
       this.focusedItem.focused = false;
       if (typeof this.focusedItem.instance.handleEvent === "function") {
@@ -242,7 +131,6 @@ class Collection {
       }
     }
 
-    // Set new focus
     this.focusedItem = item;
     item.focused = true;
 
@@ -252,26 +140,80 @@ class Collection {
 
     return true;
   }
+}
 
-  /**
-   * Select an item
-   *
-   * @param {Object} item - Item to select
-   * @returns {boolean} Whether the operation was successful
-   */
+class Selection {
+  constructor(registry, options = {}) {
+    this.registry = registry;
+    this.options = {
+      type: "single",
+      defaultValue: null,
+      value: null,
+      ...options,
+    };
+
+    this.values = [];
+    if (this.options.value !== null && this.options.value !== undefined) {
+      this.setValues(this.options.value);
+    } else if (
+      this.options.defaultValue !== null &&
+      this.options.defaultValue !== undefined
+    ) {
+      this.setValues(this.options.defaultValue);
+    }
+  }
+
+  reset() {
+    this.values = this.normalizeValues(this.options.defaultValue);
+  }
+
+  remove(item) {
+    if (item?.selected) {
+      this.values = this.values.filter((value) => value !== item.value);
+    }
+  }
+
+  normalizeValues(values) {
+    if (values === undefined || values === null) return [];
+
+    if (this.options.type === "single") {
+      return Array.isArray(values) ? [values[0]] : [values];
+    }
+
+    return Array.isArray(values) ? [...values] : [values];
+  }
+
+  setValues(values) {
+    this.values = this.normalizeValues(values ?? this.options.defaultValue);
+    this.updateSelectedStates();
+  }
+
+  getValue(asArray = false) {
+    if (this.options.type === "multiple" || asArray) {
+      return [...this.values];
+    }
+    return this.values.length > 0 ? this.values[0] : null;
+  }
+
+  initializeItem(item) {
+    item.selected = this.values.includes(item.value);
+
+    if (item.selected && typeof item.instance.handleEvent === "function") {
+      item.instance.handleEvent("select");
+    }
+  }
+
   select(item) {
-    if (!item || this.options.isItemDisabled(item.instance)) return false;
+    if (!item || this.registry.isDisabled(item)) return false;
 
     const isMultiple = this.options.type === "multiple";
 
-    // If it's already selected in single mode, do nothing
     if (!isMultiple && item.selected && this.values.length === 1) {
       return true;
     }
 
-    // For single selection, clear all other selections
     if (!isMultiple) {
-      this.items.forEach((existingItem) => {
+      this.registry.items.forEach((existingItem) => {
         if (existingItem !== item && existingItem.selected) {
           existingItem.selected = false;
           if (typeof existingItem.instance.handleEvent === "function") {
@@ -282,9 +224,7 @@ class Collection {
       this.values = [];
     }
 
-    // Toggle selection for the item
     if (item.selected) {
-      // Unselect the item
       item.selected = false;
       this.values = this.values.filter((value) => value !== item.value);
 
@@ -292,7 +232,6 @@ class Collection {
         return item.instance.handleEvent("unselect") !== false;
       }
     } else {
-      // Select the item
       item.selected = true;
       this.values.push(item.value);
 
@@ -304,11 +243,8 @@ class Collection {
     return true;
   }
 
-  /**
-   * Update all item selected states based on values
-   */
   updateSelectedStates() {
-    this.items.forEach((item) => {
+    this.registry.items.forEach((item) => {
       const shouldBeSelected = this.values.includes(item.value);
 
       if (item.selected !== shouldBeSelected) {
@@ -321,19 +257,94 @@ class Collection {
     });
   }
 
-  /**
-   * Check if a value is selected
-   *
-   * @param {*} value - Value to check
-   * @returns {boolean} Whether the value is selected
-   */
   isValueSelected(value) {
     return this.values.includes(value);
   }
+}
+
+class Collection {
+  constructor(options = {}) {
+    this.registry = new CollectionRegistry(options);
+    this.rovingFocus = new RovingFocus(this.registry);
+    this.selection = new Selection(this.registry, options);
+  }
+
+  get items() {
+    return this.registry.items;
+  }
+
+  get focusedItem() {
+    return this.rovingFocus.focusedItem;
+  }
+
+  get values() {
+    return this.selection.values;
+  }
+
+  reset() {
+    this.registry.clear();
+    this.rovingFocus.reset();
+    this.selection.reset();
+  }
+
+  setValues(values) {
+    this.selection.setValues(values);
+  }
+
+  getValue(asArray = false) {
+    return this.selection.getValue(asArray);
+  }
+
+  add(item) {
+    const collectionItem = this.registry.add(item);
+    this.selection.initializeItem(collectionItem);
+    return collectionItem;
+  }
+
+  remove(itemInstance) {
+    const removedItem = this.registry.remove(itemInstance);
+    this.rovingFocus.remove(removedItem);
+    this.selection.remove(removedItem);
+    return removedItem;
+  }
+
+  clear() {
+    this.registry.clear();
+    this.rovingFocus.reset();
+  }
+
+  getItemByInstance(itemInstance) {
+    return this.registry.getItemByInstance(itemInstance);
+  }
+
+  getItemByValue(value) {
+    return this.registry.getItemByValue(value);
+  }
+
+  getItem(direction, referenceItem = null, loop = true) {
+    return this.registry.getItem(direction, referenceItem, loop);
+  }
+
+  focus(item) {
+    return this.rovingFocus.focus(item);
+  }
+
+  select(item) {
+    return this.selection.select(item);
+  }
+
+  updateSelectedStates() {
+    return this.selection.updateSelectedStates();
+  }
+
+  isValueSelected(value) {
+    return this.selection.isValueSelected(value);
+  }
 
   each(callback) {
-    this.items.forEach((item) => callback(item.instance));
+    this.registry.each(callback);
   }
 }
 
 export default Collection;
+export { CollectionRegistry, RovingFocus, Selection };

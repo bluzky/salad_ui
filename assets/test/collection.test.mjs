@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import Collection from "../salad_ui/core/collection.js";
+import Collection, {
+  CollectionRegistry,
+  RovingFocus,
+  Selection,
+} from "../salad_ui/core/collection.js";
 
 class FakeItem {
   constructor(value, { disabled = false } = {}) {
@@ -16,141 +20,193 @@ class FakeItem {
   }
 }
 
-test("single selection: selecting a new item unselects the previous one", () => {
-  const collection = new Collection({ type: "single" });
-  const a = collection.add(new FakeItem("a"));
-  const b = collection.add(new FakeItem("b"));
+test("CollectionRegistry: first/last/next/prev skip disabled items and loop by default", () => {
+  const registry = new CollectionRegistry();
+  const a = registry.add(new FakeItem("a"));
+  registry.add(new FakeItem("b", { disabled: true }));
+  const c = registry.add(new FakeItem("c"));
 
-  collection.select(a);
-  assert.equal(a.selected, true);
-  assert.equal(collection.getValue(), "a");
-
-  collection.select(b);
-  assert.equal(a.selected, false);
-  assert.equal(b.selected, true);
-  assert.equal(collection.getValue(), "b");
-  assert.deepEqual(a.instance.events, ["select", "unselect"]);
-  assert.deepEqual(b.instance.events, ["select"]);
+  assert.equal(registry.getItem("first"), a);
+  assert.equal(registry.getItem("last"), c);
+  assert.equal(registry.getItem("next", a), c);
+  assert.equal(registry.getItem("next", c), a);
+  assert.equal(registry.getItem("prev", a), c);
 });
 
-test("single selection: selecting the only selected item again keeps it selected", () => {
-  const collection = new Collection({ type: "single" });
-  const a = collection.add(new FakeItem("a"));
+test("CollectionRegistry: next/prev without loop returns null at the boundary", () => {
+  const registry = new CollectionRegistry();
+  const a = registry.add(new FakeItem("a"));
+  const b = registry.add(new FakeItem("b"));
 
-  collection.select(a);
-  collection.select(a);
-
-  assert.equal(a.selected, true);
-  assert.equal(collection.getValue(), "a");
+  assert.equal(registry.getItem("next", b, false), null);
+  assert.equal(registry.getItem("prev", a, false), null);
 });
 
-test("multiple selection: select toggles independently and getValue(true) returns an array", () => {
-  const collection = new Collection({ type: "multiple" });
-  const a = collection.add(new FakeItem("a"));
-  const b = collection.add(new FakeItem("b"));
+test("CollectionRegistry: remove() drops the item and getItemByValue no longer finds it", () => {
+  const registry = new CollectionRegistry();
+  const a = registry.add(new FakeItem("a"));
+  const c = registry.add(new FakeItem("c"));
 
-  collection.select(a);
-  collection.select(b);
-  assert.deepEqual(collection.getValue(), ["a", "b"]);
-
-  collection.select(a);
-  assert.deepEqual(collection.getValue(), ["b"]);
-  assert.equal(a.selected, false);
-  assert.equal(b.selected, true);
+  assert.deepEqual(
+    registry.enabledItems().map((item) => item.value),
+    ["a", "c"],
+  );
+  assert.equal(registry.getItem("next", a), c);
+  assert.equal(registry.remove(a.instance), a);
+  assert.equal(registry.getItemByValue("a"), null);
 });
 
-test("select() is a no-op for disabled items", () => {
-  const collection = new Collection({ type: "single" });
-  const disabled = collection.add(new FakeItem("a", { disabled: true }));
+test("RovingFocus: focus() clears the previous focused item and notifies both items", () => {
+  const registry = new CollectionRegistry();
+  const focus = new RovingFocus(registry);
+  const a = registry.add(new FakeItem("a"));
+  const b = registry.add(new FakeItem("b"));
 
-  const result = collection.select(disabled);
-
-  assert.equal(result, false);
-  assert.equal(disabled.selected, false);
-  assert.deepEqual(collection.getValue(true), []);
-});
-
-test("add() marks items pre-selected via initial value and fires select", () => {
-  const collection = new Collection({ type: "single", value: "b" });
-  const a = collection.add(new FakeItem("a"));
-  const b = collection.add(new FakeItem("b"));
-
-  assert.equal(a.selected, false);
-  assert.equal(b.selected, true);
-  assert.deepEqual(b.instance.events, ["select"]);
-});
-
-test("getItem: first/last/next/prev skip disabled items and loop by default", () => {
-  const collection = new Collection({ type: "single" });
-  const a = collection.add(new FakeItem("a"));
-  collection.add(new FakeItem("b", { disabled: true }));
-  const c = collection.add(new FakeItem("c"));
-
-  assert.equal(collection.getItem("first"), a);
-  assert.equal(collection.getItem("last"), c);
-  assert.equal(collection.getItem("next", a), c);
-  assert.equal(collection.getItem("next", c), a);
-  assert.equal(collection.getItem("prev", a), c);
-});
-
-test("getItem: next/prev without loop returns null at the boundary", () => {
-  const collection = new Collection({ type: "single" });
-  const a = collection.add(new FakeItem("a"));
-  const b = collection.add(new FakeItem("b"));
-
-  assert.equal(collection.getItem("next", b, false), null);
-  assert.equal(collection.getItem("prev", a, false), null);
-});
-
-test("focus() clears the previous focused item and notifies both items", () => {
-  const collection = new Collection({ type: "single" });
-  const a = collection.add(new FakeItem("a"));
-  const b = collection.add(new FakeItem("b"));
-
-  collection.focus(a);
+  focus.focus(a);
   assert.equal(a.focused, true);
-  assert.equal(collection.focusedItem, a);
+  assert.equal(focus.focusedItem, a);
 
-  collection.focus(b);
+  focus.focus(b);
   assert.equal(a.focused, false);
   assert.equal(b.focused, true);
   assert.deepEqual(a.instance.events, ["focus", "blur"]);
   assert.deepEqual(b.instance.events, ["focus"]);
 });
 
-test("remove() clears focusedItem and selected value when the focused/selected item is removed", () => {
-  const collection = new Collection({ type: "single", value: "a" });
-  const a = collection.add(new FakeItem("a"));
-  collection.focus(a);
+test("RovingFocus: focus() on the already focused item is a no-op (regression)", () => {
+  const registry = new CollectionRegistry();
+  const focus = new RovingFocus(registry);
+  const a = registry.add(new FakeItem("a"));
 
-  collection.remove(a.instance);
+  focus.focus(a);
+  focus.focus(a);
 
-  assert.equal(collection.focusedItem, null);
-  assert.deepEqual(collection.getValue(true), []);
-  assert.equal(collection.getItemByValue("a"), null);
+  assert.equal(a.focused, true);
+  assert.deepEqual(a.instance.events, ["focus"]);
 });
 
-test("setValues() updates selected state on existing items", () => {
-  const collection = new Collection({ type: "multiple" });
-  const a = collection.add(new FakeItem("a"));
-  const b = collection.add(new FakeItem("b"));
+test("RovingFocus: remove() clears focusedItem when the focused item is removed", () => {
+  const registry = new CollectionRegistry();
+  const focus = new RovingFocus(registry);
+  const a = registry.add(new FakeItem("a"));
+  focus.focus(a);
 
-  collection.setValues(["b"]);
+  registry.remove(a.instance);
+  focus.remove(a);
+
+  assert.equal(focus.focusedItem, null);
+});
+
+test("Selection: single type unselects the previous item when a new one is selected", () => {
+  const registry = new CollectionRegistry();
+  const selection = new Selection(registry, { type: "single" });
+  const a = registry.add(new FakeItem("a"));
+  const b = registry.add(new FakeItem("b"));
+
+  selection.select(a);
+  assert.equal(a.selected, true);
+  assert.equal(selection.getValue(), "a");
+
+  selection.select(b);
+  assert.equal(a.selected, false);
+  assert.equal(b.selected, true);
+  assert.equal(selection.getValue(), "b");
+  assert.deepEqual(a.instance.events, ["select", "unselect"]);
+  assert.deepEqual(b.instance.events, ["select"]);
+});
+
+test("Selection: single type re-selecting the only selected item keeps it selected", () => {
+  const registry = new CollectionRegistry();
+  const selection = new Selection(registry, { type: "single" });
+  const a = registry.add(new FakeItem("a"));
+
+  selection.select(a);
+  selection.select(a);
+
+  assert.equal(a.selected, true);
+  assert.equal(selection.getValue(), "a");
+});
+
+test("Selection: multiple type toggles independently and getValue(true) returns an array", () => {
+  const registry = new CollectionRegistry();
+  const selection = new Selection(registry, { type: "multiple" });
+  const a = registry.add(new FakeItem("a"));
+  const b = registry.add(new FakeItem("b"));
+
+  selection.select(a);
+  selection.select(b);
+  assert.deepEqual(selection.getValue(), ["a", "b"]);
+
+  selection.select(a);
+  assert.deepEqual(selection.getValue(), ["b"]);
+  assert.equal(a.selected, false);
+  assert.equal(b.selected, true);
+});
+
+test("Selection: select() is a no-op for disabled items", () => {
+  const registry = new CollectionRegistry();
+  const selection = new Selection(registry, { type: "single" });
+  const disabled = registry.add(new FakeItem("a", { disabled: true }));
+
+  const result = selection.select(disabled);
+
+  assert.equal(result, false);
+  assert.equal(disabled.selected, false);
+  assert.deepEqual(selection.getValue(true), []);
+});
+
+test("Selection: initializeItem() marks items pre-selected via the initial value and fires select", () => {
+  const registry = new CollectionRegistry();
+  const selection = new Selection(registry, { type: "single", value: "b" });
+  const a = registry.add(new FakeItem("a"));
+  selection.initializeItem(a);
+  const b = registry.add(new FakeItem("b"));
+  selection.initializeItem(b);
 
   assert.equal(a.selected, false);
   assert.equal(b.selected, true);
-  assert.equal(collection.isValueSelected("b"), true);
-  assert.equal(collection.isValueSelected("a"), false);
+  assert.deepEqual(b.instance.events, ["select"]);
 });
 
-test("reset() clears items, values and focus back to defaultValue", () => {
-  const collection = new Collection({ type: "single", defaultValue: "z" });
-  collection.add(new FakeItem("a"));
-  collection.focus(collection.items[0]);
+test("Selection: setValues() updates selected state on existing items", () => {
+  const registry = new CollectionRegistry();
+  const selection = new Selection(registry, { type: "multiple" });
+  const a = registry.add(new FakeItem("a"));
+  const b = registry.add(new FakeItem("b"));
 
-  collection.reset();
+  selection.setValues(["b"]);
 
-  assert.deepEqual(collection.items, []);
-  assert.equal(collection.focusedItem, null);
-  assert.equal(collection.getValue(), "z");
+  assert.equal(a.selected, false);
+  assert.equal(b.selected, true);
+  assert.equal(selection.isValueSelected("b"), true);
+  assert.equal(selection.isValueSelected("a"), false);
+});
+
+test("Selection: remove() drops the value when the selected item is removed", () => {
+  const registry = new CollectionRegistry();
+  const selection = new Selection(registry, { type: "single", value: "a" });
+  const a = registry.add(new FakeItem("a"));
+  selection.initializeItem(a);
+
+  registry.remove(a.instance);
+  selection.remove(a);
+
+  assert.deepEqual(selection.getValue(true), []);
+});
+
+test("Collection default export preserves legacy combined API", () => {
+  const collection = new Collection({ type: "single", value: "a" });
+  const a = collection.add(new FakeItem("a"));
+  const b = collection.add(new FakeItem("b"));
+
+  assert.equal(a.selected, true);
+  assert.equal(collection.getValue(), "a");
+
+  collection.focus(a);
+  collection.select(b);
+
+  assert.equal(collection.focusedItem, a);
+  assert.equal(a.selected, false);
+  assert.equal(b.selected, true);
+  assert.equal(collection.getItemByValue("b"), b);
 });

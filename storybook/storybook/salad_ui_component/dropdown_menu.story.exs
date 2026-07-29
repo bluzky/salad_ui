@@ -15,14 +15,10 @@ defmodule Storybook.SaladUIComponents.DropdownMenu do
          dropdown_menu_label: 1,
          dropdown_menu_separator: 1,
          dropdown_menu_item: 1,
+         dropdown_menu_link_item: 1,
          dropdown_menu_shortcut: 1,
          dropdown_menu_group: 1,
-         dropdown_menu_checkbox_item: 1,
-         dropdown_menu_radio_group: 1,
-         dropdown_menu_radio_item: 1,
-         dropdown_menu_sub: 1,
-         dropdown_menu_sub_trigger: 1,
-         dropdown_menu_sub_content: 1
+         dropdown_menu_checkbox_item: 1
        ]},
       {SaladUI.Button, [button: 1]},
       {SaladStorybookWeb.CoreComponents, [icon: 1]}
@@ -83,32 +79,58 @@ defmodule Storybook.SaladUIComponents.DropdownMenu do
       },
       %Variation{
         id: :checkbox_item,
-        description: "Dropdown with checkbox",
+        description:
+          "Checkbox items toggle independently and keep the menu open, so you can flip several without reopening it",
         template: """
-        <.dropdown_menu id="text-formatting">
-        <.dropdown_menu_trigger>
-        <.button variant="outline">Format</.button>
-        </.dropdown_menu_trigger>
-        <.dropdown_menu_content>
-        <.dropdown_menu_checkbox_item
-        checked
-        on-checked-change="toggle_bold"
-        >
-        <span class="font-bold">Bold</span>
-        </.dropdown_menu_checkbox_item>
-        <.dropdown_menu_checkbox_item
-        on-checked-change={JS.push("toggle_italic")}
-        >
-        <span class="italic">Italic</span>
-        </.dropdown_menu_checkbox_item>
-        <.dropdown_menu_checkbox_item
-        on-select="format_underline"
-        on-checked-change={JS.push("toggle_underline")}
-        >
-        <span class="underline">Underline</span>
-        </.dropdown_menu_checkbox_item>
-        </.dropdown_menu_content>
-        </.dropdown_menu>
+        <div class="p-24 flex justify-center">
+          <.dropdown_menu id="text-formatting">
+            <.dropdown_menu_trigger>
+              <.button variant="outline">Format</.button>
+            </.dropdown_menu_trigger>
+            <.dropdown_menu_content class="w-48">
+              <.dropdown_menu_checkbox_item checked value="bold" on-checked-change="toggle_bold">
+                <span class="font-bold">Bold</span>
+              </.dropdown_menu_checkbox_item>
+              <.dropdown_menu_checkbox_item value="italic" on-checked-change="toggle_italic">
+                <span class="italic">Italic</span>
+              </.dropdown_menu_checkbox_item>
+              <.dropdown_menu_checkbox_item value="underline" on-checked-change="toggle_underline">
+                <span class="underline">Underline</span>
+              </.dropdown_menu_checkbox_item>
+              <.dropdown_menu_checkbox_item disabled value="strikethrough">
+                <span class="line-through">Strikethrough</span>
+              </.dropdown_menu_checkbox_item>
+            </.dropdown_menu_content>
+          </.dropdown_menu>
+        </div>
+        """
+      },
+      %Variation{
+        id: :link_item,
+        description: "Items rendered as links, for menus that navigate instead of dispatching actions",
+        template: """
+        <div class="p-24 flex justify-center">
+          <.dropdown_menu id="dropdown-links">
+            <.dropdown_menu_trigger>
+              <.button variant="outline">Help</.button>
+            </.dropdown_menu_trigger>
+            <.dropdown_menu_content class="w-56">
+              <.dropdown_menu_link_item href="/docs">
+                <.icon name="hero-book-open" class="mr-2 h-4 w-4" />
+                <span>Documentation</span>
+              </.dropdown_menu_link_item>
+              <.dropdown_menu_link_item href="https://github.com">
+                <.icon name="hero-code-bracket" class="mr-2 h-4 w-4" />
+                <span>GitHub</span>
+              </.dropdown_menu_link_item>
+              <.dropdown_menu_separator />
+              <.dropdown_menu_link_item disabled href="/changelog">
+                <.icon name="hero-clock" class="mr-2 h-4 w-4" />
+                <span>Changelog</span>
+              </.dropdown_menu_link_item>
+            </.dropdown_menu_content>
+          </.dropdown_menu>
+        </div>
         """
       }
     ]

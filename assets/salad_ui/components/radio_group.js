@@ -1,7 +1,7 @@
 // saladui/components/radio_group.js
-import Component from "../core/component";
-import SaladUI from "../index";
-import Collection from "../core/collection";
+import Component from "../core/component.js";
+import SaladUI from "../index.js";
+import { CollectionRegistry, Selection } from "../core/collection.js";
 
 class RadioGroupComponent extends Component {
   constructor(el, hookContext) {
@@ -67,16 +67,19 @@ class RadioGroupComponent extends Component {
   }
 
   initializeCollection() {
-    this.collection = new Collection({
-      type: "single",
-      defaultValue: this.options.initialValue,
+    this.registry = new CollectionRegistry({
       getItemValue: (item) => item.getAttribute("data-value"),
       isItemDisabled: (item) => item.getAttribute("data-disabled") === "true",
     });
+    this.selection = new Selection(this.registry, {
+      type: "single",
+      defaultValue: this.options.initialValue,
+    });
 
-    // Register items with the collection
+    // Register items with the registry
     this.items.forEach((item) => {
-      this.collection.add(item);
+      const collectionItem = this.registry.add(item);
+      this.selection.initializeItem(collectionItem);
 
       // Set initial ID if not present
       if (!item.id) {
@@ -98,17 +101,17 @@ class RadioGroupComponent extends Component {
 
   selectItem(item) {
     const value = item.getAttribute("data-value");
-    const previousValue = this.collection.getValue();
+    const previousValue = this.selection.getValue();
 
     // Get the collection item
-    const collectionItem = this.collection.getItemByInstance(item);
+    const collectionItem = this.registry.getItemByInstance(item);
 
     // Only proceed if we have a valid item and it's not already selected
     if (collectionItem && value !== previousValue) {
       // Transition the state machine to apply any state-specific behavior
       this.transition("valueChanged", { value, previousValue });
 
-      this.collection.select(collectionItem);
+      this.selection.select(collectionItem);
       this.updateItemStates();
 
       // Emit value changed event
@@ -120,10 +123,10 @@ class RadioGroupComponent extends Component {
   }
 
   updateItemStates() {
-    const selectedValue = this.collection.getValue();
+    const selectedValue = this.selection.getValue();
 
     // Loop over collection items instead of DOM elements directly
-    this.collection.items.forEach((collectionItem) => {
+    this.registry.items.forEach((collectionItem) => {
       const item = collectionItem.instance;
       const value = collectionItem.value;
       const isSelected = value === selectedValue;
@@ -153,11 +156,11 @@ class RadioGroupComponent extends Component {
   }
 
   navigateItem(direction) {
-    const currentValue = this.collection.getValue();
-    const currentItem = this.collection.getItemByValue(currentValue);
+    const currentValue = this.selection.getValue();
+    const currentItem = this.registry.getItemByValue(currentValue);
 
     // Get next item based on direction
-    const nextItem = this.collection.getItem(direction, currentItem);
+    const nextItem = this.registry.getItem(direction, currentItem);
     if (!nextItem) return;
 
     // Focus the item
@@ -174,8 +177,8 @@ class RadioGroupComponent extends Component {
 
   onIdleEnter() {
     // If no item is selected, make first enabled item focusable
-    if (!this.collection.getValue()) {
-      const firstItem = this.collection.getItem("first");
+    if (!this.selection.getValue()) {
+      const firstItem = this.registry.getItem("first");
       if (firstItem && firstItem.instance) {
         firstItem.instance.setAttribute("tabindex", "0");
       }
@@ -189,16 +192,16 @@ class RadioGroupComponent extends Component {
     this.el.addEventListener("focus", (e) => {
       // Only handle focus if the group itself was focused (not a child)
       if (e.target === this.el) {
-        const selectedValue = this.collection.getValue();
+        const selectedValue = this.selection.getValue();
         if (selectedValue) {
           // Focus the selected item
-          const selectedItem = this.collection.getItemByValue(selectedValue);
+          const selectedItem = this.registry.getItemByValue(selectedValue);
           if (selectedItem && selectedItem.instance) {
             selectedItem.instance.focus();
           }
         } else {
           // Focus the first enabled item if none is selected
-          const firstItem = this.collection.getItem("first");
+          const firstItem = this.registry.getItem("first");
           if (firstItem && firstItem.instance) {
             firstItem.instance.focus();
           }
@@ -209,7 +212,8 @@ class RadioGroupComponent extends Component {
 
   // Clean up when the component is destroyed
   beforeDestroy() {
-    this.collection = null;
+    this.registry = null;
+    this.selection = null;
   }
 }
 

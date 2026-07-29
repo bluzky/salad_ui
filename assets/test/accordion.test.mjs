@@ -90,8 +90,8 @@ test("all items start closed when no value/defaultValue is provided", () => {
 test("defaultValue opens the matching item immediately, synchronously, without going through an animated transition (regression)", () => {
   const { getItemEls } = buildAccordion({
     defaultValue: "item-2",
-    // If the forced-select transition from Collection.add() were still
-    // firing (the pre-fix behavior), this animation would delay
+    // If the forced-select transition from Selection.initializeItem() were
+    // still firing (the pre-fix behavior), this animation would delay
     // updatePartsVisibility() until its promise resolves, and the
     // assertions below (checked synchronously) would fail.
     animations: {

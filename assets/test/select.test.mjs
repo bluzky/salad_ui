@@ -79,11 +79,19 @@ function buildSelect({
 }
 
 function click(el) {
-  el.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  el.dispatchEvent(
+    new window.MouseEvent("click", { bubbles: true, cancelable: true }),
+  );
 }
 
 function keydown(el, key) {
-  el.dispatchEvent(new window.KeyboardEvent("keydown", { key, bubbles: true }));
+  const event = new window.KeyboardEvent("keydown", {
+    key,
+    bubbles: true,
+    cancelable: true,
+  });
+  el.dispatchEvent(event);
+  return event;
 }
 
 test("trigger keyboard opens select and focuses the selected item", () => {
@@ -104,6 +112,22 @@ test("trigger click toggles an open select closed and restores trigger focus", (
   click(trigger);
   assert.equal(content.hidden, true);
   assert.equal(document.activeElement, trigger);
+});
+
+test("arrow keys navigate and prevent page scroll when open trigger keeps focus", () => {
+  const { content, item, trigger } = buildSelect();
+  document.body.insertAdjacentHTML("afterbegin", '<input id="before-select">');
+  const before = document.getElementById("before-select");
+
+  before.focus();
+  click(trigger);
+  trigger.focus();
+
+  const event = keydown(trigger, "ArrowDown");
+
+  assert.equal(content.hidden, false);
+  assert.equal(event.defaultPrevented, true);
+  assert.equal(document.activeElement, item("banana"));
 });
 
 test("selecting an item updates readable text, hidden input, and LiveView form events", () => {
