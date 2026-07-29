@@ -8,9 +8,21 @@ import { installDom, uninstallDom } from "./helpers/dom.mjs";
 before(() => installDom());
 after(() => uninstallDom());
 
-function itemMarkup({ value, label = value, disabled = false }) {
+function itemMarkup({
+  value,
+  label = value,
+  disabled = false,
+  ariaDisabled = false,
+  dataDisabled,
+}) {
+  const dataDisabledAttr =
+    dataDisabled !== undefined
+      ? `data-disabled="${dataDisabled}"`
+      : disabled
+        ? 'data-disabled="true"'
+        : "";
   return `
-    <div data-part="item" data-value="${value}" ${disabled ? 'data-disabled="true"' : ""} tabindex="${disabled ? "-1" : "0"}">
+    <div data-part="item" data-value="${value}" ${dataDisabledAttr} ${ariaDisabled ? 'aria-disabled="true"' : ""} tabindex="${disabled ? "-1" : "0"}">
       <span data-part="item-indicator" hidden></span>
       <span data-part="item-text">${label}</span>
     </div>
@@ -134,6 +146,48 @@ test("trigger click does nothing when select is disabled", () => {
   assert.deepEqual(pushed, []);
 });
 
+test("trigger keydown does nothing when select is disabled", () => {
+  const { content, trigger } = buildSelect({ disabled: true });
+
+  keydown(trigger, "ArrowDown");
+
+  assert.equal(content.hidden, true);
+});
+
+test("items with aria-disabled=true cannot be selected", () => {
+  const { content, item, pushed, trigger, valueDisplay } = buildSelect({
+    items: [
+      { value: "apple", label: "Apple" },
+      { value: "banana", label: "Banana", ariaDisabled: true },
+      { value: "orange", label: "Orange" },
+    ],
+  });
+
+  click(trigger);
+  assert.equal(content.hidden, false);
+
+  click(item("banana"));
+
+  assert.equal(content.hidden, false);
+  assert.equal(valueDisplay.textContent, "Choose one");
+  assert.deepEqual(pushed, []);
+});
+
+test('items with data-disabled="false" behave as enabled', () => {
+  const { item, trigger, valueDisplay } = buildSelect({
+    items: [
+      { value: "apple", label: "Apple" },
+      { value: "banana", label: "Banana", dataDisabled: "false" },
+      { value: "orange", label: "Orange" },
+    ],
+  });
+
+  click(trigger);
+  click(item("banana"));
+
+  assert.equal(valueDisplay.textContent, "Banana");
+});
+
 test("arrow keys navigate and prevent page scroll when open trigger keeps focus", () => {
   const { content, item, trigger } = buildSelect();
   document.body.insertAdjacentHTML("afterbegin", '<input id="before-select">');
@@ -203,6 +257,22 @@ test("multiple select normalizes hidden input names and highlights first selecte
 
   keydown(trigger, "ArrowDown");
   assert.equal(document.activeElement, item("banana"));
+});
+
+test("multiple select preserves an already-bracketed name without doubling it", () => {
+  const { hiddenInputs } = buildSelect({
+    name: "skills[]",
+    multiple: true,
+    value: ["banana", "orange"],
+  });
+
+  assert.deepEqual(
+    hiddenInputs().map((input) => [input.name, input.value]),
+    [
+      ["skills[]", "banana"],
+      ["skills[]", "orange"],
+    ],
+  );
 });
 
 test("hidden input sync only replaces select-owned inputs", () => {

@@ -208,10 +208,10 @@ class SelectComponent extends Component {
         closed: {
           keyEventTarget: "trigger",
           keyMap: {
-            ArrowDown: "open",
-            ArrowUp: "open",
-            Enter: "open",
-            " ": "open",
+            ArrowDown: () => this.openIfEnabled(),
+            ArrowUp: () => this.openIfEnabled(),
+            Enter: () => this.openIfEnabled(),
+            " ": () => this.openIfEnabled(),
           },
         },
         open: {
@@ -272,6 +272,12 @@ class SelectComponent extends Component {
     if (this.disabled) return;
 
     this.transition(this.state === "open" ? "close" : "open");
+  }
+
+  openIfEnabled() {
+    if (this.disabled) return;
+
+    this.transition("open");
   }
 
   handleTriggerKeydown(event) {

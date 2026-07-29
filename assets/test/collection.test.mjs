@@ -194,6 +194,68 @@ test("Selection: remove() drops the value when the selected item is removed", ()
   assert.deepEqual(selection.getValue(true), []);
 });
 
+test("Selection: reset() restores defaultValue for single and multiple types", () => {
+  const registrySingle = new CollectionRegistry();
+  const single = new Selection(registrySingle, {
+    type: "single",
+    defaultValue: "a",
+  });
+  const a = registrySingle.add(new FakeItem("a"));
+  registrySingle.add(new FakeItem("b"));
+  single.initializeItem(a);
+
+  single.setValues(["b"]);
+  assert.equal(single.isValueSelected("b"), true);
+
+  single.reset();
+  assert.deepEqual(single.values, ["a"]);
+  assert.equal(single.isValueSelected("a"), true);
+  assert.equal(single.isValueSelected("b"), false);
+
+  const registryMultiple = new CollectionRegistry();
+  const multiple = new Selection(registryMultiple, {
+    type: "multiple",
+    defaultValue: ["a", "b"],
+  });
+  registryMultiple.add(new FakeItem("a"));
+  registryMultiple.add(new FakeItem("b"));
+
+  multiple.setValues(["a"]);
+  multiple.reset();
+  assert.deepEqual(multiple.values, ["a", "b"]);
+
+  const registryEmpty = new CollectionRegistry();
+  const empty = new Selection(registryEmpty, {
+    type: "single",
+    defaultValue: null,
+  });
+  registryEmpty.add(new FakeItem("a"));
+
+  empty.setValues(["a"]);
+  empty.reset();
+  assert.deepEqual(empty.values, []);
+});
+
+test("Selection: normalizeValues() for single type keeps only the first value", () => {
+  const registry = new CollectionRegistry();
+  const selection = new Selection(registry, { type: "single" });
+
+  assert.deepEqual(selection.normalizeValues("a"), ["a"]);
+  assert.deepEqual(selection.normalizeValues(["a", "b"]), ["a"]);
+  assert.deepEqual(selection.normalizeValues(null), []);
+  assert.deepEqual(selection.normalizeValues(undefined), []);
+});
+
+test("Selection: normalizeValues() for multiple type keeps every value", () => {
+  const registry = new CollectionRegistry();
+  const selection = new Selection(registry, { type: "multiple" });
+
+  assert.deepEqual(selection.normalizeValues("a"), ["a"]);
+  assert.deepEqual(selection.normalizeValues(["a", "b"]), ["a", "b"]);
+  assert.deepEqual(selection.normalizeValues(null), []);
+  assert.deepEqual(selection.normalizeValues(undefined), []);
+});
+
 test("Collection default export preserves legacy combined API", () => {
   const collection = new Collection({ type: "single", value: "a" });
   const a = collection.add(new FakeItem("a"));
