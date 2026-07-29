@@ -106,6 +106,10 @@ defmodule SaladStorybookWeb.Demo.Demo do
               </.select_group>
             </.select_content>
           </.select>
+
+          <p class="mt-4 text-sm">
+            Skills selected: <span class="font-semibold">{Enum.join(@selected_skills, ", ")}</span>
+          </p>
         </div>
       </div>
 
@@ -138,6 +142,20 @@ defmodule SaladStorybookWeb.Demo.Demo do
                 <.select_item value="us">United States</.select_item>
                 <.select_item value="ca">Canada</.select_item>
                 <.select_item value="uk">United Kingdom</.select_item>
+              </.select_content>
+            </.select>
+          </div>
+
+          <div class="mb-4">
+            <label class="block text-sm font-medium mb-1">Skills</label>
+            <.select id="form-skills-select" name="skills" multiple value={@form_data["skills"] || []}>
+              <.select_trigger>
+                <.select_value placeholder="Select skills" />
+              </.select_trigger>
+              <.select_content>
+                <.select_item value="elixir">Elixir</.select_item>
+                <.select_item value="phoenix">Phoenix</.select_item>
+                <.select_item value="liveview">LiveView</.select_item>
               </.select_content>
             </.select>
           </div>
