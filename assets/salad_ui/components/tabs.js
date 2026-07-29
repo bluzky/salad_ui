@@ -1,7 +1,7 @@
 // saladui/components/tabs.js
-import Component from "../core/component";
-import SaladUI from "../index";
-import Collection from "../core/collection";
+import Component from "../core/component.js";
+import SaladUI from "../index.js";
+import { CollectionRegistry, Selection } from "../core/collection.js";
 
 class TabsComponent extends Component {
   constructor(el, hookContext) {
@@ -27,25 +27,30 @@ class TabsComponent extends Component {
   }
 
   initialize() {
-    // Initialize collection manager for tabs
-    this.collection = new Collection({
-      type: "single",
-      defaultValue: this.options.defaultValue,
-      value: this.options.value,
+    // Initialize registry and selection state for tabs
+    this.registry = new CollectionRegistry({
       getItemValue: (item) => item.getAttribute("data-value"),
       isItemDisabled: (item) => item.getAttribute("data-disabled") === "true",
     });
+    this.selection = new Selection(this.registry, {
+      type: "single",
+      defaultValue: this.options.defaultValue,
+      value: this.options.value,
+    });
 
-    // Register triggers with collection manager
-    this.triggers.forEach((trigger) => this.collection.add(trigger));
+    // Register triggers with the registry
+    this.triggers.forEach((trigger) => {
+      const collectionItem = this.registry.add(trigger);
+      this.selection.initializeItem(collectionItem);
+    });
 
     // Setup accessibility attributes
     this.setupAriaAttributes();
 
     // Select first tab if none selected
-    if (!this.collection.getValue() && this.triggers.length > 0) {
-      const firstTrigger = this.collection.getItem("first");
-      if (firstTrigger) this.collection.select(firstTrigger);
+    if (!this.selection.getValue() && this.triggers.length > 0) {
+      const firstTrigger = this.registry.getItem("first");
+      if (firstTrigger) this.selection.select(firstTrigger);
     }
 
     // Initial UI update
@@ -61,6 +66,7 @@ class TabsComponent extends Component {
       },
       events: {
         idle: {
+          keyEventTarget: "list",
           keyMap: {
             ArrowLeft: () => this.navigateTab("prev"),
             ArrowRight: () => this.navigateTab("next"),
@@ -117,11 +123,11 @@ class TabsComponent extends Component {
 
   selectTab(value) {
     // Find the trigger item
-    const triggerItem = this.collection.getItemByValue(value);
-    if (!triggerItem || this.collection.isValueSelected(value)) return;
+    const triggerItem = this.registry.getItemByValue(value);
+    if (!triggerItem || this.selection.isValueSelected(value)) return;
 
     // Select the tab
-    this.collection.select(triggerItem);
+    this.selection.select(triggerItem);
     this.updateActiveTab();
 
     // Focus the selected trigger
@@ -132,7 +138,7 @@ class TabsComponent extends Component {
   }
 
   updateActiveTab() {
-    const selectedValue = this.collection.getValue();
+    const selectedValue = this.selection.getValue();
 
     // Update triggers
     this.triggers.forEach((trigger) => {
@@ -155,17 +161,16 @@ class TabsComponent extends Component {
   }
 
   navigateTab(direction) {
-    const currentItem = this.collection.getItemByValue(
-      this.collection.getValue(),
-    );
+    const currentItem = this.registry.getItemByValue(this.selection.getValue());
 
-    const nextItem = this.collection.getItem(direction, currentItem);
+    const nextItem = this.registry.getItem(direction, currentItem);
     if (nextItem) this.selectTab(nextItem.value);
   }
 
   // Cleanup
   destroy() {
-    this.collection = null;
+    this.registry = null;
+    this.selection = null;
     super.destroy();
   }
 }

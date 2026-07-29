@@ -1,6 +1,10 @@
 // saladui/components/accordion.js
 import Component from "../core/component.js";
-import Collection from "../core/collection.js";
+import {
+  CollectionRegistry,
+  RovingFocus,
+  Selection,
+} from "../core/collection.js";
 import SaladUI from "../index.js";
 
 /**
@@ -172,13 +176,16 @@ class AccordionComponent extends Component {
     this.type = this.options.type || "single";
     this.disabled = this.options.disabled || false;
 
-    // Initialize collection manager
-    this.collection = new Collection({
+    // Initialize registry, roving focus, and selection state
+    this.registry = new CollectionRegistry({
+      getItemValue: (item) => item.value,
+      isItemDisabled: (item) => item.disabled || this.disabled,
+    });
+    this.rovingFocus = new RovingFocus(this.registry);
+    this.selection = new Selection(this.registry, {
       type: this.type,
       defaultValue: this.options.defaultValue,
       value: this.options.value,
-      getItemValue: (item) => item.value,
-      isItemDisabled: (item) => item.disabled || this.disabled,
     });
 
     // Set keyboard navigation defaults
@@ -228,24 +235,25 @@ class AccordionComponent extends Component {
       element.id = `${this.el.id}-item-${itemValue}`;
 
       // Check if this item is initially open
-      const isOpen = this.collection.getValue(true).includes(itemValue);
+      const isOpen = this.selection.getValue(true).includes(itemValue);
       const item = new AccordionItem(element, this, {
         initialState: isOpen ? "open" : "closed",
       });
-      this.collection.add(item);
+      const collectionItem = this.registry.add(item);
+      this.selection.initializeItem(collectionItem);
       return item;
     });
   }
 
   toggleItem(item) {
-    const collectionItem = this.collection.getItemByInstance(item);
+    const collectionItem = this.registry.getItemByInstance(item);
     if (!collectionItem) return;
 
     // Toggle item selection
-    this.collection.select(collectionItem);
+    this.selection.select(collectionItem);
 
     // Emit event with current value
-    const value = this.collection.getValue();
+    const value = this.selection.getValue();
     this.pushEvent("value-changed", { value });
   }
 
@@ -260,17 +268,17 @@ class AccordionComponent extends Component {
 
     let referenceCollectionItem = null;
     if (currentItem) {
-      referenceCollectionItem = this.collection.getItemByInstance(currentItem);
+      referenceCollectionItem = this.registry.getItemByInstance(currentItem);
     }
 
-    // Get the target item using collection manager's navigation methods
-    const targetItem = this.collection.getItem(
+    // Get the target item using the registry's navigation methods
+    const targetItem = this.registry.getItem(
       direction,
       referenceCollectionItem,
     );
 
     if (targetItem) {
-      this.collection.focus(targetItem);
+      this.rovingFocus.focus(targetItem);
     }
   }
 }

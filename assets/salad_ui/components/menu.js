@@ -1,6 +1,6 @@
 // saladui/components/dropdown_menu.js
-import Component from "../core/component";
-import Collection from "../core/collection";
+import Component from "../core/component.js";
+import { CollectionRegistry, RovingFocus } from "../core/collection.js";
 
 /**
  * Base class for dropdown menu items that provides common functionality
@@ -9,7 +9,7 @@ class MenuItemBase extends Component {
   constructor(itemElement, parentComponent, options) {
     super(itemElement, {
       ...options,
-      initialState: "idle",
+      initialState: options?.initialState || "idle",
       ignoreItems: false,
     });
 
@@ -20,9 +20,19 @@ class MenuItemBase extends Component {
       itemElement.value ||
       itemElement.getAttribute("data-value") ||
       itemElement.textContent.trim();
-    this.disabled = itemElement.getAttribute("data-disabled") !== null;
+    this.disabled = this.isElementDisabled(itemElement);
     this.config.preventDefaultKeys = [" ", "Enter"];
     this.setupEvents();
+  }
+
+  isElementDisabled(itemElement) {
+    const dataDisabled = itemElement.getAttribute("data-disabled");
+
+    return (
+      itemElement.hasAttribute("disabled") ||
+      itemElement.getAttribute("aria-disabled") === "true" ||
+      (dataDisabled !== null && dataDisabled !== "false")
+    );
   }
 
   getComponentConfig() {
@@ -59,27 +69,49 @@ class MenuItemBase extends Component {
     switch (eventType) {
       case "focus":
         if (!this.disabled) {
-          this.transition("focus");
           this.el.focus();
         }
         return true;
       case "blur":
-        this.transition("blur");
         return true;
     }
   }
 
-  handleActivation() {
-    if (this.disabled) return;
+  handleActivation(event) {
+    if (!this.notifyActivation(event)) return;
+
+    this.parent.selectItem(this);
+  }
+
+  // Shared activation bookkeeping: guards, prevents the native action, and
+  // notifies the server. Returns whether activation should proceed, so
+  // subclasses (e.g. MenuCheckboxItem) can opt out of parent.selectItem()
+  // (which closes the menu) while still getting this behavior.
+  notifyActivation(event) {
+    const shouldPreserveNativeClick =
+      event?.type === "click" && this.isNativeLinkItem();
+
+    if (event && !shouldPreserveNativeClick) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+    }
+
+    if (this.disabled) return false;
+
     this.pushEvent(
       "item-selected",
       {
         value: this.value,
       },
-      this.parent.el,
+      this.parent.rootEl || this.parent.el,
     );
 
-    this.parent.selectItem(this);
+    return true;
+  }
+
+  isNativeLinkItem() {
+    return this.el.matches("a[href]");
   }
 
   handleMouseEnter() {
@@ -156,7 +188,7 @@ class MenuCheckboxItem extends MenuItemBase {
       },
 
       ariaConfig: {
-        item: {
+        "checkbox-item": {
           all: {
             role: "menuitemcheckbox",
             disabled: () => (this.disabled ? "true" : null),
@@ -167,15 +199,11 @@ class MenuCheckboxItem extends MenuItemBase {
     };
   }
 
+  // Overridden (not calling super.handleActivation()) so toggling a
+  // checkbox item does not call parent.selectItem(), which would close the
+  // menu — checkbox items stay open on toggle, matching Radix's default.
   handleActivation(event) {
-    super.handleActivation(event);
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-    }
-
-    if (this.disabled) return;
+    if (!this.notifyActivation(event)) return;
 
     this.transition("toggle");
 
@@ -185,7 +213,7 @@ class MenuCheckboxItem extends MenuItemBase {
         value: this.value,
         checked: this.state == "checked",
       },
-      this.parent.el,
+      this.parent.rootEl || this.parent.el,
     );
   }
 }
@@ -195,11 +223,12 @@ class MenuCheckboxItem extends MenuItemBase {
  * Manages a dropdown menu with support for keyboard navigation and accessibility
  */
 class Menu extends Component {
-  constructor(el, { hookContext, onItemSelect }) {
+  constructor(el, { hookContext, onItemSelect, rootEl }) {
     super(el, { hookContext });
 
     // callback for item selection
     this.onItemSelect = onItemSelect || (() => {});
+    this.rootEl = rootEl;
     this.menuItems = [];
 
     // Set keyboard navigation defaults
@@ -247,35 +276,38 @@ class Menu extends Component {
       switch (itemType) {
         case "checkbox-item":
           return new MenuCheckboxItem(element, this, {
-            initialState: "normal",
+            initialState:
+              element.dataset.state ||
+              (element.dataset.checked === "true" ? "checked" : "unchecked"),
           });
         default: // Regular item
           return new MenuItem(element, this, {
-            initialState: "normal",
+            initialState: "idle",
           });
       }
     });
   }
 
   initializeCollection() {
-    // Initialize collection manager for navigation
-    this.collection = new Collection({
+    // Initialize registry and focus manager for navigation
+    this.registry = new CollectionRegistry({
       type: "single",
       getItemValue: (item) => item.value,
       isItemDisabled: (item) => item.disabled,
     });
+    this.rovingFocus = new RovingFocus(this.registry);
 
-    // Register items with the collection
+    // Register items with the registry
     this.menuItems.forEach((item) => {
-      this.collection.add(item);
+      this.registry.add(item);
     });
   }
 
   // Activate menu, focusthe first item
   activate() {
-    const firstItem = this.collection.getItem("first");
+    const firstItem = this.registry.getItem("first");
     if (firstItem) {
-      this.collection.focus(firstItem);
+      this.rovingFocus.focus(firstItem);
     }
   }
 
@@ -285,21 +317,21 @@ class Menu extends Component {
   }
 
   handleItemFocus(item) {
-    const collectionItem = this.collection.getItemByInstance(item);
+    const collectionItem = this.registry.getItemByInstance(item);
     if (!collectionItem) return;
 
-    this.collection.focus(collectionItem);
+    this.rovingFocus.focus(collectionItem);
   }
 
   navigateItem(direction) {
     // Check if we have an active focused item
-    let currentItem = this.collection.focusedItem;
+    let currentItem = this.rovingFocus.focusedItem;
 
-    // Get target item using collection's navigation methods
-    const targetItem = this.collection.getItem(direction, currentItem);
+    // Get target item using registry navigation methods
+    const targetItem = this.registry.getItem(direction, currentItem);
 
     if (targetItem) {
-      this.collection.focus(targetItem);
+      this.rovingFocus.focus(targetItem);
     }
   }
 
@@ -314,8 +346,9 @@ class Menu extends Component {
       this.menuItems = null;
     }
 
-    // Clean up collection
-    this.collection = null;
+    // Clean up registry and focus manager
+    this.registry = null;
+    this.rovingFocus = null;
   }
 }
 

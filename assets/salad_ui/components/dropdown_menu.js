@@ -1,8 +1,8 @@
 // saladui/components/dropdown_menu.js
-import Component from "../core/component";
-import SaladUI from "../index";
-import PositionedElement from "../core/positioned-element";
-import Menu from "./menu";
+import Component from "../core/component.js";
+import SaladUI from "../index.js";
+import PositionedElement from "../core/positioned-element.js";
+import Menu from "./menu.js";
 
 /**
  * DropdownMenuComponent class for SaladUI framework
@@ -15,12 +15,22 @@ class DropdownMenuComponent extends Component {
     // Initialize core properties
     this.trigger = this.getPart("trigger");
     this.positioner = this.getPart("positioner");
-    this.content = this.positioner.querySelector("[data-part='content']");
+    this.content = this.positioner?.querySelector("[data-part='content']");
+    this.handleTriggerClick = this.handleTriggerClick.bind(this);
+    this.handleTriggerKeydown = this.handleTriggerKeydown.bind(this);
 
-    this.menu = new Menu(this.content, {
-      hookContext,
-      onItemSelect: this.onItemSelect.bind(this),
-    });
+    if (this.content && !this.content.id) {
+      this.content.id = `${this.el.id}-content`;
+      this.updateUI();
+    }
+
+    this.menu = this.content
+      ? new Menu(this.content, {
+          hookContext,
+          rootEl: this.el,
+          onItemSelect: this.onItemSelect.bind(this),
+        })
+      : null;
 
     // Set keyboard navigation defaults
     this.config.preventDefaultKeys = ["Escape", "ArrowDown", " ", "Enter"];
@@ -51,13 +61,6 @@ class DropdownMenuComponent extends Component {
             " ": "open",
             Enter: "open",
           },
-          mouseMap: {
-            trigger: {
-              click: () => {
-                this.transition("open");
-              },
-            },
-          },
         },
         open: {
           keyMap: {
@@ -77,8 +80,7 @@ class DropdownMenuComponent extends Component {
         trigger: {
           all: {
             haspopup: "menu",
-            controls: () =>
-              this.content ? this.content.id || `${this.el.id}-content` : null,
+            controls: () => this.content?.id || null,
           },
           open: {
             expanded: "true",
@@ -128,25 +130,104 @@ class DropdownMenuComponent extends Component {
           usePortal,
           portalContainer: portalContainer || document.body,
           trapFocus: false,
-          onOutsideClick: () => this.transition("close"),
+          onOutsideClick: () =>
+            this.transition("close", { restoreFocus: false }),
         },
       );
     }
   }
 
-  onOpenEnter() {
-    this.previousFocusEl = document.activeElement;
+  afterMount() {
+    if (this.state === "open") {
+      this.activateOpenState(false);
+    }
+  }
+
+  setupComponentEvents() {
+    super.setupComponentEvents();
+    this.trigger?.addEventListener("click", this.handleTriggerClick);
+    this.trigger?.addEventListener("keydown", this.handleTriggerKeydown);
+  }
+
+  teardownComponentEvents() {
+    super.teardownComponentEvents();
+    this.trigger?.removeEventListener("click", this.handleTriggerClick);
+    this.trigger?.removeEventListener("keydown", this.handleTriggerKeydown);
+  }
+
+  handleTriggerClick() {
+    if (this.state === "open") {
+      this.previousFocusEl = this.trigger;
+    }
+
+    this.transition("toggle");
+  }
+
+  handleTriggerKeydown(event) {
+    if (event.defaultPrevented || this.state !== "open") return;
+
+    const keyActions = {
+      ArrowUp: () => this.menu?.navigateItem("prev"),
+      ArrowDown: () => this.menu?.navigateItem("next"),
+      Home: () => this.menu?.navigateItem("first"),
+      End: () => this.menu?.navigateItem("last"),
+      Escape: () => this.transition("close"),
+      Enter: () => this.transition("close"),
+      " ": () => this.transition("close"),
+    };
+    const action = keyActions[event.key];
+    if (!action) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    action();
+  }
+
+  activateOpenState(pushEvent = true) {
+    const activeElement = document.activeElement;
+    this.previousFocusEl =
+      this.previousFocusEl ||
+      (activeElement && activeElement !== document.body
+        ? activeElement
+        : this.trigger);
 
     this.initializePositionedElement();
     this.positionedElement?.activate();
-    this.menu.activate();
-    this.pushEvent("opened");
+    this.menu?.activate();
+    window.requestAnimationFrame(() => {
+      if (this.destroyed || typeof document === "undefined") return;
+
+      if (
+        this.state === "open" &&
+        !this.content?.contains(document.activeElement)
+      ) {
+        this.menu?.activate();
+      }
+    });
+
+    if (pushEvent) {
+      this.pushEvent("opened");
+    }
   }
 
-  onClosedEnter() {
+  onOpenEnter() {
+    this.activateOpenState();
+  }
+
+  onClosedEnter({ restoreFocus = true } = {}) {
     this.positionedElement?.deactivate();
     this.pushEvent("closed");
-    this.previousFocusEl?.focus();
+
+    if (!restoreFocus) {
+      this.previousFocusEl = null;
+      return;
+    }
+
+    const focusTarget = this.previousFocusEl?.isConnected
+      ? this.previousFocusEl
+      : this.trigger;
+
+    focusTarget?.focus();
     this.previousFocusEl = null;
   }
 
@@ -155,6 +236,8 @@ class DropdownMenuComponent extends Component {
   }
 
   beforeDestroy() {
+    this.el.dataset.state = this.state;
+
     // Clean up the positioned element
     if (this.positionedElement) {
       this.positionedElement.destroy();

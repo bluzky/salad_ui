@@ -1,7 +1,11 @@
 // saladui/components/select.js
 import Component from "../core/component.js";
 import SaladUI from "../index.js";
-import Collection from "../core/collection.js";
+import {
+  CollectionRegistry,
+  RovingFocus,
+  Selection,
+} from "../core/collection.js";
 import PositionedElement from "../core/positioned-element.js";
 
 /**
@@ -15,10 +19,20 @@ class SelectItem extends Component {
 
     this.parent = parentComponent;
     this.value = itemElement.dataset.value;
-    this.disabled = itemElement.dataset.disabled === "true";
+    this.disabled = this.isElementDisabled(itemElement);
     this.label = itemElement.textContent.trim();
 
     this.setupEvents();
+  }
+
+  isElementDisabled(itemElement) {
+    const dataDisabled = itemElement.getAttribute("data-disabled");
+
+    return (
+      itemElement.hasAttribute("disabled") ||
+      itemElement.getAttribute("aria-disabled") === "true" ||
+      (dataDisabled !== null && dataDisabled !== "false")
+    );
   }
 
   getComponentConfig() {
@@ -132,6 +146,8 @@ class SelectComponent extends Component {
     this.valueDisplay = this.getPart("value");
     this.content = this.getPart("content");
     this.disabled = this.el.dataset.disabled === "true";
+    this.handleTriggerClick = this.handleTriggerClick.bind(this);
+    this.handleTriggerKeydown = this.handleTriggerKeydown.bind(this);
 
     // Get configuration from options
     this.multiple = this.options.multiple || false;
@@ -140,13 +156,16 @@ class SelectComponent extends Component {
       : false;
     this.portalContainer = this.options.portalContainer || null;
 
-    // Initialize collection manager
-    this.collection = new Collection({
+    // Initialize item registry, focus manager, and selection state
+    this.registry = new CollectionRegistry({
+      getItemValue: (item) => item.value,
+      isItemDisabled: (item) => item.disabled || this.disabled,
+    });
+    this.rovingFocus = new RovingFocus(this.registry);
+    this.selection = new Selection(this.registry, {
       type: this.multiple ? "multiple" : "single",
       defaultValue: this.options.defaultValue,
       value: this.options.value,
-      getItemValue: (item) => item.value,
-      isItemDisabled: (item) => item.disabled || this.disabled,
     });
 
     // Set keyboard navigation defaults
@@ -189,10 +208,10 @@ class SelectComponent extends Component {
         closed: {
           keyEventTarget: "trigger",
           keyMap: {
-            ArrowDown: "open",
-            ArrowUp: "open",
-            Enter: "open",
-            " ": "open",
+            ArrowDown: () => this.openIfEnabled(),
+            ArrowUp: () => this.openIfEnabled(),
+            Enter: () => this.openIfEnabled(),
+            " ": () => this.openIfEnabled(),
           },
         },
         open: {
@@ -238,21 +257,48 @@ class SelectComponent extends Component {
   setupComponentEvents() {
     super.setupComponentEvents();
 
-    this.handleTriggerClick = (event) => {
-      event.preventDefault();
-      if (this.disabled) return;
-
-      this.transition(this.state === "open" ? "close" : "open");
-    };
-
     this.trigger?.addEventListener("click", this.handleTriggerClick);
+    this.trigger?.addEventListener("keydown", this.handleTriggerKeydown);
   }
 
   teardownComponentEvents() {
     super.teardownComponentEvents();
 
     this.trigger?.removeEventListener("click", this.handleTriggerClick);
-    this.handleTriggerClick = null;
+    this.trigger?.removeEventListener("keydown", this.handleTriggerKeydown);
+  }
+
+  handleTriggerClick() {
+    if (this.disabled) return;
+
+    this.transition(this.state === "open" ? "close" : "open");
+  }
+
+  openIfEnabled() {
+    if (this.disabled) return;
+
+    this.transition("open");
+  }
+
+  handleTriggerKeydown(event) {
+    if (event.defaultPrevented || this.disabled || this.state !== "open")
+      return;
+
+    const keyActions = {
+      ArrowUp: () => this.navigateItem("prev"),
+      ArrowDown: () => this.navigateItem("next"),
+      Home: () => this.navigateItem("first"),
+      End: () => this.navigateItem("last"),
+      Escape: () => this.transition("close"),
+      Enter: () => this.transition("close"),
+      " ": () => this.transition("close"),
+    };
+    const action = keyActions[event.key];
+    if (!action) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    action();
   }
 
   initializeItems() {
@@ -265,11 +311,12 @@ class SelectComponent extends Component {
       const value = element.dataset.value;
 
       // Check if this item is initially selected
-      const isSelected = this.collection.isValueSelected(value);
+      const isSelected = this.selection.isValueSelected(value);
       const initialState = isSelected ? "checked" : "unchecked";
 
       const item = new SelectItem(element, this, { initialState });
-      this.collection.add(item);
+      const collectionItem = this.registry.add(item);
+      this.selection.initializeItem(collectionItem);
     });
 
     // Update value display based on initial selection
@@ -284,7 +331,7 @@ class SelectComponent extends Component {
       this.valueDisplay.getAttribute("data-placeholder") || "Select an option";
 
     // If no selection, display the placeholder
-    if (this.collection.getValue(true).length === 0) {
+    if (this.selection.getValue(true).length === 0) {
       this.valueDisplay.setAttribute("data-content", placeholder);
     }
   }
@@ -332,6 +379,16 @@ class SelectComponent extends Component {
 
     // Highlight first selected item or first item
     this.highlightFirstSelectedOrFirstItem();
+    window.requestAnimationFrame(() => {
+      if (this.destroyed || typeof document === "undefined") return;
+
+      if (
+        this.state === "open" &&
+        !this.content?.contains(document.activeElement)
+      ) {
+        this.highlightFirstSelectedOrFirstItem();
+      }
+    });
 
     this.pushEvent("opened");
   }
@@ -347,11 +404,11 @@ class SelectComponent extends Component {
 
   // Item management
   selectValue(value) {
-    const collectionItem = this.collection.getItemByValue(value);
+    const collectionItem = this.registry.getItemByValue(value);
     if (!collectionItem) return;
 
     // Toggle item selection
-    this.collection.select(collectionItem);
+    this.selection.select(collectionItem);
 
     // Update value display
     this.updateValueDisplay();
@@ -366,21 +423,21 @@ class SelectComponent extends Component {
     }
 
     // Emit event with current value
-    const selectedValue = this.collection.getValue();
+    const selectedValue = this.selection.getValue();
     this.pushEvent("value-changed", { value: selectedValue });
   }
 
   handleItemFocus(item) {
-    const collectionItem = this.collection.getItemByInstance(item);
+    const collectionItem = this.registry.getItemByInstance(item);
     if (!collectionItem) return;
 
-    this.collection.focus(collectionItem);
+    this.rovingFocus.focus(collectionItem);
   }
 
   updateValueDisplay() {
     if (!this.valueDisplay) return;
 
-    const selectedValues = this.collection.getValue(true);
+    const selectedValues = this.selection.getValue(true);
     const placeholder =
       this.valueDisplay.getAttribute("data-placeholder") || "Select an option";
 
@@ -391,7 +448,7 @@ class SelectComponent extends Component {
       // Multiple selection
       if (selectedValues.length === 1) {
         // Get the label from the selected item
-        const selectedItem = this.collection.getItemByValue(selectedValues[0]);
+        const selectedItem = this.registry.getItemByValue(selectedValues[0]);
         this.setValueDisplayText(
           selectedItem?.instance.label || selectedValues[0],
         );
@@ -401,7 +458,7 @@ class SelectComponent extends Component {
       }
     } else {
       // Single selection - get label from the selected item
-      const selectedItem = this.collection.getItemByValue(selectedValues[0]);
+      const selectedItem = this.registry.getItemByValue(selectedValues[0]);
       this.setValueDisplayText(
         selectedItem?.instance.label || selectedValues[0],
       );
@@ -419,40 +476,40 @@ class SelectComponent extends Component {
   // Navigation methods
   navigateItem(direction) {
     // Check if we have an active highlighted item
-    let currentItem = this.collection.focusedItem;
+    let currentItem = this.rovingFocus.focusedItem;
 
     // If not, use the first selected item or null
     if (!currentItem) {
       currentItem =
-        this.collection.getValue(true).length > 0
-          ? this.collection.getItemByValue(this.collection.getValue(true)[0])
+        this.selection.getValue(true).length > 0
+          ? this.registry.getItemByValue(this.selection.getValue(true)[0])
           : null;
     }
 
-    // Get target item using collection's navigation methods
-    const targetItem = this.collection.getItem(direction, currentItem);
+    // Get target item using registry navigation methods
+    const targetItem = this.registry.getItem(direction, currentItem);
 
     if (targetItem) {
-      this.collection.focus(targetItem);
+      this.rovingFocus.focus(targetItem);
     }
   }
 
   highlightFirstSelectedOrFirstItem() {
     // Try to highlight the first selected item
-    const selectedValue = this.collection.getValue(true)[0];
+    const selectedValue = this.selection.getValue(true)[0];
 
     const selectedItem =
-      this.collection.getItemByValue(selectedValue) ||
-      this.collection.getItem("first");
+      this.registry.getItemByValue(selectedValue) ||
+      this.registry.getItem("first");
     if (selectedItem) {
-      this.collection.focus(selectedItem);
+      this.rovingFocus.focus(selectedItem);
     }
   }
 
   // Form integration
   syncHiddenInputs() {
     // Get the selected values
-    const values = this.collection.getValue(true);
+    const values = this.selection.getValue(true);
     const name = this.getInputName();
 
     // Remove existing hidden inputs
@@ -491,15 +548,9 @@ class SelectComponent extends Component {
   }
 
   dispatchFormEvents() {
-    const form = this.el.closest("form");
-    if (!form) return;
+    if (!this.el.closest("form")) return;
 
-    const target =
-      this.el.querySelector(
-        "input[type='hidden'][data-salad-ui-select-input='true']",
-      ) || form;
-
-    target.dispatchEvent(new Event("change", { bubbles: true }));
+    this.el.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   // Cleanup
@@ -510,13 +561,15 @@ class SelectComponent extends Component {
     }
 
     // Clean up item instances
-    this.collection.each((item) => {
+    this.registry.each((item) => {
       if (typeof item.destroy === "function") {
         item.destroy();
       }
     });
 
-    this.collection = null;
+    this.registry = null;
+    this.rovingFocus = null;
+    this.selection = null;
   }
 }
 
