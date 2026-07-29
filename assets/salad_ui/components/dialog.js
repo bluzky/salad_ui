@@ -5,33 +5,54 @@ import FocusTrap from "../core/focus-trap.js";
 import ClickOutsideMonitor from "../core/click-outside.js";
 
 class DialogComponent extends Component {
-  constructor(el, hookContext) {
-    super(el, { hookContext, initialState: "closed" });
+  constructor(el, hookContext, { initialStateOverride = null } = {}) {
+    super(el, {
+      hookContext,
+      initialState: "closed",
+      initialStateOverride,
+    });
 
     // Initialize properties
     this.root = this.el;
     this.content = this.getPart("content");
     this.contentPanel = this.getPart("content-panel");
+    this.serverState = this.getServerState();
     this.config.preventDefaultKeys = ["Escape"];
   }
 
   afterMount() {
     const requestedState =
-      this.el.dataset.saladuiPreservedState ||
+      this.initialStateOverride ||
       (this.el.dataset.open === undefined
         ? this.el.dataset.state || "closed"
         : this.el.dataset.open === "true"
           ? "open"
           : "closed");
 
-    delete this.el.dataset.saladuiPreservedState;
-
     if (requestedState === this.state) {
-      if (this.state === "open") this.onOpenEnter();
+      if (this.state === "open") {
+        this.onOpenEnter({ notify: this.initialStateOverride === null });
+      }
       return;
     }
 
     this.transition(requestedState === "open" ? "open" : "close");
+  }
+
+  getServerState() {
+    if (this.el.dataset.open === undefined) return null;
+
+    return this.el.dataset.open === "true" ? "open" : "closed";
+  }
+
+  getUpdateState() {
+    const nextServerState = this.getServerState();
+
+    if (nextServerState === null || nextServerState === this.serverState) {
+      return this.state;
+    }
+
+    return null;
   }
 
   getComponentConfig() {
@@ -151,7 +172,7 @@ class DialogComponent extends Component {
     // No special handling needed
   }
 
-  onOpenEnter() {
+  onOpenEnter({ notify = true } = {}) {
     // Initialize focus trap if not already created
     this.el.focus();
     if (!this.focusTrap) {
@@ -169,12 +190,12 @@ class DialogComponent extends Component {
     // Setup escape key handling - now handled by the component's keyMap
 
     // Notify the server of the state change
-    this.pushEvent("opened");
+    if (notify) this.pushEvent("opened");
   }
 
-  beforeDestroy() {
+  beforeDestroy({ preserveState = false } = {}) {
     // Clean up focus trap
-    this.focusTrap?.destroy();
+    this.focusTrap?.destroy({ restoreFocus: !preserveState });
     this.focusTrap = null;
   }
 }

@@ -147,12 +147,11 @@ updated() {
 
 This means every LiveView patch to a component's root element — even an
 unrelated one — runs the full destroy phase and then the full mount phase
-again, on a brand new instance. `SaladUIHook` snapshots dialog state in a
-temporary `data-saladui-preserved-state` attribute before this remount, so
-a client-open dialog remains open after an unrelated patch. A changed
-`data-open` value still takes precedence, allowing a server patch to change
-dialog state. Other component state must be re-rendered by server into DOM to
-survive a patch.
+again, on a brand new instance. A component may opt in to restoring state by
+overriding `getUpdateState()`. The hook passes returned state into the
+replacement before its mount lifecycle runs. Dialog uses this to stay open
+after an unrelated patch; a changed `data-open` value still takes precedence.
+Components that do not override `getUpdateState/0` use server-rendered state.
 
 ```mermaid
 sequenceDiagram
@@ -205,6 +204,7 @@ diagram above for how the two paths diverge after `destroy()` completes:
 | `afterMount()` | factory, after `setupEvents()` | Once, after construction | `beforeDestroy()` (loosely — not a strict pair, but both are the two lifecycle hooks a subclass most commonly overrides) |
 | `teardownComponentEvents()` | `removeAllEvents()` | On `destroy()`, and again if `setupEvents()` is ever re-invoked | `setupComponentEvents()` |
 | `beforeDestroy()` | `destroy()` | Once, before listeners are removed | `afterMount()` (see above) |
+| `getUpdateState()` | `updated()` | Before a hook replaces component instance | Return state to restore, or `null` for server-rendered state |
 | `onStateChanged(prev, next)` | `StateMachine` via `initStateMachine()` | Every transition | n/a — override to customize UI update / animation behavior |
 
 ## Rules
@@ -241,33 +241,39 @@ previously caused a real bug (see [Common Pitfalls](#common-pitfalls)).
 
 ```javascript
 class DialogComponent extends Component {
-  constructor(el, hookContext) {
-    super(el, { hookContext, initialState: "closed" });
+  constructor(el, hookContext, { initialStateOverride = null } = {}) {
+    super(el, { hookContext, initialState: "closed", initialStateOverride });
 
     // Only cache fields here — no setupEvents(), no transition().
     this.root = this.el;
     this.content = this.getPart("content");
     this.contentPanel = this.getPart("content-panel");
+    this.serverState = this.getServerState();
     this.config.preventDefaultKeys = ["Escape"];
   }
 
   afterMount() {
     const requestedState =
-      this.el.dataset.saladuiPreservedState ||
-      (this.el.dataset.open === undefined
-        ? this.el.dataset.state || "closed"
-        : this.el.dataset.open === "true"
-          ? "open"
-          : "closed");
-
-    delete this.el.dataset.saladuiPreservedState;
+      this.initialStateOverride ||
+      this.getServerState() ||
+      this.el.dataset.state ||
+      "closed";
 
     if (requestedState === this.state) {
-      if (this.state === "open") this.onOpenEnter();
+      if (this.state === "open") {
+        this.onOpenEnter({ notify: this.initialStateOverride === null });
+      }
       return;
     }
 
     this.transition(requestedState === "open" ? "open" : "close");
+  }
+
+  getUpdateState() {
+    const nextServerState = this.getServerState();
+    return nextServerState === null || nextServerState === this.serverState
+      ? this.state
+      : null;
   }
 
   setupComponentEvents() {
@@ -292,11 +298,11 @@ class DialogComponent extends Component {
     this.clickOutsideMonitor = null;
   }
 
-  onOpenEnter() {
+  onOpenEnter({ notify = true } = {}) {
     // start()/stop() just pause/resume the monitor created above —
     // they don't create or destroy it.
     this.clickOutsideMonitor?.start();
-    // ...
+    if (notify) this.pushEvent("opened");
   }
 
   onClosedEnter() {
@@ -304,11 +310,11 @@ class DialogComponent extends Component {
     // ...
   }
 
-  beforeDestroy() {
+  beforeDestroy({ preserveState = false } = {}) {
     // Focus trap cleanup belongs here: it isn't something
     // setupComponentEvents() created, so it doesn't belong in
     // teardownComponentEvents().
-    this.focusTrap?.destroy();
+    this.focusTrap?.destroy({ restoreFocus: !preserveState });
     this.focusTrap = null;
   }
 }

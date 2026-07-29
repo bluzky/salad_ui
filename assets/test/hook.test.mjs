@@ -37,6 +37,24 @@ class FakeComponent {
 
 registry.register("hook-test", FakeComponent);
 
+class StatefulFakeComponent extends FakeComponent {
+  constructor(el, hookContext, options) {
+    super(el, hookContext);
+    this.options = options;
+  }
+
+  getUpdateState() {
+    return "active";
+  }
+
+  destroy(options) {
+    this.destroyOptions = options;
+    super.destroy();
+  }
+}
+
+registry.register("stateful-hook-test", StatefulFakeComponent);
+
 function createHookInstance(el) {
   const eventHandlers = {};
 
@@ -134,6 +152,18 @@ test("updated() destroys the old component instance and mounts a fresh one", () 
   assert.notEqual(hook.component, original);
   assert.ok(hook.component instanceof FakeComponent);
   assert.equal(hook.component.destroyed, false);
+});
+
+test("updated() passes component update state into the replacement before mount", () => {
+  const el = buildEl("stateful-hook-test");
+  const hook = createHookInstance(el);
+  hook.mounted();
+
+  const original = hook.component;
+  hook.updated();
+
+  assert.deepEqual(original.destroyOptions, { preserveState: true });
+  assert.equal(hook.component.options.initialStateOverride, "active");
 });
 
 test("destroyed() destroys the component and clears the reference", () => {

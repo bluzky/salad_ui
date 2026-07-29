@@ -4,20 +4,10 @@ import { registry } from "./factory.js";
 const SaladUIHook = {
   mounted() {
     this.initComponent();
-    this.dialogServerState = this.getDialogServerState();
     this.setupServerEvents();
   },
 
-  getDialogServerState() {
-    if (this.el.getAttribute("data-component") !== "dialog") return null;
-
-    const open = this.el.dataset.open;
-    if (open === undefined) return null;
-
-    return open === "true" ? "open" : "closed";
-  },
-
-  initComponent() {
+  initComponent(options = {}) {
     const el = this.el;
     const componentType = el.getAttribute("data-component");
 
@@ -29,7 +19,7 @@ const SaladUIHook = {
     }
 
     // The registry.create method will handle creating the component and calling setupEvents
-    this.component = registry.create(componentType, el, this);
+    this.component = registry.create(componentType, el, this, options);
   },
 
   setupServerEvents() {
@@ -46,35 +36,18 @@ const SaladUIHook = {
 
   updated() {
     if (this.component) {
-      const isDialog = this.el.getAttribute("data-component") === "dialog";
-      const nextDialogServerState = this.getDialogServerState();
-      const preservedState =
-        isDialog &&
-        (nextDialogServerState === null ||
-          nextDialogServerState === this.dialogServerState)
-          ? this.component.state
-          : null;
+      const preservedState = this.component.getUpdateState?.() ?? null;
 
-      this.component.destroy();
+      this.component.destroy({ preserveState: preservedState !== null });
       this.component = null;
 
-      if (preservedState) {
-        this.el.dataset.saladuiPreservedState = preservedState;
-      }
-
-      this.initComponent();
-      this.dialogServerState = this.getDialogServerState();
-      //   this.component.parseOptions();
-      //   this.component.setupEvents();
-      //   this.component.updatePartsVisibility();
-      //   this.component.updateUI();
+      this.initComponent({ initialStateOverride: preservedState });
     }
   },
 
   destroyed() {
     this.component?.destroy();
     this.component = null;
-    this.dialogServerState = null;
   },
 };
 
