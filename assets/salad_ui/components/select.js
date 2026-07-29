@@ -268,8 +268,7 @@ class SelectComponent extends Component {
     this.trigger?.removeEventListener("keydown", this.handleTriggerKeydown);
   }
 
-  handleTriggerClick(event) {
-    event.preventDefault();
+  handleTriggerClick() {
     if (this.disabled) return;
 
     this.transition(this.state === "open" ? "close" : "open");
@@ -543,15 +542,9 @@ class SelectComponent extends Component {
   }
 
   dispatchFormEvents() {
-    const form = this.el.closest("form");
-    if (!form) return;
+    if (!this.el.closest("form")) return;
 
-    const target =
-      this.el.querySelector(
-        "input[type='hidden'][data-salad-ui-select-input='true']",
-      ) || form;
-
-    target.dispatchEvent(new Event("change", { bubbles: true }));
+    this.el.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   // Cleanup

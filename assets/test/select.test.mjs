@@ -30,14 +30,16 @@ function buildSelect({
   ],
   inForm = false,
   extraHidden = false,
+  disabled = false,
 } = {}) {
   const options = { name, multiple, value, defaultValue, usePortal: false };
   const root = `
     <div id="${id}" data-component="select" data-state="closed"
+         data-disabled="${disabled}"
          data-options='${JSON.stringify(options)}'
          data-event-mappings='{"value-changed":"value_changed"}'
          data-part="root">
-      <button type="button" data-part="trigger">
+      <button type="button" data-part="trigger" ${disabled ? "disabled" : ""}>
         <span data-part="value" data-placeholder="Choose one">Choose one</span>
       </button>
       <div data-part="content" hidden>
@@ -114,6 +116,24 @@ test("trigger click toggles an open select closed and restores trigger focus", (
   assert.equal(document.activeElement, trigger);
 });
 
+test("trigger click does nothing when select is disabled", () => {
+  const { content, hiddenInputs, pushed, trigger, valueDisplay } = buildSelect({
+    disabled: true,
+  });
+
+  const hiddenBefore = hiddenInputs().map((input) => [input.name, input.value]);
+
+  click(trigger);
+
+  assert.equal(content.hidden, true);
+  assert.equal(valueDisplay.textContent, "Choose one");
+  assert.deepEqual(
+    hiddenInputs().map((input) => [input.name, input.value]),
+    hiddenBefore,
+  );
+  assert.deepEqual(pushed, []);
+});
+
 test("arrow keys navigate and prevent page scroll when open trigger keeps focus", () => {
   const { content, item, trigger } = buildSelect();
   document.body.insertAdjacentHTML("afterbegin", '<input id="before-select">');
@@ -147,6 +167,23 @@ test("selecting an item updates readable text, hidden input, and LiveView form e
   assert.deepEqual(events, ["change"]);
   assert.equal(pushed.at(-1).event, "value_changed");
   assert.equal(pushed.at(-1).payload.value, "banana");
+});
+
+test("multiple select dispatches form change from the select root", () => {
+  const { el, form, hiddenInputs, item } = buildSelect({
+    inForm: true,
+    multiple: true,
+  });
+  const targets = [];
+  form.addEventListener("change", (event) => targets.push(event.target));
+
+  click(item("banana"));
+
+  assert.deepEqual(targets, [el]);
+  assert.deepEqual(
+    hiddenInputs().map((input) => [input.name, input.value]),
+    [["fruit[]", "banana"]],
+  );
 });
 
 test("multiple select normalizes hidden input names and highlights first selected value", () => {
