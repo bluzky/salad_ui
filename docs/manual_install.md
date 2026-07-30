@@ -83,25 +83,16 @@ If you want to config yourself, here is step by step adding configuration to get
 
 - Download [`tw-animate.css`](https://raw.githubusercontent.com/Wombosvideo/tw-animate-css/refs/heads/main/src/tw-animate.css) into `assets/vendor/tw-animate.css`.
 
-3. **Add javascript to handle event from server**
-This add ability to execute client action from server. It's similar to `JS.exec/2`. Thanks to [this post](https://fly.io/phoenix-files/server-triggered-js/) from fly.io.
+3. **Control a Sheet from server**
+Use `SaladUI.LiveView.send_command/4` to send a state transition to Sheet.
 
-Add this code snippet to the end of `app.js`
-
-```js
-window.addEventListener("phx:js-exec", ({ detail }) => {
-  document.querySelectorAll(detail.to).forEach((el) => {
-    liveSocket.execJS(el, el.getAttribute(detail.attr));
-  });
-});
-```
-
-Then from server side, you can close an opening sheet like this.
+Then from server side, close an open sheet like this.
 ```elixir
   @impl true
   def handle_event("update", params, socket) do
     # your logic
-    {:noreply, push_event(socket, "js-exec", %{to: "#my-sheet", attr: "phx-hide-sheet"})}
+    socket = SaladUI.LiveView.send_command(socket, "my-sheet", "close")
+    {:noreply, socket}
   end
 ```
 

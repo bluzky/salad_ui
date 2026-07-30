@@ -34,6 +34,22 @@ defmodule SaladUI.SheetTest do
 
       assert html =~ ~s(data-state="open")
     end
+
+    test "configures dialog-compatible close animation and options" do
+      assigns = assign_builder()
+
+      html =
+        rendered_to_string(~H"""
+        <.sheet id="test-sheet" close-on-outside-click={false}>
+          <div>Content</div>
+        </.sheet>
+        """)
+
+      assert html =~ ~s(data-component="dialog")
+      assert html =~ "open_to_closed"
+      assert html =~ "duration&quot;:300"
+      assert html =~ "closeOnOutsideClick&quot;:false"
+    end
   end
 
   describe "sheet_trigger/1" do
@@ -69,6 +85,7 @@ defmodule SaladUI.SheetTest do
       assert html =~ ~s(data-part="overlay")
       assert html =~ ~s(data-part="content-panel")
       assert html =~ ~s(data-side="right")
+      assert html =~ "data-[state=closed]:fill-mode-forwards"
       assert html =~ "Sheet Content"
     end
 

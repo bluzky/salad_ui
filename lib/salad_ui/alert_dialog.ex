@@ -100,6 +100,8 @@ defmodule SaladUI.AlertDialog do
         :options,
         json(%{
           animations: get_animation_config(),
+          closeOnEscape: false,
+          closeOnOutsideClick: false,
           role: "alertdialog"
         })
       )
@@ -141,6 +143,7 @@ defmodule SaladUI.AlertDialog do
   The content container of the alert dialog.
   """
   attr :class, :string, default: nil
+  attr :"aria-label", :string, default: "Alert dialog"
   slot :inner_block, required: true
   attr :rest, :global
 
@@ -149,16 +152,17 @@ defmodule SaladUI.AlertDialog do
     <div data-part="content" tabindex="0" hidden class="z-50">
       <div
         data-part="overlay"
-        class="fixed inset-0 bg-black/80 data-[state=open]/dialog:animate-in data-[state=closed]/dialog:animate-out data-[state=closed]/dialog:fade-out-0 data-[state=open]/dialog:fade-in-0 z-50"
+        class="fixed inset-0 z-50 bg-black/80 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fill-mode-forwards data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
       />
       <div
         data-part="content-panel"
         class={
           classes([
-            "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:rounded-lg",
+            "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fill-mode-forwards data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:rounded-lg",
             @class
           ])
         }
+        aria-label={assigns[:"aria-label"]}
         {@rest}
       >
         {render_slot(@inner_block)}
@@ -325,7 +329,7 @@ defmodule SaladUI.AlertDialog do
   defp get_animation_config do
     %{
       "open_to_closed" => %{
-        duration: 130,
+        duration: 200,
         target_part: "content"
       }
     }

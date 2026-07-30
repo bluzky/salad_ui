@@ -618,13 +618,14 @@ class AriaManager {
     const resolvedValue =
       typeof value === "function" ? value.call(this.component, part) : value;
 
-    if (resolvedValue === null || resolvedValue === undefined) return;
+    const attribute = attr === "role" ? "role" : `aria-${attr}`;
 
-    if (attr === "role") {
-      part.setAttribute("role", resolvedValue);
-    } else {
-      part.setAttribute(`aria-${attr}`, resolvedValue);
+    if (resolvedValue === null || resolvedValue === undefined) {
+      part.removeAttribute(attribute);
+      return;
     }
+
+    part.setAttribute(attribute, resolvedValue);
   }
 }
 

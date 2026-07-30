@@ -28,7 +28,7 @@ class DialogComponent extends Component {
 
     if (requestedState === this.state) {
       if (this.state === "open") {
-        this.onOpenEnter();
+        this.activateOpenState();
       }
       return;
     }
@@ -48,6 +48,7 @@ class DialogComponent extends Component {
         },
         open: {
           enter: "onOpenEnter",
+          exit: "onOpenExit",
           transitions: {
             close: "closed",
           },
@@ -59,7 +60,9 @@ class DialogComponent extends Component {
         },
         open: {
           keyMap: {
-            Escape: "close",
+            ...(this.options.closeOnEscape === false
+              ? {}
+              : { Escape: "close" }),
           },
         },
       },
@@ -88,6 +91,11 @@ class DialogComponent extends Component {
             modal: "true",
             labelledby: () => this.getPartId("title"),
             describedby: () => this.getPartId("description"),
+          },
+          closed: {
+            modal: null,
+            labelledby: null,
+            describedby: null,
           },
         },
         "close-trigger": {
@@ -135,18 +143,7 @@ class DialogComponent extends Component {
 
   // State machine handlers
   onClosedEnter() {
-    // Clean up focus trap
-    if (this.focusTrap) {
-      this.focusTrap.deactivate();
-    }
-
-    // Clean up click outside monitor
-    if (this.clickOutsideMonitor) {
-      this.clickOutsideMonitor.stop();
-    }
-
-    // Notify the server of the state change
-    this.pushEvent("close");
+    // Content hides after its exit animation completes.
   }
 
   onClosedExit() {
@@ -154,6 +151,21 @@ class DialogComponent extends Component {
   }
 
   onOpenEnter() {
+    this.activateOpenState();
+
+    // Notify the server of the state change
+    this.pushEvent("open");
+  }
+
+  onOpenExit() {
+    this.focusTrap?.deactivate();
+    this.clickOutsideMonitor?.stop();
+
+    // Notify before an exit animation or a LiveView patch can destroy this instance.
+    this.pushEvent("close");
+  }
+
+  activateOpenState() {
     // Initialize focus trap if not already created
     this.el.focus();
     if (!this.focusTrap) {
@@ -168,10 +180,7 @@ class DialogComponent extends Component {
       this.clickOutsideMonitor.start();
     }
 
-    // Setup escape key handling - now handled by the component's keyMap
-
-    // Notify the server of the state change
-    this.pushEvent("open");
+    // Escape handling uses the component key map.
   }
 
   beforeDestroy() {

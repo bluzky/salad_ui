@@ -27,6 +27,10 @@ defmodule SaladUI.AlertDialogTest do
       assert html =~ ~s(id="test-dialog")
       assert html =~ "Content"
       assert html =~ ~s(class="relative z-50 group/alert-dialog")
+      assert html =~ ~s(data-component="dialog")
+      assert html =~ "closeOnEscape&quot;:false"
+      assert html =~ "closeOnOutsideClick&quot;:false"
+      assert html =~ "role&quot;:&quot;alertdialog"
     end
 
     test "renders with open state" do
@@ -126,7 +130,24 @@ defmodule SaladUI.AlertDialogTest do
 
       assert html =~ ~s(data-part="overlay")
       assert html =~ ~s(data-part="content-panel")
+      assert html =~ ~s(aria-label="Alert dialog")
+      assert html =~ "data-[state=open]:animate-in"
+      assert html =~ "data-[state=closed]:fill-mode-forwards"
+      refute html =~ "/dialog"
       refute html =~ ~s(data-part="close-trigger")
+    end
+
+    test "uses a consumer-provided accessible name" do
+      assigns = assign_builder()
+
+      html =
+        rendered_to_string(~H"""
+        <.alert_dialog_content aria-label="Delete confirmation">
+          <div>Dialog Content</div>
+        </.alert_dialog_content>
+        """)
+
+      assert html =~ ~s(aria-label="Delete confirmation")
     end
 
     test "renders with custom class" do
