@@ -16,6 +16,7 @@ class FakeComponent {
     this.el = el;
     this.hookContext = hookContext;
     this.destroyed = false;
+    this.beforeUpdated = false;
     this.setupEventsCalled = false;
     this.commands = [];
   }
@@ -25,6 +26,10 @@ class FakeComponent {
   }
 
   afterMount() {}
+
+  beforeUpdate() {
+    this.beforeUpdated = true;
+  }
 
   handleCommand(command, params) {
     this.commands.push({ command, params });
@@ -120,6 +125,16 @@ test("a saladui:command server event is ignored when its target does not match t
   });
 
   assert.deepEqual(hook.component.commands, []);
+});
+
+test("beforeUpdate() forwards LiveView's pre-patch lifecycle to the component", () => {
+  const el = buildEl();
+  const hook = createHookInstance(el);
+  hook.mounted();
+
+  hook.beforeUpdate();
+
+  assert.equal(hook.component.beforeUpdated, true);
 });
 
 test("updated() destroys the old component instance and mounts a fresh one", () => {

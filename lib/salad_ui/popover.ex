@@ -5,9 +5,7 @@ defmodule SaladUI.Popover do
   ## Example:
 
       <.popover id="profile-popover">
-        <.popover_trigger>
-          <.button variant="outline">Open Popover</.button>
-        </.popover_trigger>
+        <.popover_trigger>Open Popover</.popover_trigger>
         <.popover_content side="bottom" align="center">
           <div class="p-4">
             <h3 class="font-medium">Profile</h3>
@@ -25,14 +23,20 @@ defmodule SaladUI.Popover do
 
   * `:id` - Required unique identifier for the popover.
   * `:open` - Whether the popover is initially open. Defaults to `false`.
-  * `:animation` - Whether to animate the popover. Defaults to `true`.
+  * `:use-portal` - Whether to move content outside its root while open. Defaults to `false`.
+  * `:portal-container` - CSS selector for portal target. Used only when `:use-portal` is `true`.
   * `:on-open` - Handler for popover open event.
   * `:on-close` - Handler for popover close event.
   * `:class` - Additional CSS classes.
   """
   attr :id, :string, required: true, doc: "Unique identifier for the popover"
   attr :open, :boolean, default: false, doc: "Whether the popover is initially open"
-  attr :"portal-container", :string, default: nil, doc: "The portal container to render the popover in"
+  attr :"use-portal", :boolean, default: false, doc: "Whether to render the popover in a portal"
+
+  attr :"portal-container", :string,
+    default: nil,
+    doc: "Portal container selector when use-portal is enabled"
+
   attr :class, :string, default: nil
   attr :"on-open", :any, default: nil, doc: "Handler for popover open event"
   attr :"on-close", :any, default: nil, doc: "Handler for popover close event"
@@ -51,6 +55,7 @@ defmodule SaladUI.Popover do
         :options,
         Jason.encode!(%{
           animations: get_animation_config(),
+          usePortal: assigns[:"use-portal"],
           portalContainer: assigns[:"portal-container"]
         })
       )
@@ -74,16 +79,46 @@ defmodule SaladUI.Popover do
 
   @doc """
   The trigger element that toggles the popover.
+
+  Renders a native `<button type="button">` by default. Set `:as` to an
+  HTML tag or function component to render another trigger root.
   """
+  attr :as, :any, default: "button"
+  attr :type, :string, default: nil
   attr :class, :string, default: nil
   attr :rest, :global
   slot :inner_block, required: true
 
   def popover_trigger(assigns) do
+    assigns =
+      if is_function(assigns.as, 1) && is_nil(assigns.type) do
+        assign(assigns, :type, "button")
+      else
+        assigns
+      end
+
     ~H"""
-    <div data-part="trigger" data-action="toggle" class={classes(["", @class])} {@rest}>
+    <button
+      :if={@as == "button"}
+      type={@type || "button"}
+      data-part="trigger"
+      data-action="toggle"
+      class={classes([@class])}
+      {@rest}
+    >
       {render_slot(@inner_block)}
-    </div>
+    </button>
+    <.dynamic
+      :if={@as != "button"}
+      tag={@as}
+      type={@type}
+      data-part="trigger"
+      data-action="toggle"
+      class={classes([@class])}
+      {@rest}
+    >
+      {render_slot(@inner_block)}
+    </.dynamic>
     """
   end
 

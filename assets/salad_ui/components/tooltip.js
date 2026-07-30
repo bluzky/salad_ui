@@ -1,6 +1,6 @@
-import Component from "../core/component";
-import SaladUI from "../index";
-import PositionedElement from "../core/positioned-element";
+import Component from "../core/component.js";
+import SaladUI from "../index.js";
+import PositionedElement from "../core/positioned-element.js";
 
 // Define constants at the module level outside the class
 const DEFAULT_POSITION_CONFIG = {
@@ -20,9 +20,15 @@ class TooltipComponent extends Component {
     super(el, { hookContext });
 
     // Initialize core properties
-    this.trigger =
-      this.getPart("trigger") || this.el.querySelector(":first-child");
+    this.trigger = this.getPart("trigger") || this.getFallbackTrigger();
     this.content = this.getPart("content");
+
+    if (this.trigger && this.trigger.dataset.part !== "trigger") {
+      this.trigger.dataset.part = "trigger";
+      this.allParts = this.queryParts();
+      this.updateUI();
+      this.updatePartsVisibility();
+    }
 
     // Set config from options with fallbacks to defaults
     this.config.openDelay =
@@ -33,6 +39,12 @@ class TooltipComponent extends Component {
     // Track timer IDs for delayed open/close
     this.openTimer = null;
     this.closeTimer = null;
+  }
+
+  getFallbackTrigger() {
+    return Array.from(this.el.children).find(
+      (child) => child.dataset.part !== "content",
+    );
   }
 
   getComponentConfig() {
@@ -56,20 +68,20 @@ class TooltipComponent extends Component {
         closed: {
           mouseMap: {
             trigger: {
-              mouseenter: "delayOpen",
-              focus: "delayOpen",
+              mouseover: "delayOpen",
+              focusin: "delayOpen",
             },
           },
         },
         open: {
           mouseMap: {
             trigger: {
-              mouseleave: "delayClose",
-              blur: "delayClose",
+              mouseout: "delayClose",
+              focusout: "delayClose",
             },
             content: {
-              mouseenter: "clearTimers",
-              mouseleave: "delayClose",
+              mouseover: "clearTimers",
+              mouseout: "delayClose",
             },
           },
         },
@@ -105,7 +117,9 @@ class TooltipComponent extends Component {
     }, this.config.openDelay);
   }
 
-  delayClose() {
+  delayClose(event) {
+    if (event?.currentTarget?.contains(event.relatedTarget)) return;
+
     this.clearTimers();
     this.closeTimer = setTimeout(() => {
       this.transition("close");
@@ -147,6 +161,9 @@ class TooltipComponent extends Component {
       flip: true,
       usePortal: false,
       trapFocus: false,
+      onPosition: ({ placement: actualPlacement }) => {
+        this.content?.setAttribute("data-side", actualPlacement);
+      },
     };
 
     // Create positioned element

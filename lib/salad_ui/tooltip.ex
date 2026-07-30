@@ -45,7 +45,12 @@ defmodule SaladUI.Tooltip do
   slot :inner_block, required: true
 
   def tooltip(assigns) do
-    assigns = assign_new(assigns, :id, fn -> "tooltip-#{System.unique_integer()}" end)
+    assigns =
+      if assigns[:id] do
+        assigns
+      else
+        assign(assigns, :id, "tooltip-#{System.unique_integer([:positive])}")
+      end
 
     # Collect event mappings
     event_map = event_mappings(assigns)
@@ -145,10 +150,6 @@ defmodule SaladUI.Tooltip do
 
   defp get_animation_config do
     %{
-      "closed_to_open" => %{
-        duration: 200,
-        target_part: "content"
-      },
       "open_to_closed" => %{
         duration: 130,
         target_part: "content"
