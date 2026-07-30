@@ -25,6 +25,35 @@ defmodule SaladUI.AlertDialog do
           </.alert_dialog_footer>
         </.alert_dialog_content>
       </.alert_dialog>
+
+  ## Component events
+
+  Alert dialog emits these client events through `on-*` attributes:
+
+  * `:on-open` - Maps the `open` event. Fired when dialog enters open state.
+  * `:on-close` - Maps the `close` event. Fired when dialog enters closed state.
+
+  Event handlers can be a server event name string or a `%Phoenix.LiveView.JS{}` command:
+
+      <.alert_dialog
+        id="delete-confirmation"
+        on-open="delete_dialog_opened"
+        on-close={JS.push("delete_dialog_closed")}
+      >
+        ...
+      </.alert_dialog>
+
+  ## Server commands
+
+  Alert dialog supports these commands through `SaladUI.LiveView.send_command/4`:
+
+  * `"open"` - Opens the dialog.
+  * `"close"` - Closes the dialog.
+
+      def handle_event("confirm_delete", _params, socket) do
+        socket = SaladUI.LiveView.send_command(socket, "delete-confirmation", "open")
+        {:noreply, socket}
+      end
   """
   use SaladUI, :component
 
@@ -35,9 +64,21 @@ defmodule SaladUI.AlertDialog do
 
   * `:id` - Required unique identifier for the alert dialog.
   * `:open` - Whether the alert dialog is initially open. Defaults to `false`.
-  * `:on-open` - Handler for alert dialog open event.
-  * `:on-close` - Handler for alert dialog close event.
+  * `:on-open` - Handler for `open` event. Accepts a server event name or `%Phoenix.LiveView.JS{}`.
+  * `:on-close` - Handler for `close` event. Accepts a server event name or `%Phoenix.LiveView.JS{}`.
   * `:class` - Additional CSS classes.
+
+  ## Component events
+
+  * `open` - Emitted when the dialog opens. Mapped by `:on-open`.
+  * `close` - Emitted when the dialog closes. Mapped by `:on-close`.
+
+  ## Server commands
+
+  Use `SaladUI.LiveView.send_command(socket, id, command)` with:
+
+  * `"open"` - Opens the dialog.
+  * `"close"` - Closes the dialog.
   """
   attr :id, :string, required: true, doc: "Unique identifier for the alert dialog"
   attr :open, :boolean, default: false, doc: "Whether the alert dialog is initially open"
@@ -49,10 +90,7 @@ defmodule SaladUI.AlertDialog do
 
   def alert_dialog(assigns) do
     # Collect event mappings
-    event_map =
-      %{}
-      |> add_event_mapping(assigns, "opened", :"on-open")
-      |> add_event_mapping(assigns, "closed", :"on-close")
+    event_map = event_mappings(assigns)
 
     assigns =
       assigns
@@ -124,26 +162,6 @@ defmodule SaladUI.AlertDialog do
         {@rest}
       >
         {render_slot(@inner_block)}
-
-        <button
-          type="button"
-          data-part="close-trigger"
-          data-action="close"
-          class="absolute right-4 top-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]/dialog:bg-accent data-[state=open]/dialog:text-muted-foreground"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="w-5 h-5"
-          >
-            <path d="M18 6 6 18"></path>
-            <path d="m6 6 12 12"></path>
-          </svg>
-          <span class="sr-only">Close</span>
-        </button>
       </div>
     </div>
     """
@@ -290,6 +308,7 @@ defmodule SaladUI.AlertDialog do
     <button
       type="button"
       data-part="action"
+      data-action="close"
       class={
         classes([
           @variant_class,

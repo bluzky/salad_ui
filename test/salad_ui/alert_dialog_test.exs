@@ -114,7 +114,7 @@ defmodule SaladUI.AlertDialogTest do
       assert html =~ "Dialog Content"
     end
 
-    test "renders content structure" do
+    test "renders content structure without generic close button" do
       assigns = assign_builder()
 
       html =
@@ -126,6 +126,7 @@ defmodule SaladUI.AlertDialogTest do
 
       assert html =~ ~s(data-part="overlay")
       assert html =~ ~s(data-part="content-panel")
+      refute html =~ ~s(data-part="close-trigger")
     end
 
     test "renders with custom class" do
@@ -327,6 +328,8 @@ defmodule SaladUI.AlertDialogTest do
         """)
 
       assert html =~ "Continue"
+      assert html =~ ~s(data-part="action")
+      assert html =~ ~s(data-action="close")
     end
 
     test "renders with custom class" do

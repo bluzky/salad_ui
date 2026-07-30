@@ -16,15 +16,12 @@ JavaScript components send events to the Phoenix LiveView server.
 
 ### 1. Event Mapping Configuration
 
-In your Elixir component, map client events to server handlers:
+In your Elixir component, collect assigned `on-*` handlers. Attribute name suffixes are client event names:
 
 ```elixir
 defmodule SaladUI.Dialog do
   def dialog(assigns) do
-    event_map = %{}
-    |> add_event_mapping(assigns, "opened", :"on-open")
-    |> add_event_mapping(assigns, "closed", :"on-close")
-    |> add_event_mapping(assigns, "item-selected", :"on-item-selected")
+    event_map = event_mappings(assigns)
 
     assigns = assign(assigns, :event_map, json(event_map))
 
@@ -49,10 +46,10 @@ In your JavaScript component, use `pushEvent()` to send data to the server:
 class DialogComponent extends Component {
   onOpenEnter() {
     // Send simple event
-    this.pushEvent("opened");
+    this.pushEvent("open");
 
     // Send event with data
-    this.pushEvent("opened", {
+    this.pushEvent("open", {
       dialogId: this.el.id,
       timestamp: Date.now()
     });
@@ -60,7 +57,7 @@ class DialogComponent extends Component {
 
   selectItem(item) {
     // Send structured data
-    this.pushEvent("item-selected", {
+    this.pushEvent("select", {
       value: item.value,
       label: item.textContent,
       index: this.items.indexOf(item)

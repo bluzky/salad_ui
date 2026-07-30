@@ -365,7 +365,7 @@ class SelectComponent extends Component {
   onClosedEnter() {
     // Update hidden input(s)
     this.syncHiddenInputs();
-    this.pushEvent("closed");
+    this.pushEvent("close");
   }
 
   onOpenEnter() {
@@ -390,7 +390,7 @@ class SelectComponent extends Component {
       }
     });
 
-    this.pushEvent("opened");
+    this.pushEvent("open");
   }
 
   onOpenExit() {

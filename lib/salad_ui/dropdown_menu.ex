@@ -82,10 +82,7 @@ defmodule SaladUI.DropdownMenu do
 
   def dropdown_menu(assigns) do
     # Collect event mappings
-    event_map =
-      %{}
-      |> add_event_mapping(assigns, "opened", :"on-open")
-      |> add_event_mapping(assigns, "closed", :"on-close")
+    event_map = event_mappings(assigns)
 
     # Convert kebab-case attributes to snake_case for use in the template
     assigns =
@@ -261,8 +258,7 @@ defmodule SaladUI.DropdownMenu do
 
   def dropdown_menu_item(assigns) do
     # Collect event mappings
-    event_map =
-      add_event_mapping(%{}, assigns, "item-selected", :"on-select")
+    event_map = event_mappings(assigns)
 
     assigns =
       assign(assigns, :event_map, json(event_map))
@@ -354,10 +350,7 @@ defmodule SaladUI.DropdownMenu do
 
   def dropdown_menu_checkbox_item(assigns) do
     # Collect event mappings
-    event_map =
-      %{}
-      |> add_event_mapping(assigns, "checked-changed", :"on-checked-change")
-      |> add_event_mapping(assigns, "item-selected", :"on-select")
+    event_map = event_mappings(assigns)
 
     assigns =
       assign(assigns, :event_map, json(event_map))

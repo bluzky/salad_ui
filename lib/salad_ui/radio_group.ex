@@ -37,8 +37,7 @@ defmodule SaladUI.RadioGroup do
     assigns = assign_new(assigns, :id, fn -> "radio-group-#{System.unique_integer()}" end)
 
     # Collect event mappings
-    event_map =
-      add_event_mapping(%{}, assigns, "value-changed", :"on-value-changed")
+    event_map = event_mappings(assigns)
 
     assigns =
       assigns

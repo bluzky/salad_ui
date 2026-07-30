@@ -114,7 +114,7 @@ Attaches the listeners every component needs:
 
 No-op by default. Override it for anything that needs both the
 subclass's own fields *and* live listeners — the canonical case is
-`DialogComponent` performing its initial `open`/`closed` transition (see
+`DialogComponent` performing its initial `open`/`close` transition (see
 [Worked Example](#worked-example-dialogcomponent)).
 
 ## Runtime: State Transitions
@@ -292,7 +292,7 @@ class DialogComponent extends Component {
     // start()/stop() just pause/resume the monitor created above —
     // they don't create or destroy it.
     this.clickOutsideMonitor?.start();
-    this.pushEvent("opened");
+    this.pushEvent("open");
   }
 
   onClosedEnter() {

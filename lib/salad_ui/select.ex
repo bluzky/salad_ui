@@ -58,11 +58,7 @@ defmodule SaladUI.Select do
     assigns = prepare_assign(assigns)
 
     # Collect event mappings
-    event_map =
-      %{}
-      |> add_event_mapping(assigns, "value-changed", :"on-value-changed")
-      |> add_event_mapping(assigns, "opened", :"on-open")
-      |> add_event_mapping(assigns, "closed", :"on-close")
+    event_map = event_mappings(assigns)
 
     assigns =
       assigns

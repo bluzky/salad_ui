@@ -15,15 +15,15 @@ function buildMenu() {
     <div id="menu-root" data-component="dropdown-menu">
       <div id="menu-content" data-part="content">
         <div data-part="item" data-value="profile" data-disabled="false" tabindex="0"
-             data-event-mappings='{"item-selected":"selected"}'>Profile</div>
+             data-event-mappings='{"select":"selected"}'>Profile</div>
         <div data-part="item" data-value="disabled" data-disabled tabindex="-1"
-             data-event-mappings='{"item-selected":"selected"}'>Disabled</div>
+             data-event-mappings='{"select":"selected"}'>Disabled</div>
         <div data-part="item" data-value="settings" tabindex="0"
-             data-event-mappings='{"item-selected":"selected"}'>Settings</div>
+             data-event-mappings='{"select":"selected"}'>Settings</div>
         <a href="#profile" data-part="item" data-value="profile-link" tabindex="0"
-             data-event-mappings='{"item-selected":"selected"}'>Profile Link</a>
+             data-event-mappings='{"select":"selected"}'>Profile Link</a>
         <div data-part="checkbox-item" data-value="bold" data-checked="true" tabindex="0"
-             data-event-mappings='{"item-selected":"selected","checked-changed":"checked"}'>
+             data-event-mappings='{"select":"selected","checked-change":"checked"}'>
           <span data-part="item-indicator">✓</span>
           Bold
         </div>

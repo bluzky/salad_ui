@@ -48,13 +48,18 @@ defmodule SaladUI.Helpers do
 
   def has_error?(_field), do: false
 
-  # Helper function to add event mappings
-  def add_event_mapping(map \\ %{}, assigns, event, key) do
-    if assigns[key] do
-      Map.put(map, event, assigns[key])
-    else
-      map
-    end
+  # Builds client event mappings from all assigned `on-*` attributes.
+  def event_mappings(assigns) do
+    Enum.reduce(assigns, %{}, fn
+      {key, value}, event_map when is_atom(key) and value not in [nil, false] ->
+        case Atom.to_string(key) do
+          "on-" <> event -> Map.put(event_map, event, value)
+          _ -> event_map
+        end
+
+      _, event_map ->
+        event_map
+    end)
   end
 
   # Helper to encode data to JSON

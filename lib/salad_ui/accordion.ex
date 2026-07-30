@@ -59,8 +59,7 @@ defmodule SaladUI.Accordion do
 
   def accordion(assigns) do
     # Collect event mappings
-    event_map =
-      add_event_mapping(%{}, assigns, "value-changed", :"on-value-changed")
+    event_map = event_mappings(assigns)
 
     assigns =
       assigns

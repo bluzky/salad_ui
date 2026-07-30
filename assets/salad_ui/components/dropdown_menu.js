@@ -206,7 +206,7 @@ class DropdownMenuComponent extends Component {
     });
 
     if (pushEvent) {
-      this.pushEvent("opened");
+      this.pushEvent("open");
     }
   }
 
@@ -216,7 +216,7 @@ class DropdownMenuComponent extends Component {
 
   onClosedEnter({ restoreFocus = true } = {}) {
     this.positionedElement?.deactivate();
-    this.pushEvent("closed");
+    this.pushEvent("close");
 
     if (!restoreFocus) {
       this.previousFocusEl = null;

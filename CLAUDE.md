@@ -146,7 +146,7 @@ When creating or modifying components:
    - Use `use SaladUI, :component` at the top
    - Define attributes with `attr` macro, slots with `slot` macro
    - Use `classes/1` helper to merge Tailwind classes
-   - Add event mappings via `add_event_mapping/4` helper
+   - Build event mappings via `event_mappings/1` helper
    - Encode options as JSON with `json/1` helper
    - Set `phx-hook="SaladUI"` on root element if JS interaction needed
 
@@ -192,7 +192,7 @@ defmodule SaladUI.MyComponent do
   slot :inner_block, required: true
 
   def my_component(assigns) do
-    event_map = %{} |> add_event_mapping(assigns, "opened", :"on-open")
+    event_map = event_mappings(assigns)
     assigns = assign(assigns, :event_map, json(event_map))
 
     ~H"""

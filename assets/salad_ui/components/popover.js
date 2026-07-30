@@ -113,12 +113,12 @@ class PopoverComponent extends Component {
   onOpenEnter() {
     this.initializePositionedElement();
     this.positionedElement?.activate();
-    this.pushEvent("opened");
+    this.pushEvent("open");
   }
 
   onClosedEnter() {
     this.positionedElement?.deactivate();
-    this.pushEvent("closed");
+    this.pushEvent("close");
   }
 
   beforeDestroy() {
