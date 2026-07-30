@@ -25,7 +25,8 @@ defmodule Storybook.SaladUIComponents.RadioGroup do
           """
         ],
         attributes: %{
-          name: "question-1"
+          name: "question-1",
+          "aria-label": "Question 1"
         }
       },
       %Variation{
@@ -47,7 +48,8 @@ defmodule Storybook.SaladUIComponents.RadioGroup do
         ],
         attributes: %{
           name: "question-2",
-          value: "option-two"
+          value: "option-two",
+          "aria-label": "Question 2"
         }
       },
       %Variation{
@@ -69,7 +71,8 @@ defmodule Storybook.SaladUIComponents.RadioGroup do
         ],
         attributes: %{
           name: "question-3",
-          "default-value": "option-one"
+          "default-value": "option-one",
+          "aria-label": "Question 3"
         }
       },
       %Variation{
@@ -95,7 +98,8 @@ defmodule Storybook.SaladUIComponents.RadioGroup do
         ],
         attributes: %{
           name: "question-4",
-          value: "option-one"
+          value: "option-one",
+          "aria-label": "Question 4"
         }
       },
       %Variation{
@@ -121,7 +125,8 @@ defmodule Storybook.SaladUIComponents.RadioGroup do
         ],
         attributes: %{
           name: "question-5",
-          value: "option-two"
+          value: "option-two",
+          "aria-label": "Question 5"
         }
       },
       %Variation{
@@ -144,7 +149,8 @@ defmodule Storybook.SaladUIComponents.RadioGroup do
         attributes: %{
           name: "question-6",
           value: "option-one",
-          on_value_changed: "handle_radio_group_change"
+          "on-value-changed": "handle_radio_group_change",
+          "aria-label": "Question 6"
         }
       }
     ]

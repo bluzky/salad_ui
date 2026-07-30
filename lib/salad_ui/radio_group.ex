@@ -4,15 +4,20 @@ defmodule SaladUI.RadioGroup do
 
   ## Examples:
 
-      <.radio_group name="subscription" default="monthly" on_value_changed={JS.push("plan_changed")}>
+      <.radio_group
+        name="subscription"
+        default-value="monthly"
+        on-value-changed={JS.push("plan_changed")}
+        aria-label="Subscription"
+      >
         <div class="flex flex-col space-y-2">
           <div class="flex items-center space-x-2">
-            <.radio_group_item value="monthly" id="monthly"/>
-            <.label for="monthly">Monthly</label>
+            <.radio_group_item value="monthly" id="monthly" />
+            <.label for="monthly">Monthly</.label>
           </div>
           <div class="flex items-center space-x-2">
-            <.radio_group_item value="yearly" id="yearly"/>
-            <.label for="yearly">Yearly</label>
+            <.radio_group_item value="yearly" id="yearly" />
+            <.label for="yearly">Yearly</.label>
           </div>
         </div>
       </.radio_group>
@@ -45,7 +50,8 @@ defmodule SaladUI.RadioGroup do
       |> assign(
         :options,
         Jason.encode!(%{
-          initialValue: assigns.value
+          initialValue: assigns.value,
+          name: assigns.name
         })
       )
 
