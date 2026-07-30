@@ -68,7 +68,7 @@ stateMachine: {
 // Method referenced by string
 onOpenEnter(params) {
   console.log("Dialog opened with", params);
-  this.pushEvent("opened");
+  this.pushEvent("open");
 }
 
 // Inline function

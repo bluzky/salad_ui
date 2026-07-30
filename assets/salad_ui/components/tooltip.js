@@ -168,7 +168,7 @@ class TooltipComponent extends Component {
     }
 
     // Notify the server of the state change
-    this.pushEvent("opened");
+    this.pushEvent("open");
   }
 
   onOpenExit() {
@@ -181,7 +181,7 @@ class TooltipComponent extends Component {
 
   onClosedEnter() {
     // Notify the server of the state change
-    this.pushEvent("closed");
+    this.pushEvent("close");
   }
 
   beforeDestroy() {

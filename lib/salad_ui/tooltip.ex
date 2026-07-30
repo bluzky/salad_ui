@@ -48,10 +48,7 @@ defmodule SaladUI.Tooltip do
     assigns = assign_new(assigns, :id, fn -> "tooltip-#{System.unique_integer()}" end)
 
     # Collect event mappings
-    event_map =
-      %{}
-      |> add_event_mapping(assigns, "opened", :"on-open")
-      |> add_event_mapping(assigns, "closed", :"on-close")
+    event_map = event_mappings(assigns)
 
     assigns =
       assigns

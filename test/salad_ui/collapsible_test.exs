@@ -61,8 +61,8 @@ defmodule SaladUI.CollapsibleTest do
         </.collapsible>
         """)
 
-      assert html =~ ~s(&quot;opened&quot;:&quot;opened&quot;)
-      assert html =~ ~s(&quot;closed&quot;:&quot;closed&quot;)
+      assert html =~ ~s(&quot;open&quot;:&quot;opened&quot;)
+      assert html =~ ~s(&quot;close&quot;:&quot;closed&quot;)
     end
 
     test "applies custom class" do

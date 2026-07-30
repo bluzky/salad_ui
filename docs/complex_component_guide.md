@@ -16,9 +16,7 @@ defmodule SaladUI.Dialog do
   slot :inner_block, required: true
 
   def dialog(assigns) do
-    event_map = %{}
-    |> add_event_mapping(assigns, "opened", :"on-open")
-    |> add_event_mapping(assigns, "closed", :"on-close")
+    event_map = event_mappings(assigns)
 
     assigns = assign(assigns, :event_map, json(event_map))
 
@@ -131,12 +129,12 @@ class DialogComponent extends Component {
       this.focusTrap = new FocusTrap(this.contentPanel);
     }
     this.focusTrap.activate();
-    this.pushEvent("opened");
+    this.pushEvent("open");
   }
 
   onClosedEnter() {
     this.focusTrap?.deactivate();
-    this.pushEvent("closed");
+    this.pushEvent("close");
   }
 
   beforeDestroy() {
@@ -208,12 +206,12 @@ events: {
 ### Server Communication
 ```elixir
 # In template
-data-event-mappings={json(%{"opened" => assigns[:"on-open"]})}
+data-event-mappings={json(event_mappings(assigns))}}
 ```
 
 ```javascript
 // In JavaScript
-this.pushEvent("opened", { data: value });
+this.pushEvent("open", { data: value });
 ```
 
 ## Common Complex Patterns

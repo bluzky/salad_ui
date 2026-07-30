@@ -174,7 +174,7 @@ class HoverCardComponent extends Component {
     }
 
     // Notify the server of the state change
-    this.pushEvent("opened");
+    this.pushEvent("open");
   }
 
   onOpenExit() {
@@ -186,7 +186,7 @@ class HoverCardComponent extends Component {
 
   onClosedEnter() {
     // Notify the server of the state change
-    this.pushEvent("closed");
+    this.pushEvent("close");
   }
 
   beforeDestroy() {

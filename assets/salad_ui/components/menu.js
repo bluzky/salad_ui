@@ -100,7 +100,7 @@ class MenuItemBase extends Component {
     if (this.disabled) return false;
 
     this.pushEvent(
-      "item-selected",
+      "select",
       {
         value: this.value,
       },
@@ -208,7 +208,7 @@ class MenuCheckboxItem extends MenuItemBase {
     this.transition("toggle");
 
     this.pushEvent(
-      "checked-changed",
+      "checked-change",
       {
         value: this.value,
         checked: this.state == "checked",

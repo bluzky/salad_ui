@@ -43,10 +43,7 @@ defmodule SaladUI.Collapsible do
 
   def collapsible(assigns) do
     # Collect event mappings
-    event_map =
-      %{}
-      |> add_event_mapping(assigns, "opened", :"on-open")
-      |> add_event_mapping(assigns, "closed", :"on-close")
+    event_map = event_mappings(assigns)
 
     assigns =
       assigns

@@ -37,7 +37,7 @@ defmodule SaladUI.LiveView do
   ```
 
   Components emit their documented client events when state changes or user
-  interactions occur. Common dialog-like events are `opened` and `closed`.
+  interactions occur. Common dialog-like events are `open` and `close`.
 
   ## Server commands (server → client)
 

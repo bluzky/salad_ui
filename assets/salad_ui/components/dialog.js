@@ -146,7 +146,7 @@ class DialogComponent extends Component {
     }
 
     // Notify the server of the state change
-    this.pushEvent("closed");
+    this.pushEvent("close");
   }
 
   onClosedExit() {
@@ -171,7 +171,7 @@ class DialogComponent extends Component {
     // Setup escape key handling - now handled by the component's keyMap
 
     // Notify the server of the state change
-    this.pushEvent("opened");
+    this.pushEvent("open");
   }
 
   beforeDestroy() {

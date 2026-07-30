@@ -30,8 +30,8 @@ defmodule SaladUI.AlertDialog do
 
   Alert dialog emits these client events through `on-*` attributes:
 
-  * `:on-open` - Maps the `opened` event. Fired when dialog enters open state.
-  * `:on-close` - Maps the `closed` event. Fired when dialog enters closed state.
+  * `:on-open` - Maps the `open` event. Fired when dialog enters open state.
+  * `:on-close` - Maps the `close` event. Fired when dialog enters closed state.
 
   Event handlers can be a server event name string or a `%Phoenix.LiveView.JS{}` command:
 
@@ -64,14 +64,14 @@ defmodule SaladUI.AlertDialog do
 
   * `:id` - Required unique identifier for the alert dialog.
   * `:open` - Whether the alert dialog is initially open. Defaults to `false`.
-  * `:on-open` - Handler for `opened` event. Accepts a server event name or `%Phoenix.LiveView.JS{}`.
-  * `:on-close` - Handler for `closed` event. Accepts a server event name or `%Phoenix.LiveView.JS{}`.
+  * `:on-open` - Handler for `open` event. Accepts a server event name or `%Phoenix.LiveView.JS{}`.
+  * `:on-close` - Handler for `close` event. Accepts a server event name or `%Phoenix.LiveView.JS{}`.
   * `:class` - Additional CSS classes.
 
   ## Component events
 
-  * `opened` - Emitted when the dialog opens. Mapped by `:on-open`.
-  * `closed` - Emitted when the dialog closes. Mapped by `:on-close`.
+  * `open` - Emitted when the dialog opens. Mapped by `:on-open`.
+  * `close` - Emitted when the dialog closes. Mapped by `:on-close`.
 
   ## Server commands
 
@@ -90,10 +90,7 @@ defmodule SaladUI.AlertDialog do
 
   def alert_dialog(assigns) do
     # Collect event mappings
-    event_map =
-      %{}
-      |> add_event_mapping(assigns, "opened", :"on-open")
-      |> add_event_mapping(assigns, "closed", :"on-close")
+    event_map = event_mappings(assigns)
 
     assigns =
       assigns

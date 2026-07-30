@@ -2,6 +2,7 @@ defmodule SaladUI.HelperTest do
   use ExUnit.Case, async: true
 
   alias Phoenix.HTML.FormField
+  alias Phoenix.LiveView.JS
   alias SaladUI.Helpers
 
   test "prepare_assign with default value" do
@@ -60,6 +61,21 @@ defmodule SaladUI.HelperTest do
     }
 
     assert %{name: "name[]"} = Helpers.prepare_assign(assigns)
+  end
+
+  test "event_mappings collects assigned on-* handlers" do
+    assigns = %{
+      :"on-open" => "opened",
+      :"on-value-changed" => %JS{},
+      :"on-close" => nil,
+      :"on-select" => false,
+      id: "dialog"
+    }
+
+    assert %{
+             "open" => "opened",
+             "value-changed" => %JS{}
+           } = Helpers.event_mappings(assigns)
   end
 
   test "build error with custom translation function" do

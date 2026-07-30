@@ -12,7 +12,7 @@ function buildCollapsible({
   id = "collapsible-1",
   open = false,
   animations = null,
-  eventMappings = { opened: "handle_opened", closed: "handle_closed" },
+  eventMappings = { open: "handle_open", close: "handle_close" },
 } = {}) {
   const options = { open };
   if (animations) options.animations = animations;
@@ -84,7 +84,7 @@ test("aria-controls/aria-labelledby reference each other's real, non-empty ids",
   assert.equal(content.getAttribute("role"), "region");
 });
 
-test("clicking the trigger opens a closed collapsible and pushes the mapped 'opened' event", () => {
+test("clicking the trigger opens a closed collapsible and pushes the mapped 'open' event", () => {
   const { el, trigger, content, pushed } = buildCollapsible();
 
   click(trigger);
@@ -93,11 +93,11 @@ test("clicking the trigger opens a closed collapsible and pushes the mapped 'ope
   assert.equal(content.hidden, false);
   assert.equal(trigger.getAttribute("aria-expanded"), "true");
   assert.equal(pushed.length, 1);
-  assert.equal(pushed[0].event, "handle_opened");
+  assert.equal(pushed[0].event, "handle_open");
   assert.equal(pushed[0].payload.componentId, el.id);
 });
 
-test("clicking the trigger closes an open collapsible and pushes the mapped 'closed' event", () => {
+test("clicking the trigger closes an open collapsible and pushes the mapped 'close' event", () => {
   const { el, trigger, content, pushed } = buildCollapsible({ open: true });
 
   click(trigger);
@@ -106,7 +106,7 @@ test("clicking the trigger closes an open collapsible and pushes the mapped 'clo
   assert.equal(content.hidden, true);
   assert.equal(trigger.getAttribute("aria-expanded"), "false");
   assert.equal(pushed.length, 1);
-  assert.equal(pushed[0].event, "handle_closed");
+  assert.equal(pushed[0].event, "handle_close");
 });
 
 test("Enter and Space on the trigger toggle the collapsible open then closed", () => {

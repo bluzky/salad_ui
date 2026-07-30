@@ -375,12 +375,12 @@ class DialogComponent extends Component {
       this.focusTrap = new FocusTrap(this.contentPanel);
     }
     this.focusTrap.activate();
-    this.pushEvent("opened");
+    this.pushEvent("open");
   }
 
   onClosedEnter() {
     this.focusTrap?.deactivate();
-    this.pushEvent("closed");
+    this.pushEvent("close");
   }
 
   beforeDestroy() {

@@ -36,8 +36,7 @@ defmodule SaladUI.Switch do
     assigns = assign_new(assigns, :checked, fn -> normalize_boolean(assigns.value) end)
 
     # Collect event mappings
-    event_map =
-      add_event_mapping(%{}, assigns, "checked-changed", :"on-checked-changed")
+    event_map = event_mappings(assigns)
 
     assigns =
       assigns

@@ -39,8 +39,7 @@ defmodule SaladUI.Tabs do
 
   def tabs(assigns) do
     # Collect event mappings
-    event_map =
-      add_event_mapping(%{}, assigns, "tab-changed", :"on-tab-changed")
+    event_map = event_mappings(assigns)
 
     assigns =
       assigns

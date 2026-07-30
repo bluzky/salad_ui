@@ -34,8 +34,8 @@ defmodule SaladUI.Sheet do
 
   Sheet emits these client events through `on-*` attributes:
 
-  * `:on-open` - Maps the `opened` event. Fired when sheet enters open state.
-  * `:on-close` - Maps the `closed` event. Fired when sheet enters closed state.
+  * `:on-open` - Maps the `open` event. Fired when sheet enters open state.
+  * `:on-close` - Maps the `close` event. Fired when sheet enters closed state.
 
   Event handlers can be a server event name string or a `%Phoenix.LiveView.JS{}` command:
 
@@ -68,15 +68,15 @@ defmodule SaladUI.Sheet do
 
   * `:id` - Required unique identifier for the sheet.
   * `:open` - Whether the sheet is initially open. Defaults to `false`.
-  * `:on-open` - Handler for `opened` event. Accepts a server event name or `%Phoenix.LiveView.JS{}`.
-  * `:on-close` - Handler for `closed` event. Accepts a server event name or `%Phoenix.LiveView.JS{}`.
+  * `:on-open` - Handler for `open` event. Accepts a server event name or `%Phoenix.LiveView.JS{}`.
+  * `:on-close` - Handler for `close` event. Accepts a server event name or `%Phoenix.LiveView.JS{}`.
   * `:"close-on-outside-click"` - Whether overlay/outside click closes the sheet. Defaults to `true`.
   * `:class` - Additional CSS classes.
 
   ## Component events
 
-  * `opened` - Emitted when the sheet opens. Mapped by `:on-open`.
-  * `closed` - Emitted when the sheet closes. Mapped by `:on-close`.
+  * `open` - Emitted when the sheet opens. Mapped by `:on-open`.
+  * `close` - Emitted when the sheet closes. Mapped by `:on-close`.
 
   ## Server commands
 
@@ -97,10 +97,7 @@ defmodule SaladUI.Sheet do
 
   def sheet(assigns) do
     # Collect event mappings
-    event_map =
-      %{}
-      |> add_event_mapping(assigns, "opened", :"on-open")
-      |> add_event_mapping(assigns, "closed", :"on-close")
+    event_map = event_mappings(assigns)
 
     assigns =
       assigns

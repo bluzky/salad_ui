@@ -204,13 +204,13 @@ class ModalComponent extends Component {
     // setupComponentEvents() above — they don't create or destroy it.
     this.clickOutsideMonitor?.start();
 
-    this.pushEvent("opened");
+    this.pushEvent("open");
   }
 
   onClosedEnter() {
     this.focusTrap?.deactivate();
     this.clickOutsideMonitor?.stop();
-    this.pushEvent("closed");
+    this.pushEvent("close");
   }
 
   beforeDestroy() {
@@ -788,7 +788,7 @@ highlightItem(index) {
 ```javascript
 onOpenEnter() {
   // Send simple event
-  this.pushEvent("opened");
+  this.pushEvent("open");
 }
 
 onItemSelected(event) {
@@ -797,7 +797,7 @@ onItemSelected(event) {
   const label = item.textContent.trim();
 
   // Send event with data
-  this.pushEvent("item-selected", {
+  this.pushEvent("select", {
     value: value,
     label: label,
     index: this.items.indexOf(item),

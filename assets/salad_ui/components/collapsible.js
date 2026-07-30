@@ -93,11 +93,11 @@ class CollapsibleComponent extends Component {
 
   // State handlers
   onOpenEnter() {
-    this.pushEvent("opened");
+    this.pushEvent("open");
   }
 
   onClosedEnter() {
-    this.pushEvent("closed");
+    this.pushEvent("close");
   }
 }
 

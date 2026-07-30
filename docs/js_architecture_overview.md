@@ -239,7 +239,7 @@ Component.transition(event, params)
     ↓
 State Machine transition
     ↓
-State Enter Handler calls pushEvent("opened")
+State Enter Handler calls pushEvent("open")
     ↓
 Component.pushEvent() checks eventMappings
     ↓
@@ -369,7 +369,7 @@ defmodule SaladUI.Dialog do
       data-component="dialog"
       data-part="root"
       data-options={json(%{closeOnOutsideClick: true})}
-      data-event-mappings={json(%{opened: "dialog_opened"})}
+      data-event-mappings={json(%{open: "dialog_opened"})}
     >
       {render_slot(@inner_block)}
     </div>

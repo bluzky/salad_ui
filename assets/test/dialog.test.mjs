@@ -25,7 +25,7 @@ function buildDialog({
     <button id="outside-trigger" type="button">Launch</button>
     <div id="${id}" data-component="dialog" ${initialState}
          data-options='{"closeOnOutsideClick":${closeOnOutsideClick}}'
-         data-event-mappings='{"opened":"opened","closed":"closed"}'
+         data-event-mappings='{"open":"open","close":"close"}'
          data-part="root">
       <button data-part="trigger" data-action="open" type="button">Open</button>
       <div data-part="content" hidden>
@@ -82,12 +82,12 @@ test("opens from trigger and closes from close trigger", () => {
   click(trigger);
   assert.equal(component.state, "open");
   assert.equal(content.hidden, false);
-  assert.equal(pushed.at(-1).event, "opened");
+  assert.equal(pushed.at(-1).event, "open");
 
   click(closeTrigger);
   assert.equal(component.state, "closed");
   assert.equal(content.hidden, true);
-  assert.equal(pushed.at(-1).event, "closed");
+  assert.equal(pushed.at(-1).event, "close");
 
   component.destroy();
 });

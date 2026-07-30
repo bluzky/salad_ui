@@ -55,10 +55,7 @@ defmodule SaladUI.Dialog do
   slot :inner_block, required: true
 
   def dialog(assigns) do
-    event_map =
-      %{}
-      |> add_event_mapping(assigns, "opened", :"on-open")
-      |> add_event_mapping(assigns, "closed", :"on-close")
+    event_map = event_mappings(assigns)
 
     assigns =
       assigns

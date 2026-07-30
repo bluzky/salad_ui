@@ -104,7 +104,7 @@ Command palette with search and keyboard navigation.
 - `placeholder` - Search placeholder text
 
 **Events:**
-- `item-selected` - Item was selected
+- `select` - Item was selected
 - `search` - Search query changed
 
 **Parts:**
@@ -133,8 +133,8 @@ Modal dialog with focus trap.
 - `animations` - Animation configurations
 
 **Events:**
-- `opened` - Dialog opened
-- `closed` - Dialog closed
+- `open` - Dialog opened
+- `close` - Dialog closed
 
 **Parts:**
 - `root` - Container
@@ -168,9 +168,9 @@ Context menu with keyboard navigation.
 - `positioning` - Menu positioning config
 
 **Events:**
-- `opened` - Menu opened
-- `closed` - Menu closed
-- `item-selected` - Item selected
+- `open` - Menu opened
+- `close` - Menu closed
+- `select` - Item selected
 
 **Parts:**
 - `root` - Container
@@ -204,8 +204,8 @@ Contextual information on hover.
 - `closeDelay` - Delay before closing (default: 300ms)
 
 **Events:**
-- `opened` - Card opened
-- `closed` - Card closed
+- `open` - Card opened
+- `close` - Card closed
 
 **Parts:**
 - `root` - Container
@@ -252,8 +252,8 @@ Floating content panel.
 - `closeOnOutsideClick` - Close on outside click
 
 **Events:**
-- `opened` - Popover opened
-- `closed` - Popover closed
+- `open` - Popover opened
+- `close` - Popover closed
 
 **Parts:**
 - `root` - Container
@@ -325,8 +325,8 @@ Dropdown select with search and keyboard navigation.
 - `placeholder` - Placeholder text
 
 **Events:**
-- `opened` - Select opened
-- `closed` - Select closed
+- `open` - Select opened
+- `close` - Select closed
 - `value-changed` - Selection changed
 - `search` - Search query changed
 
@@ -462,8 +462,8 @@ Hover tooltip with delay.
 - `closeDelay` - Close delay (default: 0ms)
 
 **Events:**
-- `opened` - Tooltip opened
-- `closed` - Tooltip closed
+- `open` - Tooltip opened
+- `close` - Tooltip closed
 
 **Parts:**
 - `root` - Container
@@ -491,8 +491,8 @@ Expandable content panel.
 - `defaultOpen` - Initially expanded
 
 **Events:**
-- `opened` - Content expanded
-- `closed` - Content collapsed
+- `open` - Content expanded
+- `close` - Content collapsed
 
 **Parts:**
 - `root` - Container

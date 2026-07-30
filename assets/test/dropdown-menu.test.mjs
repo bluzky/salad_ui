@@ -15,19 +15,19 @@ function buildDropdown({ id = "dropdown-1", state = "closed" } = {}) {
   document.body.innerHTML = `
     <div id="${id}" data-component="dropdown-menu" data-state="${state}"
          data-options='{"usePortal":false}'
-         data-event-mappings='{"opened":"opened","closed":"closed"}'
+         data-event-mappings='{"open":"open","close":"close"}'
          data-part="root">
       <button type="button" data-part="trigger" tabindex="0">Open</button>
       <div data-part="positioner" data-side="bottom" data-align="start"
            data-side-offset="4" data-align-offset="0" hidden>
         <div data-part="content" data-side="bottom" data-align="start">
           <div data-part="item" data-value="profile" tabindex="0"
-               data-event-mappings='{"item-selected":"selected"}'>Profile</div>
+               data-event-mappings='{"select":"selected"}'>Profile</div>
           <div data-part="item" data-value="settings" tabindex="0"
-               data-event-mappings='{"item-selected":"selected"}'>Settings</div>
+               data-event-mappings='{"select":"selected"}'>Settings</div>
           <div data-part="checkbox-item" data-value="bold" data-state="checked"
                data-checked="true" tabindex="0"
-               data-event-mappings='{"checked-changed":"checked","item-selected":"selected"}'>
+               data-event-mappings='{"checked-change":"checked","select":"selected"}'>
             <span data-part="item-indicator">✓</span>
             Bold
           </div>
@@ -97,12 +97,12 @@ test("trigger click opens then closes dropdown", () => {
   click(trigger);
   assert.equal(positioner.hidden, false);
   assert.equal(trigger.getAttribute("aria-expanded"), "true");
-  assert.equal(pushed.at(-1).event, "opened");
+  assert.equal(pushed.at(-1).event, "open");
 
   click(trigger);
   assert.equal(positioner.hidden, true);
   assert.equal(trigger.getAttribute("aria-expanded"), "false");
-  assert.equal(pushed.at(-1).event, "closed");
+  assert.equal(pushed.at(-1).event, "close");
   assert.equal(document.activeElement, trigger);
 
   component.destroy();
@@ -204,7 +204,7 @@ test("Enter on focused item selects without reopening and focusing first item", 
   assert.equal(document.activeElement, trigger);
   assert.deepEqual(
     pushed.map(({ event }) => event),
-    ["opened", "selected", "closed"],
+    ["open", "selected", "close"],
   );
 
   component.destroy();

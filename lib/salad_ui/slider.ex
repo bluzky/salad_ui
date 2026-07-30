@@ -60,8 +60,7 @@ defmodule SaladUI.Slider do
       |> snap_to_step(assigns.step)
 
     # Collect event mappings
-    event_map =
-      add_event_mapping(%{}, assigns, "value-changed", :"on-value-changed")
+    event_map = event_mappings(assigns)
 
     # Create options object
     options = %{
