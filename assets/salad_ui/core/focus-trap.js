@@ -51,18 +51,25 @@ class FocusTrap {
     // Remove event listeners
     this.element.removeEventListener("keydown", this.handleKeyDown);
 
+    const previouslyFocused = this.previouslyFocused;
+
     // Restore focus if possible
     if (
-      this.previouslyFocused &&
-      this.previouslyFocused.focus &&
-      this.isElementInViewport(this.previouslyFocused)
+      previouslyFocused &&
+      previouslyFocused.focus &&
+      this.isElementInViewport(previouslyFocused)
     ) {
       setTimeout(() => {
-        this.previouslyFocused.focus();
-        this.previouslyFocused = null;
+        if (
+          typeof document !== "undefined" &&
+          document.body.contains(previouslyFocused)
+        ) {
+          previouslyFocused.focus();
+        }
       }, 0);
     }
 
+    this.previouslyFocused = null;
     this.active = false;
   }
 
@@ -70,10 +77,12 @@ class FocusTrap {
    * Set initial focus when trap is activated
    */
   setInitialFocus() {
-    // Find all focusable elements
-    const focusableElements = this.getFocusableElements();
-
     setTimeout(() => {
+      if (!this.active || !this.element) return;
+
+      // Find all focusable elements after DOM is ready.
+      const focusableElements = this.getFocusableElements();
+
       if (focusableElements.length > 0) {
         // Look for an element with autofocus attribute first
         const autoFocusEl = this.element.querySelector("[autofocus]");

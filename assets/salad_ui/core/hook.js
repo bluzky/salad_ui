@@ -39,10 +39,6 @@ const SaladUIHook = {
       this.component.destroy();
       this.component = null;
       this.initComponent();
-      //   this.component.parseOptions();
-      //   this.component.setupEvents();
-      //   this.component.updatePartsVisibility();
-      //   this.component.updateUI();
     }
   },
 

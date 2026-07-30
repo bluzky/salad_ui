@@ -39,7 +39,7 @@ defmodule Mix.Tasks.Salad.Install do
     |> patch_css_import_salad_ui()
     |> patch_tailwind_config()
     |> copy_tailwind_colors()
-    |> install_tailwind_animate()
+    |> SaladUI.Mix.Tasks.TwAnimateInstaller.install()
   end
 
   # Copy all JavaScript files to assets/js/ui/
@@ -234,35 +234,6 @@ defmodule Mix.Tasks.Salad.Install do
   defp patch_tailwind_config(igniter) do
     css_path = "./assets/css/app.css"
     SaladUI.Patcher.TailwindPatcher.patch(css_path)
-
-    igniter
-  end
-
-  @default_tailwind_animate_version "1.0.7"
-
-  defp install_tailwind_animate(igniter) do
-    tag = @default_tailwind_animate_version
-
-    Mix.shell().info("Downloading tailwindcss-animate.js v#{tag}")
-
-    url = "https://raw.githubusercontent.com/jamiebuilds/tailwindcss-animate/refs/tags/v#{tag}/index.js"
-    output_path = "assets/vendor/tailwindcss-animate.js"
-
-    :inets.start()
-    :ssl.start()
-
-    case :httpc.request(:get, {url, []}, [], body_format: :binary) do
-      {:ok, {{_version, 200, _reason_phrase}, _headers, body}} ->
-        # Write the body to file
-        File.write!(output_path, body)
-        :ok
-
-      {:ok, {{_version, status_code, _reason_phrase}, _headers, _body}} ->
-        {:error, "Failed to download tailwindcss-animate with status #{status_code}"}
-
-      {:error, reason} ->
-        {:error, "Failed to download tailwindcss-animate.js: #{inspect(reason)}"}
-    end
 
     igniter
   end

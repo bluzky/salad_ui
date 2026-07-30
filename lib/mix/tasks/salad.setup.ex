@@ -8,7 +8,7 @@ defmodule Mix.Tasks.Salad.Setup do
   * Configuring CSS color scheme variables (default: gray)
   * Copying SaladUI CSS files to assets/css/
   * Patching Tailwind CSS entrypoint with SaladUI-specific settings
-  * Installing tailwindcss-animate plugin
+  * Installing tw-animate-css utilities
   * Setting up JavaScript imports and LiveView hooks
 
   ## Usage
@@ -37,10 +37,10 @@ defmodule Mix.Tasks.Salad.Setup do
   3. **Tailwind Configuration**
      - Patches app.css with SaladUI-specific sources and theme tokens
      - Copies tailwind.colors.json with design tokens for compatibility
-     - Adds @tailwindcss/typography and tailwindcss-animate plugins
+     - Adds @tailwindcss/typography and tw-animate-css utilities
 
   4. **JavaScript Setup**
-     - Downloads and installs tailwindcss-animate
+     - Downloads tw-animate-css
      - Patches app.js to import SaladUI components and hooks
      - Registers SaladUIHook with LiveView
 
@@ -63,7 +63,7 @@ defmodule Mix.Tasks.Salad.Setup do
   * `assets/css/app.css` - Updated with Tailwind v4 sources, plugins, and theme tokens
   * `assets/tailwind.colors.json` - Created for compatibility
   * `assets/js/app.js` - Adds SaladUI imports and hooks
-  * `assets/vendor/tailwindcss-animate.js` - Downloaded
+  * `assets/vendor/tw-animate.css` - Downloaded
 
   ## Example
 
@@ -95,7 +95,7 @@ defmodule Mix.Tasks.Salad.Setup do
     |> patch_css_import_salad_ui()
     |> patch_tailwind_config()
     |> copy_tailwind_colors()
-    |> install_tailwind_animate()
+    |> SaladUI.Mix.Tasks.TwAnimateInstaller.install()
     |> patch_app_js()
   end
 
@@ -177,35 +177,6 @@ defmodule Mix.Tasks.Salad.Setup do
   defp patch_tailwind_config(igniter) do
     css_path = "./assets/css/app.css"
     SaladUI.Patcher.TailwindPatcher.patch(css_path)
-
-    igniter
-  end
-
-  @default_tailwind_animate_version "1.0.7"
-
-  defp install_tailwind_animate(igniter) do
-    tag = @default_tailwind_animate_version
-
-    Mix.shell().info("Downloading tailwindcss-animate.js v#{tag}")
-
-    url = "https://raw.githubusercontent.com/jamiebuilds/tailwindcss-animate/refs/tags/v#{tag}/index.js"
-    output_path = "assets/vendor/tailwindcss-animate.js"
-
-    :inets.start()
-    :ssl.start()
-
-    case :httpc.request(:get, {url, []}, [], body_format: :binary) do
-      {:ok, {{_version, 200, _reason_phrase}, _headers, body}} ->
-        # Write the body to file
-        File.write!(output_path, body)
-        :ok
-
-      {:ok, {{_version, status_code, _reason_phrase}, _headers, _body}} ->
-        {:error, "Failed to download tailwindcss-animate with status #{status_code}"}
-
-      {:error, reason} ->
-        {:error, "Failed to download tailwindcss-animate.js: #{inspect(reason)}"}
-    end
 
     igniter
   end

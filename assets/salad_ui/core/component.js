@@ -11,7 +11,7 @@ import { animateTransition, queryDOM } from "./utils.js";
  *
  * Lifecycle (see docs/component_lifecycle.md for the full reference):
  *
- *   1. `new ComponentClass(el, options)` — the constructor runs
+ *   1. `new ComponentClass(el, hookContext)` — the constructor runs
  *      parseOptions/initConfig/initStateMachine and does a first,
  *      un-animated `updateUI()` + `updatePartsVisibility()`. DOM
  *      listeners are NOT attached yet.

@@ -147,9 +147,9 @@ updated() {
 
 This means every LiveView patch to a component's root element — even an
 unrelated one — runs the full destroy phase and then the full mount phase
-again, on a brand new instance. Anything you rely on surviving a patch
-(e.g., in-memory state not reflected in `data-*` attributes) will be lost
-unless the server re-renders it into the DOM.
+again, on a brand new instance. Components remount from server-rendered
+attributes; client-only state does not survive a patch unless the server also
+renders that state.
 
 ```mermaid
 sequenceDiagram
@@ -249,9 +249,21 @@ class DialogComponent extends Component {
   }
 
   afterMount() {
-    // Listeners are live now, so it's safe to trigger the initial
-    // open/closed transition here.
-    this.transition(this.el.dataset.open == "true" ? "open" : "close");
+    const requestedState =
+      this.el.dataset.open === undefined
+        ? this.el.dataset.state || "closed"
+        : this.el.dataset.open === "true"
+          ? "open"
+          : "closed";
+
+    if (requestedState === this.state) {
+      if (this.state === "open") {
+        this.onOpenEnter();
+      }
+      return;
+    }
+
+    this.transition(requestedState === "open" ? "open" : "close");
   }
 
   setupComponentEvents() {
@@ -280,7 +292,7 @@ class DialogComponent extends Component {
     // start()/stop() just pause/resume the monitor created above —
     // they don't create or destroy it.
     this.clickOutsideMonitor?.start();
-    // ...
+    this.pushEvent("opened");
   }
 
   onClosedEnter() {

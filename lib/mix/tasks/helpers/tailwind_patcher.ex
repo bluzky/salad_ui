@@ -38,7 +38,7 @@ defmodule SaladUI.Patcher.TailwindPatcher do
     ~s(@source "../../lib";),
     ~s(@source "../../deps/salad_ui/lib";),
     ~s(@plugin "@tailwindcss/typography";),
-    ~s(@plugin "../vendor/tailwindcss-animate";)
+    ~s(@import "../vendor/tw-animate.css";)
   ]
 
   def patch(css_path, opts \\ []) do

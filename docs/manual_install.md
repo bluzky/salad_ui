@@ -56,7 +56,7 @@ If you want to config yourself, here is step by step adding configuration to get
 @source "../js";
 
 @plugin "@tailwindcss/typography";
-@plugin "tailwindcss-animate";
+@import "../vendor/tw-animate.css";
 
 @theme {
   --color-background: hsl(var(--background));
@@ -81,13 +81,7 @@ If you want to config yourself, here is step by step adding configuration to get
 }
 ```
 
-- Install `tailwindcss-animate` when using npm-based Tailwind
-```
-cd assets
-npm i -D tailwindcss-animate
-# or yarn
-yarn add -D tailwindcss-animate
-```
+- Download [`tw-animate.css`](https://raw.githubusercontent.com/Wombosvideo/tw-animate-css/refs/heads/main/src/tw-animate.css) into `assets/vendor/tw-animate.css`.
 
 3. **Add javascript to handle event from server**
 This add ability to execute client action from server. It's similar to `JS.exec/2`. Thanks to [this post](https://fly.io/phoenix-files/server-triggered-js/) from fly.io.

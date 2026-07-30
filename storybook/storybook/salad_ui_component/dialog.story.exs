@@ -2,8 +2,6 @@ defmodule Storybook.SaladUIComponents.Dialog do
   @moduledoc false
   use PhoenixStorybook.Story, :component
 
-  import SaladUI.LiveView
-
   alias SaladUI.Button
   alias SaladUI.Dialog
   alias SaladUI.Input

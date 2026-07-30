@@ -4,7 +4,7 @@
 
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
-@plugin "../vendor/tailwindcss-animate";
+@import "../vendor/tw-animate.css";
 
 @config "../tailwind.config.js";
 @source "../js";
