@@ -112,7 +112,7 @@ defmodule SaladStorybookWeb.Demo.DashboardOne do
       <div class="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <header class="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
           <.sheet id="menu">
-            <.sheet_trigger target="sheet">
+            <.sheet_trigger>
               <.button size="icon" variant="outline" class="sm:hidden">
                 <Lucideicons.panel_left class="h-5 w-5" />
                 <span class="sr-only">Toggle Menu</span>

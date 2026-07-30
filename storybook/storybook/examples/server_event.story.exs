@@ -22,7 +22,7 @@ defmodule Storybook.Examples.ServerEvent do
   def render(assigns) do
     ~H"""
     <.sheet id="my-sheet">
-      <.sheet_trigger target="my-sheet">
+      <.sheet_trigger>
         <.button variant="outline">Open</.button>
       </.sheet_trigger>
       <.sheet_content id="my-sheet">
@@ -47,7 +47,7 @@ defmodule Storybook.Examples.ServerEvent do
           </div>
         </div>
         <.sheet_footer>
-          <.sheet_close target="my-sheet">
+          <.sheet_close>
             <.button
               type="submit"
               phx-click={JS.exec("phx-hide-sheet", to: "#my-sheet") |> JS.push("save")}

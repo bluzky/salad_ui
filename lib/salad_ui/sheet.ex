@@ -29,6 +29,35 @@ defmodule SaladUI.Sheet do
           </.sheet_footer>
         </.sheet_content>
       </.sheet>
+
+  ## Component events
+
+  Sheet emits these client events through `on-*` attributes:
+
+  * `:on-open` - Maps the `opened` event. Fired when sheet enters open state.
+  * `:on-close` - Maps the `closed` event. Fired when sheet enters closed state.
+
+  Event handlers can be a server event name string or a `%Phoenix.LiveView.JS{}` command:
+
+      <.sheet
+        id="user-sheet"
+        on-open="sheet_opened"
+        on-close={JS.push("sheet_closed")}
+      >
+        ...
+      </.sheet>
+
+  ## Server commands
+
+  Sheet supports these commands through `SaladUI.LiveView.send_command/4`:
+
+  * `"open"` - Opens the sheet.
+  * `"close"` - Closes the sheet.
+
+      def handle_event("open_sheet", _params, socket) do
+        socket = SaladUI.LiveView.send_command(socket, "user-sheet", "open")
+        {:noreply, socket}
+      end
   """
   use SaladUI, :component
 
@@ -39,9 +68,22 @@ defmodule SaladUI.Sheet do
 
   * `:id` - Required unique identifier for the sheet.
   * `:open` - Whether the sheet is initially open. Defaults to `false`.
-  * `:on-open` - Handler for sheet open event.
-  * `:on-close` - Handler for sheet close event.
+  * `:on-open` - Handler for `opened` event. Accepts a server event name or `%Phoenix.LiveView.JS{}`.
+  * `:on-close` - Handler for `closed` event. Accepts a server event name or `%Phoenix.LiveView.JS{}`.
+  * `:"close-on-outside-click"` - Whether overlay/outside click closes the sheet. Defaults to `true`.
   * `:class` - Additional CSS classes.
+
+  ## Component events
+
+  * `opened` - Emitted when the sheet opens. Mapped by `:on-open`.
+  * `closed` - Emitted when the sheet closes. Mapped by `:on-close`.
+
+  ## Server commands
+
+  Use `SaladUI.LiveView.send_command(socket, id, command)` with:
+
+  * `"open"` - Opens the sheet.
+  * `"close"` - Closes the sheet.
   """
   attr :id, :string, required: true, doc: "Unique identifier for the sheet"
   attr :open, :boolean, default: false, doc: "Whether the sheet is initially open"
@@ -93,7 +135,6 @@ defmodule SaladUI.Sheet do
   The trigger element that opens the sheet.
   """
   attr :class, :string, default: nil
-  attr :target, :string, default: nil
   attr :rest, :global
   slot :inner_block, required: true
 
@@ -102,7 +143,6 @@ defmodule SaladUI.Sheet do
     <div
       data-part="trigger"
       data-action="open"
-      data-target={@target}
       class={classes(["", @class])}
       {@rest}
     >
@@ -199,7 +239,11 @@ defmodule SaladUI.Sheet do
 
   def sheet_title(assigns) do
     ~H"""
-    <h3 class={classes(["flex flex-col space-y-2 text-center sm:text-left", @class])} {@rest}>
+    <h3
+      data-part="title"
+      class={classes(["flex flex-col space-y-2 text-center sm:text-left", @class])}
+      {@rest}
+    >
       {render_slot(@inner_block)}
     </h3>
     """
@@ -214,7 +258,7 @@ defmodule SaladUI.Sheet do
 
   def sheet_description(assigns) do
     ~H"""
-    <p class={classes(["text-sm text-muted-foreground", @class])} {@rest}>
+    <p data-part="description" class={classes(["text-sm text-muted-foreground", @class])} {@rest}>
       {render_slot(@inner_block)}
     </p>
     """

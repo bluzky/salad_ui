@@ -43,7 +43,7 @@ defmodule SaladStorybookWeb.Demo.DashboardThree do
         </.link>
       </nav>
       <.sheet id="menu">
-        <.sheet_trigger target="sheet-content">
+        <.sheet_trigger>
           <.button variant="outline" size="icon" class="shrink-0 md:hidden">
             <.icon name="hero-bars-3" class="h-5 w-5" />
             <span class="sr-only">Toggle navigation menu</span>
