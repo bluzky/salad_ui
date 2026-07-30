@@ -158,24 +158,6 @@ test("deactivate() restores focus to the element that was focused before activat
   assert.equal(document.activeElement.id, "outside-trigger");
 });
 
-test("deactivate({ restoreFocus: false }) keeps focus inside the former trap", async () => {
-  document.body.innerHTML = `
-    <button id="outside-trigger">outside</button>
-    <div id="trap"><button id="first">first</button></div>
-  `;
-  document.getElementById("outside-trigger").focus();
-
-  const trap = new FocusTrap(document.getElementById("trap"));
-  trap.activate();
-  await wait(INITIAL_FOCUS_DELAY);
-
-  trap.deactivate({ restoreFocus: false });
-  await wait(10);
-
-  assert.equal(document.activeElement.id, "first");
-  trap.destroy();
-});
-
 test("activate()/deactivate() are no-ops when called while already in that state", async () => {
   document.body.innerHTML = `<div id="trap"><button id="first">first</button></div>`;
   const trap = new FocusTrap(document.getElementById("trap"));

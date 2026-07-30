@@ -153,7 +153,7 @@ class DialogComponent extends Component {
     // No special handling needed
   }
 
-  onOpenEnter({ notify = true } = {}) {
+  onOpenEnter() {
     // Initialize focus trap if not already created
     this.el.focus();
     if (!this.focusTrap) {
@@ -171,7 +171,7 @@ class DialogComponent extends Component {
     // Setup escape key handling - now handled by the component's keyMap
 
     // Notify the server of the state change
-    if (notify) this.pushEvent("opened");
+    this.pushEvent("opened");
   }
 
   beforeDestroy() {

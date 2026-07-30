@@ -7,7 +7,7 @@ const SaladUIHook = {
     this.setupServerEvents();
   },
 
-  initComponent(options = {}) {
+  initComponent() {
     const el = this.el;
     const componentType = el.getAttribute("data-component");
 
@@ -19,7 +19,7 @@ const SaladUIHook = {
     }
 
     // The registry.create method will handle creating the component and calling setupEvents
-    this.component = registry.create(componentType, el, this, options);
+    this.component = registry.create(componentType, el, this);
   },
 
   setupServerEvents() {

@@ -45,7 +45,7 @@ class FocusTrap {
   /**
    * Deactivate the focus trap and restore previous focus
    */
-  deactivate({ restoreFocus = true } = {}) {
+  deactivate() {
     if (!this.active) return;
 
     // Remove event listeners
@@ -55,7 +55,6 @@ class FocusTrap {
 
     // Restore focus if possible
     if (
-      restoreFocus &&
       previouslyFocused &&
       previouslyFocused.focus &&
       this.isElementInViewport(previouslyFocused)
@@ -153,8 +152,8 @@ class FocusTrap {
   /**
    * Clean up all references when no longer needed
    */
-  destroy(options = {}) {
-    this.deactivate(options);
+  destroy() {
+    this.deactivate();
     this.element = null;
     this.options = null;
     this.previouslyFocused = null;

@@ -288,11 +288,11 @@ class DialogComponent extends Component {
     this.clickOutsideMonitor = null;
   }
 
-  onOpenEnter({ notify = true } = {}) {
+  onOpenEnter() {
     // start()/stop() just pause/resume the monitor created above —
     // they don't create or destroy it.
     this.clickOutsideMonitor?.start();
-    if (notify) this.pushEvent("opened");
+    this.pushEvent("opened");
   }
 
   onClosedEnter() {

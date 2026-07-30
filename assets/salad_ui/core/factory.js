@@ -9,14 +9,14 @@ class ComponentRegistry {
     return this;
   }
 
-  create(type, el, hookContext, options = {}) {
+  create(type, el, hookContext) {
     const ComponentClass = this.registry.get(type);
     if (!ComponentClass) {
       console.error(`Component type '${type}' not registered`);
       return null;
     }
 
-    const instance = new ComponentClass(el, hookContext, options);
+    const instance = new ComponentClass(el, hookContext);
 
     // Call setupEvents after the component is fully initialized
     instance.setupEvents();
