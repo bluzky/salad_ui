@@ -8,11 +8,9 @@ defmodule Storybook.SaladUIComponents.HoverCard do
 
   def imports,
     do: [
-      {SaladUI.HoverCard, [hover_card_trigger: 1, hover_card_content: 1]},
+      {HoverCard, [hover_card_trigger: 1, hover_card_content: 1]},
       {SaladUI.Button, [button: 1]},
-      {SaladUI.Avatar, [avatar: 1, avatar_image: 1, avatar_fallback: 1]},
-      {SaladUI.Badge, [badge: 1]},
-      {SaladStorybookWeb.CoreComponents, [icon: 1]}
+      {SaladUI.Avatar, [avatar: 1, avatar_image: 1, avatar_fallback: 1]}
     ]
 
   def descriptions do
@@ -64,104 +62,66 @@ defmodule Storybook.SaladUIComponents.HoverCard do
           """
         ]
       },
-      %Variation{
-        id: :top_position,
-        description: "Hover card positioned above the trigger",
-        attributes: %{
-          id: "top-hover-card",
-          "open-delay": 200
-        },
-        slots: [
-          """
-          <.hover_card_trigger>
-            <.button variant="outline">Profile Hover Card</.button>
-          </.hover_card_trigger>
-          <.hover_card_content side="top" align="center">
-            <div class="flex justify-between space-x-4">
-              <.avatar>
-                <.avatar_image src="https://github.com/vercel.png">
-                </.avatar_image>
-                <.avatar_fallback>
-                  VC
-                </.avatar_fallback>
-              </.avatar>
-              <div class="space-y-1">
-                <h4 class="text-sm font-semibold">
-                  @salad_ui
-                </h4>
-                <p class="text-sm">LiveView component library inspired by shadcn</p>
-                <div class="flex items-center pt-2">
-                  <span class="text-xs text-muted-foreground">
-                    Joined May 2024
-                  </span>
-                </div>
-              </div>
-            </div>
-          </.hover_card_content>
-          """
-        ]
-      },
-      %Variation{
-        id: :right_aligned,
-        description: "Hover card displayed on the right of the trigger",
-        attributes: %{
-          id: "right-hover-card",
-          "close-delay": 300
-        },
-        slots: [
-          """
-          <.hover_card_trigger>
-            <.button>Documentation</.button>
-          </.hover_card_trigger>
-          <.hover_card_content side="right" align="start">
-            <div class="space-y-2">
-              <h4 class="text-sm font-semibold">HoverCard Component</h4>
-              <p class="text-sm text-muted-foreground">
-                The hover card component displays floating content when a trigger element is hovered.
-                Perfect for user profiles, tooltips, and rich previews.
-              </p>
-              <div class="flex justify-end">
-                <.button size="sm" variant="outline">View Docs</.button>
-              </div>
-            </div>
-          </.hover_card_content>
-          """
-        ]
-      },
-      %Variation{
-        id: :left_aligned,
-        description: "Hover card displayed on the left of the trigger",
-        attributes: %{
-          id: "left-hover-card"
-        },
-        slots: [
-          """
-          <.hover_card_trigger>
-            <.button variant="secondary">Package Info</.button>
-          </.hover_card_trigger>
-          <.hover_card_content side="left" align="center">
-            <div class="space-y-2">
-              <div class="flex items-center justify-between">
-                <h4 class="text-sm font-semibold">SaladUI Package</h4>
-                <.badge variant="outline">v1.0.0</.badge>
-              </div>
-              <p class="text-sm text-muted-foreground">
-                A collection of UI components for Phoenix LiveView applications.
-                Built with accessibility and performance in mind.
-              </p>
-              <ul class="text-sm space-y-1">
-                <li class="flex items-center text-muted-foreground">
-                  <.icon name="hero-check-circle" class="w-4 h-4 mr-2 text-green-500"/>
-                  100% Accessible
-                </li>
-                <li class="flex items-center text-muted-foreground">
-                  <.icon name="hero-check-circle" class="w-4 h-4 mr-2 text-green-500"/>
-                  State Management
-                </li>
-              </ul>
-            </div>
-          </.hover_card_content>
-          """
+      %VariationGroup{
+        id: :side_examples,
+        description: "Hover card placement relative to its trigger.",
+        variations: [
+          %Variation{
+            id: :top,
+            attributes: %{id: "top-hover-card"},
+            slots: [
+              """
+              <.hover_card_trigger>
+                <.button variant="outline" size="sm">Top</.button>
+              </.hover_card_trigger>
+              <.hover_card_content side="top" align="center">
+                <p class="text-sm">Content appears above the trigger.</p>
+              </.hover_card_content>
+              """
+            ]
+          },
+          %Variation{
+            id: :right,
+            attributes: %{id: "right-hover-card"},
+            slots: [
+              """
+              <.hover_card_trigger>
+                <.button variant="outline" size="sm">Right</.button>
+              </.hover_card_trigger>
+              <.hover_card_content side="right" align="center">
+                <p class="text-sm">Content appears to the right of the trigger.</p>
+              </.hover_card_content>
+              """
+            ]
+          },
+          %Variation{
+            id: :bottom,
+            attributes: %{id: "bottom-hover-card"},
+            slots: [
+              """
+              <.hover_card_trigger>
+                <.button variant="outline" size="sm">Bottom</.button>
+              </.hover_card_trigger>
+              <.hover_card_content side="bottom" align="center">
+                <p class="text-sm">Content appears below the trigger.</p>
+              </.hover_card_content>
+              """
+            ]
+          },
+          %Variation{
+            id: :left,
+            attributes: %{id: "left-hover-card"},
+            slots: [
+              """
+              <.hover_card_trigger>
+                <.button variant="outline" size="sm">Left</.button>
+              </.hover_card_trigger>
+              <.hover_card_content side="left" align="center">
+                <p class="text-sm">Content appears to the left of the trigger.</p>
+              </.hover_card_content>
+              """
+            ]
+          }
         ]
       },
       %Variation{

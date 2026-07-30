@@ -3,8 +3,36 @@ defmodule SaladUI.HoverCardTest do
 
   import SaladUI.HoverCard
 
-  describe "test hover_card" do
-    test "hover_card_trigger" do
+  describe "hover_card" do
+    test "renders root with JS hook, options, and event mappings" do
+      assigns = %{}
+
+      html =
+        ~H"""
+        <.hover_card id="user-card" open-delay={150} close-delay={75} on-open="opened" on-close="closed">
+          <.hover_card_trigger>Trigger</.hover_card_trigger>
+          <.hover_card_content>Content</.hover_card_content>
+        </.hover_card>
+        """
+        |> rendered_to_string()
+        |> clean_string()
+
+      assert html =~ "id=\"user-card\""
+      assert html =~ "data-component=\"hover-card\""
+      assert html =~ "data-state=\"closed\""
+      assert html =~ "phx-hook=\"SaladUI\""
+      assert html =~ "data-part=\"root\""
+      assert html =~ "openDelay"
+      assert html =~ "150"
+      assert html =~ "closeDelay"
+      assert html =~ "75"
+      assert html =~ "open"
+      assert html =~ "opened"
+      assert html =~ "close"
+      assert html =~ "closed"
+    end
+
+    test "renders trigger" do
       assigns = %{}
 
       html =
@@ -14,10 +42,12 @@ defmodule SaladUI.HoverCardTest do
         |> rendered_to_string()
         |> clean_string()
 
-      assert html =~ "<div class=\"text-green-500\">Hover Card</div>"
+      assert html =~ "data-part=\"trigger\""
+      assert html =~ "class=\"text-green-500\""
+      assert html =~ "Hover Card"
     end
 
-    test "hover_card_content top" do
+    test "renders content with default positioning attributes" do
       assigns = %{}
 
       html =
@@ -27,48 +57,38 @@ defmodule SaladUI.HoverCardTest do
         |> rendered_to_string()
         |> clean_string()
 
-      for class <-
-            ~w(absolute hidden p-4 mb-2 rounded-md bg-popover text-popover-foreground outline-hidden shadow-md z-50 left-1/2 bottom-full w-64 -translate-x-1/2 animate-in border data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 fade-in-0 group-hover/hover-card:block slide-in-from-left-1/2 zoom-in-95) do
-        assert html =~ class
-      end
-
+      assert html =~ "data-part=\"content\""
+      assert html =~ "data-side=\"top\""
+      assert html =~ "data-align=\"center\""
+      assert html =~ "data-side-offset=\"8\""
+      assert html =~ "data-align-offset=\"0\""
+      assert html =~ "class=\"z-50\""
+      assert html =~ "hidden"
+      refute html =~ "postion"
+      assert html =~ "data-part=\"content-wrapper\""
+      assert html =~ "w-64 rounded-md border border-border bg-popover p-4"
+      assert html =~ "data-[side=top]:slide-in-from-bottom-2"
       assert html =~ "Hover Card Content"
     end
 
-    test "It renders hover_card_content bottom correctly" do
+    test "renders content side and alignment attrs" do
       assigns = %{}
 
       html =
         ~H"""
-        <.hover_card_content side="bottom">Hover Card Content</.hover_card_content>
+        <.hover_card_content side="right" align="start" side-offset={12} align-offset={4}>
+          Hover Card Content
+        </.hover_card_content>
         """
         |> rendered_to_string()
         |> clean_string()
 
-      for class <-
-            ~w(absolute hidden p-4 mt-2 rounded-md bg-popover text-popover-foreground outline-hidden shadow-md z-50 left-1/2 top-full w-64 -translate-x-1/2 animate-in border data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 fade-in-0 group-hover/hover-card:block slide-in-from-left-1/2 zoom-in-95) do
-        assert html =~ class
-      end
-
-      assert html =~ "Hover Card Content"
-      assert html =~ "data-side=\"bottom\""
-    end
-
-    test "It renders hover_card_content right correctly" do
-      assigns = %{}
-
-      html =
-        ~H"""
-        <.hover_card_content side="right">Hover Card Content</.hover_card_content>
-        """
-        |> rendered_to_string()
-        |> clean_string()
-
-      for class <-
-            ~w(absolute hidden p-4 ml-2 rounded-md bg-popover text-popover-foreground outline-hidden shadow-md z-50 left-full top-1/2 w-64 -translate-y-1/2 animate-in border data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 fade-in-0 group-hover/hover-card:block slide-in-from-top-1/2 zoom-in-95) do
-        assert html =~ class
-      end
-
+      assert html =~ "data-side=\"right\""
+      assert html =~ "data-align=\"start\""
+      assert html =~ "data-side-offset=\"12\""
+      assert html =~ "data-align-offset=\"4\""
+      assert html =~ "data-side=\"right\" class=\"z-50 w-64"
+      assert html =~ "data-part=\"content-wrapper\""
       assert html =~ "Hover Card Content"
     end
   end

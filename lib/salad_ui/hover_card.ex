@@ -131,12 +131,12 @@ defmodule SaladUI.HoverCard do
       data-align={@align}
       data-side-offset={@side_offset}
       data-align-offset={@align_offset}
-      style="postion: fixed;"
       class="z-50"
       hidden
       {@rest}
     >
       <div
+        data-side={@side}
         class={
           classes([
             "z-50 w-64 rounded-md border border-border bg-popover p-4 text-popover-foreground shadow-md outline-hidden",

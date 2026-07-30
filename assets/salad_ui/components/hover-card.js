@@ -1,7 +1,7 @@
 // saladui/components/hover_card.js
-import Component from "../core/component";
-import SaladUI from "../index";
-import PositionedElement from "../core/positioned-element";
+import Component from "../core/component.js";
+import SaladUI from "../index.js";
+import PositionedElement from "../core/positioned-element.js";
 
 // Define constants at the module level outside the class
 const DEFAULT_POSITION_CONFIG = {
@@ -57,7 +57,7 @@ class HoverCardComponent extends Component {
           mouseMap: {
             trigger: {
               mouseenter: "delayOpen",
-              focus: "delayOpen",
+              focusin: "delayOpen",
             },
           },
         },
@@ -65,7 +65,7 @@ class HoverCardComponent extends Component {
           mouseMap: {
             trigger: {
               mouseleave: "delayClose",
-              blur: "delayClose",
+              focusout: "delayClose",
             },
             content: {
               mouseenter: "clearTimers",
