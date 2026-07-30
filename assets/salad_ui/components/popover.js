@@ -1,7 +1,7 @@
 // saladui/components/popover.js
-import Component from "../core/component";
-import SaladUI from "../index";
-import PositionedElement from "../core/positioned-element";
+import Component from "../core/component.js";
+import SaladUI from "../index.js";
+import PositionedElement from "../core/positioned-element.js";
 
 class PopoverComponent extends Component {
   constructor(el, hookContext) {
@@ -41,6 +41,7 @@ class PopoverComponent extends Component {
           keyMap: {},
         },
         open: {
+          keyEventTarget: "content",
           keyMap: {
             Escape: "close",
           },
@@ -91,6 +92,11 @@ class PopoverComponent extends Component {
         this.positioner.getAttribute("data-align-offset") || "0",
         10,
       );
+      const usePortal = this.options.usePortal === true;
+      const portalContainer =
+        usePortal && this.options.portalContainer
+          ? document.querySelector(this.options.portalContainer)
+          : document.body;
 
       this.positionedElement = new PositionedElement(
         this.positioner,
@@ -101,24 +107,41 @@ class PopoverComponent extends Component {
           sideOffset,
           alignOffset,
           flip: true,
-          usePortal: true,
-          portalContainer: document.querySelector(this.options.portalContainer),
+          usePortal,
+          portalContainer,
           trapFocus: true,
           onOutsideClick: () => this.transition("close"),
+          onPosition: ({ placement: actualPlacement }) => {
+            this.content?.setAttribute("data-side", actualPlacement);
+          },
         },
       );
     }
   }
 
-  onOpenEnter() {
+  afterMount() {
+    if (this.state === "open") {
+      this.activateOpenState();
+    }
+  }
+
+  activateOpenState() {
     this.initializePositionedElement();
     this.positionedElement?.activate();
+  }
+
+  onOpenEnter() {
+    this.activateOpenState();
     this.pushEvent("open");
   }
 
   onClosedEnter() {
     this.positionedElement?.deactivate();
     this.pushEvent("close");
+  }
+
+  beforeUpdate() {
+    this.positionedElement?.deactivate();
   }
 
   beforeDestroy() {

@@ -8,9 +8,9 @@ defmodule Storybook.SaladUIComponents.Popover do
 
   def imports do
     [
-      {SaladUI.Popover, [popover_trigger: 1, popover_content: 1]},
+      {Popover, [popover_trigger: 1, popover_content: 1]},
       {SaladUI.Button, [button: 1]},
-      {SaladUI.Avatar, [avatar: 1, avatar_image: 1, avatar_fallback: 1]},
+      {SaladUI.Card, [card: 1, card_content: 1, card_description: 1, card_header: 1, card_title: 1]},
       {SaladUI.Input, [input: 1]},
       {SaladUI.Label, [label: 1]}
     ]
@@ -25,250 +25,168 @@ defmodule Storybook.SaladUIComponents.Popover do
         },
         slots: [
           """
-          <.popover_trigger>
-            <.button variant="outline">
-              Open popover
-            </.button>
+          <.popover_trigger as={&button/1} variant="outline">
+            Open popover
           </.popover_trigger>
-          <.popover_content side="top" align="center" side-offset={8} class="w-80">
-            <div class="grid gap-4">
-              <div class="space-y-2">
-                <h4 class="font-medium leading-none">
-                  Dimensions
-                </h4>
-                <p class="text-sm text-muted-foreground">
+          <.popover_content side="top" align="center" side-offset={8} class="w-96 border-0 bg-transparent p-0 shadow-none">
+            <.card>
+              <.card_header class="p-4 pb-3">
+                <.card_title class="text-base">Dimensions</.card_title>
+                <.card_description>
                   Set the dimensions for the layer.
-                </p>
-              </div>
-              <div class="grid gap-2 max-h-32 overflow-y-auto">
-                <div class="grid grid-cols-3 items-center gap-4">
-                  <.label for="width">
+                </.card_description>
+              </.card_header>
+              <.card_content class="p-4 pt-0">
+              <div class="space-y-3">
+                <div class="flex items-center gap-3">
+                  <.label for="width" class="w-20 shrink-0">
                     Width
                   </.label>
-                  <.input id="width" default-value="100%" class="col-span-2 h-8"></.input>
+                  <.input id="width" default-value="100%" class="h-8 min-w-0 flex-1"></.input>
                 </div>
-                <div class="grid grid-cols-3 items-center gap-4">
-                  <.label for="maxWidth">
+                <div class="flex items-center gap-3">
+                  <.label for="maxWidth" class="w-20 shrink-0">
                     Max. width
                   </.label>
-                  <.input id="maxWidth" default-value="300px" class="col-span-2 h-8"></.input>
+                  <.input id="maxWidth" default-value="300px" class="h-8 min-w-0 flex-1"></.input>
                 </div>
-                <div class="grid grid-cols-3 items-center gap-4">
-                  <.label for="height">
+                <div class="flex items-center gap-3">
+                  <.label for="height" class="w-20 shrink-0">
                     Height
                   </.label>
-                  <.input id="height" default-value="25px" class="col-span-2 h-8"></.input>
+                  <.input id="height" default-value="25px" class="h-8 min-w-0 flex-1"></.input>
                 </div>
-                <div class="grid grid-cols-3 items-center gap-4">
-                  <.label for="maxHeight">
+                <div class="flex items-center gap-3">
+                  <.label for="maxHeight" class="w-20 shrink-0">
                     Max. height
                   </.label>
-                  <.input id="maxHeight" default-value="none" class="col-span-2 h-8"></.input>
+                  <.input id="maxHeight" default-value="none" class="h-8 min-w-0 flex-1"></.input>
                 </div>
               </div>
-            </div>
+              </.card_content>
+            </.card>
           </.popover_content>
           """
         ]
       },
+      %VariationGroup{
+        id: :placement_examples,
+        description: "Popover placement relative to its trigger.",
+        variations: [
+          %Variation{
+            id: :top,
+            attributes: %{id: "top-popover"},
+            slots: [
+              """
+              <.popover_trigger as={&button/1} variant="outline">Top</.popover_trigger>
+              <.popover_content side="top" align="center" side-offset={8} class="w-64">
+                <p class="text-sm">Appears above trigger.</p>
+              </.popover_content>
+              """
+            ]
+          },
+          %Variation{
+            id: :right,
+            attributes: %{id: "right-popover"},
+            slots: [
+              """
+              <.popover_trigger as={&button/1} variant="outline">Right</.popover_trigger>
+              <.popover_content side="right" align="center" side-offset={8} class="w-64">
+                <p class="text-sm">Appears right of trigger.</p>
+              </.popover_content>
+              """
+            ]
+          },
+          %Variation{
+            id: :bottom,
+            attributes: %{id: "bottom-popover"},
+            slots: [
+              """
+              <.popover_trigger as={&button/1} variant="outline">Bottom</.popover_trigger>
+              <.popover_content side="bottom" align="center" side-offset={8} class="w-64">
+                <p class="text-sm">Appears below trigger.</p>
+              </.popover_content>
+              """
+            ]
+          },
+          %Variation{
+            id: :left,
+            attributes: %{id: "left-popover"},
+            slots: [
+              """
+              <.popover_trigger as={&button/1} variant="outline">Left</.popover_trigger>
+              <.popover_content side="left" align="center" side-offset={8} class="w-64">
+                <p class="text-sm">Appears left of trigger.</p>
+              </.popover_content>
+              """
+            ]
+          }
+        ]
+      },
       %Variation{
-        id: :side_positions,
+        id: :portal_container,
         attributes: %{
-          id: "bottom-popover"
+          "portal-container" => "#popover-portal-target",
+          "use-portal" => true,
+          id: "portal-container-popover"
         },
         slots: [
           """
-          <.popover_trigger>
-            <.button variant="outline">
-              Bottom Position
-            </.button>
+          <div id="popover-portal-target"></div>
+          <.popover_trigger as={&button/1} variant="outline">
+            Open in portal
           </.popover_trigger>
-          <.popover_content side="bottom" align="center" side-offset={8} class="w-64">
-            <div class="grid gap-2">
-              <h4 class="font-medium leading-none">Bottom Placement</h4>
+          <.popover_content side="bottom" align="start" class="w-64">
+            <div class="space-y-2">
+              <h4 class="font-medium leading-none">Custom portal container</h4>
               <p class="text-sm text-muted-foreground">
-                This popover appears below the trigger
+                This content is moved into <code>#popover-portal-target</code> while open.
               </p>
             </div>
           </.popover_content>
           """
         ]
       },
-      %Variation{
-        id: :left_placement,
-        attributes: %{
-          id: "left-popover"
-        },
-        slots: [
-          """
-          <.popover_trigger>
-            <.button variant="outline">
-              Left Position
-            </.button>
-          </.popover_trigger>
-          <.popover_content side="left" align="center" side-offset={8} class="w-64">
-            <div class="grid gap-2">
-              <h4 class="font-medium leading-none">Left Placement</h4>
-              <p class="text-sm text-muted-foreground">
-                This popover appears to the left of the trigger
-              </p>
-            </div>
-          </.popover_content>
-          """
-        ]
-      },
-      %Variation{
-        id: :right_placement,
-        attributes: %{
-          id: "right-popover"
-        },
-        slots: [
-          """
-          <.popover_trigger>
-            <.button variant="outline">
-              Right Position
-            </.button>
-          </.popover_trigger>
-          <.popover_content side="right" align="center" side-offset={8} class="w-64">
-            <div class="grid gap-2">
-              <h4 class="font-medium leading-none">Right Placement</h4>
-              <p class="text-sm text-muted-foreground">
-                This popover appears to the right of the trigger
-              </p>
-            </div>
-          </.popover_content>
-          """
-        ]
-      },
-      %Variation{
-        id: :alignment,
-        attributes: %{
-          id: "start-align-popover"
-        },
-        slots: [
-          """
-          <.popover_trigger>
-            <.button variant="outline">
-              Start Alignment
-            </.button>
-          </.popover_trigger>
-          <.popover_content side="bottom" align="start" side-offset={8} class="w-64">
-            <div class="grid gap-2">
-              <h4 class="font-medium leading-none">Start Alignment</h4>
-              <p class="text-sm text-muted-foreground">
-                This popover is aligned to the start
-              </p>
-            </div>
-          </.popover_content>
-          """
-        ]
-      },
-      %Variation{
-        id: :end_alignment,
-        attributes: %{
-          id: "end-align-popover"
-        },
-        slots: [
-          """
-          <.popover_trigger>
-            <.button variant="outline">
-              End Alignment
-            </.button>
-          </.popover_trigger>
-          <.popover_content side="bottom" align="end" side-offset={8} class="w-64">
-            <div class="grid gap-2">
-              <h4 class="font-medium leading-none">End Alignment</h4>
-              <p class="text-sm text-muted-foreground">
-                This popover is aligned to the end
-              </p>
-            </div>
-          </.popover_content>
-          """
-        ]
-      },
-      %Variation{
-        id: :profile_demo,
-        attributes: %{
-          id: "profile-popover"
-        },
-        slots: [
-          """
-          <.popover_trigger>
-            <.button variant="outline">
-              <div class="flex items-center gap-2">
-                <.avatar class="h-6 w-6">
-                  <.avatar_fallback>JD</.avatar_fallback>
-                </.avatar>
-                <span>Profile</span>
-              </div>
-            </.button>
-          </.popover_trigger>
-          <.popover_content side="right" align="center" side-offset={8} class="w-80">
-            <div class="flex flex-col gap-4 p-1">
-              <div class="flex items-center gap-4">
-                <.avatar class="h-10 w-10">
-                  <.avatar_image src="/images/placeholders/avatar.png" />
-                  <.avatar_fallback>JD</.avatar_fallback>
-                </.avatar>
-                <div class="flex flex-col">
-                  <h4 class="text-sm font-semibold">John Doe</h4>
-                  <p class="text-sm text-muted-foreground">john.doe@example.com</p>
-                </div>
-              </div>
-              <div class="grid gap-2">
-                <.button variant="outline" size="sm">View profile</.button>
-                <.button variant="outline" size="sm">Settings</.button>
-                <.button variant="outline" size="sm">Logout</.button>
-              </div>
-            </div>
-          </.popover_content>
-          """
-        ]
-      },
-      %Variation{
-        id: :increased_spacing,
-        attributes: %{
-          id: "large-spacing-popover"
-        },
-        slots: [
-          """
-          <.popover_trigger>
-            <.button variant="outline">
-              Increased Spacing
-            </.button>
-          </.popover_trigger>
-          <.popover_content side="bottom" align="center" side-offset={20} class="w-64">
-            <div class="grid gap-2">
-              <h4 class="font-medium leading-none">Increased Side Offset</h4>
-              <p class="text-sm text-muted-foreground">
-                This popover has a larger gap (20px) from the trigger
-              </p>
-            </div>
-          </.popover_content>
-          """
-        ]
-      },
-      %Variation{
-        id: :custom_trigger,
-        attributes: %{
-          id: "custom-trigger-popover"
-        },
-        slots: [
-          """
-          <.popover_trigger>
-            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-            </div>
-          </.popover_trigger>
-          <.popover_content side="right" align="center" side-offset={8} class="w-64">
-            <div class="grid gap-2">
-              <h4 class="font-medium leading-none">Custom Trigger Example</h4>
-              <p class="text-sm text-muted-foreground">
-                You can use any element as a trigger, not just buttons
-              </p>
-            </div>
-          </.popover_content>
-          """
+      %VariationGroup{
+        id: :alignment_examples,
+        description: "Cross-axis alignment for bottom-placed popovers.",
+        variations: [
+          %Variation{
+            id: :start,
+            attributes: %{id: "start-align-popover"},
+            slots: [
+              """
+              <.popover_trigger as={&button/1} variant="outline">Start</.popover_trigger>
+              <.popover_content side="bottom" align="start" side-offset={8} class="w-64">
+                <p class="text-sm">Aligned to trigger start.</p>
+              </.popover_content>
+              """
+            ]
+          },
+          %Variation{
+            id: :center,
+            attributes: %{id: "center-align-popover"},
+            slots: [
+              """
+              <.popover_trigger as={&button/1} variant="outline">Center</.popover_trigger>
+              <.popover_content side="bottom" align="center" side-offset={8} class="w-64">
+                <p class="text-sm">Centered on trigger.</p>
+              </.popover_content>
+              """
+            ]
+          },
+          %Variation{
+            id: :end,
+            attributes: %{id: "end-align-popover"},
+            slots: [
+              """
+              <.popover_trigger as={&button/1} variant="outline">End</.popover_trigger>
+              <.popover_content side="bottom" align="end" side-offset={8} class="w-64">
+                <p class="text-sm">Aligned to trigger end.</p>
+              </.popover_content>
+              """
+            ]
+          }
         ]
       }
     ]

@@ -61,6 +61,22 @@ test("activate() positions the element against the reference in place when usePo
   pe.destroy();
 });
 
+test("onPosition receives actual placement on activation and updates", () => {
+  const { reference, element } = buildDom();
+  const positions = [];
+  const pe = new PositionedElement(element, reference, {
+    placement: "bottom",
+    onPosition: (position) => positions.push(position),
+  });
+
+  pe.activate();
+  pe.update();
+
+  assert.equal(positions.length, 2);
+  assert.equal(positions[0].placement, "bottom");
+  pe.destroy();
+});
+
 test("activate()/deactivate() with usePortal moves the element to the portal container and restores it on deactivate (regression)", () => {
   const { container, reference, element } = buildDom();
   const pe = new PositionedElement(element, reference, { usePortal: true });

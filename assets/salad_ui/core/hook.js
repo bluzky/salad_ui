@@ -34,6 +34,10 @@ const SaladUIHook = {
     });
   },
 
+  beforeUpdate() {
+    this.component?.beforeUpdate?.();
+  },
+
   updated() {
     if (this.component) {
       this.component.destroy();

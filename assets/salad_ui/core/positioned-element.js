@@ -38,6 +38,7 @@ class PositionedElement {
 
       // Event handlers
       onOutsideClick: null,
+      onPosition: null,
       scrollPassThrough: false,
 
       ...options,
@@ -198,6 +199,7 @@ class PositionedElement {
 
     // Update placement attribute
     this.element.setAttribute("data-placement", position.placement);
+    this.options.onPosition?.(position);
 
     return position;
   }

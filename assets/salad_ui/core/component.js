@@ -536,6 +536,13 @@ class Component {
   // Lifecycle hooks
 
   /**
+   * Called by Phoenix LiveView immediately before it patches this component's
+   * DOM. Subclasses that move descendants outside the component root must
+   * restore them here so LiveView can reconcile the expected tree.
+   */
+  beforeUpdate() {}
+
+  /**
    * Called once by the factory right after setupEvents(), i.e. once the
    * component is fully constructed and its listeners are attached.
    * Subclasses that need to run logic depending on both their own fields
