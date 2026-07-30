@@ -17,14 +17,22 @@ function buildDialog({
   open = false,
   state,
   closeOnOutsideClick = true,
+  closeOnEscape = true,
+  animations,
 } = {}) {
   const initialState =
     state === undefined ? `data-open="${open}"` : `data-state="${state}"`;
 
+  const options = JSON.stringify({
+    closeOnOutsideClick,
+    closeOnEscape,
+    ...(animations ? { animations } : {}),
+  });
+
   document.body.innerHTML = `
     <button id="outside-trigger" type="button">Launch</button>
     <div id="${id}" data-component="dialog" ${initialState}
-         data-options='{"closeOnOutsideClick":${closeOnOutsideClick}}'
+         data-options='${options}'
          data-event-mappings='{"open":"open","close":"close"}'
          data-part="root">
       <button data-part="trigger" data-action="open" type="button">Open</button>
@@ -58,6 +66,7 @@ function buildDialog({
     closeTrigger: el.querySelector('[data-part="close-trigger"]'),
     outsideTrigger: document.getElementById("outside-trigger"),
     pushed,
+    hookContext,
   };
 }
 
@@ -116,6 +125,39 @@ test("Escape closes dialog and prevents browser default", () => {
   component.destroy();
 });
 
+test("Escape does not close dialogs that disable closeOnEscape", () => {
+  const { component, el, trigger } = buildDialog({ closeOnEscape: false });
+  click(trigger);
+
+  const event = new window.KeyboardEvent("keydown", {
+    key: "Escape",
+    bubbles: true,
+    cancelable: true,
+  });
+  el.dispatchEvent(event);
+
+  assert.equal(component.state, "open");
+  assert.equal(event.defaultPrevented, false);
+  component.destroy();
+});
+
+test("notifies close before an animated exit completes", () => {
+  const { component, content, trigger, closeTrigger, pushed } = buildDialog({
+    animations: {
+      open_to_closed: { duration: 50, target_part: "content" },
+    },
+  });
+  click(trigger);
+  pushed.length = 0;
+
+  click(closeTrigger);
+
+  assert.equal(component.state, "closed");
+  assert.equal(content.hidden, false);
+  assert.equal(pushed.at(-1).event, "close");
+  component.destroy();
+});
+
 test("overlay closes only when outside-click dismissal is enabled", () => {
   const enabled = buildDialog({ closeOnOutsideClick: true });
   click(enabled.trigger);
@@ -144,8 +186,10 @@ test("focuses first dialog control and restores prior focus on close", async () 
   component.destroy();
 });
 
-test("SSR-open state activates dialog and wires accessible labels", async () => {
-  const { component, content, panel } = buildDialog({ state: "open" });
+test("SSR-open state initializes dialog without emitting open on remount", async () => {
+  const { component, content, panel, el, hookContext, pushed } = buildDialog({
+    state: "open",
+  });
 
   await wait(60);
   assert.equal(component.state, "open");
@@ -154,7 +198,15 @@ test("SSR-open state activates dialog and wires accessible labels", async () => 
   assert.equal(panel.getAttribute("aria-modal"), "true");
   assert.equal(panel.getAttribute("aria-labelledby"), "dialog-1-title");
   assert.equal(panel.getAttribute("aria-describedby"), "dialog-1-description");
+  assert.equal(pushed.filter(({ event }) => event === "open").length, 0);
   component.destroy();
+
+  const remounted = registry.create("dialog", el, hookContext);
+  await wait(60);
+
+  assert.equal(remounted.state, "open");
+  assert.equal(pushed.filter(({ event }) => event === "open").length, 0);
+  remounted.destroy();
 });
 
 test("LiveView hook updates remount dialog from server-rendered state", () => {
