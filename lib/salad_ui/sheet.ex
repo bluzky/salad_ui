@@ -168,7 +168,7 @@ defmodule SaladUI.Sheet do
     <div data-part="content" tabindex="0" hidden>
       <div
         data-part="overlay"
-        class="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+        class="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-300 data-[state=closed]:fill-mode-forwards data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
       />
 
       <div
@@ -176,7 +176,7 @@ defmodule SaladUI.Sheet do
         data-side={@side}
         class={
           classes([
-            "fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
+            "fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-300 data-[state=closed]:fill-mode-forwards",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
             @variant_class,
             @class
@@ -297,7 +297,7 @@ defmodule SaladUI.Sheet do
   defp get_animation_config do
     %{
       "open_to_closed" => %{
-        duration: 130,
+        duration: 300,
         target_part: "content"
       }
     }

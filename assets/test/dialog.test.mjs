@@ -77,16 +77,24 @@ function createHookInstance(el) {
 }
 
 test("opens from trigger and closes from close trigger", () => {
-  const { component, content, trigger, closeTrigger, pushed } = buildDialog();
+  const { component, content, panel, trigger, closeTrigger, pushed } =
+    buildDialog();
 
   click(trigger);
   assert.equal(component.state, "open");
   assert.equal(content.hidden, false);
+  assert.equal(panel.getAttribute("aria-modal"), "true");
+  assert.equal(panel.getAttribute("aria-labelledby"), "dialog-1-title");
+  assert.equal(panel.getAttribute("aria-describedby"), "dialog-1-description");
   assert.equal(pushed.at(-1).event, "open");
 
   click(closeTrigger);
   assert.equal(component.state, "closed");
   assert.equal(content.hidden, true);
+  assert.equal(panel.getAttribute("role"), "dialog");
+  assert.equal(panel.hasAttribute("aria-modal"), false);
+  assert.equal(panel.hasAttribute("aria-labelledby"), false);
+  assert.equal(panel.hasAttribute("aria-describedby"), false);
   assert.equal(pushed.at(-1).event, "close");
 
   component.destroy();

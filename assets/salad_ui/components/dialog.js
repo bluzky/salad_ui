@@ -89,6 +89,11 @@ class DialogComponent extends Component {
             labelledby: () => this.getPartId("title"),
             describedby: () => this.getPartId("description"),
           },
+          closed: {
+            modal: null,
+            labelledby: null,
+            describedby: null,
+          },
         },
         "close-trigger": {
           all: {
