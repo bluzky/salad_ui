@@ -125,7 +125,8 @@ defmodule SaladUI.JS do
   - `js` - `%Phoenix.LiveView.JS{}` pipeline. Defaults to `%JS{}`.
   - `command_name` - Command or state-machine transition name.
   - `opts` - Options passed to `JS.dispatch/3`. Use `:to` to target a component
-    selector and `:detail` for command params.
+    selector and `:detail` for command params. Client commands default to
+    `bubbles: false` so nested SaladUI components do not receive the same command.
 
   ## How it works
 
@@ -154,17 +155,26 @@ defmodule SaladUI.JS do
   </.button>
   ```
   """
-  def dispatch_command(js \\ %JS{}, command_name, opts \\ []) do
+  def dispatch_command(command_name) do
+    dispatch_command(%JS{}, command_name, [])
+  end
+
+  def dispatch_command(command_name, opts) when is_list(opts) do
+    dispatch_command(%JS{}, command_name, opts)
+  end
+
+  def dispatch_command(%JS{} = js, command_name, opts \\ []) do
     details = %{
       command: command_name,
-      params: opts[:detail]
+      params: Keyword.get(opts, :detail, %{}) || %{}
     }
 
-    JS.dispatch(
-      js,
-      "salad_ui:command",
-      Keyword.put(opts, :detail, details)
-    )
+    opts =
+      opts
+      |> Keyword.put(:detail, details)
+      |> Keyword.put_new(:bubbles, false)
+
+    JS.dispatch(js, "salad_ui:command", opts)
   end
 end
 

@@ -157,10 +157,12 @@ class Component {
 
   // Handle client commands
   onClientCommand(event) {
-    const { command, params } = event.detail;
-    if (command) {
-      this.handleCommand(command, params);
-    }
+    const { command, params = {}, target } = event.detail || {};
+    if (!command) return;
+    if (target && target !== this.el.id) return;
+
+    event.stopPropagation();
+    this.handleCommand(command, params ?? {});
   }
 
   onStateChanged(prevState, nextState) {
