@@ -12,15 +12,15 @@ defmodule SaladUI.DropdownMenuTest do
 
       html =
         rendered_to_string(~H"""
-        <.dropdown_menu_trigger>
-          <.button variant="outline">Click me</.button>
+        <.dropdown_menu_trigger as={&button/1} variant="outline">
+          Click me
         </.dropdown_menu_trigger>
         """)
 
       assert html =~ "Click me"
 
       assert html =~ ~s(data-part="trigger")
-      assert html =~ ~s(tabindex="0")
+      assert html =~ ~s(type="button")
     end
 
     test "It renders dropdown menu content correctly" do
@@ -81,8 +81,8 @@ defmodule SaladUI.DropdownMenuTest do
         rendered_to_string(~H"""
         <div class="mt-24">
           <.dropdown_menu id="dropdown-test">
-            <.dropdown_menu_trigger>
-              <.button variant="outline">Click me</.button>
+            <.dropdown_menu_trigger as={&button/1} variant="outline">
+              Click me
             </.dropdown_menu_trigger>
             <.dropdown_menu_content>
               <.menu class="w-56">

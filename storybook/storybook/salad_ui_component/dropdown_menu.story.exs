@@ -21,6 +21,7 @@ defmodule Storybook.SaladUIComponents.DropdownMenu do
          dropdown_menu_checkbox_item: 1
        ]},
       {SaladUI.Button, [button: 1]},
+      {SaladUI.Helpers, [as_child: 1]},
       {SaladStorybookWeb.CoreComponents, [icon: 1]}
     ]
 
@@ -32,9 +33,9 @@ defmodule Storybook.SaladUIComponents.DropdownMenu do
         template: """
         <div class="p-24 flex justify-center">
           <.dropdown_menu id="dropdown-default">
-            <.dropdown_menu_trigger>
-              <.button variant="outline">Open Menu</.button>
-            </.dropdown_menu_trigger>
+            <.as_child tag={&dropdown_menu_trigger/1} child={&button/1} variant="outline">
+              Open Menu
+            </.as_child>
             <.dropdown_menu_content class="w-56">
               <.dropdown_menu_label>Account</.dropdown_menu_label>
               <.dropdown_menu_separator />
@@ -84,9 +85,9 @@ defmodule Storybook.SaladUIComponents.DropdownMenu do
         template: """
         <div class="p-24 flex justify-center">
           <.dropdown_menu id="text-formatting">
-            <.dropdown_menu_trigger>
-              <.button variant="outline">Format</.button>
-            </.dropdown_menu_trigger>
+            <.as_child tag={&dropdown_menu_trigger/1} child={&button/1} variant="outline">
+              Format
+            </.as_child>
             <.dropdown_menu_content class="w-48">
               <.dropdown_menu_checkbox_item checked value="bold" on-checked-change="toggle_bold">
                 <span class="font-bold">Bold</span>
@@ -111,9 +112,9 @@ defmodule Storybook.SaladUIComponents.DropdownMenu do
         template: """
         <div class="p-24 flex justify-center">
           <.dropdown_menu id="dropdown-links">
-            <.dropdown_menu_trigger>
-              <.button variant="outline">Help</.button>
-            </.dropdown_menu_trigger>
+            <.as_child tag={&dropdown_menu_trigger/1} child={&button/1} variant="outline">
+              Help
+            </.as_child>
             <.dropdown_menu_content class="w-56">
               <.dropdown_menu_link_item href="/docs">
                 <.icon name="hero-book-open" class="mr-2 h-4 w-4" />
