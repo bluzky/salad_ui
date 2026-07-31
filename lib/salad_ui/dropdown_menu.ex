@@ -54,6 +54,19 @@ defmodule SaladUI.DropdownMenu do
           </.dropdown_menu_checkbox_item>
         </.dropdown_menu_content>
       </.dropdown_menu>
+
+  ## Component events
+
+  * `:on-open` - Maps the `open` event. Fired when the dropdown menu enters open state.
+  * `:on-close` - Maps the `close` event. Fired when the dropdown menu enters closed state.
+  * `:on-select` - Maps the `select` event on a `dropdown_menu_item`. Fired when the item is activated.
+  * `:on-checked-change` - Maps the `checked-change` event on a `dropdown_menu_checkbox_item`.
+
+  ## Server commands
+
+  * `"open"` - Opens the dropdown menu.
+  * `"close"` - Closes the dropdown menu.
+  * `"toggle"` - Toggles the dropdown menu.
   """
   use SaladUI, :component
 
@@ -69,6 +82,17 @@ defmodule SaladUI.DropdownMenu do
   * `:on-open` - Handler for dropdown menu open event.
   * `:on-close` - Handler for dropdown menu close event.
   * `:class` - Additional CSS classes.
+
+  ## Component events
+
+  * `:on-open` - Fired when the dropdown menu opens.
+  * `:on-close` - Fired when the dropdown menu closes.
+
+  ## Server commands
+
+  * `"open"` - Opens the dropdown menu.
+  * `"close"` - Closes the dropdown menu.
+  * `"toggle"` - Toggles the dropdown menu.
   """
   attr :id, :string, required: true, doc: "Unique identifier for the dropdown menu"
   attr :open, :boolean, default: false, doc: "Whether the dropdown menu is initially open"

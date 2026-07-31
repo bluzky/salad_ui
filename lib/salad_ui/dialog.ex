@@ -1,11 +1,31 @@
 defmodule SaladUI.Dialog do
   @moduledoc """
   Implement of Dialog components from https://ui.shadcn.com/docs/components/dialog
+
+  ## Component events
+
+  * `:on-open` - Maps the `open` event. Fired when dialog enters open state.
+  * `:on-close` - Maps the `close` event. Fired when dialog enters closed state.
+
+  ## Server commands
+
+  * `"open"` - Opens the dialog.
+  * `"close"` - Closes the dialog.
   """
   use SaladUI, :component
 
   @doc """
   Dialog component
+
+  ## Component events
+
+  * `:on-open` - Fired when the dialog opens.
+  * `:on-close` - Fired when the dialog closes.
+
+  ## Server commands
+
+  * `"open"` - Opens the dialog.
+  * `"close"` - Closes the dialog.
 
   ## Examples:
 

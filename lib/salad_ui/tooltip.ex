@@ -20,6 +20,14 @@ defmodule SaladUI.Tooltip do
           Need help? Click here for more information.
         </.tooltip_content>
       </.tooltip>
+
+  ## Component events
+
+  * `:on-open` - Maps the `open` event. Fired when the tooltip enters open state.
+  * `:on-close` - Maps the `close` event. Fired when the tooltip enters closed state.
+
+  Tooltip is a pure client-side interaction (hover/focus driven) and does not
+  support `SaladUI.LiveView.send_command/4`.
   """
   use SaladUI, :component
 
@@ -34,6 +42,11 @@ defmodule SaladUI.Tooltip do
   * `:on-open` - Handler for tooltip open event.
   * `:on-close` - Handler for tooltip close event.
   * `:class` - Additional CSS classes.
+
+  ## Component events
+
+  * `:on-open` - Fired when the tooltip opens.
+  * `:on-close` - Fired when the tooltip closes.
   """
   attr :id, :string, default: nil
   attr :"open-delay", :integer, default: 150, doc: "Delay in milliseconds before opening the tooltip"

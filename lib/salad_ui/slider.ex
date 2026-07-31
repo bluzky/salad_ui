@@ -10,6 +10,14 @@ defmodule SaladUI.Slider do
       <.slider id="volume-slider" min={0} max={100} value={50} on-value-changed="volume_changed" />
 
       <.slider id="price-range" min={10} max={1000} step={10} value={500} class="w-[300px]" />
+
+  ## Component events
+
+  * `:on-value-changed` - Maps the `value-changed` event. Fired when the slider value changes.
+
+  ## Server commands
+
+  * `"setValue"` - Sets the slider value. Requires a `:value` param.
   """
   use SaladUI, :component
 
@@ -27,6 +35,14 @@ defmodule SaladUI.Slider do
   * `:disabled` - Whether the slider is disabled (defaults to false).
   * `:on-value-changed` - Handler for value changed event.
   * `:class` - Additional CSS classes.
+
+  ## Component events
+
+  * `:on-value-changed` - Fired when the slider value changes.
+
+  ## Server commands
+
+  * `"setValue"` - Sets the slider value. Requires a `:value` param.
   """
   attr :id, :string, required: true, doc: "Unique identifier for the slider"
   attr :name, :any, default: nil, doc: "Name of the slider for form submission"

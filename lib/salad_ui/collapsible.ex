@@ -19,6 +19,16 @@ defmodule SaladUI.Collapsible do
         </.collapsible_content>
       </.collapsible>
 
+  ## Component events
+
+  * `:on-open` - Maps the `open` event. Fired when the collapsible enters open state.
+  * `:on-close` - Maps the `close` event. Fired when the collapsible enters closed state.
+
+  ## Server commands
+
+  * `"open"` - Opens the collapsible.
+  * `"close"` - Closes the collapsible.
+  * `"toggle"` - Toggles the collapsible.
   """
   use SaladUI, :component
 
@@ -32,6 +42,17 @@ defmodule SaladUI.Collapsible do
   * `:on-open` - Handler for collapsible open event.
   * `:on-close` - Handler for collapsible close event.
   * `:class` - Additional CSS classes.
+
+  ## Component events
+
+  * `:on-open` - Fired when the collapsible opens.
+  * `:on-close` - Fired when the collapsible closes.
+
+  ## Server commands
+
+  * `"open"` - Opens the collapsible.
+  * `"close"` - Closes the collapsible.
+  * `"toggle"` - Toggles the collapsible.
   """
   attr :id, :string, required: true, doc: "Unique identifier for the collapsible"
   attr :open, :boolean, default: false, doc: "Whether the collapsible is initially open"

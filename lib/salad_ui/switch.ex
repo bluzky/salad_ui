@@ -3,6 +3,14 @@ defmodule SaladUI.Switch do
   Implementation of a switch/toggle component.
 
   A switch is a control that allows users to toggle between checked and not checked states.
+
+  ## Component events
+
+  * `:on-checked-changed` - Maps the `checked-changed` event. Fired when the switch is toggled.
+
+  ## Server commands
+
+  * `"toggle"` - Toggles the switch between checked and unchecked.
   """
   use SaladUI, :component
 
@@ -18,6 +26,14 @@ defmodule SaladUI.Switch do
     * `:field` - Phoenix form field
     * `:disabled` - Whether the switch is disabled
     * `:on-checked-changed` - Handler for value change event
+
+  ## Component events
+
+  * `:on-checked-changed` - Fired when the switch is toggled.
+
+  ## Server commands
+
+  * `"toggle"` - Toggles the switch between checked and unchecked.
   """
   attr :id, :string, default: nil
   attr :name, :string, default: nil
