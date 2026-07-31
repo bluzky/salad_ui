@@ -32,7 +32,7 @@ defmodule SaladUI.Patcher.JSPatcher do
   """
   def append_after_last_import(js_content, content_to_append) do
     # Find all import statements - handle both semicolon and non-semicolon imports
-    import_regex = ~r/(import\s+.*?(?:;|\n|$))/
+    import_regex = ~r/(import\s+.*?(?:;\n?|\n|$))/
     imports = Regex.scan(import_regex, js_content)
 
     case imports do

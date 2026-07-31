@@ -3,54 +3,39 @@ defmodule SaladUI.Patcher.JSPatcherTest do
 
   alias SaladUI.Patcher.JSPatcher
 
-  @temp_dir "test/temp"
-  @js_file "#{@temp_dir}/app.js"
-  @code_to_add_file "#{@temp_dir}/code_to_add.js"
+  describe "patch_js/3" do
+    test "adds imports after the last import and registers hooks" do
+      js_content = """
+      import {Socket} from \"phoenix\";
+      import {LiveSocket} from \"phoenix_live_view\";
 
-  setup do
-    File.mkdir_p!(@temp_dir)
-    on_exit(fn -> File.rm_rf!(@temp_dir) end)
-  end
-
-  describe "Test JS patcher" do
-    test "patch/2 adds new code when JS file is empty" do
-      File.write!(@js_file, "")
-      File.write!(@code_to_add_file, "console.log('Hello, SaladUI!');")
-
-      JSPatcher.patch(@js_file, @code_to_add_file)
-
-      patched_content = File.read!(@js_file)
-      assert patched_content =~ "// Allows to execute JS commands from the server"
-      assert patched_content =~ "console.log('Hello, SaladUI!');"
-    end
-
-    test "patch/2 appends new code to existing content" do
-      initial_content = "const app = {};"
-      File.write!(@js_file, initial_content)
-      File.write!(@code_to_add_file, "console.log('Hello, SaladUI!');")
-
-      JSPatcher.patch(@js_file, @code_to_add_file)
-
-      patched_content = File.read!(@js_file)
-      assert patched_content =~ initial_content
-      assert patched_content =~ "// Allows to execute JS commands from the server"
-      assert patched_content =~ "console.log('Hello, SaladUI!');"
-    end
-
-    test "patch/2 doesn't duplicate code if it already exists" do
-      initial_content = """
-      const app = {};
-      // Allows to execute JS commands from the server
-      console.log('Hello, SaladUI!');
+      let liveSocket = new LiveSocket(\"/live\", Socket, {params: {_csrf_token: csrfToken}})
       """
 
-      File.write!(@js_file, initial_content)
-      File.write!(@code_to_add_file, "console.log('Hello, SaladUI!');")
+      import_content = "import SaladUI from \"salad_ui\";\n"
+      hooks = "SaladUI: SaladUI.SaladUIHook"
 
-      JSPatcher.patch(@js_file, @code_to_add_file)
+      patched_content = JSPatcher.patch_js(js_content, import_content, hooks)
 
-      patched_content = File.read!(@js_file)
-      assert patched_content == initial_content
+      assert patched_content =~ ~s(import {LiveSocket} from "phoenix_live_view";\nimport SaladUI from "salad_ui";)
+      assert patched_content =~ "hooks: { SaladUI: SaladUI.SaladUIHook }"
+    end
+
+    test "adds hooks to existing hooks object without duplicating existing hook" do
+      js_content = """
+      import {LiveSocket} from \"phoenix_live_view\";
+
+      let liveSocket = new LiveSocket(\"/live\", Socket, {
+        hooks: {Existing: ExistingHook}
+      })
+      """
+
+      patched_content = JSPatcher.patch_js(js_content, "", "SaladUI: SaladUI.SaladUIHook")
+      repatched_content = JSPatcher.patch_js(patched_content, "", "SaladUI: SaladUI.SaladUIHook")
+
+      assert patched_content =~ "Existing: ExistingHook"
+      assert patched_content =~ "SaladUI: SaladUI.SaladUIHook"
+      assert repatched_content == patched_content
     end
   end
 end
