@@ -3,19 +3,9 @@ defmodule SaladUI.AlertDialogTest do
 
   import SaladUI.AlertDialog
 
-  # Helper function to set up assigns
-  defp assign_builder(assigns \\ %{}) do
-    assigns
-    # |> Enum.into(%{
-    #   __changed__: nil,
-    #   flash: %{},
-    #   socket: %Phoenix.LiveView.Socket{}
-    # })
-  end
-
   describe "alert_dialog/1" do
     test "renders with required attributes" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -34,7 +24,7 @@ defmodule SaladUI.AlertDialogTest do
     end
 
     test "renders with open state" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -49,7 +39,7 @@ defmodule SaladUI.AlertDialogTest do
     end
 
     test "raises when missing required inner_block" do
-      assigns = assign_builder()
+      assigns = %{}
 
       assert_raise KeyError, ~r/key :inner_block not found/, fn ->
         rendered_to_string(~H"""
@@ -61,7 +51,7 @@ defmodule SaladUI.AlertDialogTest do
 
   describe "alert_dialog_trigger/1" do
     test "renders trigger" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -76,7 +66,7 @@ defmodule SaladUI.AlertDialogTest do
     end
 
     test "renders with custom class" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -89,7 +79,7 @@ defmodule SaladUI.AlertDialogTest do
     end
 
     test "renders without a deprecated builder assign" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -104,7 +94,7 @@ defmodule SaladUI.AlertDialogTest do
 
   describe "alert_dialog_content/1" do
     test "renders content with closed state by default" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -119,7 +109,7 @@ defmodule SaladUI.AlertDialogTest do
     end
 
     test "renders content structure without generic close button" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -138,7 +128,7 @@ defmodule SaladUI.AlertDialogTest do
     end
 
     test "uses a consumer-provided accessible name" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -151,7 +141,7 @@ defmodule SaladUI.AlertDialogTest do
     end
 
     test "renders with custom class" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -166,7 +156,7 @@ defmodule SaladUI.AlertDialogTest do
 
   describe "alert_dialog_header/1" do
     test "renders header with content" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -183,7 +173,7 @@ defmodule SaladUI.AlertDialogTest do
     end
 
     test "renders with custom class" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -198,7 +188,7 @@ defmodule SaladUI.AlertDialogTest do
 
   describe "alert_dialog_title/1" do
     test "renders title with content" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -213,7 +203,7 @@ defmodule SaladUI.AlertDialogTest do
     end
 
     test "renders with custom class" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -228,7 +218,7 @@ defmodule SaladUI.AlertDialogTest do
 
   describe "alert_dialog_description/1" do
     test "renders description with content" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -245,7 +235,7 @@ defmodule SaladUI.AlertDialogTest do
     end
 
     test "renders with custom class" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -260,7 +250,7 @@ defmodule SaladUI.AlertDialogTest do
 
   describe "alert_dialog_footer/1" do
     test "renders footer with content" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -277,7 +267,7 @@ defmodule SaladUI.AlertDialogTest do
     end
 
     test "renders with custom class" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -292,7 +282,7 @@ defmodule SaladUI.AlertDialogTest do
 
   describe "alert_dialog_cancel/1" do
     test "renders cancel button with content" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -311,7 +301,7 @@ defmodule SaladUI.AlertDialogTest do
     end
 
     test "renders with custom class" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -324,7 +314,7 @@ defmodule SaladUI.AlertDialogTest do
     end
 
     test "renders without a deprecated builder assign" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -339,7 +329,7 @@ defmodule SaladUI.AlertDialogTest do
 
   describe "alert_dialog_action/1" do
     test "renders action button with content" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -354,7 +344,7 @@ defmodule SaladUI.AlertDialogTest do
     end
 
     test "renders with custom class" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -370,7 +360,7 @@ defmodule SaladUI.AlertDialogTest do
   # Integration test for the complete alert dialog
   describe "complete alert dialog" do
     test "renders full alert dialog structure" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
