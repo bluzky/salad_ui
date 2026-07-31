@@ -7,7 +7,7 @@ defmodule SaladUI.Slider do
 
   ## Examples:
 
-      <.slider id="volume-slider" min={0} max={100} value={50} on-value-changed={JS.push("volume_changed")} />
+      <.slider id="volume-slider" min={0} max={100} value={50} on-value-changed="volume_changed" />
 
       <.slider id="price-range" min={10} max={1000} step={10} value={500} class="w-[300px]" />
   """
@@ -52,12 +52,15 @@ defmodule SaladUI.Slider do
         true -> assigns.min
       end
 
-    # Ensure value is within bounds and snapped to step
+    # Ensure value is numeric, within bounds, and snapped to step
     value =
       value
+      |> normalize_number(assigns.min)
       |> max(assigns.min)
       |> min(assigns.max)
-      |> snap_to_step(assigns.step)
+      |> snap_to_step(assigns.min, assigns.step)
+      |> max(assigns.min)
+      |> min(assigns.max)
 
     # Collect event mappings
     event_map = event_mappings(assigns)
@@ -80,13 +83,14 @@ defmodule SaladUI.Slider do
     ~H"""
     <div
       id={@id}
-      class={classes(["relative", @class])}
+      class={classes(["relative", @disabled && "opacity-50", @class])}
       data-component="slider"
       data-state="idle"
       data-value={@value}
       data-options={@options}
       data-event-mappings={@event_map}
       tabindex={if @disabled, do: "-1", else: "0"}
+      aria-disabled={if @disabled, do: "true", else: nil}
       phx-hook="SaladUI"
       data-part="root"
       phx-no-format
@@ -94,15 +98,19 @@ defmodule SaladUI.Slider do
     >
       <div
         class="relative flex w-full touch-none select-none items-center"
-        data-part="root"
       >
         <div data-part="track" class="relative h-2 w-full grow overflow-hidden rounded-full bg-secondary">
           <div data-part="range" class="absolute h-full bg-primary" />
         </div>
         <div
-          disabled={@disabled}
+          data-disabled={to_string(@disabled)}
           data-part="thumb"
-          class="block h-5 w-5 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 absolute"
+          class={
+            classes([
+              "absolute block h-5 w-5 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              @disabled && "pointer-events-none"
+            ])
+          }
         />
       </div>
       <input type="hidden" name={@name} value={@value} />
@@ -111,8 +119,21 @@ defmodule SaladUI.Slider do
   end
 
   # Snap a value to the nearest step
-  defp snap_to_step(value, step) do
-    step_count = round(value / step)
-    step * step_count
+  defp snap_to_step(value, min, step) when is_number(step) and step > 0 do
+    step_count = round((value - min) / step)
+    min + step * step_count
   end
+
+  defp snap_to_step(value, _min, _step), do: value
+
+  defp normalize_number(value, _default) when is_number(value), do: value
+
+  defp normalize_number(value, default) when is_binary(value) do
+    case Float.parse(value) do
+      {number, _rest} -> number
+      :error -> default
+    end
+  end
+
+  defp normalize_number(_value, default), do: default
 end
