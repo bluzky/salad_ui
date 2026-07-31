@@ -47,14 +47,27 @@ class TabsComponent extends Component {
     // Setup accessibility attributes
     this.setupAriaAttributes();
 
-    // Select first tab if none selected
-    if (!this.selection.getValue() && this.triggers.length > 0) {
-      const firstTrigger = this.registry.getItem("first");
-      if (firstTrigger) this.selection.select(firstTrigger);
-    }
+    this.ensureValidSelection();
 
     // Initial UI update
     this.updateActiveTab();
+  }
+
+  ensureValidSelection() {
+    const selectedValue = this.selection.getValue();
+    const selectedItem = selectedValue
+      ? this.registry.getItemByValue(selectedValue)
+      : null;
+
+    if (selectedItem && !this.registry.isDisabled(selectedItem)) return;
+
+    const firstTrigger = this.registry.getItem("first");
+    if (firstTrigger) {
+      this.selection.setValues(firstTrigger.value);
+    } else {
+      this.selection.values = [];
+      this.selection.updateSelectedStates();
+    }
   }
 
   getComponentConfig() {
@@ -124,10 +137,16 @@ class TabsComponent extends Component {
   selectTab(value) {
     // Find the trigger item
     const triggerItem = this.registry.getItemByValue(value);
-    if (!triggerItem || this.selection.isValueSelected(value)) return;
+    if (
+      !triggerItem ||
+      this.registry.isDisabled(triggerItem) ||
+      this.selection.isValueSelected(value)
+    ) {
+      return;
+    }
 
     // Select the tab
-    this.selection.select(triggerItem);
+    if (!this.selection.select(triggerItem)) return;
     this.updateActiveTab();
 
     // Focus the selected trigger
@@ -168,10 +187,9 @@ class TabsComponent extends Component {
   }
 
   // Cleanup
-  destroy() {
+  beforeDestroy() {
     this.registry = null;
     this.selection = null;
-    super.destroy();
   }
 }
 

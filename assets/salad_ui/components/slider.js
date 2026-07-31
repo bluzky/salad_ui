@@ -232,15 +232,18 @@ class SliderComponent extends Component {
   }
 
   snapToStep(value) {
-    return this.min + Math.round((value - this.min) / this.step) * this.step;
+    if (value <= this.min) return this.min;
+    if (value >= this.max) return this.max;
+
+    const snapped =
+      this.min + Math.round((value - this.min) / this.step) * this.step;
+
+    return Math.max(this.min, Math.min(this.max, snapped));
   }
 
   setValueAndUpdate(newValue) {
-    // Ensure value is within bounds
-    this.value = Math.max(
-      this.min,
-      Math.min(this.max, this.snapToStep(newValue)),
-    );
+    // Ensure value is snapped and within bounds
+    this.value = this.snapToStep(newValue);
 
     // Update visual position
     this.updatePosition();

@@ -4,7 +4,7 @@ defmodule SaladUI.Tabs do
 
   ## Example:
 
-      <.tabs id="settings" default="account" on_tab_changed={JS.push("tab_changed")}>
+      <.tabs id="settings" default="account" on-tab-changed={JS.push("tab_changed")}>
         <.tabs_list>
           <.tabs_trigger value="account">Account</.tabs_trigger>
           <.tabs_trigger value="password">Password</.tabs_trigger>
@@ -32,6 +32,7 @@ defmodule SaladUI.Tabs do
   """
   attr :id, :string, required: true, doc: "Unique identifier for the tabs component"
   attr :default, :string, default: nil, doc: "Default selected tab value"
+  attr :value, :string, default: nil, doc: "Currently selected tab value"
   attr :class, :string, default: nil
   attr :"on-tab-changed", :any, default: nil, doc: "Handler for tab change events"
   attr :rest, :global
@@ -47,7 +48,8 @@ defmodule SaladUI.Tabs do
       |> assign(
         :options,
         json(%{
-          defaultValue: assigns.default
+          defaultValue: assigns.default,
+          value: assigns.value
         })
       )
 
