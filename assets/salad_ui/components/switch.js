@@ -1,6 +1,6 @@
 // saladui/components/switch.js
-import Component from "../core/component";
-import SaladUI from "../index";
+import Component from "../core/component.js";
+import SaladUI from "../index.js";
 
 class SwitchComponent extends Component {
   constructor(el, hookContext) {
@@ -75,11 +75,10 @@ class SwitchComponent extends Component {
   }
 
   setupComponentEvents() {
+    super.setupComponentEvents();
+
     // Set up keyboard navigation
-    this.el.setAttribute(
-      "tabindex",
-      this.el.getAttribute("disabled") === "true" ? "-1" : "0",
-    );
+    this.el.setAttribute("tabindex", this.disabled ? "-1" : "0");
     this.config.preventDefaultKeys = [" ", "Enter"];
   }
 

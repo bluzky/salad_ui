@@ -44,7 +44,7 @@ defmodule Storybook.SaladUIComponents.Switch do
         template: """
         <div class="flex items-center space-x-2">
           <.psb-variation />
-          <label for="switch-with-label">Click me</label>
+          <label for="switch-with-label-input">Click me</label>
         </div>
         """,
         attributes: %{

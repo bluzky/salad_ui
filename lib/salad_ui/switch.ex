@@ -22,6 +22,8 @@ defmodule SaladUI.Switch do
   attr :id, :string, default: nil
   attr :name, :string, default: nil
   attr :class, :string, default: nil
+  attr :value, :any, default: nil
+  attr :"default-value", :any, values: [true, false, "true", "false"], default: false
   attr :checked, :boolean
   attr :disabled, :boolean, default: false
   attr :"on-checked-changed", :any, default: nil, doc: "Handler for value change event"
@@ -59,6 +61,8 @@ defmodule SaladUI.Switch do
       data-part="root"
       phx-hook="SaladUI"
       data-disabled={@disabled}
+      role="switch"
+      aria-checked={to_string(@checked)}
       class={
         classes([
           "switch-root inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input",
@@ -68,7 +72,7 @@ defmodule SaladUI.Switch do
       tabindex={if @disabled, do: "-1", else: "0"}
       {@rest}
     >
-      <input type="hidden" name={@name} value="false" />
+      <input :if={!@disabled} type="hidden" name={@name} value="false" />
       <input
         type="checkbox"
         id={"#{@id}-input"}
@@ -77,7 +81,7 @@ defmodule SaladUI.Switch do
         class="sr-only"
         checked={@checked}
         disabled={@disabled}
-        aria-checked={@checked}
+        aria-checked={to_string(@checked)}
         data-part="input"
       />
       <span
