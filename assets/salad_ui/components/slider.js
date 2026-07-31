@@ -1,6 +1,6 @@
 // saladui/components/slider.js
-import Component from "../core/component";
-import SaladUI from "../index";
+import Component from "../core/component.js";
+import SaladUI from "../index.js";
 
 class SliderComponent extends Component {
   constructor(el, hookContext) {
@@ -10,6 +10,7 @@ class SliderComponent extends Component {
     this.track = this.getPart("track");
     this.range = this.getPart("range");
     this.thumb = this.getPart("thumb");
+    this.input = this.el.querySelector('input[type="hidden"]');
 
     // Initialize values
     this.parseValues();
@@ -17,8 +18,17 @@ class SliderComponent extends Component {
     // Add drag handling
     this.isDragging = false;
     this.setupDragHandling();
+    this.config.preventDefaultKeys = [
+      "ArrowLeft",
+      "ArrowRight",
+      "ArrowDown",
+      "ArrowUp",
+      "Home",
+      "End",
+    ];
 
-    // Set initial position
+    // Set initial ARIA attributes and position
+    this.updateUI();
     this.updatePosition();
   }
 
@@ -27,6 +37,15 @@ class SliderComponent extends Component {
     this.min = parseFloat(this.options.min || 0);
     this.max = parseFloat(this.options.max || 100);
     this.step = parseFloat(this.options.step || 1);
+    if (!Number.isFinite(this.min)) {
+      this.min = 0;
+    }
+    if (!Number.isFinite(this.max)) {
+      this.max = 100;
+    }
+    if (!Number.isFinite(this.step) || this.step <= 0) {
+      this.step = 1;
+    }
     this.disabled = !!this.options.disabled;
 
     // Get value from data attribute, fallback to defaultValue from options, then to min
@@ -39,6 +58,10 @@ class SliderComponent extends Component {
           ? defaultValue
           : this.min,
     );
+
+    if (!Number.isFinite(this.value)) {
+      this.value = this.min;
+    }
 
     // Clamp value to min/max
     this.value = Math.max(this.min, Math.min(this.max, this.value));
@@ -68,8 +91,8 @@ class SliderComponent extends Component {
             ArrowRight: () => this.incrementValue(),
             ArrowDown: () => this.decrementValue(),
             ArrowUp: () => this.incrementValue(),
-            Home: () => this.setValueAndUpdate(this.min),
-            End: () => this.setValueAndUpdate(this.max),
+            Home: () => this.setBoundaryValue(this.min),
+            End: () => this.setBoundaryValue(this.max),
           },
         },
         dragging: {
@@ -108,7 +131,7 @@ class SliderComponent extends Component {
 
   onIdleEnter() {
     // Set proper tabindex when component is idle (not being dragged)
-    this.el.setAttribute("tabindex", "0");
+    this.el.setAttribute("tabindex", this.disabled ? "-1" : "0");
   }
 
   onDraggingEnter() {
@@ -144,6 +167,8 @@ class SliderComponent extends Component {
   }
 
   onPointerMove(event) {
+    if (this.disabled) return;
+
     // Prevent default to avoid scrolling during drag
     event.preventDefault();
 
@@ -152,6 +177,8 @@ class SliderComponent extends Component {
   }
 
   onPointerUp() {
+    if (this.disabled) return;
+
     // End dragging
     this.transition("end");
 
@@ -165,6 +192,7 @@ class SliderComponent extends Component {
 
     // Get track bounds
     const trackRect = this.track.getBoundingClientRect();
+    if (trackRect.width === 0) return;
 
     // Calculate percentage within track
     let percentage = Math.max(
@@ -176,25 +204,43 @@ class SliderComponent extends Component {
     const rawValue = this.min + percentage * (this.max - this.min);
 
     // Snap to step
-    const steppedValue = Math.round(rawValue / this.step) * this.step;
+    const steppedValue = this.snapToStep(rawValue);
 
     // Set and update
     this.setValueAndUpdate(steppedValue);
   }
 
   incrementValue() {
+    if (this.disabled) return;
+
     this.setValueAndUpdate(Math.min(this.max, this.value + this.step));
     this.pushEvent("value-changed", { value: this.value });
   }
 
   decrementValue() {
+    if (this.disabled) return;
+
     this.setValueAndUpdate(Math.max(this.min, this.value - this.step));
     this.pushEvent("value-changed", { value: this.value });
   }
 
+  setBoundaryValue(value) {
+    if (this.disabled) return;
+
+    this.setValueAndUpdate(value);
+    this.pushEvent("value-changed", { value: this.value });
+  }
+
+  snapToStep(value) {
+    return this.min + Math.round((value - this.min) / this.step) * this.step;
+  }
+
   setValueAndUpdate(newValue) {
     // Ensure value is within bounds
-    this.value = Math.max(this.min, Math.min(this.max, newValue));
+    this.value = Math.max(
+      this.min,
+      Math.min(this.max, this.snapToStep(newValue)),
+    );
 
     // Update visual position
     this.updatePosition();
@@ -202,11 +248,18 @@ class SliderComponent extends Component {
     // Update ARIA attributes
     this.el.setAttribute("aria-valuenow", this.value.toString());
     this.el.setAttribute("aria-valuetext", this.value.toString());
+
+    if (this.input) {
+      this.input.value = this.value.toString();
+    }
   }
 
   updatePosition() {
     // Calculate percentage for positioning
-    const percentage = ((this.value - this.min) / (this.max - this.min)) * 100;
+    const percentage =
+      this.max === this.min
+        ? 0
+        : ((this.value - this.min) / (this.max - this.min)) * 100;
 
     // Update range width
     this.range.style.width = `${percentage}%`;
@@ -218,7 +271,7 @@ class SliderComponent extends Component {
     // Calculate the percentage offset needed to keep thumb fully within track
     // This accounts for the thumb's width relative to the track
     const thumbHalfWidthPercentage =
-      (thumbRect.width / 2 / trackRect.width) * 100;
+      trackRect.width === 0 ? 0 : (thumbRect.width / 2 / trackRect.width) * 100;
 
     // Constrain the thumb position to keep it fully inside the track
     const thumbPercentage = Math.max(
