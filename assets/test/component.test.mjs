@@ -241,6 +241,34 @@ test("onClientCommand(): a salad_ui:command custom event triggers the given comm
   assert.equal(component.state, "open");
 });
 
+test("onClientCommand(): stops bubbling and normalizes null params", () => {
+  const { component, el } = buildComponent();
+  component.setupEvents();
+
+  let parentReceived = false;
+  let receivedParams;
+  const onParentCommand = () => {
+    parentReceived = true;
+  };
+  document.body.addEventListener("salad_ui:command", onParentCommand);
+  component.handleCommand = (_command, params) => {
+    receivedParams = params;
+    return true;
+  };
+
+  el.dispatchEvent(
+    new window.CustomEvent("salad_ui:command", {
+      bubbles: true,
+      detail: { command: "open", params: null },
+    }),
+  );
+
+  document.body.removeEventListener("salad_ui:command", onParentCommand);
+
+  assert.equal(parentReceived, false);
+  assert.deepEqual(receivedParams, {});
+});
+
 test("pushEvent(): pushes a mapped string event to the server via the hook, with component metadata", () => {
   const calls = [];
   const hookContext = {

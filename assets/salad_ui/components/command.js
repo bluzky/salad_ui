@@ -1,5 +1,5 @@
-import Component from "../core/component";
-import SaladUI from "..";
+import Component from "../core/component.js";
+import SaladUI from "../index.js";
 
 /**
  * CommandComponent for SaladUI
@@ -20,13 +20,18 @@ class CommandComponent extends Component {
     this.items = this.getAllParts("item");
 
     // Bind event handlers
-    this.input.addEventListener("input", this.handleSearch);
+    this.input?.addEventListener("input", this.handleSearch);
 
     // Initial search/filter
     this.handleSearch();
 
     // Prevent default for navigation keys
-    this.config.preventDefaultKeys = ["Escape", "ArrowDown", "ArrowUp"];
+    this.config.preventDefaultKeys = [
+      "Enter",
+      "Escape",
+      "ArrowDown",
+      "ArrowUp",
+    ];
   }
 
   getComponentConfig() {
@@ -49,7 +54,14 @@ class CommandComponent extends Component {
 
   // Focus item by index, wrap around if needed
   focusItem(index) {
-    if (!this.selectableItems?.length) return;
+    if (!this.selectableItems?.length) {
+      this.currentItemIdx = -1;
+      this.items.forEach((item) => {
+        item.setAttribute("data-selected", "false");
+        item.setAttribute("aria-selected", "false");
+      });
+      return;
+    }
 
     // Wrap index
     if (index < 0) index = this.selectableItems.length - 1;
@@ -77,12 +89,14 @@ class CommandComponent extends Component {
   selectItem = () => {
     if (this.currentItemIdx === -1) return;
     const item = this.selectableItems[this.currentItemIdx];
+    if (!item) return;
+
     item.click();
   };
 
   // Handle search/filtering
   handleSearch = () => {
-    const query = this.input.value.trim().toLowerCase();
+    const query = this.input?.value.trim().toLowerCase() || "";
 
     // Filter items
     this.items.forEach((item) => {
@@ -112,14 +126,14 @@ class CommandComponent extends Component {
     const noItems = this.visibleItems.length === 0;
 
     if (noItems) {
-      this.empty.setAttribute("data-visible", "true");
+      this.empty?.setAttribute("data-visible", "true");
     } else {
-      this.empty.setAttribute("data-visible", "false");
+      this.empty?.setAttribute("data-visible", "false");
     }
   };
 
   beforeDestroy() {
-    this.input.removeEventListener("input", this.handleSearch);
+    this.input?.removeEventListener("input", this.handleSearch);
   }
 }
 

@@ -49,7 +49,7 @@ defmodule SaladUI.CommandTest do
 
       assert html =~ "input-class"
       assert html =~ "placeholder=\"Search...\""
-      assert html =~ "data-part=\"command-input\""
+      assert html =~ "data-part=\"input\""
       assert html =~ "<input"
     end
   end
@@ -65,7 +65,7 @@ defmodule SaladUI.CommandTest do
         </.command_list>
         """)
 
-      assert html =~ "data-part=\"command-list\""
+      assert html =~ "data-part=\"list\""
       assert html =~ "list-class"
       assert html =~ "List Content"
     end
@@ -82,7 +82,7 @@ defmodule SaladUI.CommandTest do
         </.command_empty>
         """)
 
-      assert html =~ "data-part=\"command-empty\""
+      assert html =~ "data-part=\"empty\""
       assert html =~ "empty-class"
       assert html =~ "No results"
     end
@@ -117,7 +117,7 @@ defmodule SaladUI.CommandTest do
         """)
 
       assert html =~ "<button"
-      assert html =~ "data-part=\"command-item\""
+      assert html =~ "data-part=\"item\""
       assert html =~ "<span>Item</span>"
     end
 
@@ -146,7 +146,7 @@ defmodule SaladUI.CommandTest do
         <.command_shortcut class="shortcut-class">⌘P</.command_shortcut>
         """)
 
-      assert html =~ "data-part=\"command-shortcut\""
+      assert html =~ "data-part=\"shortcut\""
       assert html =~ "shortcut-class"
       assert html =~ "⌘P"
     end

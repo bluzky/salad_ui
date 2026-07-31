@@ -13,6 +13,14 @@ defmodule SaladUI.Popover do
           </div>
         </.popover_content>
       </.popover>
+
+  ## Component events
+
+  * `:on-open` - Maps the `open` event. Fired when the popover enters open state.
+  * `:on-close` - Maps the `close` event. Fired when the popover enters closed state.
+
+  Popover is a pure client-side interaction (trigger click/outside click) and does
+  not support `SaladUI.LiveView.send_command/4`.
   """
   use SaladUI, :component
 
@@ -28,6 +36,11 @@ defmodule SaladUI.Popover do
   * `:on-open` - Handler for popover open event.
   * `:on-close` - Handler for popover close event.
   * `:class` - Additional CSS classes.
+
+  ## Component events
+
+  * `:on-open` - Fired when the popover opens.
+  * `:on-close` - Fired when the popover closes.
   """
   attr :id, :string, required: true, doc: "Unique identifier for the popover"
   attr :open, :boolean, default: false, doc: "Whether the popover is initially open"

@@ -31,6 +31,13 @@ defmodule SaladUI.Accordion do
           </.accordion_content>
         </.accordion_item>
       </.accordion>
+
+  ## Component events
+
+  * `:on-value-changed` - Maps the `value-changed` event. Fired when an item is expanded or collapsed.
+
+  Accordion is a pure client-side interaction (trigger click) and does not support
+  `SaladUI.LiveView.send_command/4`.
   """
   use SaladUI, :component
 
@@ -46,6 +53,10 @@ defmodule SaladUI.Accordion do
   * `:disabled` - Whether the accordion is disabled. Defaults to `false`.
   * `:on-value-changed` - Handler for accordion value change event.
   * `:class` - Additional CSS classes.
+
+  ## Component events
+
+  * `:on-value-changed` - Fired when an item is expanded or collapsed.
   """
   attr :id, :string, required: true, doc: "Unique identifier for the accordion"
   attr :type, :string, values: ~w(single multiple), default: "single", doc: "Whether only one item can be open at a time"

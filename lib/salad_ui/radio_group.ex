@@ -21,11 +21,24 @@ defmodule SaladUI.RadioGroup do
           </div>
         </div>
       </.radio_group>
+
+  ## Component events
+
+  * `:on-value-changed` - Maps the `value-changed` event. Fired when the selected item changes.
+
+  ## Server commands
+
+  Radio group does not support `SaladUI.LiveView.send_command/4`. To change the
+  selected value from the server, update the `value` assign and let LiveView re-render.
   """
   use SaladUI, :component
 
   @doc """
   Radio group component that allows selection of one option from a set.
+
+  ## Component events
+
+  * `:on-value-changed` - Fired when the selected item changes.
   """
   attr :id, :string, default: nil
   attr :name, :string, default: nil

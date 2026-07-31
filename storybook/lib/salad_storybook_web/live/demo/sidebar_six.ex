@@ -4,6 +4,7 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
   use SaladUI
 
   import Lucideicons, except: [import: 1, quote: 1, menu: 1, sidebar: 1]
+  import SaladStorybookWeb.Demo.Helpers, only: [id: 1]
 
   @data %{
     user: %{

@@ -28,32 +28,13 @@ defmodule SaladUI.AlertDialog do
 
   ## Component events
 
-  Alert dialog emits these client events through `on-*` attributes:
-
   * `:on-open` - Maps the `open` event. Fired when dialog enters open state.
   * `:on-close` - Maps the `close` event. Fired when dialog enters closed state.
 
-  Event handlers can be a server event name string or a `%Phoenix.LiveView.JS{}` command:
-
-      <.alert_dialog
-        id="delete-confirmation"
-        on-open="delete_dialog_opened"
-        on-close={JS.push("delete_dialog_closed")}
-      >
-        ...
-      </.alert_dialog>
-
   ## Server commands
-
-  Alert dialog supports these commands through `SaladUI.LiveView.send_command/4`:
 
   * `"open"` - Opens the dialog.
   * `"close"` - Closes the dialog.
-
-      def handle_event("confirm_delete", _params, socket) do
-        socket = SaladUI.LiveView.send_command(socket, "delete-confirmation", "open")
-        {:noreply, socket}
-      end
   """
   use SaladUI, :component
 
@@ -70,12 +51,10 @@ defmodule SaladUI.AlertDialog do
 
   ## Component events
 
-  * `open` - Emitted when the dialog opens. Mapped by `:on-open`.
-  * `close` - Emitted when the dialog closes. Mapped by `:on-close`.
+  * `:on-open` - Fired when the dialog opens.
+  * `:on-close` - Fired when the dialog closes.
 
   ## Server commands
-
-  Use `SaladUI.LiveView.send_command(socket, id, command)` with:
 
   * `"open"` - Opens the dialog.
   * `"close"` - Closes the dialog.

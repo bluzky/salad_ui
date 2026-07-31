@@ -26,6 +26,14 @@ defmodule SaladUI.HoverCard do
           </div>
         </.hover_card_content>
       </.hover_card>
+
+  ## Component events
+
+  * `:on-open` - Maps the `open` event. Fired when the hover card enters open state.
+  * `:on-close` - Maps the `close` event. Fired when the hover card enters closed state.
+
+  Hover card is a pure client-side interaction (hover/focus driven) and does not
+  support `SaladUI.LiveView.send_command/4`.
   """
   use SaladUI, :component
 
@@ -40,6 +48,11 @@ defmodule SaladUI.HoverCard do
   * `:on-open` - Handler for hover card open event.
   * `:on-close` - Handler for hover card close event.
   * `:class` - Additional CSS classes.
+
+  ## Component events
+
+  * `:on-open` - Fired when the hover card opens.
+  * `:on-close` - Fired when the hover card closes.
   """
   attr :id, :string, required: true, doc: "Unique identifier for the hover card"
   attr :"open-delay", :integer, default: 300, doc: "Delay in milliseconds before opening the hover card"

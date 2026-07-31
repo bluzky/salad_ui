@@ -24,11 +24,24 @@ defmodule SaladUI.Tabs do
           </.card>
         </.tabs_content>
       </.tabs>
+
+  ## Component events
+
+  * `:on-tab-changed` - Maps the `tab-changed` event. Fired when a different tab is selected.
+
+  ## Server commands
+
+  Tabs does not support `SaladUI.LiveView.send_command/4`. To change the active
+  tab from the server, update the `value` assign and let LiveView re-render.
   """
   use SaladUI, :component
 
   @doc """
   Primary tabs component that serves as a container for tab triggers and content.
+
+  ## Component events
+
+  * `:on-tab-changed` - Fired when a different tab is selected.
   """
   attr :id, :string, required: true, doc: "Unique identifier for the tabs component"
   attr :default, :string, default: nil, doc: "Default selected tab value"

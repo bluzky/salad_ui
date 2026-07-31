@@ -24,11 +24,38 @@ defmodule SaladUI.Select do
 
         <.button type="submit">Submit</.button>
       </form>
+
+  ## Component events
+
+  * `:on-value-changed` - Maps the `value-changed` event. Fired when the selected value changes.
+  * `:on-open` - Maps the `open` event. Fired when the select dropdown enters open state.
+  * `:on-close` - Maps the `close` event. Fired when the select dropdown enters closed state.
+
+  ## Server commands
+
+  * `"open"` - Opens the select dropdown.
+  * `"close"` - Closes the select dropdown.
+  * `"toggle"` - Toggles the select dropdown.
+
+  Changing the selected value from the server is done through the controlled
+  `value` assign rather than `SaladUI.LiveView.send_command/4`.
   """
   use SaladUI, :component
 
   @doc """
   Ready to use select component with all required parts.
+
+  ## Component events
+
+  * `:on-value-changed` - Fired when the selected value changes.
+  * `:on-open` - Fired when the dropdown opens.
+  * `:on-close` - Fired when the dropdown closes.
+
+  ## Server commands
+
+  * `"open"` - Opens the select dropdown.
+  * `"close"` - Closes the select dropdown.
+  * `"toggle"` - Toggles the select dropdown.
   """
 
   attr :id, :string, default: nil

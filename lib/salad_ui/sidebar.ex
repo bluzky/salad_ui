@@ -205,7 +205,7 @@ defmodule SaladUI.Sidebar do
       data-sidebar="rail"
       aria-label="Toggle Sidebar"
       tabindex={-1}
-      onclick={exec_closest("phx-toggle-sidebar", ".sidebar-root")}
+      phx-click={JS.exec("phx-toggle-sidebar", to: {:closest, ".sidebar-root"})}
       title="Toggle Sidebar"
       class={
         classes([

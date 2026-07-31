@@ -33,7 +33,12 @@ defmodule SaladUI.Card do
 
   def card(assigns) do
     ~H"""
-    <div class={classes(["rounded-xl border border-border bg-card text-card-foreground shadow-sm", @class])} {@rest}>
+    <div
+      class={
+        classes(["rounded-xl border border-border bg-card text-card-foreground shadow-sm", @class])
+      }
+      {@rest}
+    >
       {render_slot(@inner_block)}
     </div>
     """

@@ -44,6 +44,16 @@ defmodule SaladUI.HelperTest do
     assert %{value: "test", name: "name"} = Helpers.prepare_assign(assigns)
   end
 
+  test "prepare_assign preserves explicit falsy value over field value" do
+    assigns = %{
+      __changed__: %{},
+      value: false,
+      field: %FormField{value: true, name: "field", id: "a", errors: [], field: :name, form: nil}
+    }
+
+    assert %{value: false} = Helpers.prepare_assign(assigns)
+  end
+
   test "prepare_assign used name/value from field" do
     assigns = %{
       __changed__: %{},
@@ -98,4 +108,23 @@ defmodule SaladUI.HelperTest do
 
   def translate_error({"error 1", _}), do: "translated error 1"
   def translate_error({"error 2", _}), do: "translated error 2"
+
+  describe "style/1" do
+    test "merges maps and appends a single trailing semicolon" do
+      assert Helpers.style([%{color: "red"}, %{"font-size": "16px"}]) == "color: red; font-size: 16px;"
+    end
+
+    test "preserves the original order of raw string declarations" do
+      assert Helpers.style(["color: red", "font-weight: bold"]) == "color: red; font-weight: bold;"
+    end
+
+    test "keeps map declarations before raw string declarations, in order" do
+      assert Helpers.style([%{color: "red"}, "font-weight: bold"]) == "color: red; font-weight: bold;"
+    end
+
+    test "returns an empty string when nothing is provided" do
+      assert Helpers.style([%{}]) == ""
+      assert Helpers.style([]) == ""
+    end
+  end
 end
