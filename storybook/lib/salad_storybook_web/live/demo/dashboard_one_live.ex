@@ -7,6 +7,7 @@ defmodule SaladStorybookWeb.Demo.DashboardOne do
   import SaladUI.Button
   import SaladUI.Card
   import SaladUI.DropdownMenu
+  import SaladUI.Helpers, only: [as_child: 1]
   import SaladUI.Input
   import SaladUI.Sheet
   import SaladUI.Skeleton
@@ -186,17 +187,21 @@ defmodule SaladStorybookWeb.Demo.DashboardOne do
             />
           </div>
           <.dropdown_menu id="accounts">
-            <.dropdown_menu_trigger>
-              <.button variant="outline" size="icon" class="overflow-hidden rounded-full">
-                <img
-                  src={~p"/images/avatar02.png"}
-                  width="{36}"
-                  height="{36}"
-                  alt="Avatar"
-                  class="overflow-hidden rounded-full"
-                />
-              </.button>
-            </.dropdown_menu_trigger>
+            <.as_child
+              tag={&dropdown_menu_trigger/1}
+              child={&button/1}
+              variant="outline"
+              size="icon"
+              class="overflow-hidden rounded-full"
+            >
+              <img
+                src={~p"/images/avatar02.png"}
+                width="{36}"
+                height="{36}"
+                alt="Avatar"
+                class="overflow-hidden rounded-full"
+              />
+            </.as_child>
             <.dropdown_menu_content align="end">
               <.dropdown_menu_label>My Account</.dropdown_menu_label>
               <.dropdown_menu_separator />
@@ -220,14 +225,18 @@ defmodule SaladStorybookWeb.Demo.DashboardOne do
               </.tabs_list>
               <div class="ml-auto flex items-center gap-2">
                 <.dropdown_menu id="filters">
-                  <.dropdown_menu_trigger>
-                    <.button variant="outline" size="sm" class="h-8 gap-1">
-                      <Lucideicons.list_filter class="h-3.5 w-3.5" />
-                      <span class="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                        Filter
-                      </span>
-                    </.button>
-                  </.dropdown_menu_trigger>
+                  <.as_child
+                    tag={&dropdown_menu_trigger/1}
+                    child={&button/1}
+                    variant="outline"
+                    size="sm"
+                    class="h-8 gap-1"
+                  >
+                    <Lucideicons.list_filter class="h-3.5 w-3.5" />
+                    <span class="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                      Filter
+                    </span>
+                  </.as_child>
                   <.dropdown_menu_content align="end">
                     <.dropdown_menu_label>Filter by</.dropdown_menu_label>
                     <.dropdown_menu_separator />
@@ -305,12 +314,15 @@ defmodule SaladStorybookWeb.Demo.DashboardOne do
                         </.table_cell>
                         <.table_cell>
                           <.dropdown_menu id="actions">
-                            <.dropdown_menu_trigger>
-                              <.button aria-haspopup="true" size="icon" variant="ghost">
-                                <Lucideicons.ellipsis class="h-4 w-4" />
-                                <span class="sr-only">Toggle menu</span>
-                              </.button>
-                            </.dropdown_menu_trigger>
+                            <.as_child
+                              tag={&dropdown_menu_trigger/1}
+                              child={&button/1}
+                              size="icon"
+                              variant="ghost"
+                            >
+                              <Lucideicons.ellipsis class="h-4 w-4" />
+                              <span class="sr-only">Toggle menu</span>
+                            </.as_child>
                             <.dropdown_menu_content align="end">
                               <.dropdown_menu_label>Actions</.dropdown_menu_label>
                               <.dropdown_menu_item>Edit</.dropdown_menu_item>

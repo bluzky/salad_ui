@@ -174,7 +174,15 @@ defmodule SaladUI.Form do
     assigns =
       assigns
       |> assign(error: has_error?(assigns[:field]) || not Enum.empty?(assigns[:errors]))
-      |> assign(:message, List.first(assigns[:errors] || field_errors(assigns[:field])))
+      |> assign(
+        :message,
+        List.first(
+          case assigns[:errors] do
+            [] -> field_errors(assigns[:field])
+            errors -> errors
+          end
+        )
+      )
 
     ~H"""
     <p

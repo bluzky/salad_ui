@@ -73,6 +73,10 @@ test("initialization applies radio names and accessible labels", () => {
 
 test("selecting item keeps name and emits value change", () => {
   const { input, item, pushed } = buildRadioGroup();
+  const targets = [];
+  input("yearly").addEventListener("change", (event) =>
+    targets.push(event.target),
+  );
 
   click(item("yearly"));
 
@@ -90,4 +94,6 @@ test("selecting item keeps name and emits value change", () => {
       },
     },
   ]);
+  // LiveView only forwards phx-change from form-associated event targets.
+  assert.deepEqual(targets, [input("yearly")]);
 });

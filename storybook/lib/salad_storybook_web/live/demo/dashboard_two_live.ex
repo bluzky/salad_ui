@@ -7,6 +7,7 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
   import SaladUI.Button
   import SaladUI.Card
   import SaladUI.DropdownMenu
+  import SaladUI.Helpers, only: [as_child: 1]
   import SaladUI.Input
   import SaladUI.Pagination
   import SaladUI.Progress
@@ -223,17 +224,21 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
             />
           </div>
           <.dropdown_menu id="dropdown">
-            <.dropdown_menu_trigger>
-              <.button variant="outline" size="icon" class="overflow-hidden rounded-full">
-                <img
-                  src={~p"/images/avatar02.png"}
-                  width="36"
-                  height="36"
-                  alt="Avatar"
-                  class="overflow-hidden rounded-full"
-                />
-              </.button>
-            </.dropdown_menu_trigger>
+            <.as_child
+              tag={&dropdown_menu_trigger/1}
+              child={&button/1}
+              variant="outline"
+              size="icon"
+              class="overflow-hidden rounded-full"
+            >
+              <img
+                src={~p"/images/avatar02.png"}
+                width="36"
+                height="36"
+                alt="Avatar"
+                class="overflow-hidden rounded-full"
+              />
+            </.as_child>
             <.dropdown_menu_content align="end">
               <.dropdown_menu_label>
                 My Account
@@ -323,14 +328,18 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
                 </.tabs_list>
                 <div class="ml-auto flex items-center gap-2">
                   <.dropdown_menu id="filter">
-                    <.dropdown_menu_trigger>
-                      <.button variant="outline" size="sm" class="h-7 gap-1 text-sm">
-                        <Lucideicons.list_filter class="h-3.5 w-3.5" />
-                        <span class="sr-only sm:not-sr-only">
-                          Filter
-                        </span>
-                      </.button>
-                    </.dropdown_menu_trigger>
+                    <.as_child
+                      tag={&dropdown_menu_trigger/1}
+                      child={&button/1}
+                      variant="outline"
+                      size="sm"
+                      class="h-7 gap-1 text-sm"
+                    >
+                      <Lucideicons.list_filter class="h-3.5 w-3.5" />
+                      <span class="sr-only sm:not-sr-only">
+                        Filter
+                      </span>
+                    </.as_child>
                     <.dropdown_menu_content align="end">
                       <.dropdown_menu_label>
                         Filter by
@@ -615,14 +624,18 @@ defmodule SaladStorybookWeb.Demo.DashboardTwo do
                     </span>
                   </.button>
                   <.dropdown_menu id="action">
-                    <.dropdown_menu_trigger>
-                      <.button size="icon" variant="outline" class="h-8 w-8">
-                        <Lucideicons.ellipsis_vertical class="h-3.5 w-3.5" />
-                        <span class="sr-only">
-                          More
-                        </span>
-                      </.button>
-                    </.dropdown_menu_trigger>
+                    <.as_child
+                      tag={&dropdown_menu_trigger/1}
+                      child={&button/1}
+                      size="icon"
+                      variant="outline"
+                      class="h-8 w-8"
+                    >
+                      <Lucideicons.ellipsis_vertical class="h-3.5 w-3.5" />
+                      <span class="sr-only">
+                        More
+                      </span>
+                    </.as_child>
                     <.dropdown_menu_content align="end">
                       <.dropdown_menu_item>
                         Edit

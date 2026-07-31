@@ -209,7 +209,11 @@ test("selecting an item updates readable text, hidden input, and LiveView form e
     inForm: true,
   });
   const events = [];
-  form.addEventListener("change", () => events.push("change"));
+  const targets = [];
+  form.addEventListener("change", (event) => {
+    events.push("change");
+    targets.push(event.target);
+  });
 
   click(item("banana"));
 
@@ -219,12 +223,15 @@ test("selecting an item updates readable text, hidden input, and LiveView form e
     [["fruit", "banana"]],
   );
   assert.deepEqual(events, ["change"]);
+  // LiveView only forwards phx-change when the event target is form-associated
+  // (input/select/textarea/button) — dispatching from the component root breaks it.
+  assert.deepEqual(targets, hiddenInputs());
   assert.equal(pushed.at(-1).event, "value_changed");
   assert.equal(pushed.at(-1).payload.value, "banana");
 });
 
-test("multiple select dispatches form change from the select root", () => {
-  const { el, form, hiddenInputs, item } = buildSelect({
+test("multiple select dispatches form change from a hidden input", () => {
+  const { form, hiddenInputs, item } = buildSelect({
     inForm: true,
     multiple: true,
   });
@@ -233,7 +240,7 @@ test("multiple select dispatches form change from the select root", () => {
 
   click(item("banana"));
 
-  assert.deepEqual(targets, [el]);
+  assert.deepEqual(targets, hiddenInputs());
   assert.deepEqual(
     hiddenInputs().map((input) => [input.name, input.value]),
     [["fruit[]", "banana"]],

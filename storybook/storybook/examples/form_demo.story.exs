@@ -18,7 +18,7 @@ defmodule Storybook.Examples.FormDemo.Item do
 
   def changeset(user, params \\ %{}) do
     user
-    |> cast(params, [:name, :description, :material, :sellable, :color, :scale, :virtual])
+    |> cast(params, [:name, :description, :material, :sellable, :color, :scale, :virtual, :toggle])
     |> validate_required([:name, :description])
   end
 end

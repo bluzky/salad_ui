@@ -8,6 +8,7 @@ defmodule SaladStorybookWeb.Demo.DashboardThree do
   import SaladUI.Button
   import SaladUI.Card
   import SaladUI.DropdownMenu
+  import SaladUI.Helpers, only: [as_child: 1]
   import SaladUI.Input
   import SaladUI.Sheet
   import SaladUI.Table
@@ -88,12 +89,16 @@ defmodule SaladStorybookWeb.Demo.DashboardThree do
           </div>
         </form>
         <.dropdown_menu id="accounts">
-          <.dropdown_menu_trigger>
-            <.button variant="secondary" size="icon" class="rounded-full">
-              <.icon name="hero-user-circle" class="h-5 w-5" />
-              <span class="sr-only">Toggle user menu</span>
-            </.button>
-          </.dropdown_menu_trigger>
+          <.as_child
+            tag={&dropdown_menu_trigger/1}
+            child={&button/1}
+            variant="secondary"
+            size="icon"
+            class="rounded-full"
+          >
+            <.icon name="hero-user-circle" class="h-5 w-5" />
+            <span class="sr-only">Toggle user menu</span>
+          </.as_child>
           <.dropdown_menu_content align="end">
             <.dropdown_menu_label>My Account</.dropdown_menu_label>
             <.dropdown_menu_separator />

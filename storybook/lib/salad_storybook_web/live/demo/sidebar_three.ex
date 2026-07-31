@@ -251,25 +251,25 @@ defmodule SaladStorybookWeb.Demo.SidebarThree do
     <.sidebar_menu>
       <.sidebar_menu_item>
         <.dropdown_menu id="sidebar-three-dropdown" class="block">
-          <.dropdown_menu_trigger>
-            <.sidebar_menu_button
-              size="lg"
-              class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <div class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <Lucideicons.gallery_vertical_end class="size-4" />
-              </div>
-              <div class="flex flex-col gap-0.5 leading-none">
-                <span class="font-semibold">
-                  Documentation
-                </span>
-                <span class="">
-                  v{@default_version}
-                </span>
-              </div>
-              <Lucideicons.chevrons_up_down class="ml-auto" />
-            </.sidebar_menu_button>
-          </.dropdown_menu_trigger>
+          <.as_child
+            tag={&dropdown_menu_trigger/1}
+            child={&sidebar_menu_button/1}
+            size="lg"
+            class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+          >
+            <div class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+              <Lucideicons.gallery_vertical_end class="size-4" />
+            </div>
+            <div class="flex flex-col gap-0.5 leading-none">
+              <span class="font-semibold">
+                Documentation
+              </span>
+              <span class="">
+                v{@default_version}
+              </span>
+            </div>
+            <Lucideicons.chevrons_up_down class="ml-auto" />
+          </.as_child>
           <.dropdown_menu_content class="w-full" align="start">
             <.menu>
               <.menu_item :for={item <- @versions}>

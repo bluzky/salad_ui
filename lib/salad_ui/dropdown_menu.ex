@@ -8,8 +8,8 @@ defmodule SaladUI.DropdownMenu do
   ## Examples:
 
       <.dropdown_menu id="user-menu">
-        <.dropdown_menu_trigger>
-          <.button variant="outline">Open Menu</.button>
+        <.dropdown_menu_trigger as={&SaladUI.Button.button/1} variant="outline">
+          Open Menu
         </.dropdown_menu_trigger>
         <.dropdown_menu_content>
           <.dropdown_menu_label>My Account</.dropdown_menu_label>
@@ -36,8 +36,8 @@ defmodule SaladUI.DropdownMenu do
 
   ## Example with checkbox items
       <.dropdown_menu id="options-menu">
-        <.dropdown_menu_trigger>
-          <.button variant="outline">Options</.button>
+        <.dropdown_menu_trigger as={&SaladUI.Button.button/1} variant="outline">
+          Options
         </.dropdown_menu_trigger>
         <.dropdown_menu_content>
           <.dropdown_menu_checkbox_item
@@ -144,19 +144,47 @@ defmodule SaladUI.DropdownMenu do
   @doc """
   The trigger element that toggles the dropdown menu.
 
+  Renders a native `<button type="button">` by default. Set `:as` to an
+  HTML tag or function component to render another trigger root.
+
   ## Options
 
   * `:class` - Additional CSS classes.
-  * `:as` - The HTML tag to use for the trigger. Defaults to `"div"`.
+  * `:as` - The HTML tag or function component to use for the trigger. Defaults to `"button"`.
   """
+  attr :as, :any, default: "button"
+  attr :type, :string, default: nil
   attr :class, :string, default: nil
-  attr :as, :any, default: "div"
   attr :rest, :global
   slot :inner_block, required: true
 
   def dropdown_menu_trigger(assigns) do
+    assigns =
+      if is_function(assigns.as, 1) && is_nil(assigns.type) do
+        assign(assigns, :type, "button")
+      else
+        assigns
+      end
+
     ~H"""
-    <.dynamic tag={@as} data-part="trigger" tabindex="0" class={classes(["", @class])} {@rest}>
+    <button
+      :if={@as == "button"}
+      type={@type || "button"}
+      data-part="trigger"
+      class={classes(["", @class])}
+      {@rest}
+    >
+      {render_slot(@inner_block)}
+    </button>
+    <.dynamic
+      :if={@as != "button"}
+      tag={@as}
+      type={@type}
+      data-part="trigger"
+      tabindex="0"
+      class={classes(["", @class])}
+      {@rest}
+    >
       {render_slot(@inner_block)}
     </.dynamic>
     """

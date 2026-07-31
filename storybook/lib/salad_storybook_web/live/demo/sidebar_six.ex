@@ -309,20 +309,18 @@ defmodule SaladStorybookWeb.Demo.SidebarSix do
       </.sidebar_group_label>
       <.sidebar_menu>
         <.sidebar_menu_item :for={item <- @projects}>
+          <.as_child tag={&sidebar_menu_button/1} child="a" href={item.url}>
+            <.dynamic tag={item.icon} />
+            <span>
+              {item.name}
+            </span>
+          </.as_child>
           <.dropdown_menu id="projects" style="-ml-8 block">
-            <.dropdown_menu_trigger>
-              <.as_child tag={&sidebar_menu_button/1} child="a" href={item.url}>
-                <.dynamic tag={item.icon} />
-                <span>
-                  {item.name}
-                </span>
-              </.as_child>
-              <.sidebar_menu_action>
-                <.ellipsis class="h-4 w-4" />
-                <span class="sr-only">
-                  More
-                </span>
-              </.sidebar_menu_action>
+            <.dropdown_menu_trigger as={&sidebar_menu_action/1}>
+              <.ellipsis class="h-4 w-4" />
+              <span class="sr-only">
+                More
+              </span>
             </.dropdown_menu_trigger>
             <.dropdown_menu_content class="w-48 rounded-lg" side="right" align="start">
               <.dropdown_menu_item>
