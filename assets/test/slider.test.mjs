@@ -85,6 +85,9 @@ test("pointer updates use min-relative step snapping and sync hidden input", () 
 
 test("keyboard changes sync input, prevent default, and push value", () => {
   const { el, pushed } = buildSlider({ value: 20, step: 5 });
+  const hiddenInput = el.querySelector('input[type="hidden"]');
+  const targets = [];
+  hiddenInput.addEventListener("change", (event) => targets.push(event.target));
   const event = new window.KeyboardEvent("keydown", {
     key: "ArrowRight",
     bubbles: true,
@@ -94,9 +97,11 @@ test("keyboard changes sync input, prevent default, and push value", () => {
   el.dispatchEvent(event);
 
   assert.equal(event.defaultPrevented, true);
-  assert.equal(el.querySelector('input[type="hidden"]').value, "25");
+  assert.equal(hiddenInput.value, "25");
   assert.equal(pushed[0].event, "slider_changed");
   assert.equal(pushed[0].payload.value, 25);
+  // LiveView only forwards phx-change from form-associated event targets.
+  assert.deepEqual(targets, [hiddenInput]);
 });
 
 test("Home and End preserve exact boundaries when step does not divide range", () => {

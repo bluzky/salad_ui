@@ -183,6 +183,7 @@ class SliderComponent extends Component {
     this.transition("end");
 
     // Notify of value change
+    this.dispatchFormEvents();
     this.pushEvent("value-changed", { value: this.value });
   }
 
@@ -214,6 +215,7 @@ class SliderComponent extends Component {
     if (this.disabled) return;
 
     this.setValueAndUpdate(Math.min(this.max, this.value + this.step));
+    this.dispatchFormEvents();
     this.pushEvent("value-changed", { value: this.value });
   }
 
@@ -221,6 +223,7 @@ class SliderComponent extends Component {
     if (this.disabled) return;
 
     this.setValueAndUpdate(Math.max(this.min, this.value - this.step));
+    this.dispatchFormEvents();
     this.pushEvent("value-changed", { value: this.value });
   }
 
@@ -228,6 +231,7 @@ class SliderComponent extends Component {
     if (this.disabled) return;
 
     this.setValueAndUpdate(value);
+    this.dispatchFormEvents();
     this.pushEvent("value-changed", { value: this.value });
   }
 
@@ -255,6 +259,12 @@ class SliderComponent extends Component {
     if (this.input) {
       this.input.value = this.value.toString();
     }
+  }
+
+  dispatchFormEvents() {
+    if (!this.input) return;
+
+    this.input.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   updatePosition() {

@@ -145,6 +145,7 @@ class RadioGroupComponent extends Component {
 
       this.selection.select(collectionItem);
       this.updateItemStates();
+      this.dispatchFormEvents(item);
 
       // Emit value changed event
       this.pushEvent("value-changed", {
@@ -152,6 +153,13 @@ class RadioGroupComponent extends Component {
         previousValue,
       });
     }
+  }
+
+  dispatchFormEvents(item) {
+    const input = item.querySelector('input[type="radio"]');
+    if (!input) return;
+
+    input.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   updateItemStates() {

@@ -87,6 +87,7 @@ class SwitchComponent extends Component {
     const checkbox = this.el.querySelector('input[type="checkbox"]');
     if (checkbox) {
       checkbox.checked = true;
+      checkbox.dispatchEvent(new Event("change", { bubbles: true }));
     }
 
     // Notify of value change
@@ -98,6 +99,7 @@ class SwitchComponent extends Component {
     const checkbox = this.el.querySelector('input[type="checkbox"]');
     if (checkbox) {
       checkbox.checked = false;
+      checkbox.dispatchEvent(new Event("change", { bubbles: true }));
     }
 
     // Notify of value change

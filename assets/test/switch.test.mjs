@@ -65,6 +65,8 @@ test("initialization reflects state with role, aria, and data-state", () => {
 
 test("click toggles checkbox, aria, data-state, and pushes LiveView event", () => {
   const { el, input, pushed } = buildSwitch();
+  const targets = [];
+  input.addEventListener("change", (event) => targets.push(event.target));
 
   click(el);
 
@@ -82,6 +84,8 @@ test("click toggles checkbox, aria, data-state, and pushes LiveView event", () =
       },
     },
   ]);
+  // LiveView only forwards phx-change from form-associated event targets.
+  assert.deepEqual(targets, [input]);
 });
 
 test("Space toggles switch and prevents page scroll", () => {

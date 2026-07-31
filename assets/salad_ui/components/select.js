@@ -550,7 +550,11 @@ class SelectComponent extends Component {
   dispatchFormEvents() {
     if (!this.el.closest("form")) return;
 
-    this.el.dispatchEvent(new Event("change", { bubbles: true }));
+    const hiddenInput = this.el.querySelector(
+      "input[type='hidden'][data-salad-ui-select-input='true']",
+    );
+    const target = hiddenInput || this.el;
+    target.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   // Cleanup
