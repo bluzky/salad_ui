@@ -119,7 +119,7 @@ defmodule SaladUI.Slider do
           data-part="thumb"
           class={
             classes([
-              "absolute block h-5 w-5 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              "absolute block h-5 w-5 rounded-full border-2 border-primary bg-background transition-colors focus-visible:outline-hidden focus-visible:ring-ring/50 focus-visible:ring-[3px]",
               @disabled && "pointer-events-none"
             ])
           }

@@ -24,8 +24,9 @@ defmodule SaladUI.Patcher.TailwindPatcherTest do
       assert patched_content =~ ~s(@source "../../deps/salad_ui/lib";)
       assert patched_content =~ ~s(@plugin "@tailwindcss/typography";)
       assert patched_content =~ ~s(@import "../vendor/tw-animate.css";)
-      assert patched_content =~ "@theme {"
-      assert patched_content =~ "--color-background: hsl(var(--background));"
+      assert patched_content =~ "@theme inline {"
+      assert patched_content =~ "--color-background: var(--background);"
+      assert patched_content =~ "--radius-lg: var(--radius);"
     end
 
     test "patch/1 doesn't duplicate existing directives" do

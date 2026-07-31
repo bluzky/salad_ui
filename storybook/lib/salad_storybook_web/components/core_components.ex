@@ -171,7 +171,7 @@ defmodule SaladStorybookWeb.CoreComponents do
 
   def simple_form(assigns) do
     ~H"""
-    <.form :let={f} for={@for} as={@as} {@rest}>
+    <.form :let={f} for={@for} as={@as} phx-debounce="500" {@rest}>
       <div class="mt-10 space-y-8 bg-white">
         {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
@@ -308,7 +308,6 @@ defmodule SaladStorybookWeb.CoreComponents do
         id={@id}
         name={@name}
         value={Phoenix.HTML.Form.normalize_value("textarea", @value)}
-        phx-debounce="500"
         class={[
           @errors != [] && "border-destructive focus:border-destructive"
         ]}

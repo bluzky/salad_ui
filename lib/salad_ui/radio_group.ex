@@ -104,7 +104,7 @@ defmodule SaladUI.RadioGroup do
       class={
         classes([
           "group/item",
-          "aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-50 inline-grid",
+          "relative aspect-square h-4 w-4 rounded-full border border-primary text-primary focus:outline-hidden focus-visible:ring-ring/50 focus-visible:ring-[3px] data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-50 inline-flex",
           @class
         ])
       }
@@ -112,7 +112,7 @@ defmodule SaladUI.RadioGroup do
       {@rest}
     >
       <input type="radio" id={@id} value={@value} disabled={@disabled} class="sr-only" tabindex="-1" />
-      <span class="hidden group-data-[state=checked]/item:flex items-center justify-center">
+      <span class="absolute inset-0 hidden group-data-[state=checked]/item:block">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -123,7 +123,7 @@ defmodule SaladUI.RadioGroup do
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          class="lucide lucide-circle h-2.5 w-2.5 fill-current text-current"
+          class="lucide lucide-circle absolute top-1/2 left-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 fill-current text-current"
         >
           <circle cx="12" cy="12" r="10"></circle>
         </svg>

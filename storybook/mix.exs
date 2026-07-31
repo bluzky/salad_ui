@@ -71,7 +71,6 @@ defmodule SaladStorybook.MixProject do
       {:styler, "~> 1.0", only: [:dev, :test], runtime: false},
       {:floki, "~> 0.38"},
       {:faker, "~> 0.19"},
-      {:live_debugger, "~> 1.0"},
 
       # salad ui
       {:lucide_icons, "~> 2.2"},

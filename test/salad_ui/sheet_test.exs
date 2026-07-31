@@ -3,11 +3,9 @@ defmodule SaladUI.SheetTest do
 
   import SaladUI.Sheet
 
-  defp assign_builder(assigns \\ %{}), do: assigns
-
   describe "sheet/1" do
     test "renders with required attributes" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -23,7 +21,7 @@ defmodule SaladUI.SheetTest do
     end
 
     test "renders with open state" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -36,7 +34,7 @@ defmodule SaladUI.SheetTest do
     end
 
     test "configures dialog-compatible close animation and options" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -54,7 +52,7 @@ defmodule SaladUI.SheetTest do
 
   describe "sheet_trigger/1" do
     test "renders trigger without unused target attribute" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -72,7 +70,7 @@ defmodule SaladUI.SheetTest do
 
   describe "sheet_content/1" do
     test "renders content structure" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -90,7 +88,7 @@ defmodule SaladUI.SheetTest do
     end
 
     test "renders side variants" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -107,7 +105,7 @@ defmodule SaladUI.SheetTest do
 
   describe "sheet_title/1 and sheet_description/1" do
     test "render ARIA data parts" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -124,7 +122,7 @@ defmodule SaladUI.SheetTest do
 
   describe "sheet_close/1" do
     test "renders close trigger" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
@@ -141,7 +139,7 @@ defmodule SaladUI.SheetTest do
 
   describe "complete sheet" do
     test "renders full sheet structure" do
-      assigns = assign_builder()
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
