@@ -88,7 +88,7 @@ defmodule Storybook.SaladUIComponents.Tab do
         attributes: %{
           default: "tab1",
           id: "event-tabs",
-          on_tab_changed: JS.push("tab_changed", value: %{tab: "_value_"})
+          "on-tab-changed": "tab_changed"
         },
         slots: [
           """
