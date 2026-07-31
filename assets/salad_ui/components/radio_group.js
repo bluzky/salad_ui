@@ -86,10 +86,42 @@ class RadioGroupComponent extends Component {
         const value = item.getAttribute("data-value");
         item.id = `${this.el.id}-item-${value}`;
       }
+
+      this.syncItemAccessibleLabel(item);
     });
 
     // Initialize UI state
     this.updateItemStates();
+  }
+
+  syncItemAccessibleLabel(item) {
+    if (
+      item.hasAttribute("aria-label") ||
+      item.hasAttribute("aria-labelledby")
+    ) {
+      return;
+    }
+
+    const input = item.querySelector('input[type="radio"]');
+    if (!input?.id) return;
+
+    const labels = input.labels
+      ? Array.from(input.labels)
+      : Array.from(document.querySelectorAll("label")).filter(
+          (label) => label.htmlFor === input.id,
+        );
+
+    if (labels.length === 0) return;
+
+    const labelIds = labels.map((label, index) => {
+      if (!label.id) {
+        label.id = `${item.id}-label-${index}`;
+      }
+
+      return label.id;
+    });
+
+    item.setAttribute("aria-labelledby", labelIds.join(" "));
   }
 
   handleItemClick(event) {
@@ -137,6 +169,7 @@ class RadioGroupComponent extends Component {
 
       // Update ARIA attributes
       item.setAttribute("aria-checked", isSelected.toString());
+      item.setAttribute("aria-disabled", isDisabled.toString());
 
       // Update tabindex for keyboard navigation
       item.setAttribute("tabindex", isSelected ? "0" : "-1");
