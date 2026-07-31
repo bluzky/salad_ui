@@ -56,11 +56,7 @@ defmodule SaladUI.Slider do
     value =
       value
       |> normalize_number(assigns.min)
-      |> max(assigns.min)
-      |> min(assigns.max)
-      |> snap_to_step(assigns.min, assigns.step)
-      |> max(assigns.min)
-      |> min(assigns.max)
+      |> snap_to_step(assigns.min, assigns.max, assigns.step)
 
     # Collect event mappings
     event_map = event_mappings(assigns)
@@ -103,7 +99,7 @@ defmodule SaladUI.Slider do
           <div data-part="range" class="absolute h-full bg-primary" />
         </div>
         <div
-          data-disabled={to_string(@disabled)}
+          data-disabled={if @disabled, do: "true", else: nil}
           data-part="thumb"
           class={
             classes([
@@ -118,13 +114,24 @@ defmodule SaladUI.Slider do
     """
   end
 
-  # Snap a value to the nearest step
-  defp snap_to_step(value, min, step) when is_number(step) and step > 0 do
-    step_count = round((value - min) / step)
-    min + step * step_count
+  # Snap a value to the nearest step while preserving exact boundaries.
+  defp snap_to_step(value, min, max, step) when is_number(step) and step > 0 do
+    cond do
+      value <= min ->
+        min
+
+      value >= max ->
+        max
+
+      true ->
+        step_count = round((value - min) / step)
+        snapped = min + step * step_count
+
+        snapped |> max(min) |> min(max)
+    end
   end
 
-  defp snap_to_step(value, _min, _step), do: value
+  defp snap_to_step(value, min, max, _step), do: value |> max(min) |> min(max)
 
   defp normalize_number(value, _default) when is_number(value), do: value
 

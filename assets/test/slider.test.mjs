@@ -99,6 +99,34 @@ test("keyboard changes sync input, prevent default, and push value", () => {
   assert.equal(pushed[0].payload.value, 25);
 });
 
+test("Home and End preserve exact boundaries when step does not divide range", () => {
+  const { el, pushed } = buildSlider({ min: 0, max: 10, step: 3, value: 6 });
+  const endEvent = new window.KeyboardEvent("keydown", {
+    key: "End",
+    bubbles: true,
+    cancelable: true,
+  });
+  const homeEvent = new window.KeyboardEvent("keydown", {
+    key: "Home",
+    bubbles: true,
+    cancelable: true,
+  });
+
+  el.dispatchEvent(endEvent);
+
+  assert.equal(endEvent.defaultPrevented, true);
+  assert.equal(el.querySelector('input[type="hidden"]').value, "10");
+  assert.equal(el.getAttribute("aria-valuenow"), "10");
+  assert.equal(pushed.at(-1).payload.value, 10);
+
+  el.dispatchEvent(homeEvent);
+
+  assert.equal(homeEvent.defaultPrevented, true);
+  assert.equal(el.querySelector('input[type="hidden"]').value, "0");
+  assert.equal(el.getAttribute("aria-valuenow"), "0");
+  assert.equal(pushed.at(-1).payload.value, 0);
+});
+
 test("disabled slider ignores keyboard and stays non-focusable", () => {
   const { el, pushed } = buildSlider({ disabled: true, value: 20 });
   const event = new window.KeyboardEvent("keydown", {
