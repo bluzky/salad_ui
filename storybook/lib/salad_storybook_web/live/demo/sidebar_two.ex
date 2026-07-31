@@ -3,6 +3,8 @@ defmodule SaladStorybookWeb.Demo.SidebarTwo do
   use SaladStorybookWeb, :demo_view
   use SaladUI
 
+  import SaladStorybookWeb.Demo.Helpers, only: [id: 1]
+
   @data %{
     versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
     nav_main: [

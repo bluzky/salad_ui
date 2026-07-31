@@ -92,4 +92,14 @@ defmodule SaladUI.Switch do
     </div>
     """
   end
+
+  defp normalize_boolean(value) do
+    case value do
+      "true" -> true
+      "false" -> false
+      true -> true
+      false -> false
+      _ -> false
+    end
+  end
 end

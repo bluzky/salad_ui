@@ -7,14 +7,20 @@ defmodule SaladUI.Helpers do
   alias Phoenix.HTML.FormField
 
   @doc """
-  Prepare input assigns for use in a form. Extract required attribute from the Form.Field struct and update current assigns.
+  Prepares form-related assigns for use in an input component.
+
+  When a `:field` (a `%Phoenix.HTML.FormField{}`) is given, `:id`, `:name`, `:value`,
+  and `:errors` are derived from it, though explicit assigns still take precedence.
+
+  In all cases, falls back to `:"default-value"` when the resulting value is `nil`,
+  `""`, or `[]`.
   """
   def prepare_assign(%{field: %FormField{} = field} = assigns) do
     assigns
     |> assign(field: nil, id: assigns[:id] || field.id)
     |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
     |> assign(:name, assigns[:name] || if(assigns[:multiple], do: field.name <> "[]", else: field.name))
-    |> assign(:value, assigns[:value] || field.value)
+    |> assign(:value, if(is_nil(assigns[:value]), do: field.value, else: assigns[:value]))
     |> prepare_assign()
   end
 
@@ -31,7 +37,9 @@ defmodule SaladUI.Helpers do
   end
 
   @doc """
-  This function return list of error message from form field
+  Returns the translated error messages for a form field.
+
+  Returns `[]` when given anything other than a `%Phoenix.HTML.FormField{}`.
   """
   def field_errors(%FormField{} = field) do
     Enum.map(field.errors, &translate_error(&1))
@@ -40,7 +48,7 @@ defmodule SaladUI.Helpers do
   def field_errors(_), do: []
 
   @doc """
-  This function return true if the field has error
+  Returns `true` when the given form field has one or more errors.
   """
   def has_error?(%FormField{} = field) do
     not Enum.empty?(field.errors)
@@ -48,7 +56,14 @@ defmodule SaladUI.Helpers do
 
   def has_error?(_field), do: false
 
-  # Builds client event mappings from all assigned `on-*` attributes.
+  @doc """
+  Builds a map of client event mappings from all assigned `on-*` attributes.
+
+  Each `on-*` attribute (e.g. `on-open`, `on-value-changed`) is mapped to its bare
+  event name (`"open"`, `"value-changed"`) for JSON-encoding into the
+  `data-event-mappings` attribute consumed by the SaladUI JS hook. Attributes whose
+  value is `nil` or `false` are skipped.
+  """
   def event_mappings(assigns) do
     Enum.reduce(assigns, %{}, fn
       {key, value}, event_map when is_atom(key) and value not in [nil, false] ->
@@ -62,41 +77,13 @@ defmodule SaladUI.Helpers do
     end)
   end
 
-  # Helper to encode data to JSON
+  @doc """
+  Encodes `data` to JSON using the application's configured `Phoenix.json_library/0`.
+
+  Used to serialize the `data-options` and `data-event-mappings` attributes.
+  """
   def json(data) do
     Phoenix.json_library().encode!(data)
-  end
-
-  # normalize_integer
-  def normalize_integer(value) when is_integer(value), do: value
-
-  def normalize_integer(value) when is_binary(value) do
-    case Integer.parse(value) do
-      {integer, _} -> integer
-      _ -> nil
-    end
-  end
-
-  def normalize_integer(_), do: nil
-
-  def normalize_boolean(value) do
-    case value do
-      "true" -> true
-      "false" -> false
-      true -> true
-      false -> false
-      _ -> false
-    end
-  end
-
-  @doc """
-  Normalize id to be used in HTML id attribute
-  It will replace all non-alphanumeric characters with `-` and downcase the string
-  """
-  def id(id) do
-    id
-    |> String.replace(~r/[^a-zA-Z0-9]/, "-")
-    |> String.downcase()
   end
 
   @variants %{
@@ -122,7 +109,7 @@ defmodule SaladUI.Helpers do
   }
 
   @doc """
-  Reuseable button variant helper. Support 2 variant
+  Reusable button variant helper. Supports two variant kinds:
   - size: `default|sm|lg|icon`
   - variant: `default|destructive|outline|secondary|ghost|link`
   """
@@ -139,7 +126,8 @@ defmodule SaladUI.Helpers do
   end
 
   @doc """
-  Common function for building variant
+  Builds a CSS class string from a variant config and the selected variant values,
+  falling back to `default_variants` for any key not present in `class_input`.
 
   ## Examples
 
@@ -192,7 +180,9 @@ defmodule SaladUI.Helpers do
   end
 
   @doc """
-  This function build css style string from map of css style
+  Builds a CSS `style` attribute string from a list of style maps and/or raw
+  declaration strings. Map entries are merged together (later maps win on
+  conflicting keys) and rendered before raw strings, which keep their given order.
 
   ## Examples
 
@@ -211,44 +201,27 @@ defmodule SaladUI.Helpers do
   def style(items) when is_list(items) do
     {acc_map, acc_list} =
       Enum.reduce(items, {%{}, []}, fn item, {acc_map, acc_list} ->
-        cond do
-          is_map(item) ->
-            {Map.merge(acc_map, item), acc_list}
-
-          is_binary(item) ->
-            {acc_map, [item | acc_list]}
-
-          true ->
-            {acc_map, [item | acc_list]}
+        if is_map(item) do
+          {Map.merge(acc_map, item), acc_list}
+        else
+          {acc_map, [item | acc_list]}
         end
       end)
 
-    style = Enum.map_join(acc_map, "; ", fn {k, v} -> "#{k}: #{v}" end) <> ";"
-    Enum.join([style | acc_list], "; ")
+    map_declarations = Enum.map(acc_map, fn {k, v} -> "#{k}: #{v}" end)
+    declarations = map_declarations ++ Enum.reverse(acc_list)
+
+    case declarations do
+      [] -> ""
+      _ -> Enum.join(declarations, "; ") <> ";"
+    end
   end
 
   @doc """
-  This function build js script to invoke JS stored in given attribute.
-  Similar to JS.exec/2 but this function target the nearest ancestor element.
+  Renders a dynamic tag based on the `tag` attribute, which can be a string or a
+  function component.
 
-  ## Examples
-
-  ```heex
-  <button click={exec_closest("phx-hide-sheet", ".ancestor_class")}>
-    Close
-  </button>
-  ```
-  """
-  def exec_closest(attribute, ancestor_selector) do
-    """
-    var el = this.closest("#{ancestor_selector}"); liveSocket.execJS(el, el.getAttribute("#{attribute}"));
-    """
-  end
-
-  @doc """
-  This component is used to render dynamic tag based on the `tag` attribute. `tag` attribute can be a string or a function component.
-
-  This is just a wrapper around `dynamic_tag` function from Phoenix LiveView which only support string tag.
+  Wraps Phoenix LiveView's `dynamic_tag/1`, which only supports string tags.
 
   ## Examples
 
@@ -276,10 +249,13 @@ defmodule SaladUI.Helpers do
   end
 
   @doc """
-  This component mimic behavior of `asChild` attribute from shadcn/ui.
-  It works by passing all attribute from `as_child` tag to `tag` function component, add pass `child` attribute to the `as` attribute of the `tag` function component.
+  Mimics the behavior of shadcn/ui's `asChild` attribute.
 
-  The `tag` function component should accept `as_tag` attribute to render the child component.
+  Passes all attributes given to `as_child` through to the `tag` function
+  component, and passes `child` as that component's `as` attribute.
+
+  The `tag` function component must accept an `:as` attribute to render the
+  child component in its place.
 
   ## Examples
 
@@ -289,12 +265,14 @@ defmodule SaladUI.Helpers do
   </.as_child>
   ```
 
-  Normally this can be archieved by using `dropdown_menu_trigger` component directly but this will fire copile warning.
+  This is equivalent to using `dropdown_menu_trigger` directly, but calling it
+  directly would trigger a compiler warning for the unrecognized `:as` attribute:
 
   ```heex
   <.dropdown_menu_trigger as={&sidebar_menu_button/1} class="bg-primary text-primary-foreground">
      Hello World
   </.dropdown_menu_trigger>
+  ```
   """
   def as_child(%{tag: tag, child: child_tag} = assigns) when is_function(tag, 1) do
     assigns

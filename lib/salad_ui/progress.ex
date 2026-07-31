@@ -56,4 +56,15 @@ defmodule SaladUI.Progress do
     </div>
     """
   end
+
+  defp normalize_integer(value) when is_integer(value), do: value
+
+  defp normalize_integer(value) when is_binary(value) do
+    case Integer.parse(value) do
+      {integer, _} -> integer
+      _ -> nil
+    end
+  end
+
+  defp normalize_integer(_), do: nil
 end
