@@ -13,7 +13,7 @@ defmodule SaladUI.Toggle do
   attr :name, :any, default: nil
   attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
-  attr :value, :boolean, default: false
+  attr :value, :any, default: nil
   attr :"default-value", :any, values: [true, false, "true", "false"], default: false
 
   attr :disabled, :boolean, default: false
