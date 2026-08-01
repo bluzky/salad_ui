@@ -5,14 +5,6 @@ defmodule Storybook.Examples.Toast do
   import SaladUI.Button
   import SaladUI.Toast
 
-  def doc do
-    "An example of triggering toasts from the server (actions/cancel, rich-content " <>
-      "templates, and Phoenix.LiveView.put_flash/3), building your own per-variant " <>
-      "colors since SaladUI ships none by default, switching the toaster's corner " <>
-      "between all 6 supported positions, and controlling the stack's expand/collapse " <>
-      "and visible-card options."
-  end
-
   @positions ~w(top-left top-center top-right bottom-left bottom-center bottom-right)
 
   @impl true

@@ -19,6 +19,7 @@ defmodule SaladUI.Patcher.TailwindPatcherTest do
 
       patched_content = File.read!(@tailwind_css)
       assert patched_content =~ ~s(@import "tailwindcss";)
+      assert patched_content =~ ~s{@custom-variant dark (&:where(.dark, .dark *));}
       assert patched_content =~ ~s(@source "../js";)
       assert patched_content =~ ~s(@source "../../lib";)
       assert patched_content =~ ~s(@source "../../deps/salad_ui/lib";)
@@ -33,6 +34,7 @@ defmodule SaladUI.Patcher.TailwindPatcherTest do
     test "patch/1 doesn't duplicate existing directives" do
       initial_content = """
       @import "tailwindcss";
+      @custom-variant dark (&:where(.dark, .dark *));
       @source "../js";
       @source "../../lib";
       @source "../../deps/salad_ui/lib";
@@ -50,6 +52,7 @@ defmodule SaladUI.Patcher.TailwindPatcherTest do
       patched_content = File.read!(@tailwind_css)
 
       assert count(patched_content, ~s(@import "tailwindcss";)) == 1
+      assert count(patched_content, ~s{@custom-variant dark (&:where(.dark, .dark *));}) == 1
       assert count(patched_content, ~s(@source "../js";)) == 1
       assert count(patched_content, ~s(@source "../../lib";)) == 1
       assert count(patched_content, ~s(@source "../../deps/salad_ui/lib";)) == 1
