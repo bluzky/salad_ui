@@ -15,6 +15,8 @@ module.exports = {
     "../../../config/*.*exs",
     "../../lib/**/*.ex",
     "../deps/salad_ui/lib/**/*.ex",
+    "../../assets/salad_ui/**/*.js",
+    "../deps/salad_ui/assets/salad_ui/**/*.js",
   ],
   theme: {
     extend: {

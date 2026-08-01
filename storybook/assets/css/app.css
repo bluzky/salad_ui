@@ -12,6 +12,8 @@
 @source "../../storybook";
 @source "../../../lib";
 @source "../../deps/salad_ui/lib";
+@source "../../../assets/salad_ui";
+@source "../../deps/salad_ui/assets/salad_ui";
 
 /* This file is for your main application CSS */
 :root {

@@ -79,12 +79,24 @@ class Component {
     try {
       const optionsString = this.el.getAttribute("data-options");
       this.options = optionsString ? JSON.parse(optionsString) : {};
+      this._optionsRaw = optionsString;
       this.initialState =
         this.el.getAttribute("data-state") || this.initialState;
     } catch (error) {
       console.error("SaladUI: Error parsing component options:", error);
       this.options = {};
+      this._optionsRaw = null;
     }
+  }
+
+  /**
+   * Called by SaladUIHook.updated() before it destroys and rebuilds this
+   * component for a LiveView patch. Return true to keep the current
+   * instance instead, e.g. when nothing this component reads has actually
+   * changed. Default: false (always reinitialize).
+   */
+  skipReinitialize(_el) {
+    return false;
   }
 
   queryParts() {
@@ -102,9 +114,11 @@ class Component {
     try {
       const mappingsString = this.el.getAttribute("data-event-mappings");
       this.eventMappings = mappingsString ? JSON.parse(mappingsString) : {};
+      this._eventMappingsRaw = mappingsString;
     } catch (error) {
       console.error("SaladUI: Error parsing event mappings:", error);
       this.eventMappings = {};
+      this._eventMappingsRaw = null;
     }
   }
 

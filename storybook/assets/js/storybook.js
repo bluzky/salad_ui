@@ -16,6 +16,8 @@ import "salad_ui/components/slider";
 import "salad_ui/components/switch";
 import "salad_ui/components/dropdown_menu";
 import "salad_ui/components/chart";
+import "salad_ui/components/toast";
+import "salad_ui/components/toast-flash";
 
 // import * as Params from "./params";
 // import * as Uploaders from "./uploaders";

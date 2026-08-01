@@ -331,6 +331,12 @@ test("onStateChanged() defers visibility updates for animated transitions, and d
   assert.equal(elements.content.hidden, true);
 });
 
+test("skipReinitialize() defaults to false, so SaladUIHook.updated() always rebuilds unless a subclass opts out", () => {
+  const { component, el } = buildComponent();
+
+  assert.equal(component.skipReinitialize(el), false);
+});
+
 test("destroy() marks the component destroyed, makes transition()/handleActionClick a no-op, and does not throw", () => {
   const { component, elements } = buildComponent();
   component.setupEvents();

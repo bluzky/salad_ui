@@ -37,10 +37,16 @@ defmodule SaladUI.Patcher.TailwindPatcher do
   }
   """
 
+  # `assets/salad_ui` is scanned separately from `lib` because the toast
+  # component builds its card/viewport classes at runtime in JS (its DOM is
+  # entirely client-constructed) rather than embedding them in HEEx like
+  # every other component — without this source, Tailwind never sees those
+  # class strings and the toast ships with no styling or transitions.
   @directives [
     ~s(@source "../js";),
     ~s(@source "../../lib";),
     ~s(@source "../../deps/salad_ui/lib";),
+    ~s(@source "../../deps/salad_ui/assets/salad_ui";),
     ~s(@plugin "@tailwindcss/typography";),
     ~s(@import "../vendor/tw-animate.css";)
   ]

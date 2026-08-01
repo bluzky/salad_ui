@@ -212,6 +212,7 @@ defmodule SaladUI do
       import SaladUI.Table
       import SaladUI.Tabs
       import SaladUI.Textarea
+      import SaladUI.Toast
       import SaladUI.Toggle
       import SaladUI.ToggleGroup
       import SaladUI.Tooltip

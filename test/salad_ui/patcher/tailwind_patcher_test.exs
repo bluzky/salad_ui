@@ -22,6 +22,7 @@ defmodule SaladUI.Patcher.TailwindPatcherTest do
       assert patched_content =~ ~s(@source "../js";)
       assert patched_content =~ ~s(@source "../../lib";)
       assert patched_content =~ ~s(@source "../../deps/salad_ui/lib";)
+      assert patched_content =~ ~s(@source "../../deps/salad_ui/assets/salad_ui";)
       assert patched_content =~ ~s(@plugin "@tailwindcss/typography";)
       assert patched_content =~ ~s(@import "../vendor/tw-animate.css";)
       assert patched_content =~ "@theme inline {"
@@ -52,6 +53,7 @@ defmodule SaladUI.Patcher.TailwindPatcherTest do
       assert count(patched_content, ~s(@source "../js";)) == 1
       assert count(patched_content, ~s(@source "../../lib";)) == 1
       assert count(patched_content, ~s(@source "../../deps/salad_ui/lib";)) == 1
+      assert count(patched_content, ~s(@source "../../deps/salad_ui/assets/salad_ui";)) == 1
       assert count(patched_content, ~s(@plugin "@tailwindcss/typography";)) == 1
       assert count(patched_content, ~s(@import "../vendor/tw-animate.css";)) == 1
       assert count(patched_content, "--color-background:") == 1

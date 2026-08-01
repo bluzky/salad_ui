@@ -135,10 +135,12 @@ but the base implementation doesn't use it — if you override
 ## Update Phase (LiveView Patch)
 
 `SaladUIHook.updated()` does **not** re-run the mount phase on the existing
-instance — it fully destroys and recreates the component:
+instance — by default it fully destroys and recreates the component:
 
 ```javascript
 updated() {
+  if (this.component.skipReinitialize(this.el)) return;
+
   this.component.destroy();
   this.component = null;
   this.initComponent(); // → registry.create() → full mount phase again
@@ -151,6 +153,24 @@ again, on a brand new instance. Components remount from server-rendered
 attributes; client-only state does not survive a patch unless the server also
 renders that state.
 
+This matters because LiveView widens change-tracking whenever `@flash`
+changes anywhere on the page, patching hooked elements even when their own
+`data-options`/`data-event-mappings` are unchanged. `Component.skipReinitialize(el)`
+is the escape hatch: defaults to `false` (always reinitialize), but a
+subclass can return `true` to keep the current instance when the patch
+didn't change anything it reads. `ToastComponent` overrides it to compare
+`el.dataset.options`/`el.dataset.eventMappings` against the raw strings the
+instance was built with.
+
+`skipReinitialize` only protects the JS instance, not the DOM — LiveView's
+diff/patch runs *before* `updated()` fires, so the same flash-triggered patch
+can also morph a component's server-rendered children back to their (empty)
+template, independent of whether the hook rebuilds. That's why `toaster/1`
+additionally renders with `phx-update="ignore"`, so LiveView never diffs its
+content after mount. `data-*` attributes on an ignored element still update
+live (non-`data-*` ones don't) — `ToastComponent`'s constructor relies on
+that to keep `position` changes working despite the freeze.
+
 ```mermaid
 sequenceDiagram
     participant LV as LiveView
@@ -161,6 +181,9 @@ sequenceDiagram
         LV->>Hook: destroyed()
     else element patched
         LV->>Hook: updated()
+        Hook->>C: skipReinitialize(el)
+        C-->>Hook: true
+        Note over Hook: data-options/data-event-mappings<br/>unchanged — keep this instance, stop here
     end
 
     Hook->>C: destroy()

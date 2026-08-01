@@ -14,6 +14,8 @@
 @source "../../storybook";
 @source "../../../lib";
 @source "../../deps/salad_ui/lib";
+@source "../../../assets/salad_ui";
+@source "../../deps/salad_ui/assets/salad_ui";
 
 /*
  * Put your component styling within the Tailwind utilities layer.
