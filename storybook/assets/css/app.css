@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "../../../assets/css/tailwind.theme.css";
+@import "../../deps/salad_ui/assets/css/tailwind.theme.css";
 @import "../../deps/salad_ui/priv/static/assets/salad_ui.css";
 
 @plugin "@tailwindcss/forms";
