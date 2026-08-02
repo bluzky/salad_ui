@@ -96,7 +96,6 @@ defmodule SaladUI.Toast do
   * `"add"` - Creates and mounts a new toast card, arms its timer.
   * `"update"` - Patches an existing card in place, keyed by `id`.
   * `"dismiss"` - Plays the exit animation and removes a card (or every card if `id` is omitted).
-  * `"pause-all"` / `"resume-all"` - Pauses/resumes every timer.
 
   ## Component events
 
@@ -215,7 +214,7 @@ defmodule SaladUI.Toast do
     entries =
       for {kind, msg} <- assigns.flash,
           msg not in [nil, ""],
-          do: %{kind: to_string(kind), message: msg}
+          do: %{kind: to_string(kind), message: flash_message_to_string(msg)}
 
     assigns = assign(assigns, :entries, json(entries))
 
@@ -329,6 +328,15 @@ defmodule SaladUI.Toast do
     if Map.get(map, key) == nil, do: Map.delete(map, key), else: map
   end
 
+  # Flash messages are commonly iodata or a Phoenix.HTML.Safe `{:safe, iodata}`
+  # tuple (e.g. built with `~H`/`content_tag`), neither of which `json/1`'s
+  # encoder can serialize directly. The JS bridge only ever renders this via
+  # `textContent`, so flattening to a plain string here is lossless for the
+  # toast's purposes.
+  defp flash_message_to_string(msg) when is_binary(msg), do: msg
+  defp flash_message_to_string({:safe, _} = safe), do: Phoenix.HTML.safe_to_string(safe)
+  defp flash_message_to_string(msg), do: IO.iodata_to_binary(msg)
+
   defp maybe_put_title(params, nil), do: params
   defp maybe_put_title(params, message), do: Map.put_new(params, :title, message)
 
@@ -342,10 +350,10 @@ defmodule SaladUI.Toast do
 
   defp normalize_offset(%{} = value) do
     %{
-      top: Map.get(value, :top, 0),
-      right: Map.get(value, :right, 0),
-      bottom: Map.get(value, :bottom, 0),
-      left: Map.get(value, :left, 0)
+      top: Map.get(value, :top) || Map.get(value, "top") || 0,
+      right: Map.get(value, :right) || Map.get(value, "right") || 0,
+      bottom: Map.get(value, :bottom) || Map.get(value, "bottom") || 0,
+      left: Map.get(value, :left) || Map.get(value, "left") || 0
     }
   end
 

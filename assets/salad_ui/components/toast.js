@@ -5,19 +5,17 @@ import SaladUI from "../index.js";
 const DEFAULT_DURATION = 4000;
 const DEFAULT_GAP = 14;
 const COLLAPSED_SCALE_STEP = 0.05;
-const MIN_COLLAPSED_SCALE = 0.9;
+// Floor low enough that every card up through a 5-deep collapsed stack
+// (the largest `visibleToasts` the storybook demo offers) still gets a
+// distinct scale/width — a 0.9 floor made every card from index 2 on
+// share the same width, so index 2/3/4 rendered with flush, un-tapered
+// edges instead of a receding stack.
+const MIN_COLLAPSED_SCALE = 0.75;
 const EXIT_FALLBACK_MS = 500;
 const SWIPE_THRESHOLD_PX = 45;
 const SWIPE_VELOCITY_THRESHOLD = 0.11; // px/ms, matches Sonner's flick-to-dismiss
 const SWIPE_EXIT_DISTANCE = "150%";
 
-// Toasts render in the card's default neutral border/background/text (no
-// per-variant color, and no predefined variant palette) unless the toaster's
-// `colors` option or a per-toast `color` param lists that variant — see
-// populateCard's colorClass, which *replaces* NEUTRAL_CARD_CLASSES wholesale
-// (border + background + text, not just text) so a custom color reads as one
-// coherently tinted card, icon and title included, instead of fighting the
-// default border/bg classes for the same CSS properties.
 const VARIANT_ICON_NAMES = {
   success: "hero-check-circle",
   error: "hero-x-circle",
@@ -30,48 +28,14 @@ const NEUTRAL_CARD_CLASSES = "border-border bg-background text-foreground";
 const CARD_BASE_CLASSES = [
   "group relative flex w-[var(--toast-width)] items-center gap-3 rounded-lg border p-4 text-sm shadow-lg",
   "[&_svg]:size-5 [&_svg]:shrink-0",
-  // Matches Sonner's actual transition list/durations (box-shadow gets its
-  // own faster 200ms) — extended with color properties so update()'s
-  // in-place variant swap cross-fades instead of snapping, now that it
-  // patches the existing card rather than replacing it.
-  // `height` is included so the collapsed-stack front-height clamp (below)
-  // animates instead of snapping, same as Sonner's own `height 400ms`.
-  // NOTE: both `translate`/`scale` *and* `transform` are listed, because two
-  // different mechanisms drive this card's position and they land on two
-  // different CSS properties. The data-state-driven stack classes below
-  // (translate-y-[var(--stack-y)], scale-[var(--scale)]) are Tailwind v4
-  // utilities, which compile to the standalone `translate`/`scale`
-  // properties (the individual-transform-properties spec) — *not*
-  // `transform`. Swipe dragging and the swipe-out exit, meanwhile, set the
-  // legacy `transform` property directly via inline style (see
-  // attachSwipeHandlers/dismissToast). Transitioning only `transform` (the
-  // original list here) silently animated nothing for the class-driven
-  // side: every slide (entering/dismissing) and every stack reposition
-  // snapped instantly while only opacity/height faded.
-  "[transition:translate_400ms_ease-out,scale_400ms_ease-out,transform_400ms_ease-out,opacity_400ms_ease-out,height_400ms_ease-out,background-color_400ms_ease-out,border-color_400ms_ease-out,color_400ms_ease-out,box-shadow_200ms_ease-out]",
+  "[transition:translate_300ms_ease-out,scale_300ms_ease-out,transform_300ms_ease-out,opacity_300ms_ease-out,height_300ms_ease-out,background-color_300ms_ease-out,border-color_300ms_ease-out,color_300ms_ease-out,box-shadow_200ms_ease-out]",
   "data-[swiping=true]:transition-none",
-  // Every card is a positioned element (front included) so painting order
-  // follows z-index instead of CSS's "positioned always paints above
-  // static" rule — without this, non-front cards (position:absolute)
-  // would render *above* the front card despite being visually behind it.
   "relative",
   "data-[front=false]:absolute data-[front=false]:inset-x-0",
   "data-[front=false]:data-[position^=bottom]:bottom-0",
   "data-[front=false]:data-[position^=top]:top-0",
-  // Direct children (icon/content/close/actions) fade out on collapsed
-  // background cards so only a clean color/border sliver peeks out instead
-  // of overlapping text — matches Sonner's `[data-expanded=false]
-  // [data-front=false] > * { opacity: 0 }`.
-  "[&>*]:transition-opacity [&>*]:duration-[400ms]",
+  "[&>*]:transition-opacity [&>*]:duration-[300ms]",
   "group-data-[expanded=false]/toast-viewport:data-[front=false]:[&>*]:opacity-0",
-  // When expanded, cards are spread apart by `gap` — genuinely empty space
-  // the mouse has to cross to move from one card to the next. That space is
-  // outside every card's own box (and outside the viewport's box, which
-  // only ever tracks the front card's height), so moving through it fired
-  // mouseleave on the viewport and collapsed the stack mid-hover. Each card
-  // gets an invisible ::after strip bridging the gap toward its neighbor
-  // (matches Sonner's own `[data-expanded=true]::after` hover-bridge, here
-  // generalized to both edges since we support top *and* bottom positions).
   "group-data-[expanded=true]/toast-viewport:after:content-['']",
   "group-data-[expanded=true]/toast-viewport:after:absolute",
   "group-data-[expanded=true]/toast-viewport:after:inset-x-0",
@@ -159,9 +123,10 @@ function resolveImportant(params, variant) {
 // the toast id — e.g. { action: { label: "Undo", event: "undo", value: %{item_id: 5} } }
 // arrives server-side as %{"id" => toast_id, "item_id" => 5}. Nothing is
 // added when `value` is omitted or isn't a plain object, so existing
-// action/cancel payloads (just `{id}`) are unaffected.
+// action/cancel payloads (just `{id}`) are unaffected. `id` is spread last so
+// it stays authoritative even if `value` happens to contain its own `id` key.
 function actionPayload(id, value) {
-  return isPlainObject(value) ? { id, ...value } : { id };
+  return isPlainObject(value) ? { ...value, id } : { id };
 }
 
 function isPlainObject(value) {
@@ -304,8 +269,6 @@ class ToastComponent extends Component {
       viewport.removeEventListener("focusin", expand);
       viewport.removeEventListener("focusout", collapse);
 
-      // Remove dynamically-created viewports from document.body.
-      // Keep the server-rendered viewport (it lives inside this.el).
       if (viewport !== this.viewport && viewport.parentNode) {
         viewport.parentNode.removeChild(viewport);
       }
@@ -325,10 +288,6 @@ class ToastComponent extends Component {
         return params.id
           ? this.dismissToast(params.id, "programmatic")
           : this.dismissAll();
-      case "pause-all":
-        return this.forEachTimer((timer) => timer.pause());
-      case "resume-all":
-        return this.forEachTimer((timer) => timer.resume());
       default:
         return super.handleCommand(command, params);
     }
@@ -468,24 +427,11 @@ class ToastComponent extends Component {
 
     const variant = params.variant || record.variant;
 
-    // `duration` is only carried over from the old params when the variant
-    // isn't changing (a plain content/detail edit). A sticky toast's
-    // "infinity" duration was set for that specific variant, not a genuine
-    // request for permanence going forward — spreading it into every
-    // subsequent update() call blindly meant a variant change (e.g.
-    // resolving a sticky toast to a different kind) left the toast stuck on
-    // screen forever unless the caller remembered to also re-specify
-    // `duration` on the resolving call.
     const merged =
       variant === record.variant
         ? { ...record.params, ...params }
         : { ...record.params, ...params, duration: params.duration };
 
-    // Clear any collapsed-stack height clamp before remeasuring, otherwise
-    // offsetHeight would report the clamped height instead of the card's
-    // real (possibly now-different) content height. This "auto" state is
-    // never painted — recomputeStackPositions below applies a concrete px
-    // value again before the browser gets a chance to render this frame.
     record.el.style.height = "";
     this.populateCard(record.el, id, merged, variant, record.position);
     record.naturalHeight = record.el.offsetHeight;
@@ -594,27 +540,11 @@ class ToastComponent extends Component {
           card.setAttribute("aria-live", card.dataset.live);
       }
 
-      // Every branch below ends with an explicit `${…}px` height, never `""`
-      // (CSS auto). A card flips between this branch and the collapsed one
-      // as newer toasts arrive and demote it from front to background (or
-      // back) — and a transition *from* `height: auto` cannot be smoothly
-      // interpolated by the browser, so leaving any branch at auto meant
-      // that specific flip always snapped instead of animating, which is
-      // exactly what showed up as "the shift isn't smooth" when a new
-      // toast's height differed from the existing ones. Pinning every card
-      // to a concrete pixel height at all times, even when it's visually
-      // equivalent to auto (front/expanded use the card's own natural
-      // height), keeps every height change a plain px-to-px transition.
       if (index === 0) {
         card.style.setProperty("--stack-y", "0px");
         card.style.setProperty("--scale", "1");
         card.style.height = `${heights[index]}px`;
       } else if (expanded) {
-        // Real cumulative-height offset (heightIndex*gap + toastsHeightBefore
-        // in Sonner's terms) so cards of different content heights stack
-        // edge-to-edge with a clean `gap`, continuously animated from
-        // wherever the collapsed transform left off — no absolute->static
-        // layout swap involved.
         const offsetPx = heightAccum + index * gap;
         card.style.setProperty(
           "--stack-y",
@@ -982,4 +912,43 @@ class ToastComponent extends Component {
 
 SaladUI.register("toast", ToastComponent);
 
+/**
+ * Client-only toast API, mirroring Sonner's `import { toast } from "sonner"`
+ * ergonomics for pages/components that want to toast without a LiveView
+ * round trip. Targets whichever `<.toaster>` mounted first on the page.
+ */
+function getToaster() {
+  return document.querySelector('[data-component="toast"]')?.__toastComponent || null;
+}
+
+function dispatchToast(variant, message, opts = {}) {
+  const toaster = getToaster();
+  if (!toaster) {
+    console.error("SaladUI: toast() called but no <.toaster> is mounted");
+    return null;
+  }
+
+  return toaster.handleCommand("add", { ...opts, variant, title: message });
+}
+
+function toast(message, opts) {
+  return dispatchToast("default", message, opts);
+}
+
+toast.success = (message, opts) => dispatchToast("success", message, opts);
+toast.error = (message, opts) => dispatchToast("error", message, opts);
+toast.warning = (message, opts) => dispatchToast("warning", message, opts);
+toast.info = (message, opts) => dispatchToast("info", message, opts);
+toast.message = (message, opts = {}) =>
+  dispatchToast(opts.variant || "default", message, opts);
+
+toast.dismiss = (id) => {
+  getToaster()?.handleCommand("dismiss", id ? { id } : {});
+};
+
+toast.update = (id, opts = {}) => {
+  getToaster()?.handleCommand("update", { ...opts, id });
+};
+
 export default ToastComponent;
+export { toast };

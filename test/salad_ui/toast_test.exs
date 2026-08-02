@@ -108,6 +108,20 @@ defmodule SaladUI.ToastTest do
       assert html =~ "--offset-l: 0px"
     end
 
+    test "a string-keyed offset map (e.g. sourced from params/JSON) is honored the same as atom keys" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.toaster id="toaster" offset={%{"top" => 10, "right" => 20}} />
+        """)
+
+      assert html =~ "--offset-t: 10px"
+      assert html =~ "--offset-r: 20px"
+      assert html =~ "--offset-b: 0px"
+      assert html =~ "--offset-l: 0px"
+    end
+
     test "width and gap flow into the style vars and JSON options" do
       assigns = %{}
 

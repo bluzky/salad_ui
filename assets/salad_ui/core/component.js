@@ -77,6 +77,10 @@ class Component {
 
   parseOptions() {
     try {
+      // _optionsRaw/_eventMappingsRaw (below) keep the unparsed attribute
+      // strings so a subclass's skipReinitialize(el) can cheaply compare
+      // them against the live DOM without re-parsing JSON — see e.g.
+      // ToastComponent.skipReinitialize.
       const optionsString = this.el.getAttribute("data-options");
       this.options = optionsString ? JSON.parse(optionsString) : {};
       this._optionsRaw = optionsString;

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { after, afterEach, before, test } from "node:test";
 
-import "../salad_ui/components/toast.js";
+import { toast } from "../salad_ui/components/toast.js";
 import { registry } from "../salad_ui/core/factory.js";
 import { installDom, setRect, uninstallDom, wait } from "./helpers/dom.mjs";
 
@@ -1035,4 +1035,87 @@ test("destroy clears every pending timer and removes cards from the DOM", async 
     0,
     "cards are removed from DOM on destroy",
   );
+});
+
+test("client-only toast() targets the mounted <.toaster> and defaults to the default variant", async () => {
+  const { component, viewport } = buildToaster();
+
+  const id = toast("Hello there");
+  await wait(10);
+
+  const card = cardFor(viewport, id);
+  assert.notEqual(card, null);
+  assert.equal(card.dataset.variant, "default");
+  assert.equal(card.textContent.includes("Hello there"), true);
+
+  component.destroy();
+});
+
+test("toast.success/error/warning/info dispatch their respective variant", async () => {
+  const { component, viewport } = buildToaster();
+
+  const successId = toast.success("ok");
+  const errorId = toast.error("bad");
+  const warningId = toast.warning("careful");
+  const infoId = toast.info("fyi");
+  await wait(10);
+
+  assert.equal(cardFor(viewport, successId).dataset.variant, "success");
+  assert.equal(cardFor(viewport, errorId).dataset.variant, "error");
+  assert.equal(cardFor(viewport, warningId).dataset.variant, "warning");
+  assert.equal(cardFor(viewport, infoId).dataset.variant, "info");
+
+  component.destroy();
+});
+
+test("toast.dismiss(id) removes just that toast; toast.dismiss() with no id clears all", async () => {
+  const { component, viewport } = buildToaster();
+
+  const keepId = toast("Keep me");
+  const goneId = toast("Dismiss me");
+  await wait(10);
+
+  toast.dismiss(goneId);
+  await wait(550);
+  assert.equal(cardFor(viewport, goneId), null);
+  assert.notEqual(cardFor(viewport, keepId), null);
+
+  toast.dismiss();
+  await wait(550);
+  assert.equal(cardFor(viewport, keepId), null);
+
+  component.destroy();
+});
+
+test("toast.update(id, opts) patches the existing card in place", async () => {
+  const { component, viewport } = buildToaster();
+
+  const id = toast("Uploading...");
+  await wait(10);
+
+  toast.update(id, { title: "Done!", variant: "success" });
+  await wait(10);
+
+  const card = cardFor(viewport, id);
+  assert.equal(card.dataset.variant, "success");
+  assert.equal(card.textContent.includes("Done!"), true);
+
+  component.destroy();
+});
+
+test("toast() called with no <.toaster> mounted logs an error and returns null", () => {
+  const originalError = console.error;
+  const errors = [];
+  console.error = (...args) => errors.push(args.join(" "));
+
+  try {
+    const result = toast("Nobody home");
+    assert.equal(result, null);
+    assert.equal(
+      errors.some((msg) => msg.includes("no <.toaster> is mounted")),
+      true,
+    );
+  } finally {
+    console.error = originalError;
+  }
 });
