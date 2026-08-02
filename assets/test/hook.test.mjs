@@ -31,6 +31,10 @@ class FakeComponent {
     this.beforeUpdated = true;
   }
 
+  skipReinitialize() {
+    return this.constructor.nextSkipReinitialize;
+  }
+
   handleCommand(command, params) {
     this.commands.push({ command, params });
   }
@@ -39,6 +43,8 @@ class FakeComponent {
     this.destroyed = true;
   }
 }
+
+FakeComponent.nextSkipReinitialize = false;
 
 registry.register("hook-test", FakeComponent);
 
@@ -149,6 +155,23 @@ test("updated() destroys the old component instance and mounts a fresh one", () 
   assert.notEqual(hook.component, original);
   assert.ok(hook.component instanceof FakeComponent);
   assert.equal(hook.component.destroyed, false);
+});
+
+test("updated() keeps the current instance when the component reports skipReinitialize()", () => {
+  const el = buildEl();
+  const hook = createHookInstance(el);
+  hook.mounted();
+
+  const original = hook.component;
+  FakeComponent.nextSkipReinitialize = true;
+  try {
+    hook.updated();
+  } finally {
+    FakeComponent.nextSkipReinitialize = false;
+  }
+
+  assert.equal(hook.component, original);
+  assert.equal(original.destroyed, false);
 });
 
 test("destroyed() destroys the component and clears the reference", () => {

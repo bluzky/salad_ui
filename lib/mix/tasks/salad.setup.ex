@@ -200,6 +200,8 @@ defmodule Mix.Tasks.Salad.Setup do
   import "salad_ui/components/slider";
   import "salad_ui/components/switch";
   import "salad_ui/components/dropdown_menu";
+  import "salad_ui/components/toast";
+  import "salad_ui/components/toast-flash";
   """
   @js_hooks "SaladUI: SaladUI.SaladUIHook"
   defp patch_app_js(igniter) do

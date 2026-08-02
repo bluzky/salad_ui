@@ -1,3 +1,7 @@
+/* Ties `dark:` to the same `.dark` class the tokens below use, instead of
+   the OS-level prefers-color-scheme media query. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);

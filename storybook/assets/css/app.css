@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 @import "../../deps/salad_ui/assets/css/tailwind.theme.css";
 @import "../../deps/salad_ui/priv/static/assets/salad_ui.css";
 
@@ -12,6 +13,8 @@
 @source "../../storybook";
 @source "../../../lib";
 @source "../../deps/salad_ui/lib";
+@source "../../../assets/salad_ui";
+@source "../../deps/salad_ui/assets/salad_ui";
 
 /* This file is for your main application CSS */
 :root {
