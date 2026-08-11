@@ -457,7 +457,6 @@ When adding new components or patterns, please:
 
 ## Related Documentation
 
-- [CLAUDE.md](../CLAUDE.md) - Overview for AI assistants
 - [README.md](../README.md) - Project overview and installation
 - [Elixir Component Docs](https://hexdocs.pm/salad_ui/) - Server-side component documentation
 - Phoenix LiveView [Hooks Documentation](https://hexdocs.pm/phoenix_live_view/js-interop.html#client-hooks-via-phx-hook)

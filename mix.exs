@@ -64,7 +64,8 @@ defmodule SaladUI.MixProject do
         "docs/js_architecture_overview.md",
         "docs/js_component_patterns.md",
         "docs/js_component_reference.md",
-        "docs/js_state_transition_flow.md"
+        "docs/js_state_transition_flow.md",
+        "docs/component_lifecycle.md"
       ],
       groups_for_extras: [
         "Getting Started": [
@@ -81,7 +82,8 @@ defmodule SaladUI.MixProject do
           "docs/js_architecture_overview.md",
           "docs/js_component_patterns.md",
           "docs/js_component_reference.md",
-          "docs/js_state_transition_flow.md"
+          "docs/js_state_transition_flow.md",
+          "docs/component_lifecycle.md"
         ]
       ]
     ]
