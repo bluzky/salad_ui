@@ -10,7 +10,8 @@ getComponentConfig() {
     stateMachine: { /* State definitions and transitions */ },
     events: { /* Event handlers by state */ },
     hiddenConfig: { /* Visibility control by state */ },
-    ariaConfig: { /* ARIA attributes by part and state */ }
+    ariaConfig: { /* ARIA attributes by part and state */ },
+    ownedAttributes: { /* Attributes LiveView patches leave alone, by part */ }
   };
 }
 ```
@@ -364,6 +365,39 @@ ariaConfig: {
     active: { selected: "true" }
   },
   content: { all: { role: "tabpanel" } }
+}
+```
+
+## Owned Attributes
+
+Names the attributes the component sets itself on its parts, so that a
+LiveView patch leaves them alone. Without it, any patch inside the component
+puts the server-rendered values back (a static `hidden`, a missing
+`data-state`) until the hook's `updated()` applies the state again, and the
+browser may render that in between: an open dialog disappears for a moment and
+replays its opening animation.
+
+### Structure
+
+```js
+ownedAttributes: {
+  partName: ["attribute", "aria-*"]  // passed to LiveView's ignoreAttributes
+}
+```
+
+The root element is the part named `root`. Leave out attributes the server
+still controls, such as a root `data-state` the template renders from an
+assign. The component claims the attributes through the hook's
+`this.js().ignoreAttributes(el, attrs)` (LiveView 1.1+) whenever it updates
+its UI, so parts a patch adds are covered too.
+
+### Example
+
+```js
+ownedAttributes: {
+  root: ["data-state"],
+  content: ["hidden", "data-state", "aria-hidden"],
+  "content-panel": ["data-state", "aria-modal"]
 }
 ```
 

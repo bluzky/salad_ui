@@ -151,6 +151,7 @@ class Component {
     this.eventConfig = this.componentConfig.events || {};
     this.hiddenConfig = this.componentConfig.hiddenConfig || {};
     this.ariaConfig = this.componentConfig.ariaConfig || {};
+    this.ownedAttributes = this.componentConfig.ownedAttributes || {};
   }
 
   /**
@@ -452,6 +453,29 @@ class Component {
 
     // Apply ARIA attributes
     this.ariaManager.applyAriaAttributes(currentState);
+
+    this.claimOwnedAttributes();
+  }
+
+  /**
+   * Tell LiveView to leave the attributes this component sets on its parts
+   * alone when it patches them (`ownedAttributes` in the component config).
+   * Otherwise a patch of anything inside the component puts the
+   * server-rendered values back (`hidden`, a removed `data-state`) until the
+   * hook's `updated()` re-applies the state, and the browser may render that
+   * in between: an open dialog disappears for a moment and replays its
+   * opening animation.
+   */
+  claimOwnedAttributes() {
+    if (Object.keys(this.ownedAttributes).length === 0) return;
+
+    const js = this.hook?.js?.();
+    if (!js?.ignoreAttributes) return;
+
+    this.allParts.forEach((el) => {
+      const attrs = this.ownedAttributes[el.dataset.part];
+      if (attrs?.length > 0) js.ignoreAttributes(el, attrs);
+    });
   }
 
   /**

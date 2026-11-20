@@ -209,19 +209,85 @@ test("SSR-open state initializes dialog without emitting open on remount", async
   remounted.destroy();
 });
 
-test("LiveView hook updates remount dialog from server-rendered state", () => {
+test("LiveView hook updates keep an open dialog when its server state is unchanged", () => {
   const { el, trigger } = buildDialog();
   const hook = createHookInstance(el);
   hook.mounted();
   click(trigger);
 
   const original = hook.component;
+  const content = el.querySelector('[data-part="content"]');
+  // What a patch without JS.ignore_attributes does to the parts.
+  content.hidden = true;
+  el.removeAttribute("data-state");
+  content.removeAttribute("data-state");
   hook.updated();
 
+  assert.equal(original.destroyed, false);
+  assert.equal(hook.component, original);
+  assert.equal(hook.component.state, "open");
+  assert.equal(content.hidden, false);
+  assert.equal(el.getAttribute("data-state"), "open");
+  assert.equal(content.getAttribute("data-state"), "open");
+  hook.destroyed();
+});
+
+test("LiveView hook updates apply the open state to parts a patch added", () => {
+  const { el, trigger, panel } = buildDialog();
+  const hook = createHookInstance(el);
+  hook.mounted();
+  click(trigger);
+
+  panel.insertAdjacentHTML(
+    "beforeend",
+    '<div data-part="footer" id="added-footer"></div>',
+  );
+  hook.updated();
+
+  assert.equal(
+    document.getElementById("added-footer").getAttribute("data-state"),
+    "open",
+  );
+  hook.destroyed();
+});
+
+test("dialog claims the attributes it sets so LiveView patches leave them alone", () => {
+  const { el } = buildDialog();
+  const claimed = new Map();
+  const hook = {
+    ...createHookInstance(el),
+    js: () => ({
+      ignoreAttributes: (part, attrs) => claimed.set(part.dataset.part, attrs),
+    }),
+  };
+  hook.mounted();
+
+  assert.deepEqual(claimed.get("root"), ["data-state"]);
+  assert.ok(claimed.get("content").includes("hidden"));
+  assert.ok(claimed.get("content").includes("data-state"));
+  assert.ok(claimed.get("overlay").includes("data-state"));
+  assert.ok(claimed.get("content-panel").includes("aria-modal"));
+  hook.destroyed();
+});
+
+test("dialogs driven by a server-rendered data-state leave it to the server and rebuild on updates", () => {
+  const { el, trigger } = buildDialog({ state: "closed" });
+  const claimed = new Map();
+  const hook = {
+    ...createHookInstance(el),
+    js: () => ({
+      ignoreAttributes: (part, attrs) => claimed.set(part.dataset.part, attrs),
+    }),
+  };
+  hook.mounted();
+  assert.equal(claimed.has("root"), false);
+  assert.ok(claimed.get("content").includes("hidden"));
+
+  click(trigger);
+  const original = hook.component;
+  hook.updated();
   assert.equal(original.destroyed, true);
   assert.notEqual(hook.component, original);
-  assert.equal(hook.component.state, "closed");
-  assert.equal(el.querySelector('[data-part="content"]').hidden, true);
   hook.destroyed();
 });
 

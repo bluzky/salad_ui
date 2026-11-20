@@ -16,6 +16,32 @@ class DialogComponent extends Component {
     this.content = this.getPart("content");
     this.contentPanel = this.getPart("content-panel");
     this.config.preventDefaultKeys = ["Escape"];
+    this._openRaw = el.dataset.open;
+  }
+
+  // Keep this instance across LiveView patches that leave the dialog's own
+  // attributes alone (every keystroke of a phx-change form inside it). A
+  // rebuild resets the state from the server-rendered `data-open`, which
+  // closes a dialog the user opened on the client, and its focus trap moves
+  // focus back to the first field while the user types. The state is applied
+  // again, without focusing anything, to parts the patch added. The focus
+  // trap reads the focusable elements anew on each Tab, so patched content
+  // is fine.
+  //
+  // Sheets and alert dialogs render their state as `data-state` on the root
+  // instead of `data-open`; they still rebuild on every patch.
+  skipReinitialize(el) {
+    const same =
+      this._openRaw !== undefined &&
+      el.dataset.open === this._openRaw &&
+      el.dataset.options === this._optionsRaw &&
+      el.dataset.eventMappings === this._eventMappingsRaw;
+    if (same) {
+      this.allParts = this.queryParts();
+      this.updateUI();
+      this.updatePartsVisibility();
+    }
+    return same;
   }
 
   afterMount() {
@@ -65,6 +91,24 @@ class DialogComponent extends Component {
               : { Escape: "close" }),
           },
         },
+      },
+      // The dialog sets these itself; a LiveView patch must not put back the
+      // server-rendered `hidden` or drop `data-state`, which would hide the
+      // open dialog for a moment and replay its opening animation. The root's
+      // `data-state` is the server's to set where it renders it (sheets and
+      // alert dialogs, which have no `data-open`).
+      ownedAttributes: {
+        root: this.el.dataset.open === undefined ? [] : ["data-state"],
+        overlay: ["data-state"],
+        content: ["hidden", "data-state", "aria-hidden"],
+        "content-panel": [
+          "data-state",
+          "role",
+          "aria-modal",
+          "aria-labelledby",
+          "aria-describedby",
+        ],
+        "close-trigger": ["aria-label"],
       },
       hiddenConfig: {
         closed: {
