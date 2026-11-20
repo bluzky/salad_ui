@@ -331,6 +331,52 @@ test("onStateChanged() defers visibility updates for animated transitions, and d
   assert.equal(elements.content.hidden, true);
 });
 
+test("ownedAttributes are handed to LiveView's ignoreAttributes for the configured parts", () => {
+  const claimed = [];
+  const hookContext = {
+    js: () => ({
+      ignoreAttributes: (el, attrs) => claimed.push([el.dataset.part, attrs]),
+    }),
+  };
+
+  class OwningComponent extends TestComponent {
+    getComponentConfig() {
+      return {
+        ...super.getComponentConfig(),
+        ownedAttributes: { content: ["hidden", "data-state"], root: [] },
+      };
+    }
+  }
+
+  document.body.innerHTML = `
+    <div id="owning" data-part="root" data-state="closed">
+      <div data-part="content" hidden></div>
+    </div>
+  `;
+  const component = new OwningComponent(document.getElementById("owning"), {
+    hookContext,
+  });
+
+  assert.deepEqual(claimed.at(-1), ["content", ["hidden", "data-state"]]);
+  assert.equal(
+    claimed.some(([part]) => part === "root"),
+    false,
+  );
+
+  claimed.length = 0;
+  component.transition("open");
+  assert.deepEqual(claimed, [["content", ["hidden", "data-state"]]]);
+  component.destroy();
+});
+
+test("ownedAttributes are skipped without a hook or without hook.js()", () => {
+  const { component } = buildComponent();
+  assert.doesNotThrow(() => component.claimOwnedAttributes());
+
+  const withoutJs = buildComponent({ hookContext: { pushEventTo() {} } });
+  assert.doesNotThrow(() => withoutJs.component.claimOwnedAttributes());
+});
+
 test("skipReinitialize() defaults to false, so SaladUIHook.updated() always rebuilds unless a subclass opts out", () => {
   const { component, el } = buildComponent();
 

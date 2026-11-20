@@ -57,15 +57,8 @@ class Component {
     this.initStateMachine(this.componentConfig.stateMachine, this.initialState);
     this.ariaManager = new AriaManager(this, this.ariaConfig);
 
-    // ignore item's part
-    this.allParts = this.queryParts();
-    if (ignoreItems) {
-      this.allParts = this.allParts.filter(
-        (element) =>
-          !element.dataset.part.startsWith("item") &&
-          !element.dataset.part.endsWith("-item"),
-      );
-    }
+    this.ignoreItems = ignoreItems;
+    this.allParts = this.collectParts();
 
     this.updateUI();
     this.updatePartsVisibility();
@@ -101,6 +94,21 @@ class Component {
    */
   skipReinitialize(_el) {
     return false;
+  }
+
+  /**
+   * The parts this component manages: queryParts(), without item parts
+   * unless the component was created with `ignoreItems: false`.
+   */
+  collectParts() {
+    const parts = this.queryParts();
+    if (!this.ignoreItems) return parts;
+
+    return parts.filter(
+      (element) =>
+        !element.dataset.part.startsWith("item") &&
+        !element.dataset.part.endsWith("-item"),
+    );
   }
 
   queryParts() {
@@ -151,6 +159,7 @@ class Component {
     this.eventConfig = this.componentConfig.events || {};
     this.hiddenConfig = this.componentConfig.hiddenConfig || {};
     this.ariaConfig = this.componentConfig.ariaConfig || {};
+    this.ownedAttributes = this.componentConfig.ownedAttributes || {};
   }
 
   /**
@@ -193,6 +202,7 @@ class Component {
 
     if (!animConfig) {
       // No animation, update visibility immediately
+      this.visibilityPending = null;
       this.updatePartsVisibility(nextState);
       return null; // No promise
     }
@@ -202,8 +212,14 @@ class Component {
       ? this.getPart(animConfig.target_part)
       : this.el;
 
+    // Parts keep their visibility until the animation ends; see
+    // visibilityPending.
+    const pending = { state: nextState };
+    this.visibilityPending = pending;
+
     // Animate with the config
     return animateTransition(animConfig, targetElement).then(() => {
+      if (this.visibilityPending === pending) this.visibilityPending = null;
       if (this.destroyed || this.stateMachine.state !== nextState) return;
 
       this.updatePartsVisibility(nextState);
@@ -452,6 +468,29 @@ class Component {
 
     // Apply ARIA attributes
     this.ariaManager.applyAriaAttributes(currentState);
+
+    this.claimOwnedAttributes();
+  }
+
+  /**
+   * Tell LiveView to leave the attributes this component sets on its parts
+   * alone when it patches them (`ownedAttributes` in the component config).
+   * Otherwise a patch of anything inside the component puts the
+   * server-rendered values back (`hidden`, a removed `data-state`) until the
+   * hook's `updated()` re-applies the state, and the browser may render that
+   * in between: an open dialog disappears for a moment and replays its
+   * opening animation.
+   */
+  claimOwnedAttributes() {
+    if (Object.keys(this.ownedAttributes).length === 0) return;
+
+    const js = this.hook?.js?.();
+    if (!js?.ignoreAttributes) return;
+
+    this.allParts.forEach((el) => {
+      const attrs = this.ownedAttributes[el.dataset.part];
+      if (attrs?.length > 0) js.ignoreAttributes(el, attrs);
+    });
   }
 
   /**

@@ -43,6 +43,22 @@ class FocusTrap {
   }
 
   /**
+   * Trap focus within another element (one that replaced the trapped one)
+   * without moving focus.
+   *
+   * @param {HTMLElement} element - The new element to trap focus within
+   */
+  retarget(element) {
+    if (element === this.element) return;
+
+    if (this.active) {
+      this.element.removeEventListener("keydown", this.handleKeyDown);
+      element.addEventListener("keydown", this.handleKeyDown);
+    }
+    this.element = element;
+  }
+
+  /**
    * Deactivate the focus trap and restore previous focus
    */
   deactivate() {
