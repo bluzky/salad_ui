@@ -6,6 +6,12 @@ import ClickOutsideMonitor from "../core/click-outside.js";
 
 class DialogComponent extends Component {
   constructor(el, hookContext) {
+    // A root `data-state` on a dialog driven by `data-open` was kept from the
+    // instance this one replaces (see ownedAttributes): the server changed
+    // `data-open`.
+    const rebuilt =
+      el.dataset.open !== undefined && el.hasAttribute("data-state");
+
     super(el, {
       hookContext,
       initialState: "closed",
@@ -17,6 +23,7 @@ class DialogComponent extends Component {
     this.contentPanel = this.getPart("content-panel");
     this.config.preventDefaultKeys = ["Escape"];
     this._openRaw = el.dataset.open;
+    this._rebuilt = rebuilt;
   }
 
   // Keep this instance across LiveView patches that leave the dialog's own
@@ -37,11 +44,42 @@ class DialogComponent extends Component {
       el.dataset.options === this._optionsRaw &&
       el.dataset.eventMappings === this._eventMappingsRaw;
     if (same) {
-      this.allParts = this.queryParts();
+      this.allParts = this.collectParts();
+      this.rebindReplacedParts();
       this.updateUI();
-      this.updatePartsVisibility();
+      // A running exit animation hides the content when it ends.
+      if (!this.visibilityPending) this.updatePartsVisibility();
     }
     return same;
+  }
+
+  // A patch that replaced the content or its panel (rather than patching them
+  // in place) leaves the focus trap and the outside-click monitor on the old
+  // nodes; move them to the new ones, without moving focus.
+  rebindReplacedParts() {
+    const content = this.getPart("content");
+    const contentPanel = this.getPart("content-panel");
+    if (content === this.content && contentPanel === this.contentPanel) return;
+
+    this.content = content;
+    this.contentPanel = contentPanel;
+    this.focusTrap?.retarget(contentPanel);
+
+    if (this.clickOutsideMonitor) {
+      this.clickOutsideMonitor.destroy();
+      this.setupOutsideClickDetection();
+      if (this.state === "open") this.clickOutsideMonitor.start();
+    }
+  }
+
+  // Events tell the server what the user did. A transition the server asked
+  // for by changing `data-open` is not echoed back to it.
+  pushEvent(clientEvent, payload, context) {
+    if (clientEvent === this._echoToSkip) {
+      this._echoToSkip = null;
+      return;
+    }
+    super.pushEvent(clientEvent, payload, context);
   }
 
   afterMount() {
@@ -59,7 +97,9 @@ class DialogComponent extends Component {
       return;
     }
 
-    this.transition(requestedState === "open" ? "open" : "close");
+    const event = requestedState === "open" ? "open" : "close";
+    if (this._rebuilt) this._echoToSkip = event;
+    this.transition(event);
   }
 
   getComponentConfig() {

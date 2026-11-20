@@ -303,3 +303,128 @@ test("LiveView hook updates honor changed server dialog state", () => {
   assert.equal(el.querySelector('[data-part="content"]').hidden, true);
   hook.destroyed();
 });
+
+function trackingHook(el) {
+  const pushed = [];
+  const hook = {
+    ...createHookInstance(el),
+    pushEventTo: (target, event) => pushed.push(event),
+  };
+  return { hook, pushed };
+}
+
+test("a patch that replaces the panel moves the focus trap and outside-click monitor to it", async () => {
+  const { el, trigger } = buildDialog();
+  const { hook } = trackingHook(el);
+  hook.mounted();
+  click(trigger);
+  await wait(60);
+
+  const oldPanel = el.querySelector('[data-part="content-panel"]');
+  oldPanel.outerHTML = `
+    <div data-part="content-panel">
+      <button id="first" type="button">First</button>
+      <button id="last" type="button">Last</button>
+    </div>`;
+  hook.updated();
+
+  const panel = el.querySelector('[data-part="content-panel"]');
+  assert.equal(hook.component.contentPanel, panel);
+
+  document.getElementById("last").focus();
+  const tab = new window.KeyboardEvent("keydown", {
+    key: "Tab",
+    bubbles: true,
+    cancelable: true,
+  });
+  document.getElementById("last").dispatchEvent(tab);
+  assert.equal(tab.defaultPrevented, true);
+  assert.equal(document.activeElement, document.getElementById("first"));
+
+  document
+    .getElementById("first")
+    .dispatchEvent(
+      new window.MouseEvent("mousedown", { bubbles: true, cancelable: true }),
+    );
+  click(document.getElementById("first"));
+  assert.equal(hook.component.state, "open");
+  hook.destroyed();
+});
+
+test("a server-driven close or open after a rebuild is not pushed back to the server", () => {
+  const { el } = buildDialog({ open: true });
+  const { hook, pushed } = trackingHook(el);
+  hook.mounted();
+  pushed.length = 0;
+
+  // The root's data-state is owned by the dialog, so the patch keeps it.
+  el.dataset.open = "false";
+  hook.updated();
+  assert.equal(hook.component.state, "closed");
+  assert.deepEqual(pushed, []);
+
+  el.dataset.open = "true";
+  hook.updated();
+  assert.equal(hook.component.state, "open");
+  assert.deepEqual(pushed, []);
+
+  // What the user does still reaches the server.
+  click(el.querySelector('[data-part="close-trigger"]'));
+  assert.deepEqual(pushed, ["close"]);
+  hook.destroyed();
+});
+
+test("a close control added by a patch works", () => {
+  const { el, trigger, panel } = buildDialog();
+  const { hook } = trackingHook(el);
+  hook.mounted();
+  click(trigger);
+
+  panel.insertAdjacentHTML(
+    "beforeend",
+    '<button id="added-close" data-action="close" type="button">Done</button>',
+  );
+  hook.updated();
+
+  click(document.getElementById("added-close"));
+  assert.equal(hook.component.state, "closed");
+  hook.destroyed();
+});
+
+test("a patch leaves the state of item parts inside the dialog alone", () => {
+  const { el, trigger, panel } = buildDialog();
+  const { hook } = trackingHook(el);
+  hook.mounted();
+  click(trigger);
+
+  panel.insertAdjacentHTML(
+    "beforeend",
+    '<div id="an-item" data-part="checkbox-item" data-state="checked"></div>',
+  );
+  hook.updated();
+
+  assert.equal(
+    document.getElementById("an-item").getAttribute("data-state"),
+    "checked",
+  );
+  hook.destroyed();
+});
+
+test("a patch during the close animation does not cut it short", async () => {
+  const { el, trigger, content } = buildDialog({
+    animations: {
+      open_to_closed: { duration: 40, target_part: "content" },
+    },
+  });
+  const { hook } = trackingHook(el);
+  hook.mounted();
+  click(trigger);
+
+  hook.component.transition("close");
+  hook.updated();
+  assert.equal(content.hidden, false);
+
+  await wait(120);
+  assert.equal(content.hidden, true);
+  hook.destroyed();
+});

@@ -57,15 +57,8 @@ class Component {
     this.initStateMachine(this.componentConfig.stateMachine, this.initialState);
     this.ariaManager = new AriaManager(this, this.ariaConfig);
 
-    // ignore item's part
-    this.allParts = this.queryParts();
-    if (ignoreItems) {
-      this.allParts = this.allParts.filter(
-        (element) =>
-          !element.dataset.part.startsWith("item") &&
-          !element.dataset.part.endsWith("-item"),
-      );
-    }
+    this.ignoreItems = ignoreItems;
+    this.allParts = this.collectParts();
 
     this.updateUI();
     this.updatePartsVisibility();
@@ -101,6 +94,21 @@ class Component {
    */
   skipReinitialize(_el) {
     return false;
+  }
+
+  /**
+   * The parts this component manages: queryParts(), without item parts
+   * unless the component was created with `ignoreItems: false`.
+   */
+  collectParts() {
+    const parts = this.queryParts();
+    if (!this.ignoreItems) return parts;
+
+    return parts.filter(
+      (element) =>
+        !element.dataset.part.startsWith("item") &&
+        !element.dataset.part.endsWith("-item"),
+    );
   }
 
   queryParts() {
@@ -194,6 +202,7 @@ class Component {
 
     if (!animConfig) {
       // No animation, update visibility immediately
+      this.visibilityPending = null;
       this.updatePartsVisibility(nextState);
       return null; // No promise
     }
@@ -203,8 +212,14 @@ class Component {
       ? this.getPart(animConfig.target_part)
       : this.el;
 
+    // Parts keep their visibility until the animation ends; see
+    // visibilityPending.
+    const pending = { state: nextState };
+    this.visibilityPending = pending;
+
     // Animate with the config
     return animateTransition(animConfig, targetElement).then(() => {
+      if (this.visibilityPending === pending) this.visibilityPending = null;
       if (this.destroyed || this.stateMachine.state !== nextState) return;
 
       this.updatePartsVisibility(nextState);
