@@ -270,7 +270,7 @@ test("dialog claims the attributes it sets so LiveView patches leave them alone"
   hook.destroyed();
 });
 
-test("dialogs driven by a server-rendered data-state leave it to the server and rebuild on updates", () => {
+test("dialogs driven by a server-rendered data-state leave it to the server", () => {
   const { el, trigger } = buildDialog({ state: "closed" });
   const claimed = new Map();
   const hook = {
@@ -283,11 +283,22 @@ test("dialogs driven by a server-rendered data-state leave it to the server and 
   assert.equal(claimed.has("root"), false);
   assert.ok(claimed.get("content").includes("hidden"));
 
+  // The user opens it; a patch puts the server's unchanged `closed` back.
   click(trigger);
   const original = hook.component;
+  el.dataset.state = "closed";
   hook.updated();
-  assert.equal(original.destroyed, true);
+  assert.equal(hook.component, original);
+  assert.equal(hook.component.state, "open");
+  assert.equal(el.dataset.state, "open");
+
+  // The server changes it: the dialog follows.
+  el.dataset.state = "open";
+  hook.updated();
+  el.dataset.state = "closed";
+  hook.updated();
   assert.notEqual(hook.component, original);
+  assert.equal(hook.component.state, "closed");
   hook.destroyed();
 });
 

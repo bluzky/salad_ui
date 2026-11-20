@@ -6,6 +6,11 @@ import ClickOutsideMonitor from "../core/click-outside.js";
 
 class DialogComponent extends Component {
   constructor(el, hookContext) {
+    // Sheets and alert dialogs render their state as the root's `data-state`
+    // (no `data-open`). Read the server-rendered value before the base
+    // constructor overwrites it with the initial state.
+    const stateRaw =
+      el.dataset.open === undefined ? el.dataset.state : undefined;
     // A root `data-state` on a dialog driven by `data-open` was kept from the
     // instance this one replaces (see ownedAttributes): the server changed
     // `data-open`.
@@ -23,6 +28,7 @@ class DialogComponent extends Component {
     this.contentPanel = this.getPart("content-panel");
     this.config.preventDefaultKeys = ["Escape"];
     this._openRaw = el.dataset.open;
+    this._stateRaw = stateRaw;
     this._rebuilt = rebuilt;
   }
 
@@ -36,11 +42,14 @@ class DialogComponent extends Component {
   // is fine.
   //
   // Sheets and alert dialogs render their state as `data-state` on the root
-  // instead of `data-open`; they still rebuild on every patch.
+  // instead of `data-open`. A patch puts the server's value back there, so
+  // they are compared against the server-rendered value seen at mount, not
+  // the client's state: a sheet the user opened stays open while the server
+  // keeps rendering `closed`, and rebuilds when the server changes it.
   skipReinitialize(el) {
     const same =
-      this._openRaw !== undefined &&
       el.dataset.open === this._openRaw &&
+      (this._openRaw !== undefined || el.dataset.state === this._stateRaw) &&
       el.dataset.options === this._optionsRaw &&
       el.dataset.eventMappings === this._eventMappingsRaw;
     if (same) {
@@ -85,7 +94,7 @@ class DialogComponent extends Component {
   afterMount() {
     const requestedState =
       this.el.dataset.open === undefined
-        ? this.el.dataset.state || "closed"
+        ? this._stateRaw || "closed"
         : this.el.dataset.open === "true"
           ? "open"
           : "closed";
